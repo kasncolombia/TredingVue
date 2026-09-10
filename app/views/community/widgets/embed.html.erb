@@ -1,0 +1,58 @@
+<% content_for :page_title, "Widget Embebible" %>
+
+<div class="fade-in">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-xl font-black text-slate-800 dark:text-white">📊 Widget Embebible</h1>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Copia el código y compártelo en tu sitio web</p>
+    </div>
+  </div>
+
+  <!-- WIDGET PREVIEW -->
+  <div class="glass rounded-2xl p-6 mb-5">
+    <h2 class="text-sm font-bold text-slate-800 dark:text-white mb-4">Vista Previa del Widget</h2>
+    <div class="border-2 border-dashed border-slate-300 dark:border-darkBorder rounded-xl p-6 bg-slate-50 dark:bg-darkSidebar">
+      <div class="text-center">
+        <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white font-black text-2xl mb-4 shadow-lg shadow-indigo-500/30">
+          📊
+        </div>
+        <h3 class="text-lg font-bold text-slate-800 dark:text-white">AI Trading Community</h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Tu comunidad de trading</p>
+        
+        <div class="grid grid-cols-3 gap-3 mt-5 max-w-sm mx-auto">
+          <div class="p-3 rounded-xl bg-white dark:bg-darkCard text-center">
+            <p class="text-lg font-black text-emerald-500"><%= @stats[:total_trades] %></p>
+            <p class="text-[10px] text-slate-400">Trades</p>
+          </div>
+          <div class="p-3 rounded-xl bg-white dark:bg-darkCard text-center">
+            <p class="text-lg font-black text-indigo-500"><%= @stats[:active_traders] %></p>
+            <p class="text-[10px] text-slate-400">Traders</p>
+          </div>
+          <div class="p-3 rounded-xl bg-white dark:bg-darkCard text-center">
+            <p class="text-lg font-black text-emerald-500"><%= @stats[:win_rate].round(1) %>%</p>
+            <p class="text-[10px] text-slate-400">Win Rate</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EMBED CODE -->
+  <div class="glass rounded-2xl p-5">
+    <h2 class="text-sm font-bold text-slate-800 dark:text-white mb-3">Código para Embeber</h2>
+    <div class="relative">
+      <pre class="bg-slate-900 text-green-400 p-4 rounded-xl text-xs overflow-x-auto font-mono"><code>&lt;iframe
+  src="&lt;%= community_widget_url %&gt;"
+  width="100%"
+  height="400"
+  frameborder="0"
+  style="border-radius: 16px; overflow: hidden;"
+ &gt;&lt;/iframe&gt;
+
+&lt;!-- Para uso en blogs o sitios web --&gt;</code></pre>
+      <button onclick="navigator.clipboard.writeText(document.querySelector('pre code').innerText)" class="absolute top-3 right-3 p-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-all" title="Copiar código">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+      </button>
+    </div>
+  </div>
+</div>

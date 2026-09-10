@@ -1,0 +1,32 @@
+<% content_for :page_title, "Nueva Solicitud" %>
+
+<div class="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden">
+  <div class="w-full max-w-lg relative fade-in">
+    <div class="text-center mb-8">
+      <h1 class="text-2xl font-black text-slate-800 dark:text-white tracking-tight">Solicitud de Revisión</h1>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Pide ayuda a un mentor experimentado</p>
+    </div>
+    <div class="glass rounded-2xl p-8 shadow-2xl shadow-indigo-500/10">
+      <%= form_with model: @request, url: community_review_requests_path, local: true do |f| %>
+        <div class="space-y-5">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Mentor</label>
+            <%= f.collection_select :mentor_id, @mentors, :id, :name, { prompt: "Selecciona un mentor" }, { class: "input-field w-full px-4 py-3 rounded-xl text-sm transition-all focus:outline-none" } %>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Trade</label>
+            <%= f.collection_select :trade_id, @trades, :id, :symbol, { prompt: "Selecciona un trade" }, { class: "input-field w-full px-4 py-3 rounded-xl text-sm transition-all focus:outline-none" } %>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Mensaje</label>
+            <%= f.text_area :message, rows: 5, placeholder="Describe qué necesitas revisar...", class: "input-field w-full px-4 py-3 rounded-xl text-sm transition-all focus:outline-none" %>
+          </div>
+          <%= f.submit "Enviar Solicitud", class: "w-full py-3 px-4 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-amber-500/30 transition-all duration-200 cursor-pointer transform hover:scale-[1.01] active:scale-[0.99]" %>
+        </div>
+      <% end %>
+      <div class="mt-5 text-center">
+        <%= link_to "Cancelar", community_reviews_path, class: "text-xs text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 font-semibold" %>
+      </div>
+    </div>
+  </div>
+</div>

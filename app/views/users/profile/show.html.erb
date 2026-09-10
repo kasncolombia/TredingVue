@@ -1,0 +1,117 @@
+<% content_for :page_title, "Mi Perfil" %>
+
+<div class="fade-in">
+  <!-- HEADER -->
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-xl font-black text-slate-800 dark:text-white">Mi Perfil</h1>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Administra tu cuenta y datos de trading</p>
+    </div>
+    <%= link_to edit_user_registration_path, class: "px-4 py-2 text-xs font-bold bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-xl shadow-lg shadow-indigo-500/30 transition-all flex items-center gap-1.5 animate-float" do %>
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+      Editar Perfil
+    <% end %>
+  </div>
+
+  <!-- STATS CARDS -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
+    <div class="stat-card rounded-2xl p-4">
+      <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Operaciones</p>
+      <p class="text-2xl font-black text-slate-800 dark:text-white mt-1"><%= @total_trades %></p>
+    </div>
+    <div class="stat-card rounded-2xl p-4">
+      <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Ganadoras</p>
+      <p class="text-2xl font-black text-emerald-500 mt-1"><%= @win_trades %></p>
+    </div>
+    <div class="stat-card rounded-2xl p-4">
+      <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Perdedoras</p>
+      <p class="text-2xl font-black text-rose-500 mt-1"><%= @loss_trades %></p>
+    </div>
+    <div class="stat-card rounded-2xl p-4">
+      <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Win Rate</p>
+      <p class="text-2xl font-black text-indigo-500 mt-1"><%= @total_trades > 0 ? (@win_trades.to_f / @total_trades * 100).round(1) : 0 %>%</p>
+    </div>
+  </div>
+
+  <!-- INFO PERSONAL -->
+  <div class="glass rounded-2xl p-6 mb-5">
+    <div class="flex items-center gap-4 mb-5">
+      <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-black text-2xl shadow-lg shadow-indigo-500/30">
+        <%= @user.name&.first&.upcase || @user.email.first.upcase %>
+      </div>
+      <div>
+        <h2 class="text-lg font-bold text-slate-800 dark:text-white"><%= @user.name || "Sin nombre" %></h2>
+        <p class="text-sm text-slate-500 dark:text-slate-400"><%= @user.email %></p>
+        <span class="text-xs text-indigo-500 dark:text-indigo-400 font-medium">Pro Trader</span>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <div class="p-3 rounded-xl bg-slate-50 dark:bg-darkSidebar border border-slate-200 dark:border-darkBorder">
+        <p class="text-[10px] text-slate-400 uppercase font-semibold">Zona Horaria</p>
+        <p class="text-sm font-bold text-slate-800 dark:text-white mt-1"><%= @user.timezone %></p>
+      </div>
+      <div class="p-3 rounded-xl bg-slate-50 dark:bg-darkSidebar border border-slate-200 dark:border-darkBorder">
+        <p class="text-[10px] text-slate-400 uppercase font-semibold">Moneda Preferida</p>
+        <p class="text-sm font-bold text-slate-800 dark:text-white mt-1"><%= @user.preferred_currency %></p>
+      </div>
+      <div class="p-3 rounded-xl bg-slate-50 dark:bg-darkSidebar border border-slate-200 dark:border-darkBorder">
+        <p class="text-[10px] text-slate-400 uppercase font-semibold">Capital Inicial</p>
+        <p class="text-sm font-bold text-slate-800 dark:text-white mt-1">$<%= number_with_precision(@user.initial_capital || 0, precision: 2) %></p>
+      </div>
+      <div class="p-3 rounded-xl bg-slate-50 dark:bg-darkSidebar border border-slate-200 dark:border-darkBorder">
+        <p class="text-[10px] text-slate-400 uppercase font-semibold">Miembro desde</p>
+        <p class="text-sm font-bold text-slate-800 dark:text-white mt-1"><%= @user.created_at.strftime("%b %Y") %></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÚLTIMAS OPERACIONES -->
+  <div class="glass rounded-2xl overflow-hidden">
+    <div class="flex justify-between items-center px-5 py-3.5 border-b border-slate-200 dark:border-darkBorder">
+      <div class="flex items-center gap-2">
+        <p class="text-sm font-bold text-slate-800 dark:text-white">Últimas Operaciones</p>
+        <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 dark:bg-darkCard text-slate-500 dark:text-slate-400 font-semibold"><%= @recent_trades.size %></span>
+      </div>
+      <%= link_to "Ver todas →", trades_path, class: "text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-semibold" %>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-xs">
+        <thead class="table-header">
+          <tr class="border-b border-slate-200 dark:border-darkBorder">
+            <th class="py-3 px-4 text-left text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Fecha</th>
+            <th class="py-3 px-4 text-left text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Activo</th>
+            <th class="py-3 px-4 text-left text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Dir.</th>
+            <th class="py-3 px-4 text-left text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Estrategia</th>
+            <th class="py-3 px-4 text-right text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">P&L</th>
+            <th class="py-3 px-4 text-center text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Resultado</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 dark:divide-darkBorder">
+          <% @recent_trades.each do |trade| %>
+          <tr class="table-row-hover transition-all duration-150 cursor-pointer" onclick="location.href='<%= trade_path(trade) %>'">
+            <td class="py-3 px-4 text-slate-500 dark:text-slate-400"><%= trade.entry_at&.strftime("%d %b %y") || "—" %></td>
+            <td class="py-3 px-4 font-bold text-slate-800 dark:text-white"><%= trade.symbol %></td>
+            <td class="py-3 px-4"><%= direction_badge(trade.direction) %></td>
+            <td class="py-3 px-4 text-slate-600 dark:text-slate-300"><%= trade.strategy&.name || "—" %></td>
+            <td class="py-3 px-4 text-right font-bold <%= pnl_class(trade.pnl) %>">
+              <%= trade.pnl >= 0 ? "+" : "" %>$<%= number_with_precision(trade.pnl, precision: 2) %>
+            </td>
+            <td class="py-3 px-4 text-center"><%= result_badge(trade.result || "—") %></td>
+          </tr>
+          <% end %>
+          <% if @recent_trades.empty? %>
+          <tr>
+            <td colspan="6" class="py-12 text-center text-slate-400 dark:text-slate-500">
+              <div class="flex flex-col items-center gap-3">
+                <svg class="w-10 h-10 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <p>No hay operaciones aún.</p>
+                <%= link_to "Registra tu primera operación →", new_trade_path, class: "text-indigo-600 dark:text-indigo-400 hover:underline font-semibold" %>
+              </div>
+            </td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

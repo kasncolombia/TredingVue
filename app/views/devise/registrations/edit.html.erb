@@ -1,0 +1,210 @@
+<%# app/views/devise/registrations/edit.html.erb %>
+<% content_for :page_title, "Mi Perfil" %>
+
+<div class="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden">
+
+  <!-- BG GRADIENT ORBS -->
+  <div class="absolute inset-0 pointer-events-none overflow-hidden">
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-indigo-600/20 dark:bg-indigo-600/10 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-violet-600/20 dark:bg-violet-600/10 rounded-full blur-3xl"></div>
+  </div>
+
+  <div class="w-full max-w-lg relative fade-in">
+
+    <!-- LOGO + TITULO -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 shadow-2xl shadow-indigo-500/40 mb-4">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+        </svg>
+      </div>
+      <h1 class="text-2xl font-black text-slate-800 dark:text-white tracking-tight">Mi Perfil</h1>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Administra tu cuenta y datos personales</p>
+    </div>
+
+    <!-- CARD -->
+    <div class="glass rounded-2xl p-8 shadow-2xl shadow-indigo-500/10">
+
+      <!-- AVATAR Y INFO BASICA -->
+      <div class="flex items-center gap-4 mb-6 pb-6 border-b border-slate-200 dark:border-darkBorder">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-indigo-500/30">
+          <%= current_user.name&.first&.upcase || current_user.email.first.upcase %>
+        </div>
+        <div>
+          <p class="text-sm font-bold text-slate-800 dark:text-white"><%= current_user.name || "Sin nombre" %></p>
+          <p class="text-xs text-slate-500 dark:text-slate-400"><%= current_user.email %></p>
+          <p class="text-[10px] text-indigo-500 dark:text-indigo-400 font-medium mt-0.5">Pro Trader</p>
+        </div>
+      </div>
+
+      <%= form_with model: resource, url: registration_path(resource_name), method: :patch, class: "space-y-5" do |f| %>
+
+        <!-- NOMBRE -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Nombre completo</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+              </svg>
+            </div>
+            <%= f.text_field :name, autofocus: true,
+                placeholder: "Tu nombre",
+                class: "input-field w-full pl-10 pr-4 py-3 rounded-xl text-sm transition-all focus:outline-none" %>
+          </div>
+        </div>
+
+        <!-- EMAIL -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Correo electrónico</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            <%= f.email_field :email, autocomplete: "email",
+                placeholder: "trader@ejemplo.com",
+                class: "input-field w-full pl-10 pr-4 py-3 rounded-xl text-sm transition-all focus:outline-none" %>
+          </div>
+        </div>
+
+        <!-- CONTRASEÑA ACTUAL -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Contraseña actual <span class="text-slate-400 font-normal">(dejar vacío si no deseas cambiar)</span></label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+              </svg>
+            </div>
+            <%= f.password_field :current_password, autocomplete: "current-password",
+                placeholder: "••••••••",
+                class: "input-field w-full pl-10 pr-4 py-3 rounded-xl text-sm transition-all focus:outline-none" %>
+          </div>
+        </div>
+
+        <!-- NUEVA CONTRASEÑA -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Nueva contraseña <span class="text-slate-400 font-normal">(dejar vacío si no deseas cambiar)</span></label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+              </svg>
+            </div>
+            <%= f.password_field :password, autocomplete: "new-password",
+                placeholder: "Mínimo 8 caracteres",
+                class: "input-field w-full pl-10 pr-4 py-3 rounded-xl text-sm transition-all focus:outline-none" %>
+          </div>
+        </div>
+
+        <!-- CONFIRMAR CONTRASEÑA -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Confirmar nueva contraseña</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+              </svg>
+            </div>
+            <%= f.password_field :password_confirmation, autocomplete: "new-password",
+                placeholder: "Repite tu contraseña",
+                class: "input-field w-full pl-10 pr-4 py-3 rounded-xl text-sm transition-all focus:outline-none" %>
+          </div>
+        </div>
+
+        <!-- ZONA HORARIA -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Zona horaria</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <%= f.select :timezone, options_for_select([
+              ["UTC", "UTC"],
+              ["America/New_York", "Eastern (ET)"],
+              ["America/Chicago", "Central (CT)"],
+              ["America/Denver", "Mountain (MT)"],
+              ["America/Los_Angeles", "Pacific (PT)"],
+              ["America/Mexico_City", "Mexico City"],
+              ["Europe/Madrid", "Madrid"],
+              ["Europe/Paris", "París"],
+              ["Asia/Tokyo", "Tokio"],
+              ["Asia/Singapore", "Singapur"]
+            ], current_user.timezone), {}, { class: "input-field w-full pl-10 pr-4 py-3 rounded-xl text-sm transition-all focus:outline-none" } %>
+          </div>
+        </div>
+
+        <!-- CAPITAL INICIAL -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Capital inicial ($)</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <%= f.number_field :initial_capital, step: 0.01, min: 0,
+                placeholder: "0.00",
+                class: "input-field w-full pl-10 pr-4 py-3 rounded-xl text-sm transition-all focus:outline-none" %>
+          </div>
+        </div>
+
+        <!-- MONEDA PREFERIDA -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Moneda preferida</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <%= f.select :preferred_currency, options_for_select([
+              ["USD - Dólar", "USD"],
+              ["EUR - Euro", "EUR"],
+              ["GBP - Libra", "GBP"],
+              ["MXN - Peso Mexicano", "MXN"],
+              ["COP - Peso Colombiano", "COP"],
+              ["ARS - Peso Argentino", "ARS"],
+              ["BRL - Real Brasileño", "BRL"],
+              ["JPY - Yen", "JPY"]
+            ], current_user.preferred_currency), {}, { class: "input-field w-full pl-10 pr-4 py-3 rounded-xl text-sm transition-all focus:outline-none" } %>
+          </div>
+        </div>
+
+        <!-- SUBMIT -->
+        <div class="pt-4">
+          <%= f.submit "Guardar cambios",
+              class: "w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-indigo-500/30 transition-all duration-200 cursor-pointer transform hover:scale-[1.01] active:scale-[0.99]" %>
+        </div>
+
+      <% end %>
+
+      <!-- DIVIDER -->
+      <div class="flex items-center gap-3 my-5">
+        <div class="flex-1 h-px bg-slate-200 dark:bg-slate-700"></div>
+        <span class="text-xs text-slate-400">peligro</span>
+        <div class="flex-1 h-px bg-slate-200 dark:bg-slate-700"></div>
+      </div>
+
+      <!-- CANCELAR Y ELIMINAR CUENTA -->
+      <div class="flex items-center justify-between">
+        <div>
+          <%= button_to "Cancelar cuenta", registration_path(resource_name),
+              method: :delete, data: { confirm: "¿Estás seguro? Esta acción es irreversible." },
+              class: "text-xs text-rose-500 hover:text-rose-400 font-bold hover:underline transition-all" %>
+        </div>
+      </div>
+    </div>
+
+    <!-- NAVEGACIÓN -->
+    <div class="mt-5 flex justify-center gap-4">
+      <%= link_to "Volver al Dashboard", dashboard_path, class: "text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-semibold flex items-center gap-1" %>
+      <span class="text-slate-400">|</span>
+      <%= link_to "Cambiar contraseña", edit_password_path(resource_name), class: "text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-semibold flex items-center gap-1" %>
+    </div>
+  </div>
+</div>

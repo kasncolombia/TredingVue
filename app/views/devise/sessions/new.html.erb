@@ -1,0 +1,129 @@
+<%# app/views/devise/sessions/new.html.erb %>
+<div class="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden">
+
+  <!-- BG GRADIENT ORBS -->
+  <div class="absolute inset-0 pointer-events-none overflow-hidden">
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-indigo-600/20 dark:bg-indigo-600/10 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-violet-600/20 dark:bg-violet-600/10 rounded-full blur-3xl"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-indigo-400/10 rounded-full blur-2xl"></div>
+  </div>
+
+  <div class="w-full max-w-md relative fade-in">
+
+    <!-- LOGO + TITULO -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 shadow-2xl shadow-indigo-500/40 mb-4">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+        </svg>
+      </div>
+      <h1 class="text-2xl font-black text-slate-800 dark:text-white tracking-tight">AI Trading Journal</h1>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Tu coach de trading con inteligencia artificial</p>
+    </div>
+
+    <!-- CARD -->
+    <div class="glass rounded-2xl p-8 shadow-2xl shadow-indigo-500/10">
+      <h2 class="text-lg font-bold text-slate-800 dark:text-white mb-1">Bienvenido de vuelta</h2>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Ingresa tu cuenta para continuar</p>
+
+      <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "space-y-5" }) do |f| %>
+
+        <!-- EMAIL -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Correo electrónico</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            <%= f.email_field :email, autofocus: true, autocomplete: "email",
+                placeholder: "trader@ejemplo.com",
+                class: "input-field w-full pl-10 pr-4 py-3 rounded-xl text-sm transition-all focus:outline-none" %>
+          </div>
+        </div>
+
+        <!-- PASSWORD -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Contraseña</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+              </svg>
+            </div>
+            <%= f.password_field :password, autocomplete: "current-password",
+                placeholder: "••••••••",
+                class: "input-field w-full pl-10 pr-4 py-3 rounded-xl text-sm transition-all focus:outline-none" %>
+          </div>
+        </div>
+
+        <!-- REMEMBER + FORGOT -->
+        <div class="flex items-center justify-between">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <%= f.check_box :remember_me, class: "w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" %>
+            <span class="text-xs text-slate-500 dark:text-slate-400">Recordarme</span>
+          </label>
+          <% if devise_mapping.recoverable? && controller_name != "passwords" %>
+            <%= link_to "¿Olvidaste tu contraseña?", new_password_path(resource_name),
+                class: "text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-medium" %>
+          <% end %>
+        </div>
+
+        <!-- SUBMIT -->
+        <%= f.submit "Iniciar Sesión",
+            class: "w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-indigo-500/30 transition-all duration-200 cursor-pointer transform hover:scale-[1.01] active:scale-[0.99]" %>
+
+      <% end %>
+
+      <!-- DEMO QUICK LOGIN BUTTON -->
+      <button type="button" onclick="fillDemoCredentials()"
+          class="w-full mb-3 py-2.5 px-4 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold text-xs rounded-xl border border-emerald-500/30 transition-all flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        Entrar como Trader Demo (1-Click)
+      </button>
+
+      <!-- DIVIDER -->
+      <div class="flex items-center gap-3 my-4">
+        <div class="flex-1 h-px bg-slate-200 dark:bg-slate-700"></div>
+        <span class="text-xs text-slate-400">o</span>
+        <div class="flex-1 h-px bg-slate-200 dark:bg-slate-700"></div>
+      </div>
+
+      <script>
+        function fillDemoCredentials() {
+          const emailInput = document.querySelector('input[type="email"]');
+          const passInput  = document.querySelector('input[type="password"]');
+          if (emailInput && passInput) {
+            emailInput.value = 'trader@coachtrading.com';
+            passInput.value  = 'password123';
+            emailInput.form.submit();
+          }
+        }
+      </script>
+
+      <!-- REGISTRO LINK -->
+      <p class="text-center text-xs text-slate-500 dark:text-slate-400">
+        ¿No tienes cuenta?
+        <%= link_to "Crear cuenta gratis", new_registration_path(resource_name),
+            class: "text-indigo-600 dark:text-indigo-400 font-bold hover:underline" %>
+      </p>
+    </div>
+
+    <!-- FEATURES BADGES -->
+    <div class="flex justify-center gap-4 mt-6">
+      <span class="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-500">
+        <svg class="w-3.5 h-3.5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+        AI Coach Personal
+      </span>
+      <span class="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-500">
+        <svg class="w-3.5 h-3.5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+        Analytics Pro
+      </span>
+      <span class="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-500">
+        <svg class="w-3.5 h-3.5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+        100% Gratis
+      </span>
+    </div>
+  </div>
+</div>

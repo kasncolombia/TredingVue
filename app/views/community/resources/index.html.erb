@@ -1,0 +1,48 @@
+<% content_for :page_title, "Resources" %>
+
+<div class="fade-in">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-xl font-black text-slate-800 dark:text-white">📦 Biblioteca de Recursos</h1>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Materiales compartidos por la comunidad</p>
+    </div>
+    <%= link_to new_community_resource_path, class: "px-4 py-2 text-xs font-bold bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded-xl shadow-lg shadow-cyan-500/30 transition-all flex items-center gap-1.5" do %>
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      Agregar Recurso
+    <% end %>
+  </div>
+
+  <!-- CATEGORY FILTER -->
+  <div class="flex gap-1 mb-5 glass rounded-xl p-1 overflow-x-auto">
+    <% %w[all book video article podcast course].each do |cat| %>
+      <%= link_to community_resources_path(category: cat), class: "px-3 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 rounded-lg hover:bg-indigo-50 dark:hover:bg-darkCard transition-all whitespace-nowrap" do %>
+        <%= cat.capitalize %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="space-y-4">
+    <% @resources.each do |resource| %>
+      <div class="glass rounded-2xl p-5 hover:shadow-lg transition-shadow">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+            <%= resource.category == 'book' ? '📖' : resource.category == 'video' ? '🎬' : resource.category == 'article' ? '📝' : resource.category == 'podcast' ? '🎙️' : '📚' %>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between mb-1">
+              <h3 class="text-sm font-bold text-slate-800 dark:text-white"><%= resource.title %></h3>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-500"><%= resource.category.capitalize %></span>
+            </div>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 mb-2"><%= resource.description %></p>
+            <div class="flex items-center justify-between">
+              <a href="<%= resource.url %>" target="_blank" class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-semibold">
+                🔗 <%= resource.url %>
+              </a>
+              <span class="text-[10px] text-slate-400">por <%= resource.author.name %></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

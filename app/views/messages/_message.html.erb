@@ -1,0 +1,11 @@
+<div class="flex gap-2 items-start <%= message.user_id == current_user.id ? 'justify-end' : '' %>">
+  <% unless message.user_id == current_user.id %>
+    <div class="w-6 h-6 rounded-full bg-indigo-100 dark:bg-darkCard flex items-center justify-center text-[10px] font-bold text-indigo-600 flex-shrink-0">
+      <%= message.user.name&.first&.upcase %>
+    </div>
+  <% end %>
+  <div class="p-2.5 rounded-2xl max-w-[80%] <%= message.user_id == current_user.id ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-tr-none' : 'bg-slate-100 dark:bg-darkSidebar border border-slate-200 dark:border-darkBorder text-slate-700 dark:text-slate-200' %>">
+    <%= message.content %>
+    <p class="text-[9px] mt-1 opacity-60"><%= time_ago_in_words(message.created_at) %> ago</p>
+  </div>
+</div>

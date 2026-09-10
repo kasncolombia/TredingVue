@@ -1,0 +1,378 @@
+<% content_for :page_title, "Dashboard General" %>
+<% content_for :badge do %>
+  <span class="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> En Vivo
+  </span>
+<% end %>
+
+<!-- ====== KPI CARDS ====== -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
+
+  <!-- P&L Total -->
+  <div class="stat-card rounded-2xl p-4 relative overflow-hidden group hover:scale-[1.02] transition-transform duration-200">
+    <div class="absolute inset-0 bg-gradient-to-br <%= @stats[:total_pnl].to_f >= 0 ? 'from-emerald-500/5 to-transparent' : 'from-rose-500/5 to-transparent' %> pointer-events-none"></div>
+    <div class="flex items-start justify-between mb-3">
+      <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">P&L Total</p>
+      <div class="w-7 h-7 rounded-lg <%= @stats[:total_pnl].to_f >= 0 ? 'bg-emerald-500/15 text-emerald-500' : 'bg-rose-500/15 text-rose-500' %> flex items-center justify-center">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="<%= @stats[:total_pnl].to_f >= 0 ? 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' : 'M13 17h8m0 0V9m0 8l-8-8-4 4-6-6' %>"/>
+        </svg>
+      </div>
+    </div>
+    <p class="text-2xl font-black <%= @stats[:total_pnl].to_f >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
+      <%= @stats[:total_pnl].to_f >= 0 ? "+" : "" %>$<%= number_with_precision(@stats[:total_pnl], precision: 2, delimiter: ',') %>
+    </p>
+    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1"><%= @stats[:total_trades] %> operaciones registradas</p>
+  </div>
+
+  <!-- Win Rate -->
+  <div class="stat-card rounded-2xl p-4 group hover:scale-[1.02] transition-transform duration-200">
+    <div class="flex items-start justify-between mb-3">
+      <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Win Rate</p>
+      <div class="w-7 h-7 rounded-lg bg-indigo-500/15 text-indigo-500 flex items-center justify-center">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+    </div>
+    <p class="text-2xl font-black text-slate-800 dark:text-white"><%= @stats[:win_rate] %><span class="text-base font-bold text-slate-400">%</span></p>
+    <div class="mt-2.5">
+      <div class="flex justify-between text-[10px] text-slate-400 mb-1">
+        <span><%= @stats[:wins_count] %> ganadoras</span>
+        <span><%= @stats[:losses_count] %> perdedoras</span>
+      </div>
+      <div class="w-full bg-slate-200 dark:bg-slate-700/50 rounded-full h-1.5 overflow-hidden">
+        <div class="h-1.5 rounded-full bg-gradient-to-r from-indigo-500 to-violet-500 transition-all duration-1000" style="width:<%= @stats[:win_rate] %>%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profit Factor -->
+  <div class="stat-card rounded-2xl p-4 group hover:scale-[1.02] transition-transform duration-200">
+    <div class="flex items-start justify-between mb-3">
+      <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Profit Factor</p>
+      <div class="w-7 h-7 rounded-lg bg-amber-500/15 text-amber-500 flex items-center justify-center">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+        </svg>
+      </div>
+    </div>
+    <p class="text-2xl font-black text-slate-800 dark:text-white"><%= @stats[:profit_factor] %></p>
+    <div class="flex items-center gap-1.5 mt-1">
+      <% pf = @stats[:profit_factor].to_f %>
+      <span class="text-[11px] px-2 py-0.5 rounded-full font-semibold <%= pf >= 2 ? 'bg-emerald-500/15 text-emerald-500' : pf >= 1 ? 'bg-amber-500/15 text-amber-500' : 'bg-rose-500/15 text-rose-500' %>">
+        <%= pf >= 2 ? "✓ Excelente" : pf >= 1 ? "~ Aceptable" : "✗ Mejorar" %>
+      </span>
+    </div>
+  </div>
+
+  <!-- Operaciones -->
+  <div class="stat-card rounded-2xl p-4 group hover:scale-[1.02] transition-transform duration-200">
+    <div class="flex items-start justify-between mb-3">
+      <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Operaciones</p>
+      <div class="w-7 h-7 rounded-lg bg-violet-500/15 text-violet-500 flex items-center justify-center">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+      </div>
+    </div>
+    <p class="text-2xl font-black text-slate-800 dark:text-white"><%= @stats[:total_trades] %></p>
+    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+      <span class="text-emerald-500 font-semibold"><%= @stats[:wins_count] %> W</span>
+      <span class="text-slate-400 mx-1">/</span>
+      <span class="text-rose-500 font-semibold"><%= @stats[:losses_count] %> L</span>
+    </p>
+  </div>
+</div>
+
+<!-- ====== EQUITY CURVE + AI INSIGHT ====== -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5">
+
+  <!-- Equity Chart -->
+  <div class="lg:col-span-2 glass rounded-2xl p-5">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <p class="text-sm font-bold text-slate-800 dark:text-white">Curva de Patrimonio</p>
+        <p class="text-[11px] text-slate-500 dark:text-slate-400">P&L acumulado en el tiempo</p>
+      </div>
+      <div class="flex gap-1" id="period-tabs">
+        <% [["30d","30"], ["60d","60"], ["90d","90"], ["Todo","all"]].each_with_index do |(label, val), i| %>
+          <button onclick="changePeriod('<%= val %>')" data-period="<%= val %>"
+                  class="period-btn text-[11px] px-3 py-1.5 rounded-lg font-semibold transition-all duration-200 <%= i == 0 ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50' %>">
+            <%= label %>
+          </button>
+        <% end %>
+      </div>
+    </div>
+    <div class="h-52" id="equity-chart-wrap">
+      <div id="apexEquityChart"></div>
+    </div>
+  </div>
+
+  <!-- AI Coach Panel -->
+  <div class="glass rounded-2xl p-5 flex flex-col justify-between border-l-4 border-indigo-500">
+    <div>
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center text-white text-sm">🤖</div>
+        <div>
+          <p class="text-xs font-bold text-slate-800 dark:text-white">AI Coach Insights</p>
+          <p class="text-[10px] text-indigo-500 dark:text-indigo-400">Análisis automático</p>
+        </div>
+      </div>
+      <div class="space-y-2.5">
+        <!-- Score Disciplina -->
+        <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Score Disciplina</span>
+            <% wr = @stats[:win_rate].to_f; score = (wr / 10).round %>
+            <span class="text-xs font-black <%= score >= 7 ? 'text-emerald-500' : score >= 5 ? 'text-amber-500' : 'text-rose-500' %>"><%= score %>/10</span>
+          </div>
+          <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5 overflow-hidden">
+            <div class="h-1.5 rounded-full transition-all duration-1000 <%= score >= 7 ? 'bg-emerald-500' : score >= 5 ? 'bg-amber-500' : 'bg-rose-500' %>" style="width:<%= score * 10 %>%"></div>
+          </div>
+        </div>
+
+        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+          Tu Win Rate es <span class="font-bold text-indigo-600 dark:text-indigo-400"><%= @stats[:win_rate] %>%</span> con Profit Factor de <span class="font-bold"><%= @stats[:profit_factor] %></span>.
+          <% if @stats[:wins_count].to_i > @stats[:losses_count].to_i %>
+            Tu disciplina va por buen camino. Sigue respetando tu plan.
+          <% else %>
+            Detecté más pérdidas que ganancias. Revisa tu gestión de riesgo.
+          <% end %>
+        </p>
+      </div>
+    </div>
+    <%= link_to ai_coach_path, class: "mt-4 block text-center py-2.5 rounded-xl bg-gradient-to-r from-indigo-600/20 to-violet-600/20 hover:from-indigo-600/30 hover:to-violet-600/30 text-indigo-600 dark:text-indigo-300 text-xs font-bold border border-indigo-500/30 transition-all duration-200 group" do %>
+      Consultar AI Coach <span class="group-hover:translate-x-1 inline-block transition-transform">→</span>
+    <% end %>
+  </div>
+</div>
+
+<!-- ====== WIN/LOSS DONUT + P&L BAR ====== -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5">
+
+  <!-- Donut Win/Loss -->
+  <div class="glass rounded-2xl p-5">
+    <p class="text-sm font-bold text-slate-800 dark:text-white mb-1">Distribución</p>
+    <p class="text-[11px] text-slate-500 dark:text-slate-400 mb-3">Ganadoras vs Perdedoras</p>
+    <div id="apexDonutChart" class="flex justify-center"></div>
+    <div class="flex justify-center gap-4 mt-2">
+      <span class="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>Ganadoras (<%= @stats[:wins_count] %>)</span>
+      <span class="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>Perdedoras (<%= @stats[:losses_count] %>)</span>
+    </div>
+  </div>
+
+  <!-- P&L por día últimas operaciones -->
+  <div class="lg:col-span-2 glass rounded-2xl p-5">
+    <p class="text-sm font-bold text-slate-800 dark:text-white mb-1">P&L por Operación</p>
+    <p class="text-[11px] text-slate-500 dark:text-slate-400 mb-3">Últimas 20 operaciones</p>
+    <div id="apexBarChart" class="h-44"></div>
+  </div>
+</div>
+
+<!-- ====== ÚLTIMAS OPERACIONES ====== -->
+<div class="glass rounded-2xl overflow-hidden">
+  <div class="flex justify-between items-center px-5 py-3.5 border-b border-slate-200 dark:border-darkBorder">
+    <div class="flex items-center gap-2">
+      <p class="text-sm font-bold text-slate-800 dark:text-white">Últimas Operaciones</p>
+      <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 dark:bg-darkCard text-slate-500 dark:text-slate-400 font-semibold"><%= @recent_trades.size %></span>
+    </div>
+    <%= link_to "Ver todas →", trades_path, class: "text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-semibold" %>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="w-full text-xs">
+      <thead class="table-header">
+        <tr class="border-b border-slate-200 dark:border-darkBorder">
+          <th class="py-3 px-4 text-left text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Fecha</th>
+          <th class="py-3 px-4 text-left text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Activo</th>
+          <th class="py-3 px-4 text-left text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Dir.</th>
+          <th class="py-3 px-4 text-left text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Estrategia</th>
+          <th class="py-3 px-4 text-right text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">P&L</th>
+          <th class="py-3 px-4 text-center text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Resultado</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100 dark:divide-darkBorder">
+        <% @recent_trades.each do |trade| %>
+        <tr class="table-row-hover transition-all duration-150 cursor-pointer" onclick="location.href='<%= trade_path(trade) %>'">
+          <td class="py-3 px-4 text-slate-500 dark:text-slate-400"><%= trade.entry_at&.strftime("%d %b %y") || "—" %></td>
+          <td class="py-3 px-4 font-bold text-slate-800 dark:text-white"><%= trade.symbol %></td>
+          <td class="py-3 px-4"><%= direction_badge(trade.direction) %></td>
+          <td class="py-3 px-4 text-slate-600 dark:text-slate-300"><%= trade.strategy&.name || "—" %></td>
+          <td class="py-3 px-4 text-right font-bold <%= pnl_class(trade.pnl) %>">
+            <%= trade.pnl >= 0 ? "+" : "" %>$<%= number_with_precision(trade.pnl, precision: 2) %>
+          </td>
+          <td class="py-3 px-4 text-center"><%= result_badge(trade.result || "—") %></td>
+        </tr>
+        <% end %>
+        <% if @recent_trades.empty? %>
+        <tr>
+          <td colspan="6" class="py-12 text-center text-slate-400 dark:text-slate-500">
+            <div class="flex flex-col items-center gap-3">
+              <svg class="w-10 h-10 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              <p>No hay operaciones aún.</p>
+              <%= link_to "Registra tu primera operación →", new_trade_path, class: "text-indigo-600 dark:text-indigo-400 hover:underline font-semibold" %>
+            </div>
+          </td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ====== SCRIPTS CHARTS ====== -->
+<script>
+(function() {
+  // ---- HELPERS ----
+  const isDark = document.getElementById('html-root').classList.contains('dark');
+  const textColor    = isDark ? '#8B8FA8' : '#64748B';
+  const gridColor    = isDark ? '#2A2D4A' : '#E2E8F0';
+  const cardBg       = isDark ? '#13152B' : '#FFFFFF';
+
+  // ---- EQUITY CURVE (ApexCharts) ----
+  const equityRaw = <%= raw @equity_data.to_json %>;
+  const equityLabels = equityRaw.map(d => d.date);
+  const equityValues = equityRaw.map(d => parseFloat(d.value));
+  const lastVal      = equityValues[equityValues.length - 1] || 0;
+  const isProfit     = lastVal >= 0;
+  const strokeColor  = isProfit ? '#10B981' : '#F43F5E';
+
+  if (equityRaw.length > 0) {
+    const equityOpts = {
+      series: [{ name: 'P&L Acumulado', data: equityValues }],
+      chart: {
+        type: 'area', height: 210, toolbar: { show: false }, sparkline: { enabled: false },
+        animations: { enabled: true, easing: 'easeinout', speed: 800 },
+        background: 'transparent', foreColor: textColor,
+        dropShadow: { enabled: true, top: 4, left: 0, blur: 8, color: strokeColor, opacity: 0.35 }
+      },
+      stroke: { curve: 'smooth', width: 3, colors: [strokeColor] },
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shadeIntensity: 1, opacityFrom: 0.45, opacityTo: 0.0,
+          stops: [0, 95, 100],
+          colorStops: [
+            { offset: 0, color: strokeColor, opacity: 0.45 },
+            { offset: 100, color: strokeColor, opacity: 0.0 }
+          ]
+        }
+      },
+      markers: { size: 4, colors: [strokeColor], strokeColors: cardBg, strokeWidth: 2, hover: { size: 7 } },
+      xaxis: {
+        categories: equityLabels,
+        axisBorder: { show: false }, axisTicks: { show: false },
+        labels: { style: { colors: textColor, fontSize: '10px', fontWeight: '500' }, rotate: -25 }
+      },
+      yaxis: {
+        labels: {
+          style: { colors: textColor, fontSize: '10px', fontWeight: '500' },
+          formatter: v => (v >= 0 ? '+' : '') + '$' + Math.round(v).toLocaleString()
+        }
+      },
+      grid: { borderColor: gridColor, strokeDashArray: 4, yaxis: { lines: { show: true } } },
+      tooltip: {
+        theme: isDark ? 'dark' : 'light',
+        style: { fontSize: '11px' },
+        y: { formatter: v => (v >= 0 ? '+' : '') + '$' + v.toFixed(2) }
+      },
+      dataLabels: { enabled: false }
+    };
+    new ApexCharts(document.getElementById('apexEquityChart'), equityOpts).render();
+  } else {
+    document.getElementById('apexEquityChart').innerHTML =
+      '<div class="flex flex-col items-center justify-center h-44 text-slate-400 dark:text-slate-500 text-xs gap-2"><svg class="w-8 h-8 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 12l3-3 3 3 4-4"/></svg><p>Sin datos de equity aún</p></div>';
+  }
+
+  // ---- DONUT CHART (ApexCharts) ----
+  const wins   = <%= @stats[:wins_count].to_i %>;
+  const losses = <%= @stats[:losses_count].to_i %>;
+  if (wins + losses > 0) {
+    new ApexCharts(document.getElementById('apexDonutChart'), {
+      series: [wins, losses],
+      labels: ['Ganadoras', 'Perdedoras'],
+      chart: { type: 'donut', height: 170, background: 'transparent', foreColor: textColor },
+      colors: ['#10B981', '#F43F5E'],
+      legend: { show: false },
+      dataLabels: { enabled: true, style: { fontSize: '11px', fontWeight: '700' }, dropShadow: { enabled: false } },
+      stroke: { width: 3, colors: [cardBg] },
+      plotOptions: {
+        pie: {
+          donut: {
+            size: '70%',
+            labels: {
+              show: true,
+              total: {
+                show: true, label: 'Win Rate', fontSize: '10px', color: textColor, fontWeight: '600',
+                formatter: w => {
+                  const t = w.globals.seriesTotals.reduce((a,b) => a+b,0);
+                  return t ? Math.round((w.globals.seriesTotals[0]/t)*100) + '%' : '0%';
+                }
+              }
+            }
+          }
+        }
+      },
+      tooltip: { theme: isDark ? 'dark' : 'light' }
+    }).render();
+  } else {
+    document.getElementById('apexDonutChart').innerHTML =
+      '<div class="flex items-center justify-center h-36 text-xs text-slate-400">Sin datos</div>';
+  }
+
+  // ---- BAR CHART P&L POR OPERACIÓN (ApexCharts) ----
+  const recentData = <%= raw @recent_trades.map { |t| { label: t.symbol, value: t.pnl.to_f.round(2), date: t.entry_at&.strftime("%d %b") || "—" } }.to_json %>;
+  if (recentData.length > 0) {
+    const barColors = recentData.map(d => d.value >= 0 ? '#10B981' : '#F43F5E');
+    new ApexCharts(document.getElementById('apexBarChart'), {
+      series: [{ name: 'P&L', data: recentData.map(d => d.value) }],
+      chart: {
+        type: 'bar', height: 175, toolbar: { show: false },
+        background: 'transparent', foreColor: textColor,
+        animations: { enabled: true, easing: 'easeinout', speed: 600 }
+      },
+      plotOptions: {
+        bar: { columnWidth: '55%', borderRadius: 6, distributed: true }
+      },
+      colors: barColors,
+      legend: { show: false },
+      dataLabels: { enabled: false },
+      xaxis: {
+        categories: recentData.map(d => d.label),
+        axisBorder: { show: false }, axisTicks: { show: false },
+        labels: { style: { colors: textColor, fontSize: '10px', fontWeight: '600' } }
+      },
+      yaxis: {
+        labels: {
+          style: { colors: textColor, fontSize: '10px', fontWeight: '500' },
+          formatter: v => (v >= 0 ? '+' : '') + '$' + Math.round(v)
+        }
+      },
+      grid: { borderColor: gridColor, strokeDashArray: 4 },
+      tooltip: {
+        theme: isDark ? 'dark' : 'light',
+        y: { formatter: v => (v >= 0 ? '+' : '') + '$' + v.toFixed(2) },
+        x: { formatter: (_, { dataPointIndex }) => recentData[dataPointIndex]?.date || '' }
+      }
+    }).render();
+  } else {
+    document.getElementById('apexBarChart').innerHTML =
+      '<div class="flex items-center justify-center h-44 text-xs text-slate-400">Sin operaciones aún</div>';
+  }
+
+  // ---- PERIOD TABS ----
+  window.changePeriod = function(period) {
+    document.querySelectorAll('.period-btn').forEach(btn => {
+      const active = btn.dataset.period === period;
+      btn.className = btn.className.replace(/bg-indigo-600.*?shadow-indigo-500\/30/, '').trim();
+      if (active) {
+        btn.classList.add('bg-indigo-600','text-white','shadow-md','shadow-indigo-500/30');
+        btn.classList.remove('text-slate-500','dark:text-slate-400','hover:bg-slate-100','dark:hover:bg-slate-700/50');
+      } else {
+        btn.classList.add('text-slate-500','dark:text-slate-400','hover:bg-slate-100','dark:hover:bg-slate-700/50');
+        btn.classList.remove('bg-indigo-600','text-white','shadow-md','shadow-indigo-500/30');
+      }
+    });
+  };
+})();
+</script>

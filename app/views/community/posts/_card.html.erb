@@ -1,0 +1,49 @@
+<div class="glass rounded-2xl p-4 hover:shadow-lg transition-shadow">
+  <div class="flex items-center gap-3 mb-3">
+    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+      <%= post.user.name&.first&.upcase || "?" %>
+    </div>
+    <div class="flex-1">
+      <p class="text-sm font-bold text-slate-800 dark:text-white"><%= post.user.name || "Anónimo" %></p>
+      <p class="text-[10px] text-slate-400"><%= time_ago_in_words(post.created_at) %> ago</p>
+    </div>
+    <span class="text-xs px-2 py-0.5 rounded-full <%= post.visibility == 'public' ? 'bg-emerald-500/10 text-emerald-500' : post.visibility == 'friends' ? 'bg-amber-500/10 text-amber-500' : 'bg-slate-500/10 text-slate-500' %>">
+      <%= post.visibility == 'public' ? '🌐' : post.visibility == 'friends' ? '👥' : '🔒' %> <%= post.visibility %>
+    </span>
+  </div>
+
+  <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed mb-3"><%= post.content %></p>
+
+  <!-- REACTIONS -->
+  <div class="flex items-center gap-4 mb-3">
+    <% %w[like heart fire celebrate].each do |type| %>
+      <button onclick="fetch('/community/feed/<%= post.id %>/react', {method:'POST', headers:{'Content-Type':'application/json','X-CSRF-Token':document.querySelector("meta[name=csrf-token]").content}})
+        .then(r=>r.json()).then(d=>{document.getElementById('react-<%= type %>-<%= post.id %>').innerHTML=d.reaction+' '+d.count})"
+        id="react-<%= type %>-<%= post.id %>"
+        class="flex items-center gap-1 text-xs text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all px-2 py-1 rounded-lg hover:bg-indigo-50 dark:hover:bg-darkCard">
+        <%= type == 'like' ? '👍' : type == 'heart' ? '❤️' : type == 'fire' ? '🔥' : '🎉' %>
+        <span><%= post.reactions.where(reaction_type: type).count %></span>
+      </button>
+    <% end %>
+  </div>
+
+  <!-- COMMENTS -->
+  <div class="border-t border-slate-200 dark:border-darkBorder pt-3">
+    <p class="text-[10px] text-slate-400 mb-2"><%= post.comments.count %> comentarios</p>
+    <% post.comments.includes(:user).limit(3).each do |comment| %>
+      <div class="flex gap-2 mb-2">
+        <div class="w-6 h-6 rounded-full bg-indigo-100 dark:bg-darkCard flex items-center justify-center text-[10px] font-bold text-indigo-600 flex-shrink-0">
+          <%= comment.user.name&.first&.upcase %>
+        </div>
+        <div>
+          <span class="text-[10px] font-bold text-slate-700 dark:text-slate-300"><%= comment.user.name %></span>
+          <p class="text-[11px] text-slate-600 dark:text-slate-400"><%= comment.content %></p>
+        </div>
+      </div>
+    <% end %>
+    <%= form_with model: [post, post.comments.build], url: community_feed_comment_path(post), local: true, class: "flex gap-2 mt-2" do |f| %>
+      <%= f.text_area :content, rows: 1, placeholder="Comenta..." , class: "input-field flex-1 px-3 py-1.5 rounded-lg text-xs transition-all focus:outline-none" %>
+      <%= f.submit "Enviar", class: "px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-lg transition-all cursor-pointer" %>
+    <% end %>
+  </div>
+</div>

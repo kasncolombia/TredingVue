@@ -1,0 +1,86 @@
+<% content_for :page_title, "Perfil Público" %>
+
+<div class="fade-in">
+  <!-- PROFILE HEADER -->
+  <div class="glass rounded-2xl p-6 mb-5">
+    <div class="flex items-center gap-6">
+      <div class="w-24 h-24 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-black text-3xl shadow-lg shadow-indigo-500/30">
+        <%= @user.name&.first&.upcase || "?" %>
+      </div>
+      <div class="flex-1">
+        <h1 class="text-2xl font-black text-slate-800 dark:text-white"><%= @user.name || "Anónimo" %></h1>
+        <p class="text-sm text-slate-500 dark:text-slate-400"><%= @user.email %></p>
+        <div class="flex items-center gap-4 mt-2">
+          <span class="text-xs text-slate-400">📊 <strong class="text-indigo-600 dark:text-indigo-400"><%= @stats[:total_trades] %></strong> trades</span>
+          <span class="text-xs text-slate-400">🏆 <strong class="text-emerald-600 dark:text-emerald-400"><%= @stats[:win_rate] %>%</strong> Win Rate</span>
+          <span class="text-xs text-slate-400">💰 <strong class="text-indigo-600 dark:text-indigo-400"><%= @stats[:total_pnl] >= 0 ? "+" : "" %>$<%= @stats[:total_pnl].round(2) %></strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS GRID -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
+    <div class="stat-card rounded-2xl p-4">
+      <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase">Total Trades</p>
+      <p class="text-2xl font-black text-slate-800 dark:text-white mt-1"><%= @stats[:total_trades] %></p>
+    </div>
+    <div class="stat-card rounded-2xl p-4">
+      <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase">Win Rate</p>
+      <p class="text-2xl font-black text-emerald-500 mt-1"><%= @stats[:win_rate] %>%</p>
+    </div>
+    <div class="stat-card rounded-2xl p-4">
+      <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase">Ganadoras</p>
+      <p class="text-2xl font-black text-emerald-500 mt-1"><%= @stats[:win_trades] %></p>
+    </div>
+    <div class="stat-card rounded-2xl p-4">
+      <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase">Perdedoras</p>
+      <p class="text-2xl font-black text-rose-500 mt-1"><%= @stats[:loss_trades] %></p>
+    </div>
+  </div>
+
+  <!-- RECENT TRADES -->
+  <div class="glass rounded-2xl overflow-hidden mb-5">
+    <div class="px-5 py-3 border-b border-slate-200 dark:border-darkBorder">
+      <p class="text-sm font-bold text-slate-800 dark:text-white">Operaciones Recientes</p>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-xs">
+        <thead class="table-header">
+          <tr>
+            <th class="py-3 px-4 text-left text-[10px] font-semibold text-slate-500 uppercase">Activo</th>
+            <th class="py-3 px-4 text-left text-[10px] font-semibold text-slate-500 uppercase">Dir.</th>
+            <th class="py-3 px-4 text-right text-[10px] font-semibold text-slate-500 uppercase">P&L</th>
+            <th class="py-3 px-4 text-center text-[10px] font-semibold text-slate-500 uppercase">Resultado</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 dark:divide-darkBorder">
+          <% @trades.each do |trade| %>
+          <tr class="table-row-hover cursor-pointer" onclick="location.href='<%= trade_path(trade) %>'">
+            <td class="py-3 px-4 font-bold text-slate-800 dark:text-white"><%= trade.symbol %></td>
+            <td class="py-3 px-4"><%= trade.direction == "LONG" ? "🟢" : "🔴" %> <%= trade.direction %></td>
+            <td class="py-3 px-4 text-right font-bold <%= trade.pnl >= 0 ? "text-emerald-500" : "text-rose-500" %>"><%= trade.pnl >= 0 ? "+" : "" %>$<%= trade.pnl %></td>
+            <td class="py-3 px-4 text-center"><%= trade.result == "WIN" ? "✅" : "❌" %> <%= trade.result %></td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TRADE SHARES -->
+  <% if @trade_shares.any? %>
+  <div class="glass rounded-2xl p-5">
+    <p class="text-sm font-bold text-slate-800 dark:text-white mb-3">📊 Trades Compartidos</p>
+    <div class="space-y-2">
+      <% @trade_shares.each do |share| %>
+      <div class="p-3 rounded-xl bg-slate-50 dark:bg-darkSidebar border border-slate-200 dark:border-darkBorder">
+        <p class="text-xs font-bold text-slate-800 dark:text-white"><%= share.title %></p>
+        <p class="text-[11px] text-slate-500 dark:text-slate-400"><%= share.note %></p>
+        <span class="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-500"><%= share.privacy %></span>
+      </div>
+      <% end %>
+    </div>
+  </div>
+  <% end %>
+</div>

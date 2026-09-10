@@ -1,0 +1,33 @@
+<% content_for :page_title, "Classroom" %>
+
+<div class="fade-in">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-xl font-black text-slate-800 dark:text-white">📚 Classroom</h1>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Contenido educativo para mejorar tu trading</p>
+    </div>
+    <%= link_to new_community_classroom_path, class: "px-4 py-2 text-xs font-bold bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white rounded-xl shadow-lg shadow-violet-500/30 transition-all flex items-center gap-1.5" do %>
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      Nueva Clase
+    <% end %>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <% @classrooms.each do |classroom| %>
+      <div class="glass rounded-2xl p-5 hover:shadow-lg transition-shadow cursor-pointer" onclick="window.location.href='<%= community_classroom_path(classroom) %>'">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-[10px] px-2 py-0.5 rounded-full <%= classroom.category == 'beginner' ? 'bg-emerald-500/10 text-emerald-500' : classroom.category == 'intermediate' ? 'bg-amber-500/10 text-amber-500' : 'bg-rose-500/10 text-rose-500' %>">
+            <%= classroom.category.capitalize %>
+          </span>
+          <span class="text-[10px] text-slate-400"><%= classroom.enrollments.count %> inscritos</span>
+        </div>
+        <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-2"><%= classroom.title %></h3>
+        <p class="text-[11px] text-slate-500 dark:text-slate-400 mb-3"><%= classroom.description %></p>
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] text-slate-400">por <%= classroom.author.name %></span>
+          <span class="text-xs text-indigo-600 dark:text-indigo-400 font-semibold hover:underline">Ver clase →</span>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
