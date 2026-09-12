@@ -77,42 +77,63 @@
     html:not(.dark) ::-webkit-scrollbar-thumb { background: #E3E6EF; border-radius: 3px; }
 
     /* ──────────────────────────────────────────
-       DARK MODE
+       DARK MODE & HARMONIC FRAME
     ────────────────────────────────────────── */
-    .dark body { background: #0D0E15; color: #F1F2F6; }
-    .dark .glass        { background: rgba(21,23,36,.88); backdrop-filter: blur(14px); border: 1px solid #23263A; }
-    .dark .sidebar-bg   { background: #101219; border-right: 1px solid #23263A; }
-    .dark .header-bg    { background: rgba(13,14,21,.82); border-bottom: 1px solid #23263A; backdrop-filter: blur(14px); }
-    .dark .stat-card    { background: #151724; border: 1px solid #23263A; }
-    .dark .input-field  { background: #11121C; border: 1px solid #23263A; color: #F1F2F6; }
+    .dark body { background: #090A10; color: #F1F2F6; }
+    .dark .glass        { background: rgba(18,20,32,.88); backdrop-filter: blur(14px); border: 1px solid #1E2235; }
+    .dark .sidebar-bg   { background: #0E1018; border-right: 1px solid #1E2235; transition: width .3s cubic-bezier(0.4,0,0.2,1), background-color .3s, border-color .3s; }
+    .dark .header-bg    { background: rgba(14,16,24,.92); border-bottom: 1px solid #1E2235; backdrop-filter: blur(14px); transition: background-color .3s, border-color .3s; }
+    .dark .stat-card    { background: #131522; border: 1px solid #1E2235; }
+    .dark .input-field  { background: #0D0E16; border: 1px solid #1E2235; color: #F1F2F6; }
     .dark .input-field::placeholder { color: #4A4D6A; }
     .dark .input-field:focus { border-color: #6C5CE7; box-shadow: 0 0 0 3px rgba(108,92,231,.15); }
-    .dark .table-header { background: rgba(13,14,21,.6); }
-    .dark .table-row-hover:hover { background: rgba(21,23,36,.5); }
-    .dark .dropdown-bg  { background: #151724; border: 1px solid #23263A; }
-    .dark .nav-item     { color: #7B7FA0; }
-    .dark .nav-item:hover { background: #1A1D2D; color: #E5E0ED; }
+    .dark .table-header { background: rgba(14,16,24,.7); }
+    .dark .table-row-hover:hover { background: rgba(18,20,32,.5); }
+    .dark .dropdown-bg  { background: #131522; border: 1px solid #1E2235; }
+    .dark .nav-item     { color: #8286A8; }
+    .dark .nav-item:hover { background: #1A1D2E; color: #E5E0ED; }
     .dark .nav-active   { background: #6C5CE7; color: #fff !important; }
     .dark .nav-active .material-symbols-outlined { color: #fff; }
 
     /* ──────────────────────────────────────────
-       LIGHT MODE
+       LIGHT MODE & HARMONIC FRAME
     ────────────────────────────────────────── */
-    html:not(.dark) body { background: #F8F9FD; color: #0F0E1A; }
-    html:not(.dark) .glass        { background: rgba(255,255,255,.92); backdrop-filter: blur(14px); border: 1px solid #E3E6EF; box-shadow: 0 2px 20px rgba(108,92,231,.06); }
-    html:not(.dark) .sidebar-bg   { background: #FFFFFF; border-right: 1px solid #E3E6EF; }
-    html:not(.dark) .header-bg    { background: rgba(248,249,253,.92); border-bottom: 1px solid #E3E6EF; backdrop-filter: blur(14px); }
-    html:not(.dark) .stat-card    { background: #FFFFFF; border: 1px solid #E3E6EF; box-shadow: 0 2px 12px rgba(108,92,231,.06); }
-    html:not(.dark) .input-field  { background: rgba(248,249,253,.5); border: 1px solid #E3E6EF; color: #0F0E1A; }
+    html:not(.dark) body { background: #F6F7FC; color: #0F0E1A; }
+    html:not(.dark) .glass        { background: rgba(255,255,255,.94); backdrop-filter: blur(14px); border: 1px solid #E2E6F0; box-shadow: 0 2px 20px rgba(108,92,231,.05); }
+    html:not(.dark) .sidebar-bg   { background: #FFFFFF; border-right: 1px solid #E2E6F0; transition: width .3s cubic-bezier(0.4,0,0.2,1), background-color .3s, border-color .3s; }
+    html:not(.dark) .header-bg    { background: rgba(255,255,255,.94); border-bottom: 1px solid #E2E6F0; backdrop-filter: blur(14px); transition: background-color .3s, border-color .3s; }
+    html:not(.dark) .stat-card    { background: #FFFFFF; border: 1px solid #E2E6F0; box-shadow: 0 2px 12px rgba(108,92,231,.05); }
+    html:not(.dark) .input-field  { background: rgba(246,247,252,.6); border: 1px solid #E2E6F0; color: #0F0E1A; }
     html:not(.dark) .input-field::placeholder { color: #9DA3B4; }
     html:not(.dark) .input-field:focus { border-color: #6C5CE7; box-shadow: 0 0 0 3px rgba(108,92,231,.12); }
     html:not(.dark) .table-header { background: rgba(236,238,255,.8); }
     html:not(.dark) .table-row-hover:hover { background: rgba(108,92,231,.04); }
-    html:not(.dark) .dropdown-bg  { background: #FFFFFF; border: 1px solid #E3E6EF; box-shadow: 0 4px 24px rgba(108,92,231,.1); }
+    html:not(.dark) .dropdown-bg  { background: #FFFFFF; border: 1px solid #E2E6F0; box-shadow: 0 4px 24px rgba(108,92,231,.1); }
     html:not(.dark) .nav-item     { color: #64748B; }
     html:not(.dark) .nav-item:hover { background: rgba(108,92,231,.06); color: #6C5CE7; }
     html:not(.dark) .nav-active   { background: #6C5CE7; color: #fff !important; }
     html:not(.dark) .nav-active .material-symbols-outlined { color: #fff; }
+
+    /* ──────────────────────────────────────────
+       COLLAPSED SIDEBAR DESKTOP STYLES
+    ────────────────────────────────────────── */
+    #sidebar-container.collapsed {
+      width: 4.5rem !important;
+    }
+    #sidebar-container.collapsed .sidebar-text-hide {
+      display: none !important;
+    }
+    #sidebar-container.collapsed .nav-item {
+      justify-content: center;
+      padding: 10px 0;
+    }
+    #sidebar-container.collapsed .nav-item .material-symbols-outlined {
+      margin: 0;
+      font-size: 22px;
+    }
+    #sidebar-container.collapsed #sidebar-logo-icon {
+      margin: 0 auto;
+    }
 
     /* ──────────────────────────────────────────
        SIDEBAR NAV ITEM
@@ -177,28 +198,29 @@
   <div id="mobile-sidebar-backdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 hidden md:hidden transition-opacity"></div>
 
   <!-- ===================== SIDEBAR ===================== -->
-  <aside id="sidebar-container" class="w-64 sidebar-bg flex flex-col justify-between flex-shrink-0 transition-transform duration-300 transform -translate-x-full md:translate-x-0 fixed md:static inset-y-0 left-0 z-40">
+  <aside id="sidebar-container" class="w-64 sidebar-bg flex flex-col justify-between flex-shrink-0 transition-all duration-300 transform -translate-x-full md:translate-x-0 fixed md:static inset-y-0 left-0 z-40">
     <div class="overflow-y-auto overflow-x-hidden flex flex-col h-full">
 
       <!-- LOGO -->
-      <div class="h-16 flex items-center justify-between px-5 border-b dark:border-darkBorder border-lightBorder flex-shrink-0">
+      <div class="h-14 flex items-center justify-between px-4 border-b dark:border-darkBorder border-lightBorder flex-shrink-0">
         <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl bg-brand flex items-center justify-center shadow-lg" style="animation: pulse-glow 3s infinite;">
+          <div id="sidebar-logo-icon" class="w-8 h-8 rounded-xl bg-brand flex items-center justify-center shadow-lg flex-shrink-0" style="animation: pulse-glow 3s infinite;">
             <span class="material-symbols-outlined text-white text-[18px]">monitoring</span>
           </div>
-          <div>
+          <div class="sidebar-text-hide">
             <p class="font-extrabold text-sm leading-none dark:text-white text-slate-900 tracking-tight">Coach<span class="text-brand">Trading</span></p>
             <p class="text-[10px] font-bold uppercase tracking-wider mt-0.5 dark:text-brand-light text-brand">PRO</p>
           </div>
         </div>
         <!-- CLOSE mobile -->
-        <button onclick="toggleMobileSidebar()" class="md:hidden dark:text-slate-400 text-slate-500 p-1 hover:text-brand transition-colors">
-          <span class="material-symbols-outlined text-[20px]">close</span>
+        <button onclick="toggleMobileSidebar()" class="md:hidden flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-xl bg-slate-200/70 dark:bg-darkCardAlt text-slate-600 dark:text-slate-300 hover:text-rose-500 transition-all border dark:border-darkBorder border-slate-300">
+          <span>Cerrar</span>
+          <span class="material-symbols-outlined text-[15px]">close</span>
         </button>
       </div>
 
       <!-- NAVIGATION -->
-      <nav class="p-3 space-y-0.5 mt-1 flex-1">
+      <nav class="p-2.5 space-y-0.5 mt-1 flex-1">
         <% nav_items = [
           { label: "Dashboard",    path: dashboard_path,             icon: "dashboard" },
           { label: "Perfil",       path: profile_path,               icon: "person" },
@@ -211,27 +233,27 @@
         ] %>
         <% nav_items.each do |item| %>
           <% active = current_page?(item[:path]) %>
-          <a href="<%= item[:path] %>" class="nav-item <%= active ? 'nav-active' : 'nav-item' %>">
-            <span class="material-symbols-outlined" style="font-size:18px"><%= item[:icon] %></span>
-            <span class="flex-1"><%= item[:label] %></span>
+          <a href="<%= item[:path] %>" class="nav-item <%= active ? 'nav-active' : '' %>" title="<%= item[:label] %>">
+            <span class="material-symbols-outlined flex-shrink-0" style="font-size:18px"><%= item[:icon] %></span>
+            <span class="flex-1 sidebar-text-hide truncate"><%= item[:label] %></span>
             <% if item[:count] %>
-              <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold <%= active ? 'bg-white/20 text-white' : 'bg-brand/15 text-brand dark:text-brand-light' %>"><%= item[:count] %></span>
+              <span class="sidebar-text-hide text-[10px] px-1.5 py-0.5 rounded-full font-bold <%= active ? 'bg-white/20 text-white' : 'bg-brand/15 text-brand dark:text-brand-light' %>"><%= item[:count] %></span>
             <% end %>
           </a>
         <% end %>
       </nav>
 
       <!-- USER SECTION -->
-      <div class="p-3 border-t dark:border-darkBorder border-lightBorder flex-shrink-0">
-        <div class="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-darkHover dark:hover:bg-darkHover hover:bg-slate-50 cursor-pointer transition-all" onclick="window.location.href='<%= profile_path %>'">
+      <div class="p-2.5 border-t dark:border-darkBorder border-lightBorder flex-shrink-0">
+        <div class="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-darkHover cursor-pointer transition-all" onclick="window.location.href='<%= profile_path %>'" title="<%= current_user.name || current_user.email %>">
           <div class="w-8 h-8 rounded-full bg-gradient-to-br from-brand to-violet-600 flex items-center justify-center font-bold text-white text-xs flex-shrink-0">
             <%= current_user.name&.first&.upcase || current_user.email.first.upcase %>
           </div>
-          <div class="overflow-hidden flex-1">
+          <div class="overflow-hidden flex-1 sidebar-text-hide">
             <p class="text-xs font-semibold truncate dark:text-white text-slate-800"><%= current_user.name || current_user.email %></p>
             <p class="text-[10px] font-medium text-brand dark:text-brand-light">Pro Trader</p>
           </div>
-          <%= link_to destroy_user_session_path, data: { turbo_method: :delete }, class: "p-1.5 dark:text-slate-400 text-slate-400 hover:text-loss rounded-lg transition-all cursor-pointer ml-auto" do %>
+          <%= link_to destroy_user_session_path, data: { turbo_method: :delete }, class: "p-1.5 dark:text-slate-400 text-slate-400 hover:text-loss rounded-lg transition-all cursor-pointer ml-auto sidebar-text-hide", title: "Cerrar Sesión" do %>
             <span class="material-symbols-outlined text-[18px]">logout</span>
           <% end %>
         </div>
@@ -245,10 +267,15 @@
 
     <!-- TOP HEADER -->
     <header class="h-14 header-bg px-4 md:px-6 flex items-center justify-between flex-shrink-0">
-      <div class="flex items-center gap-3">
-        <!-- HAMBURGER -->
+      <div class="flex items-center gap-2 md:gap-3">
+        <!-- MOBILE HAMBURGER -->
         <button onclick="toggleMobileSidebar()" class="md:hidden p-1.5 rounded-xl dark:text-slate-400 text-slate-500 hover:bg-brand/10 transition-all">
           <span class="material-symbols-outlined text-[20px]">menu</span>
+        </button>
+
+        <!-- DESKTOP TOGGLE SIDEBAR BUTTON -->
+        <button onclick="toggleDesktopSidebar()" class="hidden md:flex items-center justify-center p-1.5 rounded-xl dark:text-slate-400 text-slate-500 hover:bg-brand/10 dark:hover:bg-darkHover transition-all cursor-pointer border border-transparent hover:border-brand/20" title="Colapsar/Expandir Menú Sidebar">
+          <span id="desktop-sidebar-icon" class="material-symbols-outlined text-[20px]">menu_open</span>
         </button>
 
         <h1 class="text-sm md:text-base font-bold dark:text-white text-slate-800 truncate">
@@ -284,11 +311,13 @@
       </div>
     </header>
 
-    <!-- PAGE CONTENT -->
-    <div class="flex-1 overflow-y-auto p-4 md:p-5">
-      <% if notice %><div class="mb-4 px-4 py-3 rounded-xl bg-profit/10 border border-profit/20 text-profit text-sm fade-in flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">check_circle</span><%= notice %></div><% end %>
-      <% if alert  %><div class="mb-4 px-4 py-3 rounded-xl bg-loss/10 border border-loss/20 text-loss text-sm fade-in flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">error</span><%= alert %></div><% end %>
-      <%= yield %>
+    <!-- PAGE CONTENT (CANVAS CON PROFUNDIDAD SUTIL EN DARK Y LIGHT) -->
+    <div class="flex-1 overflow-y-auto p-4 md:p-6 dark:bg-[#07080E] bg-[#F1F3FA] transition-colors duration-300">
+      <div class="min-h-full rounded-2xl dark:bg-[#0E1019]/90 bg-white p-4 md:p-6 border dark:border-[#1E2235] border-[#E2E6F0] shadow-sm">
+        <% if notice && notice != "Signed out successfully." && notice != "Signed in successfully." && !notice.include?("Cerró sesión") %><div class="mb-4 px-4 py-3 rounded-xl bg-profit/10 border border-profit/20 text-profit text-sm fade-in flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">check_circle</span><%= notice %></div><% end %>
+        <% if alert  %><div class="mb-4 px-4 py-3 rounded-xl bg-loss/10 border border-loss/20 text-loss text-sm fade-in flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">error</span><%= alert %></div><% end %>
+        <%= yield %>
+      </div>
     </div>
   </main>
 
@@ -360,7 +389,7 @@
   <% else %>
   <!-- AUTH LAYOUT (sin sidebar) -->
   <div class="flex-1 overflow-y-auto">
-    <% if notice %><div style="position:fixed;top:1rem;right:1rem;z-index:99;" class="px-4 py-3 rounded-xl bg-profit/10 border border-profit/20 text-profit text-sm fade-in"><%= notice %></div><% end %>
+    <% if notice && notice != "Signed out successfully." && notice != "Signed in successfully." && !notice.include?("Cerró sesión") %><div style="position:fixed;top:1rem;right:1rem;z-index:99;" class="px-4 py-3 rounded-xl bg-profit/10 border border-profit/20 text-profit text-sm fade-in"><%= notice %></div><% end %>
     <% if alert  %><div style="position:fixed;top:1rem;right:1rem;z-index:99;" class="px-4 py-3 rounded-xl bg-loss/10 border border-loss/20 text-loss text-sm fade-in"><%= alert %></div><% end %>
     <%= yield %>
   </div>
@@ -385,6 +414,29 @@
     } else {
       root.classList.add('dark');
       localStorage.setItem('tj-theme', 'dark');
+    }
+  }
+
+  // ── DESKTOP SIDEBAR TOGGLE & INITIALIZATION ──
+  (function() {
+    const isCollapsed = localStorage.getItem('tj-sidebar-collapsed') === 'true';
+    if (isCollapsed) {
+      const sidebar = document.getElementById('sidebar-container');
+      const icon = document.getElementById('desktop-sidebar-icon');
+      if (sidebar) sidebar.classList.add('collapsed');
+      if (icon) icon.textContent = 'menu';
+    }
+  })();
+
+  function toggleDesktopSidebar() {
+    const sidebar = document.getElementById('sidebar-container');
+    const icon = document.getElementById('desktop-sidebar-icon');
+    if (!sidebar) return;
+    sidebar.classList.toggle('collapsed');
+    const nowCollapsed = sidebar.classList.contains('collapsed');
+    localStorage.setItem('tj-sidebar-collapsed', nowCollapsed ? 'true' : 'false');
+    if (icon) {
+      icon.textContent = nowCollapsed ? 'menu' : 'menu_open';
     }
   }
 

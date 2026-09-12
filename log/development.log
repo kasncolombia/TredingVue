@@ -20412,3 +20412,1772 @@ Processing by DashboardController#index as HTML
 Completed 200 OK in 26ms (Views: 8.9ms | ActiveRecord: 1.3ms (6 queries, 1 cached) | GC: 0.0ms)
 
 
+Generating image variants require the image_processing gem. Please add `gem "image_processing", "~> 1.2"` to your Gemfile or set `config.active_storage.variant_processor = :disabled`.
+Started GET "/perfil" for ::1 at 2026-09-12 14:27:10 -0500
+  [1m[36mActiveRecord::SchemaMigration Load (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='CoachTradingApp'*/[0m
+Processing by Users::ProfileController#show as HTML
+  [1m[36mUser Load (0.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  [1m[36mTrade Count (3.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:8:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (2.8ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:11:in 'Trading::CalculateStatistics#call'
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/controllers/users/profile_controller.rb:6:in 'Users::ProfileController#show'
+  [1m[36mTrade Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."result" = 'WIN' /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/controllers/users/profile_controller.rb:7:in 'Users::ProfileController#show'
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."result" = 'LOSS' /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/controllers/users/profile_controller.rb:8:in 'Users::ProfileController#show'
+  Rendering layout layouts/application.html.erb
+  Rendering users/profile/show.html.erb within layouts/application
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/users/profile/show.html.erb:65
+  [1m[36mStrategy Load (0.1ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:172
+  [1m[36mTrade Load (0.3ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 51 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 52 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.6ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 55 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.9ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 53 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 54 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  Rendered users/profile/show.html.erb within layouts/application (Duration: 2577.8ms | GC: 0.0ms)
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/layouts/application.html.erb:228
+  Rendered layout layouts/application.html.erb (Duration: 2591.8ms | GC: 0.0ms)
+Completed 200 OK in 3514ms (Views: 2719.1ms | ActiveRecord: 36.6ms (29 queries, 13 cached) | GC: 31.3ms)
+
+
+Started GET "/dashboard" for ::1 at 2026-09-12 14:27:35 -0500
+Processing by DashboardController#index as HTML
+  [1m[36mUser Load (0.3ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:8:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:11:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (0.5ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC, "trades"."entry_at" ASC /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/services/trading/calculate_drawdown.rb:9:in 'Enumerable#map'
+  Rendering layout layouts/application.html.erb
+  Rendering dashboard/index.html.erb within layouts/application
+  [1m[36mTrade Load (0.3ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC LIMIT 5 /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:218
+  Rendered dashboard/index.html.erb within layouts/application (Duration: 19.7ms | GC: 0.0ms)
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/layouts/application.html.erb:228
+  Rendered layout layouts/application.html.erb (Duration: 23.8ms | GC: 0.0ms)
+Completed 200 OK in 98ms (Views: 34.1ms | ActiveRecord: 1.4ms (6 queries, 1 cached) | GC: 0.0ms)
+
+
+Started GET "/community/feed" for ::1 at 2026-09-12 14:27:42 -0500
+Processing by Community::FeedController#index as HTML
+  [1m[36mUser Load (0.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  Rendering layout layouts/application.html.erb
+  Rendering community/feed/index.html.erb within layouts/application
+  [1m[36mPost Load (6.3ms)[0m  [1m[34mSELECT "posts".* FROM "posts" WHERE "posts"."visibility" = 'public' AND "posts"."status" = 'active' ORDER BY "posts"."created_at" DESC LIMIT 20 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/feed/index.html.erb:76
+  [1m[36mUser Load (0.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 LIMIT 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:7
+  [1m[36mReaction Count (0.8ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 7 AND "reactions"."reaction_type" = 'like' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:35
+  [1m[36mReaction Count (1.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 7 AND "reactions"."reaction_type" = 'heart' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:39
+  [1m[36mReaction Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 7 AND "reactions"."reaction_type" = 'fire' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:43
+  [1m[36mComment Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "comments" WHERE "comments"."post_id" = 7 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:47
+  [1m[36mComment Exists? (0.2ms)[0m  [1m[34mSELECT 1 AS one FROM "comments" WHERE "comments"."post_id" = 7 LIMIT 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:52
+  [1m[36mComment Load (0.1ms)[0m  [1m[34mSELECT "comments".* FROM "comments" WHERE "comments"."post_id" = 7 LIMIT 3 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:54
+  [1m[36mUser Load (0.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:54
+  Rendered community/_post_card.html.erb (Duration: 267.3ms | GC: 0.0ms)
+  [1m[36mUser Load (0.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 LIMIT 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:7
+  [1m[36mReaction Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 6 AND "reactions"."reaction_type" = 'like' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:35
+  [1m[36mReaction Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 6 AND "reactions"."reaction_type" = 'heart' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:39
+  [1m[36mReaction Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 6 AND "reactions"."reaction_type" = 'fire' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:43
+  [1m[36mComment Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "comments" WHERE "comments"."post_id" = 6 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:47
+  [1m[36mComment Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "comments" WHERE "comments"."post_id" = 6 LIMIT 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:52
+  [1m[36mComment Load (0.1ms)[0m  [1m[34mSELECT "comments".* FROM "comments" WHERE "comments"."post_id" = 6 LIMIT 3 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:54
+  [1m[36mUser Load (2.6ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:54
+  Rendered community/_post_card.html.erb (Duration: 102.8ms | GC: 31.3ms)
+  Rendered community/feed/index.html.erb within layouts/application (Duration: 424.4ms | GC: 31.3ms)
+  [1m[36mTrade Count (0.6ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/layouts/application.html.erb:228
+  Rendered layout layouts/application.html.erb (Duration: 441.4ms | GC: 31.3ms)
+Completed 200 OK in 536ms (Views: 428.5ms | ActiveRecord: 18.2ms (19 queries, 0 cached) | GC: 31.3ms)
+
+
+Started GET "/perfil" for ::1 at 2026-09-12 14:28:10 -0500
+Processing by Users::ProfileController#show as HTML
+  [1m[36mUser Load (0.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  [1m[36mTrade Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:8:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (0.3ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:11:in 'Trading::CalculateStatistics#call'
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/controllers/users/profile_controller.rb:6:in 'Users::ProfileController#show'
+  [1m[36mTrade Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."result" = 'WIN' /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/controllers/users/profile_controller.rb:7:in 'Users::ProfileController#show'
+  [1m[36mTrade Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."result" = 'LOSS' /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/controllers/users/profile_controller.rb:8:in 'Users::ProfileController#show'
+  Rendering layout layouts/application.html.erb
+  Rendering users/profile/show.html.erb within layouts/application
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/users/profile/show.html.erb:65
+  [1m[36mStrategy Load (0.2ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:172
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 51 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 52 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.3ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 55 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.6ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 53 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.3ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 54 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  Rendered users/profile/show.html.erb within layouts/application (Duration: 72.4ms | GC: 0.0ms)
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/layouts/application.html.erb:228
+  Rendered layout layouts/application.html.erb (Duration: 80.0ms | GC: 0.0ms)
+Completed 200 OK in 137ms (Views: 78.1ms | ActiveRecord: 4.6ms (29 queries, 13 cached) | GC: 15.6ms)
+
+
+Started GET "/dashboard" for ::1 at 2026-09-12 14:28:11 -0500
+Processing by DashboardController#index as HTML
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  [1m[36mTrade Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:8:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (0.6ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:11:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (2.0ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC, "trades"."entry_at" ASC /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/services/trading/calculate_drawdown.rb:9:in 'Enumerable#map'
+  Rendering layout layouts/application.html.erb
+  Rendering dashboard/index.html.erb within layouts/application
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC LIMIT 5 /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:218
+  Rendered dashboard/index.html.erb within layouts/application (Duration: 2.7ms | GC: 0.0ms)
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/layouts/application.html.erb:228
+  Rendered layout layouts/application.html.erb (Duration: 10.1ms | GC: 0.0ms)
+Completed 200 OK in 32ms (Views: 10.8ms | ActiveRecord: 3.2ms (6 queries, 1 cached) | GC: 0.0ms)
+
+
+Started GET "/trades" for ::1 at 2026-09-12 14:29:26 -0500
+Processing by TradesController#index as HTML
+  [1m[36mUser Load (0.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='index',application='CoachTradingApp',controller='trades'*/[0m
+  [1m[36mTrade Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='index',application='CoachTradingApp',controller='trades'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:8:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (0.4ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC /*action='index',application='CoachTradingApp',controller='trades'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:11:in 'Trading::CalculateStatistics#call'
+  Rendering layout layouts/application.html.erb
+  Rendering trades/index.html.erb within layouts/application
+  [1m[36mStrategy Load (0.4ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."user_id" = 2 /*action='index',application='CoachTradingApp',controller='trades'*/[0m
+  ↳ app/views/trades/index.html.erb:40
+  [1m[36mStrategy Load (1.4ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 51 LIMIT 1 /*action='index',application='CoachTradingApp',controller='trades'*/[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mStrategy Load (0.5ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 53 LIMIT 1 /*action='index',application='CoachTradingApp',controller='trades'*/[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 51 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mStrategy Load (1.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 55 LIMIT 1 /*action='index',application='CoachTradingApp',controller='trades'*/[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.1ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 51 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 55 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mStrategy Load (0.2ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 52 LIMIT 1 /*action='index',application='CoachTradingApp',controller='trades'*/[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.1ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 53 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mStrategy Load (0.3ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 54 LIMIT 1 /*action='index',application='CoachTradingApp',controller='trades'*/[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 51 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 53 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.1ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 54 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 52 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 55 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.1ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 51 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 53 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 54 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.1ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 52 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 55 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.1ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 51 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  Rendered trades/index.html.erb within layouts/application (Duration: 145.5ms | GC: 15.6ms)
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/layouts/application.html.erb:228
+  Rendered layout layouts/application.html.erb (Duration: 151.0ms | GC: 15.6ms)
+Completed 200 OK in 220ms (Views: 178.9ms | ActiveRecord: 5.1ms (25 queries, 16 cached) | GC: 15.6ms)
+
+
+Started GET "/dashboard" for ::1 at 2026-09-12 14:30:59 -0500
+Processing by DashboardController#index as HTML
+  [1m[36mUser Load (0.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:8:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (0.9ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:11:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (0.4ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC, "trades"."entry_at" ASC /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/services/trading/calculate_drawdown.rb:9:in 'Enumerable#map'
+  Rendering layout layouts/application.html.erb
+  Rendering dashboard/index.html.erb within layouts/application
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC LIMIT 5 /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:218
+  Rendered dashboard/index.html.erb within layouts/application (Duration: 3.0ms | GC: 0.0ms)
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/layouts/application.html.erb:228
+  Rendered layout layouts/application.html.erb (Duration: 5.2ms | GC: 0.0ms)
+Completed 200 OK in 26ms (Views: 5.9ms | ActiveRecord: 1.7ms (6 queries, 1 cached) | GC: 0.0ms)
+
+
+Started GET "/perfil" for ::1 at 2026-09-12 14:31:07 -0500
+Processing by Users::ProfileController#show as HTML
+  [1m[36mUser Load (0.4ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:8:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:11:in 'Trading::CalculateStatistics#call'
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/controllers/users/profile_controller.rb:6:in 'Users::ProfileController#show'
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."result" = 'WIN' /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/controllers/users/profile_controller.rb:7:in 'Users::ProfileController#show'
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."result" = 'LOSS' /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/controllers/users/profile_controller.rb:8:in 'Users::ProfileController#show'
+  Rendering layout layouts/application.html.erb
+  Rendering users/profile/show.html.erb within layouts/application
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/users/profile/show.html.erb:65
+  [1m[36mStrategy Load (0.2ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:172
+  [1m[36mTrade Load (0.4ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 51 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.3ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 52 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (1.1ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 55 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 53 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 54 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  Rendered users/profile/show.html.erb within layouts/application (Duration: 110.7ms | GC: 62.5ms)
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/layouts/application.html.erb:228
+  Rendered layout layouts/application.html.erb (Duration: 112.4ms | GC: 62.5ms)
+Completed 200 OK in 133ms (Views: 110.2ms | ActiveRecord: 4.2ms (29 queries, 13 cached) | GC: 62.5ms)
+
+
+Started GET "/perfil" for ::1 at 2026-09-12 14:31:09 -0500
+Processing by Users::ProfileController#show as HTML
+  [1m[36mUser Load (0.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:8:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (0.4ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:11:in 'Trading::CalculateStatistics#call'
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/controllers/users/profile_controller.rb:6:in 'Users::ProfileController#show'
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."result" = 'WIN' /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/controllers/users/profile_controller.rb:7:in 'Users::ProfileController#show'
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."result" = 'LOSS' /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/controllers/users/profile_controller.rb:8:in 'Users::ProfileController#show'
+  Rendering layout layouts/application.html.erb
+  Rendering users/profile/show.html.erb within layouts/application
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/users/profile/show.html.erb:65
+  [1m[36mStrategy Load (0.1ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:172
+  [1m[36mTrade Load (0.3ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 51 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 52 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.1ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 55 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.1ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 53 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 54 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  Rendered users/profile/show.html.erb within layouts/application (Duration: 34.4ms | GC: 0.0ms)
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/layouts/application.html.erb:228
+  Rendered layout layouts/application.html.erb (Duration: 36.1ms | GC: 0.0ms)
+Completed 200 OK in 54ms (Views: 35.0ms | ActiveRecord: 2.5ms (29 queries, 13 cached) | GC: 0.0ms)
+
+
+Started GET "/cuenta/salir" for ::1 at 2026-09-12 14:31:13 -0500
+Processing by Devise::SessionsController#destroy as HTML
+  [1m[36mUser Load (0.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='destroy',application='CoachTradingApp',controller='sessions'*/[0m
+Redirected to http://localhost:3000/
+Completed 303 See Other in 73ms (ActiveRecord: 0.5ms (1 query, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/" for ::1 at 2026-09-12 14:31:13 -0500
+Processing by PagesController#landing as HTML
+  Rendering layout layouts/application.html.erb
+  Rendering pages/landing.html.erb within layouts/application
+  Rendered pages/landing.html.erb within layouts/application (Duration: 1.4ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 2.3ms | GC: 0.0ms)
+Completed 200 OK in 21ms (Views: 8.8ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/cuenta/ingresar" for ::1 at 2026-09-12 14:31:54 -0500
+Processing by Devise::SessionsController#new as HTML
+  Rendering layout layouts/application.html.erb
+  Rendering devise/sessions/new.html.erb within layouts/application
+  Rendered devise/sessions/new.html.erb within layouts/application (Duration: 96.7ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 97.6ms | GC: 0.0ms)
+Completed 200 OK in 131ms (Views: 125.9ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started POST "/cuenta/ingresar" for ::1 at 2026-09-12 14:32:00 -0500
+Processing by Devise::SessionsController#create as HTML
+  Parameters: {"authenticity_token" => "[FILTERED]", "user" => {"email" => "[FILTERED]", "password" => "[FILTERED]", "remember_me" => "0"}}
+  [1m[36mUser Load (3.3ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."email" = 'trader@coachtrading.com' ORDER BY "users"."id" ASC LIMIT 1 /*action='create',application='CoachTradingApp',controller='sessions'*/[0m
+Redirected to http://localhost:3000/
+Completed 303 See Other in 546ms (ActiveRecord: 3.3ms (1 query, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/" for ::1 at 2026-09-12 14:32:00 -0500
+Processing by PagesController#landing as HTML
+  [1m[36mUser Load (0.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='landing',application='CoachTradingApp',controller='pages'*/[0m
+  ↳ app/controllers/pages_controller.rb:5:in 'PagesController#landing'
+Redirected to http://localhost:3000/dashboard
+↳ app/controllers/pages_controller.rb:6:in 'PagesController#landing'
+Completed 302 Found in 8ms (ActiveRecord: 0.2ms (1 query, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/dashboard" for ::1 at 2026-09-12 14:32:00 -0500
+Processing by DashboardController#index as HTML
+  [1m[36mUser Load (0.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:8:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (0.3ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:11:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (0.4ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC, "trades"."entry_at" ASC /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/services/trading/calculate_drawdown.rb:9:in 'Enumerable#map'
+  Rendering layout layouts/application.html.erb
+  Rendering dashboard/index.html.erb within layouts/application
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC LIMIT 5 /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:218
+  Rendered dashboard/index.html.erb within layouts/application (Duration: 2.4ms | GC: 0.0ms)
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/layouts/application.html.erb:228
+  Rendered layout layouts/application.html.erb (Duration: 4.3ms | GC: 0.0ms)
+Completed 200 OK in 20ms (Views: 4.6ms | ActiveRecord: 1.1ms (6 queries, 1 cached) | GC: 0.0ms)
+
+
+Started GET "/perfil" for ::1 at 2026-09-12 14:32:11 -0500
+Processing by Users::ProfileController#show as HTML
+  [1m[36mUser Load (0.6ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:8:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:11:in 'Trading::CalculateStatistics#call'
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/controllers/users/profile_controller.rb:6:in 'Users::ProfileController#show'
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."result" = 'WIN' /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/controllers/users/profile_controller.rb:7:in 'Users::ProfileController#show'
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."result" = 'LOSS' /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/controllers/users/profile_controller.rb:8:in 'Users::ProfileController#show'
+  Rendering layout layouts/application.html.erb
+  Rendering users/profile/show.html.erb within layouts/application
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/users/profile/show.html.erb:65
+  [1m[36mStrategy Load (0.2ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:172
+  [1m[36mTrade Load (0.3ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 51 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.1ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 52 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 55 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.3ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 53 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.1ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 54 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.7ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  Rendered users/profile/show.html.erb within layouts/application (Duration: 55.4ms | GC: 15.6ms)
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/layouts/application.html.erb:228
+  Rendered layout layouts/application.html.erb (Duration: 58.9ms | GC: 15.6ms)
+Completed 200 OK in 76ms (Views: 57.0ms | ActiveRecord: 3.4ms (29 queries, 13 cached) | GC: 15.6ms)
+
+
+Started GET "/perfil" for ::1 at 2026-09-12 14:32:17 -0500
+Processing by Users::ProfileController#show as HTML
+  [1m[36mUser Load (0.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:8:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (0.4ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:11:in 'Trading::CalculateStatistics#call'
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/controllers/users/profile_controller.rb:6:in 'Users::ProfileController#show'
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."result" = 'WIN' /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/controllers/users/profile_controller.rb:7:in 'Users::ProfileController#show'
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."result" = 'LOSS' /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/controllers/users/profile_controller.rb:8:in 'Users::ProfileController#show'
+  Rendering layout layouts/application.html.erb
+  Rendering users/profile/show.html.erb within layouts/application
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/users/profile/show.html.erb:65
+  [1m[36mStrategy Load (0.2ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:172
+  [1m[36mTrade Load (0.3ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 51 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 52 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.3ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 55 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 53 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.1ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 54 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  Rendered users/profile/show.html.erb within layouts/application (Duration: 36.1ms | GC: 15.6ms)
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/layouts/application.html.erb:228
+  Rendered layout layouts/application.html.erb (Duration: 40.6ms | GC: 15.6ms)
+Completed 200 OK in 60ms (Views: 39.5ms | ActiveRecord: 2.8ms (29 queries, 13 cached) | GC: 15.6ms)
+
+
+Started GET "/perfil" for ::1 at 2026-09-12 14:32:54 -0500
+Processing by Users::ProfileController#show as HTML
+  [1m[36mUser Load (0.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:8:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:11:in 'Trading::CalculateStatistics#call'
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/controllers/users/profile_controller.rb:6:in 'Users::ProfileController#show'
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."result" = 'WIN' /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/controllers/users/profile_controller.rb:7:in 'Users::ProfileController#show'
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."result" = 'LOSS' /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/controllers/users/profile_controller.rb:8:in 'Users::ProfileController#show'
+  Rendering layout layouts/application.html.erb
+  Rendering users/profile/show.html.erb within layouts/application
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/users/profile/show.html.erb:65
+  [1m[36mStrategy Load (0.4ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:172
+  [1m[36mTrade Load (0.4ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 51 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.1ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 52 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.1ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 55 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 53 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.1ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 54 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  Rendered users/profile/show.html.erb within layouts/application (Duration: 34.3ms | GC: 0.0ms)
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/layouts/application.html.erb:228
+  Rendered layout layouts/application.html.erb (Duration: 36.2ms | GC: 0.0ms)
+Completed 200 OK in 54ms (Views: 35.5ms | ActiveRecord: 2.6ms (29 queries, 13 cached) | GC: 0.0ms)
+
+
+Started GET "/perfil" for ::1 at 2026-09-12 14:33:06 -0500
+Processing by Users::ProfileController#show as HTML
+  [1m[36mUser Load (0.4ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:8:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:11:in 'Trading::CalculateStatistics#call'
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/controllers/users/profile_controller.rb:6:in 'Users::ProfileController#show'
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."result" = 'WIN' /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/controllers/users/profile_controller.rb:7:in 'Users::ProfileController#show'
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."result" = 'LOSS' /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/controllers/users/profile_controller.rb:8:in 'Users::ProfileController#show'
+  Rendering layout layouts/application.html.erb
+  Rendering users/profile/show.html.erb within layouts/application
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/users/profile/show.html.erb:65
+  [1m[36mStrategy Load (0.2ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:172
+  [1m[36mTrade Load (0.3ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 51 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.5ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 52 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.5ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 55 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.1ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 53 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 54 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  Rendered users/profile/show.html.erb within layouts/application (Duration: 49.1ms | GC: 0.0ms)
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/layouts/application.html.erb:228
+  Rendered layout layouts/application.html.erb (Duration: 54.9ms | GC: 0.0ms)
+Completed 200 OK in 74ms (Views: 53.1ms | ActiveRecord: 3.3ms (29 queries, 13 cached) | GC: 0.0ms)
+
+
+Started GET "/perfil" for ::1 at 2026-09-12 14:33:13 -0500
+Processing by Users::ProfileController#show as HTML
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  [1m[36mTrade Count (0.6ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:8:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (0.3ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:11:in 'Trading::CalculateStatistics#call'
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/controllers/users/profile_controller.rb:6:in 'Users::ProfileController#show'
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."result" = 'WIN' /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/controllers/users/profile_controller.rb:7:in 'Users::ProfileController#show'
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."result" = 'LOSS' /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/controllers/users/profile_controller.rb:8:in 'Users::ProfileController#show'
+  Rendering layout layouts/application.html.erb
+  Rendering users/profile/show.html.erb within layouts/application
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/users/profile/show.html.erb:65
+  [1m[36mStrategy Load (0.2ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:172
+  [1m[36mTrade Load (2.5ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 51 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.3ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 52 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.4ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 55 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.1ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 53 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.6ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.3ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 54 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  Rendered users/profile/show.html.erb within layouts/application (Duration: 69.0ms | GC: 15.6ms)
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/layouts/application.html.erb:228
+  Rendered layout layouts/application.html.erb (Duration: 76.4ms | GC: 15.6ms)
+Completed 200 OK in 97ms (Views: 72.0ms | ActiveRecord: 6.6ms (29 queries, 13 cached) | GC: 15.6ms)
+
+
+Started GET "/dashboard" for ::1 at 2026-09-12 14:33:20 -0500
+Processing by DashboardController#index as HTML
+  [1m[36mUser Load (0.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:8:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:11:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC, "trades"."entry_at" ASC /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/services/trading/calculate_drawdown.rb:9:in 'Enumerable#map'
+  Rendering layout layouts/application.html.erb
+  Rendering dashboard/index.html.erb within layouts/application
+  [1m[36mTrade Load (0.3ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC LIMIT 5 /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:218
+  Rendered dashboard/index.html.erb within layouts/application (Duration: 4.9ms | GC: 0.0ms)
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/layouts/application.html.erb:228
+  Rendered layout layouts/application.html.erb (Duration: 7.6ms | GC: 0.0ms)
+Completed 200 OK in 25ms (Views: 8.5ms | ActiveRecord: 0.9ms (6 queries, 1 cached) | GC: 0.0ms)
+
+
+Started GET "/community/feed" for ::1 at 2026-09-12 14:33:28 -0500
+Processing by Community::FeedController#index as HTML
+  [1m[36mUser Load (0.4ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  Rendering layout layouts/application.html.erb
+  Rendering community/feed/index.html.erb within layouts/application
+  [1m[36mPost Load (0.5ms)[0m  [1m[34mSELECT "posts".* FROM "posts" WHERE "posts"."visibility" = 'public' AND "posts"."status" = 'active' ORDER BY "posts"."created_at" DESC LIMIT 20 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/feed/index.html.erb:76
+  [1m[36mUser Load (0.7ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 LIMIT 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:7
+  [1m[36mReaction Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 7 AND "reactions"."reaction_type" = 'like' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:35
+  [1m[36mReaction Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 7 AND "reactions"."reaction_type" = 'heart' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:39
+  [1m[36mReaction Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 7 AND "reactions"."reaction_type" = 'fire' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:43
+  [1m[36mComment Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "comments" WHERE "comments"."post_id" = 7 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:47
+  [1m[36mComment Exists? (0.7ms)[0m  [1m[34mSELECT 1 AS one FROM "comments" WHERE "comments"."post_id" = 7 LIMIT 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:52
+  [1m[36mComment Load (0.2ms)[0m  [1m[34mSELECT "comments".* FROM "comments" WHERE "comments"."post_id" = 7 LIMIT 3 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:54
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:54
+  Rendered community/_post_card.html.erb (Duration: 37.8ms | GC: 0.0ms)
+  [1m[36mUser Load (0.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 LIMIT 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:7
+  [1m[36mReaction Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 6 AND "reactions"."reaction_type" = 'like' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:35
+  [1m[36mReaction Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 6 AND "reactions"."reaction_type" = 'heart' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:39
+  [1m[36mReaction Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 6 AND "reactions"."reaction_type" = 'fire' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:43
+  [1m[36mComment Count (0.5ms)[0m  [1m[34mSELECT COUNT(*) FROM "comments" WHERE "comments"."post_id" = 6 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:47
+  [1m[36mComment Exists? (0.2ms)[0m  [1m[34mSELECT 1 AS one FROM "comments" WHERE "comments"."post_id" = 6 LIMIT 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:52
+  [1m[36mComment Load (0.2ms)[0m  [1m[34mSELECT "comments".* FROM "comments" WHERE "comments"."post_id" = 6 LIMIT 3 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:54
+  [1m[36mUser Load (0.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:54
+  Rendered community/_post_card.html.erb (Duration: 26.7ms | GC: 0.0ms)
+  Rendered community/feed/index.html.erb within layouts/application (Duration: 71.1ms | GC: 0.0ms)
+  [1m[36mTrade Count (0.6ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/layouts/application.html.erb:228
+  Rendered layout layouts/application.html.erb (Duration: 81.2ms | GC: 0.0ms)
+Completed 200 OK in 97ms (Views: 77.4ms | ActiveRecord: 5.7ms (19 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/trades" for ::1 at 2026-09-12 14:33:29 -0500
+Processing by TradesController#index as HTML
+  [1m[36mUser Load (0.7ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='index',application='CoachTradingApp',controller='trades'*/[0m
+  [1m[36mTrade Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='index',application='CoachTradingApp',controller='trades'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:8:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (0.3ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC /*action='index',application='CoachTradingApp',controller='trades'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:11:in 'Trading::CalculateStatistics#call'
+  Rendering layout layouts/application.html.erb
+  Rendering trades/index.html.erb within layouts/application
+  [1m[36mStrategy Load (0.1ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."user_id" = 2 /*action='index',application='CoachTradingApp',controller='trades'*/[0m
+  ↳ app/views/trades/index.html.erb:40
+  [1m[36mStrategy Load (0.5ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 51 LIMIT 1 /*action='index',application='CoachTradingApp',controller='trades'*/[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mStrategy Load (0.2ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 53 LIMIT 1 /*action='index',application='CoachTradingApp',controller='trades'*/[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 51 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mStrategy Load (0.1ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 55 LIMIT 1 /*action='index',application='CoachTradingApp',controller='trades'*/[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 51 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.1ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 55 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mStrategy Load (0.2ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 52 LIMIT 1 /*action='index',application='CoachTradingApp',controller='trades'*/[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 53 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mStrategy Load (0.5ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 54 LIMIT 1 /*action='index',application='CoachTradingApp',controller='trades'*/[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 51 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 53 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 54 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.2ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 52 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 55 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 51 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 53 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 54 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.1ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 52 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 55 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 51 LIMIT 1[0m
+  ↳ app/views/trades/index.html.erb:90
+  Rendered trades/index.html.erb within layouts/application (Duration: 83.4ms | GC: 15.6ms)
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/layouts/application.html.erb:228
+  Rendered layout layouts/application.html.erb (Duration: 85.5ms | GC: 15.6ms)
+Completed 200 OK in 103ms (Views: 84.2ms | ActiveRecord: 3.4ms (25 queries, 16 cached) | GC: 15.6ms)
+
+
+Started GET "/calendar" for ::1 at 2026-09-12 14:33:31 -0500
+Processing by CalendarController#show as HTML
+  [1m[36mUser Load (1.7ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  [1m[36mTrade Count (0.5ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."entry_at" BETWEEN '2026-09-01' AND '2026-09-30' /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/controllers/calendar_controller.rb:13:in 'CalendarController#show'
+  [1m[36mTrade Load (0.3ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."entry_at" BETWEEN '2026-08-31 00:00:00' AND '2026-10-03 23:59:59.999999' /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/controllers/calendar_controller.rb:17:in 'Enumerable#group_by'
+  [1m[36mTrade Sum (0.4ms)[0m  [1m[34mSELECT SUM("trades"."pnl") FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."entry_at" BETWEEN '2026-09-01 00:00:00' AND '2026-09-30 23:59:59.999999' /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/controllers/calendar_controller.rb:22:in 'CalendarController#show'
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."entry_at" BETWEEN '2026-09-01 00:00:00' AND '2026-09-30 23:59:59.999999' /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/controllers/calendar_controller.rb:23:in 'CalendarController#show'
+  [1m[36mTrade Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."entry_at" BETWEEN '2026-09-01 00:00:00' AND '2026-09-30 23:59:59.999999' /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/controllers/calendar_controller.rb:28:in 'CalendarController#show'
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."entry_at" BETWEEN '2026-09-01 00:00:00' AND '2026-09-30 23:59:59.999999'[0m
+  ↳ app/controllers/calendar_controller.rb:31:in 'CalendarController#show'
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."entry_at" BETWEEN '2026-09-01 00:00:00' AND '2026-09-30 23:59:59.999999'[0m
+  ↳ app/controllers/calendar_controller.rb:31:in 'CalendarController#show'
+  Rendering layout layouts/application.html.erb
+  Rendering calendar/show.html.erb within layouts/application
+  [1m[36mStrategy Load (0.2ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 51 LIMIT 1 /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/views/calendar/show.html.erb:115
+  [1m[36mStrategy Load (0.8ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 54 LIMIT 1 /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/views/calendar/show.html.erb:115
+  [1m[36mStrategy Load (0.2ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 53 LIMIT 1 /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/views/calendar/show.html.erb:115
+  [1m[36mStrategy Load (0.1ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 52 LIMIT 1 /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/views/calendar/show.html.erb:115
+  [1m[36mStrategy Load (0.8ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 55 LIMIT 1 /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/views/calendar/show.html.erb:115
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 51 LIMIT 1[0m
+  ↳ app/views/calendar/show.html.erb:115
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 55 LIMIT 1[0m
+  ↳ app/views/calendar/show.html.erb:115
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 51 LIMIT 1[0m
+  ↳ app/views/calendar/show.html.erb:115
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 53 LIMIT 1[0m
+  ↳ app/views/calendar/show.html.erb:115
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 51 LIMIT 1[0m
+  ↳ app/views/calendar/show.html.erb:115
+  Rendered calendar/show.html.erb within layouts/application (Duration: 75.1ms | GC: 15.6ms)
+  [1m[36mTrade Count (0.6ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/views/layouts/application.html.erb:228
+  Rendered layout layouts/application.html.erb (Duration: 81.1ms | GC: 15.6ms)
+Completed 200 OK in 201ms (Views: 90.0ms | ActiveRecord: 6.2ms (19 queries, 7 cached) | GC: 15.6ms)
+
+
+Started GET "/" for ::1 at 2026-09-12 14:39:39 -0500
+Processing by PagesController#landing as HTML
+  Rendering layout layouts/application.html.erb
+  Rendering pages/landing.html.erb within layouts/application
+  Rendered pages/landing.html.erb within layouts/application (Duration: 13.9ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 234.6ms | GC: 0.0ms)
+Completed 200 OK in 518ms (Views: 292.4ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/favicon.ico" for ::1 at 2026-09-12 14:39:41 -0500
+  
+ActionController::RoutingError (No route matches [GET] "/favicon.ico"):
+  
+Started GET "/dashboard" for ::1 at 2026-09-12 14:39:51 -0500
+Processing by DashboardController#index as HTML
+Completed 401 Unauthorized in 13ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/cuenta/ingresar" for ::1 at 2026-09-12 14:39:52 -0500
+Processing by Devise::SessionsController#new as HTML
+  Rendering layout layouts/application.html.erb
+  Rendering devise/sessions/new.html.erb within layouts/application
+  Rendered devise/sessions/new.html.erb within layouts/application (Duration: 15.2ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 24.0ms | GC: 0.0ms)
+Completed 200 OK in 153ms (Views: 88.4ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started POST "/cuenta/ingresar" for ::1 at 2026-09-12 14:39:58 -0500
+Processing by Devise::SessionsController#create as HTML
+  Parameters: {"authenticity_token" => "[FILTERED]", "user" => {"email" => "[FILTERED]", "password" => "[FILTERED]", "remember_me" => "0"}}
+  [1m[36mUser Load (130.9ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."email" = 'trader@coachtrading.com' ORDER BY "users"."id" ASC LIMIT 1 /*action='create',application='CoachTradingApp',controller='sessions'*/[0m
+Redirected to http://localhost:3000/dashboard
+Completed 303 See Other in 461ms (ActiveRecord: 130.9ms (1 query, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/dashboard" for ::1 at 2026-09-12 14:39:58 -0500
+Processing by DashboardController#index as HTML
+  [1m[36mUser Load (1.0ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  [1m[36mTrade Count (4.7ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:8:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (4.4ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:11:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (1.5ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC, "trades"."entry_at" ASC /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/services/trading/calculate_drawdown.rb:9:in 'Enumerable#map'
+  Rendering layout layouts/application.html.erb
+  Rendering dashboard/index.html.erb within layouts/application
+  [1m[36mTrade Load (2.0ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC LIMIT 5 /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:218
+  Rendered dashboard/index.html.erb within layouts/application (Duration: 43.6ms | GC: 0.0ms)
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/layouts/application.html.erb:229
+  Rendered layout layouts/application.html.erb (Duration: 66.3ms | GC: 0.0ms)
+Completed 200 OK in 483ms (Views: 90.3ms | ActiveRecord: 13.3ms (6 queries, 1 cached) | GC: 15.6ms)
+
+
+Started GET "/perfil" for ::1 at 2026-09-12 14:41:10 -0500
+Processing by Users::ProfileController#show as HTML
+  [1m[36mUser Load (2.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  [1m[36mTrade Count (1.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:8:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (1.3ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:11:in 'Trading::CalculateStatistics#call'
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/controllers/users/profile_controller.rb:6:in 'Users::ProfileController#show'
+  [1m[36mTrade Count (1.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."result" = 'WIN' /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/controllers/users/profile_controller.rb:7:in 'Users::ProfileController#show'
+  [1m[36mTrade Count (0.9ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."result" = 'LOSS' /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/controllers/users/profile_controller.rb:8:in 'Users::ProfileController#show'
+  Rendering layout layouts/application.html.erb
+  Rendering users/profile/show.html.erb within layouts/application
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/users/profile/show.html.erb:65
+  [1m[36mStrategy Load (5.9ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:172
+  [1m[36mTrade Load (0.3ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 51 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (1.5ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 52 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.6ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 55 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.5ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 53 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.3ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 54 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  Rendered users/profile/show.html.erb within layouts/application (Duration: 169.6ms | GC: 15.6ms)
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/layouts/application.html.erb:229
+  Rendered layout layouts/application.html.erb (Duration: 175.9ms | GC: 15.6ms)
+Completed 200 OK in 341ms (Views: 199.8ms | ActiveRecord: 17.4ms (29 queries, 13 cached) | GC: 15.6ms)
+
+
+Started GET "/community/feed" for ::1 at 2026-09-12 14:41:12 -0500
+Processing by Community::FeedController#index as HTML
+  [1m[36mUser Load (1.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  Rendering layout layouts/application.html.erb
+  Rendering community/feed/index.html.erb within layouts/application
+  [1m[36mPost Load (7.2ms)[0m  [1m[34mSELECT "posts".* FROM "posts" WHERE "posts"."visibility" = 'public' AND "posts"."status" = 'active' ORDER BY "posts"."created_at" DESC LIMIT 20 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/feed/index.html.erb:76
+  [1m[36mUser Load (0.4ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 LIMIT 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:7
+  [1m[36mReaction Count (0.6ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 7 AND "reactions"."reaction_type" = 'like' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:35
+  [1m[36mReaction Count (0.6ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 7 AND "reactions"."reaction_type" = 'heart' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:39
+  [1m[36mReaction Count (0.7ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 7 AND "reactions"."reaction_type" = 'fire' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:43
+  [1m[36mComment Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "comments" WHERE "comments"."post_id" = 7 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:47
+  [1m[36mComment Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "comments" WHERE "comments"."post_id" = 7 LIMIT 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:52
+  [1m[36mComment Load (0.1ms)[0m  [1m[34mSELECT "comments".* FROM "comments" WHERE "comments"."post_id" = 7 LIMIT 3 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:54
+  [1m[36mUser Load (0.7ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:54
+  Rendered community/_post_card.html.erb (Duration: 146.4ms | GC: 0.0ms)
+  [1m[36mUser Load (0.8ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 LIMIT 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:7
+  [1m[36mReaction Count (1.6ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 6 AND "reactions"."reaction_type" = 'like' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:35
+  [1m[36mReaction Count (0.6ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 6 AND "reactions"."reaction_type" = 'heart' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:39
+  [1m[36mReaction Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 6 AND "reactions"."reaction_type" = 'fire' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:43
+  [1m[36mComment Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "comments" WHERE "comments"."post_id" = 6 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:47
+  [1m[36mComment Exists? (1.3ms)[0m  [1m[34mSELECT 1 AS one FROM "comments" WHERE "comments"."post_id" = 6 LIMIT 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:52
+  [1m[36mComment Load (0.8ms)[0m  [1m[34mSELECT "comments".* FROM "comments" WHERE "comments"."post_id" = 6 LIMIT 3 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:54
+  [1m[36mUser Load (0.4ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:54
+  Rendered community/_post_card.html.erb (Duration: 58.1ms | GC: 0.0ms)
+  Rendered community/feed/index.html.erb within layouts/application (Duration: 256.1ms | GC: 0.0ms)
+  [1m[36mTrade Count (0.7ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/layouts/application.html.erb:229
+  Rendered layout layouts/application.html.erb (Duration: 266.2ms | GC: 0.0ms)
+Completed 200 OK in 411ms (Views: 253.7ms | ActiveRecord: 17.9ms (19 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/dashboard" for ::1 at 2026-09-12 14:41:14 -0500
+Processing by DashboardController#index as HTML
+  [1m[36mUser Load (0.4ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  [1m[36mTrade Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:8:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (0.4ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:11:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (0.9ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC, "trades"."entry_at" ASC /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/services/trading/calculate_drawdown.rb:9:in 'Enumerable#map'
+  Rendering layout layouts/application.html.erb
+  Rendering dashboard/index.html.erb within layouts/application
+  [1m[36mTrade Load (0.8ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC LIMIT 5 /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:218
+  Rendered dashboard/index.html.erb within layouts/application (Duration: 9.3ms | GC: 0.0ms)
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/layouts/application.html.erb:229
+  Rendered layout layouts/application.html.erb (Duration: 15.0ms | GC: 0.0ms)
+Completed 200 OK in 61ms (Views: 23.1ms | ActiveRecord: 2.7ms (6 queries, 1 cached) | GC: 0.0ms)
+
+
+Started GET "/calendar" for ::1 at 2026-09-12 14:41:17 -0500
+Processing by CalendarController#show as HTML
+  [1m[36mUser Load (0.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  [1m[36mTrade Count (2.8ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."entry_at" BETWEEN '2026-09-01' AND '2026-09-30' /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/controllers/calendar_controller.rb:13:in 'CalendarController#show'
+  [1m[36mTrade Load (1.0ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."entry_at" BETWEEN '2026-08-31 00:00:00' AND '2026-10-03 23:59:59.999999' /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/controllers/calendar_controller.rb:17:in 'Enumerable#group_by'
+  [1m[36mTrade Sum (1.0ms)[0m  [1m[34mSELECT SUM("trades"."pnl") FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."entry_at" BETWEEN '2026-09-01 00:00:00' AND '2026-09-30 23:59:59.999999' /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/controllers/calendar_controller.rb:22:in 'CalendarController#show'
+  [1m[36mTrade Load (0.4ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."entry_at" BETWEEN '2026-09-01 00:00:00' AND '2026-09-30 23:59:59.999999' /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/controllers/calendar_controller.rb:23:in 'CalendarController#show'
+  [1m[36mTrade Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."entry_at" BETWEEN '2026-09-01 00:00:00' AND '2026-09-30 23:59:59.999999' /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/controllers/calendar_controller.rb:28:in 'CalendarController#show'
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."entry_at" BETWEEN '2026-09-01 00:00:00' AND '2026-09-30 23:59:59.999999'[0m
+  ↳ app/controllers/calendar_controller.rb:31:in 'CalendarController#show'
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."entry_at" BETWEEN '2026-09-01 00:00:00' AND '2026-09-30 23:59:59.999999'[0m
+  ↳ app/controllers/calendar_controller.rb:31:in 'CalendarController#show'
+  Rendering layout layouts/application.html.erb
+  Rendering calendar/show.html.erb within layouts/application
+  [1m[36mStrategy Load (0.5ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 51 LIMIT 1 /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/views/calendar/show.html.erb:115
+  [1m[36mStrategy Load (0.3ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 54 LIMIT 1 /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/views/calendar/show.html.erb:115
+  [1m[36mStrategy Load (1.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 53 LIMIT 1 /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/views/calendar/show.html.erb:115
+  [1m[36mStrategy Load (0.7ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 52 LIMIT 1 /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/views/calendar/show.html.erb:115
+  [1m[36mStrategy Load (0.3ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 55 LIMIT 1 /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/views/calendar/show.html.erb:115
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 51 LIMIT 1[0m
+  ↳ app/views/calendar/show.html.erb:115
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 55 LIMIT 1[0m
+  ↳ app/views/calendar/show.html.erb:115
+  [1m[36mCACHE Strategy Load (0.1ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 51 LIMIT 1[0m
+  ↳ app/views/calendar/show.html.erb:115
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 53 LIMIT 1[0m
+  ↳ app/views/calendar/show.html.erb:115
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 51 LIMIT 1[0m
+  ↳ app/views/calendar/show.html.erb:115
+  Rendered calendar/show.html.erb within layouts/application (Duration: 100.2ms | GC: 15.6ms)
+  [1m[36mTrade Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/views/layouts/application.html.erb:229
+  Rendered layout layouts/application.html.erb (Duration: 107.9ms | GC: 15.6ms)
+Completed 200 OK in 248ms (Views: 113.6ms | ActiveRecord: 9.0ms (19 queries, 7 cached) | GC: 15.6ms)
+
+
+Started GET "/analytics" for ::1 at 2026-09-12 14:41:19 -0500
+Processing by AnalyticsController#show as HTML
+  [1m[36mUser Load (1.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='CoachTradingApp',controller='analytics'*/[0m
+  [1m[36mTrade Count (0.9ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='analytics'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:8:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (0.7ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC /*action='show',application='CoachTradingApp',controller='analytics'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:11:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (0.6ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC, "trades"."entry_at" ASC /*action='show',application='CoachTradingApp',controller='analytics'*/[0m
+  ↳ app/services/trading/calculate_drawdown.rb:9:in 'Enumerable#map'
+  [1m[36mStrategy Load (0.3ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 51 LIMIT 1 /*action='show',application='CoachTradingApp',controller='analytics'*/[0m
+  ↳ app/controllers/analytics_controller.rb:14:in 'block in AnalyticsController#show'
+  [1m[36mStrategy Load (1.1ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 53 LIMIT 1 /*action='show',application='CoachTradingApp',controller='analytics'*/[0m
+  ↳ app/controllers/analytics_controller.rb:14:in 'block in AnalyticsController#show'
+  [1m[36mStrategy Load (0.3ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 55 LIMIT 1 /*action='show',application='CoachTradingApp',controller='analytics'*/[0m
+  ↳ app/controllers/analytics_controller.rb:14:in 'block in AnalyticsController#show'
+  [1m[36mStrategy Load (0.6ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 52 LIMIT 1 /*action='show',application='CoachTradingApp',controller='analytics'*/[0m
+  ↳ app/controllers/analytics_controller.rb:14:in 'block in AnalyticsController#show'
+  [1m[36mStrategy Load (0.8ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 54 LIMIT 1 /*action='show',application='CoachTradingApp',controller='analytics'*/[0m
+  ↳ app/controllers/analytics_controller.rb:14:in 'block in AnalyticsController#show'
+  Rendering layout layouts/application.html.erb
+  Rendering analytics/show.html.erb within layouts/application
+  Rendered analytics/show.html.erb within layouts/application (Duration: 5.0ms | GC: 0.0ms)
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/layouts/application.html.erb:229
+  Rendered layout layouts/application.html.erb (Duration: 18.1ms | GC: 0.0ms)
+Completed 200 OK in 132ms (Views: 28.6ms | ActiveRecord: 6.2ms (10 queries, 1 cached) | GC: 0.0ms)
+
+
+Started GET "/ai_coach" for ::1 at 2026-09-12 14:41:21 -0500
+Processing by AiCoachController#show as HTML
+  [1m[36mUser Load (0.3ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='CoachTradingApp',controller='ai_coach'*/[0m
+  [1m[36mTrade Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='ai_coach'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:8:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (9.1ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='ai_coach'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:11:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (1.4ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC LIMIT 1 /*action='show',application='CoachTradingApp',controller='ai_coach'*/[0m
+  ↳ app/controllers/ai_coach_controller.rb:4:in 'AiCoachController#show'
+  [1m[36mAiAnalysis Load (6.9ms)[0m  [1m[34mSELECT "ai_analyses".* FROM "ai_analyses" WHERE "ai_analyses"."trade_id" = 242 ORDER BY "ai_analyses"."id" DESC LIMIT 1 /*action='show',application='CoachTradingApp',controller='ai_coach'*/[0m
+  ↳ app/controllers/ai_coach_controller.rb:5:in 'AiCoachController#show'
+  [1m[36mAiConversation Load (0.9ms)[0m  [1m[34mSELECT "ai_conversations".* FROM "ai_conversations" WHERE "ai_conversations"."user_id" = 2 ORDER BY "ai_conversations"."id" DESC LIMIT 1 /*action='show',application='CoachTradingApp',controller='ai_coach'*/[0m
+  ↳ app/controllers/ai_coach_controller.rb:6:in 'AiCoachController#show'
+  Rendering layout layouts/application.html.erb
+  Rendering ai_coach/show.html.erb within layouts/application
+  [1m[36mAiMessage Load (4.9ms)[0m  [1m[34mSELECT "ai_messages".* FROM "ai_messages" WHERE "ai_messages"."ai_conversation_id" = 2 ORDER BY "ai_messages"."created_at" ASC /*action='show',application='CoachTradingApp',controller='ai_coach'*/[0m
+  ↳ app/views/ai_coach/show.html.erb:27
+  Rendered ai_coach/show.html.erb within layouts/application (Duration: 56.9ms | GC: 15.6ms)
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/layouts/application.html.erb:229
+  Rendered layout layouts/application.html.erb (Duration: 74.4ms | GC: 15.6ms)
+Completed 200 OK in 966ms (Views: 92.1ms | ActiveRecord: 47.1ms (8 queries, 1 cached) | GC: 390.6ms)
+
+
+Started GET "/strategies" for ::1 at 2026-09-12 14:41:24 -0500
+Processing by StrategiesController#index as HTML
+  [1m[36mUser Load (0.9ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='index',application='CoachTradingApp',controller='strategies'*/[0m
+  Rendering layout layouts/application.html.erb
+  Rendering strategies/index.html.erb within layouts/application
+  [1m[36mStrategy Load (0.4ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."user_id" = 2 /*action='index',application='CoachTradingApp',controller='strategies'*/[0m
+  ↳ app/views/strategies/index.html.erb:24
+  [1m[36mTrade Load (1.4ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 51 /*action='index',application='CoachTradingApp',controller='strategies'*/[0m
+  ↳ app/views/strategies/index.html.erb:28
+  [1m[36mTrade Load (0.6ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 52 /*action='index',application='CoachTradingApp',controller='strategies'*/[0m
+  ↳ app/views/strategies/index.html.erb:28
+  [1m[36mTrade Load (0.5ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 55 /*action='index',application='CoachTradingApp',controller='strategies'*/[0m
+  ↳ app/views/strategies/index.html.erb:28
+  [1m[36mTrade Load (0.8ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 53 /*action='index',application='CoachTradingApp',controller='strategies'*/[0m
+  ↳ app/views/strategies/index.html.erb:28
+  [1m[36mTrade Load (0.4ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 54 /*action='index',application='CoachTradingApp',controller='strategies'*/[0m
+  ↳ app/views/strategies/index.html.erb:28
+  Rendered strategies/index.html.erb within layouts/application (Duration: 70.8ms | GC: 15.6ms)
+  [1m[36mTrade Count (0.6ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='index',application='CoachTradingApp',controller='strategies'*/[0m
+  ↳ app/views/layouts/application.html.erb:229
+  Rendered layout layouts/application.html.erb (Duration: 83.5ms | GC: 15.6ms)
+Completed 200 OK in 170ms (Views: 108.6ms | ActiveRecord: 5.4ms (8 queries, 0 cached) | GC: 46.9ms)
+
+
+Started GET "/perfil" for ::1 at 2026-09-12 14:41:28 -0500
+Processing by Users::ProfileController#show as HTML
+  [1m[36mUser Load (0.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  [1m[36mTrade Count (1.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:8:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (0.4ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:11:in 'Trading::CalculateStatistics#call'
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/controllers/users/profile_controller.rb:6:in 'Users::ProfileController#show'
+  [1m[36mTrade Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."result" = 'WIN' /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/controllers/users/profile_controller.rb:7:in 'Users::ProfileController#show'
+  [1m[36mTrade Count (1.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."result" = 'LOSS' /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/controllers/users/profile_controller.rb:8:in 'Users::ProfileController#show'
+  Rendering layout layouts/application.html.erb
+  Rendering users/profile/show.html.erb within layouts/application
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/users/profile/show.html.erb:65
+  [1m[36mStrategy Load (0.5ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:172
+  [1m[36mTrade Load (0.4ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 51 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.5ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 52 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.5ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 55 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.7ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 53 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.9ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.7ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 54 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.5ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  Rendered users/profile/show.html.erb within layouts/application (Duration: 116.3ms | GC: 0.0ms)
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/layouts/application.html.erb:229
+  Rendered layout layouts/application.html.erb (Duration: 125.2ms | GC: 0.0ms)
+Completed 200 OK in 161ms (Views: 121.8ms | ActiveRecord: 9.4ms (29 queries, 13 cached) | GC: 0.0ms)
+
+
+Started GET "/community/feed" for ::1 at 2026-09-12 14:41:35 -0500
+Processing by Community::FeedController#index as HTML
+  [1m[36mUser Load (0.3ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  Rendering layout layouts/application.html.erb
+  Rendering community/feed/index.html.erb within layouts/application
+  [1m[36mPost Load (0.3ms)[0m  [1m[34mSELECT "posts".* FROM "posts" WHERE "posts"."visibility" = 'public' AND "posts"."status" = 'active' ORDER BY "posts"."created_at" DESC LIMIT 20 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/feed/index.html.erb:76
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 LIMIT 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:7
+  [1m[36mReaction Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 7 AND "reactions"."reaction_type" = 'like' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:35
+  [1m[36mReaction Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 7 AND "reactions"."reaction_type" = 'heart' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:39
+  [1m[36mReaction Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 7 AND "reactions"."reaction_type" = 'fire' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:43
+  [1m[36mComment Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "comments" WHERE "comments"."post_id" = 7 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:47
+  [1m[36mComment Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "comments" WHERE "comments"."post_id" = 7 LIMIT 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:52
+  [1m[36mComment Load (0.1ms)[0m  [1m[34mSELECT "comments".* FROM "comments" WHERE "comments"."post_id" = 7 LIMIT 3 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:54
+  [1m[36mUser Load (0.6ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:54
+  Rendered community/_post_card.html.erb (Duration: 25.4ms | GC: 0.0ms)
+  [1m[36mUser Load (0.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 LIMIT 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:7
+  [1m[36mReaction Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 6 AND "reactions"."reaction_type" = 'like' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:35
+  [1m[36mReaction Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 6 AND "reactions"."reaction_type" = 'heart' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:39
+  [1m[36mReaction Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 6 AND "reactions"."reaction_type" = 'fire' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:43
+  [1m[36mComment Count (0.5ms)[0m  [1m[34mSELECT COUNT(*) FROM "comments" WHERE "comments"."post_id" = 6 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:47
+  [1m[36mComment Exists? (0.5ms)[0m  [1m[34mSELECT 1 AS one FROM "comments" WHERE "comments"."post_id" = 6 LIMIT 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:52
+  [1m[36mComment Load (0.2ms)[0m  [1m[34mSELECT "comments".* FROM "comments" WHERE "comments"."post_id" = 6 LIMIT 3 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:54
+  [1m[36mUser Load (0.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:54
+  Rendered community/_post_card.html.erb (Duration: 23.5ms | GC: 0.0ms)
+  Rendered community/feed/index.html.erb within layouts/application (Duration: 54.6ms | GC: 0.0ms)
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/layouts/application.html.erb:229
+  Rendered layout layouts/application.html.erb (Duration: 59.1ms | GC: 0.0ms)
+Completed 200 OK in 79ms (Views: 57.9ms | ActiveRecord: 4.3ms (19 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/community/trade_shares" for ::1 at 2026-09-12 14:41:37 -0500
+Processing by Community::TradeSharesController#index as HTML
+  [1m[36mUser Load (0.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='index',application='CoachTradingApp',controller='trade_shares'*/[0m
+  Rendering layout layouts/application.html.erb
+  Rendering community/trade_shares/index.html.erb within layouts/application
+  [1m[36mTradeShare Load (3.2ms)[0m  [1m[34mSELECT "trade_shares".* FROM "trade_shares" WHERE "trade_shares"."privacy" = 'public' ORDER BY "trade_shares"."created_at" DESC LIMIT 20 /*action='index',application='CoachTradingApp',controller='trade_shares'*/[0m
+  ↳ app/views/community/trade_shares/index.html.erb:22
+  [1m[36mTrade Load (3.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."id" IN (242, 222) /*action='index',application='CoachTradingApp',controller='trade_shares'*/[0m
+  ↳ app/views/community/trade_shares/index.html.erb:22
+  [1m[36mUser Load (0.3ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" IN (2, 1) /*action='index',application='CoachTradingApp',controller='trade_shares'*/[0m
+  ↳ app/views/community/trade_shares/index.html.erb:22
+  [1m[36mTradeNote Count (3.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trade_notes" WHERE "trade_notes"."trade_id" = 242 /*action='index',application='CoachTradingApp',controller='trade_shares'*/[0m
+  ↳ app/views/community/trade_shares/index.html.erb:77
+  [1m[36mAiAnalysis Count (0.6ms)[0m  [1m[34mSELECT COUNT(*) FROM "ai_analyses" WHERE "ai_analyses"."trade_id" = 242 /*action='index',application='CoachTradingApp',controller='trade_shares'*/[0m
+  ↳ app/views/community/trade_shares/index.html.erb:81
+  [1m[36mTradeNote Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "trade_notes" WHERE "trade_notes"."trade_id" = 222 /*action='index',application='CoachTradingApp',controller='trade_shares'*/[0m
+  ↳ app/views/community/trade_shares/index.html.erb:77
+  [1m[36mAiAnalysis Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "ai_analyses" WHERE "ai_analyses"."trade_id" = 222 /*action='index',application='CoachTradingApp',controller='trade_shares'*/[0m
+  ↳ app/views/community/trade_shares/index.html.erb:81
+  Rendered community/trade_shares/index.html.erb within layouts/application (Duration: 81.8ms | GC: 0.0ms)
+  [1m[36mTrade Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='index',application='CoachTradingApp',controller='trade_shares'*/[0m
+  ↳ app/views/layouts/application.html.erb:229
+  Rendered layout layouts/application.html.erb (Duration: 86.8ms | GC: 0.0ms)
+Completed 200 OK in 114ms (Views: 78.0ms | ActiveRecord: 11.3ms (9 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/perfil" for ::1 at 2026-09-12 14:41:44 -0500
+Processing by Users::ProfileController#show as HTML
+  [1m[36mUser Load (1.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  [1m[36mTrade Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:8:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (1.6ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:11:in 'Trading::CalculateStatistics#call'
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/controllers/users/profile_controller.rb:6:in 'Users::ProfileController#show'
+  [1m[36mTrade Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."result" = 'WIN' /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/controllers/users/profile_controller.rb:7:in 'Users::ProfileController#show'
+  [1m[36mTrade Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."result" = 'LOSS' /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/controllers/users/profile_controller.rb:8:in 'Users::ProfileController#show'
+  Rendering layout layouts/application.html.erb
+  Rendering users/profile/show.html.erb within layouts/application
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/users/profile/show.html.erb:65
+  [1m[36mStrategy Load (0.9ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:172
+  [1m[36mTrade Load (1.0ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 51 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.7ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 52 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.9ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.3ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 55 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (1.1ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 53 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.9ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.5ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 54 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  Rendered users/profile/show.html.erb within layouts/application (Duration: 116.8ms | GC: 0.0ms)
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/layouts/application.html.erb:229
+  Rendered layout layouts/application.html.erb (Duration: 125.2ms | GC: 0.0ms)
+Completed 200 OK in 174ms (Views: 120.6ms | ActiveRecord: 11.3ms (29 queries, 13 cached) | GC: 0.0ms)
+
+
+Started GET "/dashboard" for ::1 at 2026-09-12 14:41:45 -0500
+Processing by DashboardController#index as HTML
+  [1m[36mUser Load (0.6ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  [1m[36mTrade Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:8:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (0.7ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:11:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (2.0ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC, "trades"."entry_at" ASC /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/services/trading/calculate_drawdown.rb:9:in 'Enumerable#map'
+  Rendering layout layouts/application.html.erb
+  Rendering dashboard/index.html.erb within layouts/application
+  [1m[36mTrade Load (0.8ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC LIMIT 5 /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:218
+  Rendered dashboard/index.html.erb within layouts/application (Duration: 11.5ms | GC: 0.0ms)
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/layouts/application.html.erb:229
+  Rendered layout layouts/application.html.erb (Duration: 16.7ms | GC: 0.0ms)
+Completed 200 OK in 56ms (Views: 17.5ms | ActiveRecord: 4.3ms (6 queries, 1 cached) | GC: 0.0ms)
+
+
+Started GET "/community/feed" for ::1 at 2026-09-12 14:42:52 -0500
+Processing by Community::FeedController#index as HTML
+  [1m[36mUser Load (1.3ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  Rendering layout layouts/application.html.erb
+  Rendering community/feed/index.html.erb within layouts/application
+  [1m[36mPost Load (2.1ms)[0m  [1m[34mSELECT "posts".* FROM "posts" WHERE "posts"."visibility" = 'public' AND "posts"."status" = 'active' ORDER BY "posts"."created_at" DESC LIMIT 20 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/feed/index.html.erb:76
+  [1m[36mUser Load (0.7ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 LIMIT 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:7
+  [1m[36mReaction Count (0.9ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 7 AND "reactions"."reaction_type" = 'like' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:35
+  [1m[36mReaction Count (1.5ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 7 AND "reactions"."reaction_type" = 'heart' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:39
+  [1m[36mReaction Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 7 AND "reactions"."reaction_type" = 'fire' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:43
+  [1m[36mComment Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "comments" WHERE "comments"."post_id" = 7 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:47
+  [1m[36mComment Exists? (0.4ms)[0m  [1m[34mSELECT 1 AS one FROM "comments" WHERE "comments"."post_id" = 7 LIMIT 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:52
+  [1m[36mComment Load (0.7ms)[0m  [1m[34mSELECT "comments".* FROM "comments" WHERE "comments"."post_id" = 7 LIMIT 3 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:54
+  [1m[36mUser Load (0.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:54
+  Rendered community/_post_card.html.erb (Duration: 58.4ms | GC: 0.0ms)
+  [1m[36mUser Load (1.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 LIMIT 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:7
+  [1m[36mReaction Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 6 AND "reactions"."reaction_type" = 'like' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:35
+  [1m[36mReaction Count (0.6ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 6 AND "reactions"."reaction_type" = 'heart' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:39
+  [1m[36mReaction Count (0.8ms)[0m  [1m[34mSELECT COUNT(*) FROM "reactions" WHERE "reactions"."post_id" = 6 AND "reactions"."reaction_type" = 'fire' /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:43
+  [1m[36mComment Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "comments" WHERE "comments"."post_id" = 6 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:47
+  [1m[36mComment Exists? (0.6ms)[0m  [1m[34mSELECT 1 AS one FROM "comments" WHERE "comments"."post_id" = 6 LIMIT 1 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:52
+  [1m[36mComment Load (1.6ms)[0m  [1m[34mSELECT "comments".* FROM "comments" WHERE "comments"."post_id" = 6 LIMIT 3 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:54
+  [1m[36mUser Load (0.9ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/community/_post_card.html.erb:54
+  Rendered community/_post_card.html.erb (Duration: 61.1ms | GC: 0.0ms)
+  Rendered community/feed/index.html.erb within layouts/application (Duration: 130.2ms | GC: 0.0ms)
+  [1m[36mTrade Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='index',application='CoachTradingApp',controller='feed'*/[0m
+  ↳ app/views/layouts/application.html.erb:229
+  Rendered layout layouts/application.html.erb (Duration: 146.8ms | GC: 0.0ms)
+Completed 200 OK in 177ms (Views: 137.1ms | ActiveRecord: 14.4ms (19 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/perfil" for ::1 at 2026-09-12 14:42:54 -0500
+Processing by Users::ProfileController#show as HTML
+  [1m[36mUser Load (0.9ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  [1m[36mTrade Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:8:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (1.1ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:11:in 'Trading::CalculateStatistics#call'
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/controllers/users/profile_controller.rb:6:in 'Users::ProfileController#show'
+  [1m[36mTrade Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."result" = 'WIN' /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/controllers/users/profile_controller.rb:7:in 'Users::ProfileController#show'
+  [1m[36mTrade Count (0.6ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."result" = 'LOSS' /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/controllers/users/profile_controller.rb:8:in 'Users::ProfileController#show'
+  Rendering layout layouts/application.html.erb
+  Rendering users/profile/show.html.erb within layouts/application
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/users/profile/show.html.erb:65
+  [1m[36mStrategy Load (0.8ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:172
+  [1m[36mTrade Load (1.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 51 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.7ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 51[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.6ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 52 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (3.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 52[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.8ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 55 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.6ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 55[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (1.3ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 53 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 53[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  [1m[36mTrade Load (0.6ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 54 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:175
+  [1m[36mTrade Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54 /*action='show',application='CoachTradingApp',controller='profile'*/[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54[0m
+  ↳ app/views/users/profile/show.html.erb:176
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."strategy_id" = 54[0m
+  ↳ app/views/users/profile/show.html.erb:181
+  Rendered users/profile/show.html.erb within layouts/application (Duration: 153.7ms | GC: 0.0ms)
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/layouts/application.html.erb:229
+  Rendered layout layouts/application.html.erb (Duration: 161.4ms | GC: 0.0ms)
+Completed 200 OK in 218ms (Views: 154.3ms | ActiveRecord: 14.2ms (29 queries, 13 cached) | GC: 0.0ms)
+
+
+Started GET "/calendar" for ::1 at 2026-09-12 14:42:56 -0500
+Processing by CalendarController#show as HTML
+  [1m[36mUser Load (1.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  [1m[36mTrade Count (0.6ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."entry_at" BETWEEN '2026-09-01' AND '2026-09-30' /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/controllers/calendar_controller.rb:13:in 'CalendarController#show'
+  [1m[36mTrade Load (0.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."entry_at" BETWEEN '2026-08-31 00:00:00' AND '2026-10-03 23:59:59.999999' /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/controllers/calendar_controller.rb:17:in 'Enumerable#group_by'
+  [1m[36mTrade Sum (0.9ms)[0m  [1m[34mSELECT SUM("trades"."pnl") FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."entry_at" BETWEEN '2026-09-01 00:00:00' AND '2026-09-30 23:59:59.999999' /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/controllers/calendar_controller.rb:22:in 'CalendarController#show'
+  [1m[36mTrade Load (1.6ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."entry_at" BETWEEN '2026-09-01 00:00:00' AND '2026-09-30 23:59:59.999999' /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/controllers/calendar_controller.rb:23:in 'CalendarController#show'
+  [1m[36mTrade Count (1.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."entry_at" BETWEEN '2026-09-01 00:00:00' AND '2026-09-30 23:59:59.999999' /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/controllers/calendar_controller.rb:28:in 'CalendarController#show'
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."entry_at" BETWEEN '2026-09-01 00:00:00' AND '2026-09-30 23:59:59.999999'[0m
+  ↳ app/controllers/calendar_controller.rb:31:in 'CalendarController#show'
+  [1m[36mCACHE Trade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 AND "trades"."entry_at" BETWEEN '2026-09-01 00:00:00' AND '2026-09-30 23:59:59.999999'[0m
+  ↳ app/controllers/calendar_controller.rb:31:in 'CalendarController#show'
+  Rendering layout layouts/application.html.erb
+  Rendering calendar/show.html.erb within layouts/application
+  [1m[36mStrategy Load (1.6ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 51 LIMIT 1 /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/views/calendar/show.html.erb:115
+  [1m[36mStrategy Load (0.5ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 54 LIMIT 1 /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/views/calendar/show.html.erb:115
+  [1m[36mStrategy Load (0.6ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 53 LIMIT 1 /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/views/calendar/show.html.erb:115
+  [1m[36mStrategy Load (0.3ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 52 LIMIT 1 /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/views/calendar/show.html.erb:115
+  [1m[36mStrategy Load (1.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 55 LIMIT 1 /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/views/calendar/show.html.erb:115
+  [1m[36mCACHE Strategy Load (0.1ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 51 LIMIT 1[0m
+  ↳ app/views/calendar/show.html.erb:115
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 55 LIMIT 1[0m
+  ↳ app/views/calendar/show.html.erb:115
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 51 LIMIT 1[0m
+  ↳ app/views/calendar/show.html.erb:115
+  [1m[36mCACHE Strategy Load (0.1ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 53 LIMIT 1[0m
+  ↳ app/views/calendar/show.html.erb:115
+  [1m[36mCACHE Strategy Load (0.0ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 51 LIMIT 1[0m
+  ↳ app/views/calendar/show.html.erb:115
+  Rendered calendar/show.html.erb within layouts/application (Duration: 107.5ms | GC: 0.0ms)
+  [1m[36mTrade Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='calendar'*/[0m
+  ↳ app/views/layouts/application.html.erb:229
+  Rendered layout layouts/application.html.erb (Duration: 116.9ms | GC: 0.0ms)
+Completed 200 OK in 192ms (Views: 115.0ms | ActiveRecord: 9.7ms (19 queries, 7 cached) | GC: 0.0ms)
+
+
+Started GET "/analytics" for ::1 at 2026-09-12 14:42:59 -0500
+Processing by AnalyticsController#show as HTML
+  [1m[36mUser Load (1.6ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='CoachTradingApp',controller='analytics'*/[0m
+  [1m[36mTrade Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='analytics'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:8:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (0.6ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC /*action='show',application='CoachTradingApp',controller='analytics'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:11:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (0.9ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC, "trades"."entry_at" ASC /*action='show',application='CoachTradingApp',controller='analytics'*/[0m
+  ↳ app/services/trading/calculate_drawdown.rb:9:in 'Enumerable#map'
+  [1m[36mStrategy Load (1.3ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 51 LIMIT 1 /*action='show',application='CoachTradingApp',controller='analytics'*/[0m
+  ↳ app/controllers/analytics_controller.rb:14:in 'block in AnalyticsController#show'
+  [1m[36mStrategy Load (0.5ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 53 LIMIT 1 /*action='show',application='CoachTradingApp',controller='analytics'*/[0m
+  ↳ app/controllers/analytics_controller.rb:14:in 'block in AnalyticsController#show'
+  [1m[36mStrategy Load (0.4ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 55 LIMIT 1 /*action='show',application='CoachTradingApp',controller='analytics'*/[0m
+  ↳ app/controllers/analytics_controller.rb:14:in 'block in AnalyticsController#show'
+  [1m[36mStrategy Load (0.3ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 52 LIMIT 1 /*action='show',application='CoachTradingApp',controller='analytics'*/[0m
+  ↳ app/controllers/analytics_controller.rb:14:in 'block in AnalyticsController#show'
+  [1m[36mStrategy Load (0.7ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."id" = 54 LIMIT 1 /*action='show',application='CoachTradingApp',controller='analytics'*/[0m
+  ↳ app/controllers/analytics_controller.rb:14:in 'block in AnalyticsController#show'
+  Rendering layout layouts/application.html.erb
+  Rendering analytics/show.html.erb within layouts/application
+  Rendered analytics/show.html.erb within layouts/application (Duration: 0.4ms | GC: 0.0ms)
+  [1m[36mCACHE Trade Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/layouts/application.html.erb:229
+  Rendered layout layouts/application.html.erb (Duration: 16.2ms | GC: 0.0ms)
+Completed 200 OK in 108ms (Views: 19.5ms | ActiveRecord: 6.4ms (10 queries, 1 cached) | GC: 0.0ms)
+
+
+Started GET "/ai_coach" for ::1 at 2026-09-12 14:43:00 -0500
+Processing by AiCoachController#show as HTML
+  [1m[36mUser Load (0.4ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='CoachTradingApp',controller='ai_coach'*/[0m
+  [1m[36mTrade Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='ai_coach'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:8:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (1.9ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 /*action='show',application='CoachTradingApp',controller='ai_coach'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:11:in 'Trading::CalculateStatistics#call'
+  [1m[36mTrade Load (0.5ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC LIMIT 1 /*action='show',application='CoachTradingApp',controller='ai_coach'*/[0m
+  ↳ app/controllers/ai_coach_controller.rb:4:in 'AiCoachController#show'
+  [1m[36mAiAnalysis Load (1.4ms)[0m  [1m[34mSELECT "ai_analyses".* FROM "ai_analyses" WHERE "ai_analyses"."trade_id" = 242 ORDER BY "ai_analyses"."id" DESC LIMIT 1 /*action='show',application='CoachTradingApp',controller='ai_coach'*/[0m
+  ↳ app/controllers/ai_coach_controller.rb:5:in 'AiCoachController#show'
+  [1m[36mAiConversation Load (1.1ms)[0m  [1m[34mSELECT "ai_conversations".* FROM "ai_conversations" WHERE "ai_conversations"."user_id" = 2 ORDER BY "ai_conversations"."id" DESC LIMIT 1 /*action='show',application='CoachTradingApp',controller='ai_coach'*/[0m
+  ↳ app/controllers/ai_coach_controller.rb:6:in 'AiCoachController#show'
+  Rendering layout layouts/application.html.erb
+  Rendering ai_coach/show.html.erb within layouts/application
+  [1m[36mAiMessage Load (0.5ms)[0m  [1m[34mSELECT "ai_messages".* FROM "ai_messages" WHERE "ai_messages"."ai_conversation_id" = 2 ORDER BY "ai_messages"."created_at" ASC /*action='show',application='CoachTradingApp',controller='ai_coach'*/[0m
+  ↳ app/views/ai_coach/show.html.erb:27
+  Rendered ai_coach/show.html.erb within layouts/application (Duration: 5.5ms | GC: 0.0ms)
+  [1m[36mCACHE Trade Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2[0m
+  ↳ app/views/layouts/application.html.erb:229
+  Rendered layout layouts/application.html.erb (Duration: 11.8ms | GC: 0.0ms)
+Completed 200 OK in 79ms (Views: 16.7ms | ActiveRecord: 6.1ms (8 queries, 1 cached) | GC: 0.0ms)
+
+
+Started GET "/strategies" for ::1 at 2026-09-12 14:43:02 -0500
+Processing by StrategiesController#index as HTML
+  [1m[36mUser Load (1.0ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='index',application='CoachTradingApp',controller='strategies'*/[0m
+  Rendering layout layouts/application.html.erb
+  Rendering strategies/index.html.erb within layouts/application
+  [1m[36mStrategy Load (0.4ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."user_id" = 2 /*action='index',application='CoachTradingApp',controller='strategies'*/[0m
+  ↳ app/views/strategies/index.html.erb:24
+  [1m[36mTrade Load (0.3ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 51 /*action='index',application='CoachTradingApp',controller='strategies'*/[0m
+  ↳ app/views/strategies/index.html.erb:28
+  [1m[36mTrade Load (1.6ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 52 /*action='index',application='CoachTradingApp',controller='strategies'*/[0m
+  ↳ app/views/strategies/index.html.erb:28
+  [1m[36mTrade Load (1.2ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 55 /*action='index',application='CoachTradingApp',controller='strategies'*/[0m
+  ↳ app/views/strategies/index.html.erb:28
+  [1m[36mTrade Load (0.9ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 53 /*action='index',application='CoachTradingApp',controller='strategies'*/[0m
+  ↳ app/views/strategies/index.html.erb:28
+  [1m[36mTrade Load (0.7ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."strategy_id" = 54 /*action='index',application='CoachTradingApp',controller='strategies'*/[0m
+  ↳ app/views/strategies/index.html.erb:28
+  Rendered strategies/index.html.erb within layouts/application (Duration: 67.7ms | GC: 0.0ms)
+  [1m[36mTrade Count (0.7ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='index',application='CoachTradingApp',controller='strategies'*/[0m
+  ↳ app/views/layouts/application.html.erb:229
+  Rendered layout layouts/application.html.erb (Duration: 86.2ms | GC: 0.0ms)
+Completed 200 OK in 113ms (Views: 84.8ms | ActiveRecord: 6.8ms (8 queries, 0 cached) | GC: 0.0ms)
+
+

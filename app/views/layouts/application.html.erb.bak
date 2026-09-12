@@ -1,0 +1,1 @@
+<%= File.read("d:/YOUTUBE/Antigravity/10-PROYECTOS-MARATON/CoachTrading/coachtrading_app/app/views/layouts/application.html.erb") rescue "" %>
