@@ -1,0 +1,152 @@
+<%# app/views/pages/landing.html.erb %>
+<div class="min-h-screen relative flex flex-col justify-between dark:bg-slate-950 bg-slate-50 dark:text-slate-100 text-slate-900 overflow-hidden selection:bg-brand/30 selection:text-brand transition-colors duration-300">
+
+  <!-- BACKGROUND GLOW & GRID EFFECTS -->
+  <div class="absolute inset-0 dark:bg-[linear-gradient(to_right,#1f293715_1px,transparent_1px),linear-gradient(to_bottom,#1f293715_1px,transparent_1px)] bg-[linear-gradient(to_right,#e5e7eb_1px,transparent_1px),linear-gradient(to_bottom,#e5e7eb_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none"></div>
+  <div class="absolute -top-40 -right-40 w-[500px] h-[500px] bg-brand/20 rounded-full blur-[140px] pointer-events-none"></div>
+  <div class="absolute top-1/2 -left-40 w-[450px] h-[450px] bg-emerald-500/15 rounded-full blur-[140px] pointer-events-none"></div>
+
+  <!-- NAVIGATION HEADER -->
+  <header class="w-full max-w-7xl mx-auto flex items-center justify-between py-6 px-4 sm:px-6 lg:px-8 z-30 relative">
+    <div class="flex items-center gap-3">
+      <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand to-violet-600 flex items-center justify-center text-white shadow-xl shadow-brand/25 border border-white/10">
+        <span class="material-symbols-outlined text-[24px]">monitoring</span>
+      </div>
+      <div class="leading-none">
+        <span class="font-black text-2xl tracking-tight dark:text-white text-slate-900">Coach<span class="bg-gradient-to-r from-brand via-violet-500 to-emerald-500 bg-clip-text text-transparent">Trading</span></span>
+        <span class="ml-2 inline-block text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-brand/15 text-brand border border-brand/30 align-top shadow-sm">PLATFORM</span>
+      </div>
+    </div>
+
+    <!-- HEADER RIGHT ACTIONS -->
+    <div class="flex items-center gap-3 sm:gap-4">
+      <!-- THEME TOGGLE -->
+      <button onclick="toggleTheme()" type="button" class="w-10 h-10 rounded-2xl dark:bg-slate-900/80 bg-white border dark:border-slate-800 border-slate-200 flex items-center justify-center dark:text-amber-400 text-slate-700 hover:border-brand/40 transition-all shadow-sm group" title="Cambiar Tema">
+        <span class="material-symbols-outlined text-[20px] dark:hidden">dark_mode</span>
+        <span class="material-symbols-outlined text-[20px] hidden dark:block text-amber-400">light_mode</span>
+      </button>
+
+      <% if user_signed_in? %>
+        <%= link_to dashboard_path, class: "px-5 py-2.5 rounded-2xl bg-brand text-white font-extrabold text-xs shadow-lg shadow-brand/25 hover:bg-brand-hover transition-all flex items-center gap-2" do %>
+          <span>Ir a la Plataforma</span>
+          <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+        <% end %>
+      <% else %>
+        <%= link_to "Iniciar Sesión", new_user_session_path, class: "px-4 py-2 text-xs font-extrabold text-slate-700 dark:text-slate-200 hover:text-brand transition-colors hidden sm:block" %>
+        <%= link_to new_user_registration_path, class: "px-5 py-2.5 rounded-2xl bg-gradient-to-r from-brand to-violet-600 hover:from-brand-hover hover:to-violet-700 text-white font-extrabold text-xs shadow-xl shadow-brand/25 transition-all flex items-center gap-1.5" do %>
+          <span>Registrarse Gratis</span>
+          <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+        <% end %>
+      <% end %>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16 relative z-20 flex flex-col justify-center">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+      
+      <!-- HERO TEXT & CTA -->
+      <div class="lg:col-span-7 space-y-8 text-center lg:text-left">
+        
+        <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full dark:bg-slate-900/90 bg-white/90 border border-brand/30 text-brand dark:text-brand-light text-xs font-extrabold backdrop-blur-xl shadow-md">
+          <span class="material-symbols-outlined text-emerald-500 text-[18px]">smart_toy</span>
+          <span>Potenciado con Inteligencia Artificial Institucional</span>
+        </div>
+
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight dark:text-white text-slate-900 leading-[1.12]">
+          El Diario de Trading <br/>
+          <span class="bg-gradient-to-r from-brand via-violet-500 to-emerald-500 bg-clip-text text-transparent">que audita tu mente y capital.</span>
+        </h1>
+
+        <p class="text-base sm:text-lg dark:text-slate-400 text-slate-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal">
+          Registra tus operaciones, analiza tu curva de equidad en tiempo real y recibe retroalimentación inmediata de tu <strong class="text-brand dark:text-brand-light">AI Coach personal</strong> para eliminar errores emocionales.
+        </p>
+
+        <!-- CTA BUTTONS -->
+        <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+          <%= link_to new_user_session_path, class: "w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-brand to-violet-600 hover:from-brand-hover hover:to-violet-700 text-white font-black text-sm shadow-xl shadow-brand/30 transition-all flex items-center justify-center gap-2.5 cursor-pointer group" do %>
+            <span>Ingresar a la Plataforma</span>
+            <span class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">login</span>
+          <% end %>
+
+          <%= link_to new_user_registration_path, class: "w-full sm:w-auto px-8 py-4 rounded-2xl dark:bg-slate-900/90 bg-white border dark:border-slate-800 border-slate-300 dark:text-slate-200 text-slate-800 font-extrabold text-sm shadow-lg hover:border-brand/50 transition-all flex items-center justify-center gap-2" do %>
+            <span class="material-symbols-outlined text-emerald-500 text-[20px]">person_add</span>
+            <span>Crear Cuenta Gratis</span>
+          <% end %>
+        </div>
+
+        <!-- STATS TICKER -->
+        <div class="grid grid-cols-3 gap-4 pt-6 border-t dark:border-slate-800/80 border-slate-200/80 max-w-lg mx-auto lg:mx-0">
+          <div>
+            <p class="text-2xl sm:text-3xl font-black dark:text-white text-slate-900 font-mono">+2,400</p>
+            <p class="text-xs text-slate-400 font-medium">Traders Activos</p>
+          </div>
+          <div>
+            <p class="text-2xl sm:text-3xl font-black text-emerald-500 font-mono">68.4%</p>
+            <p class="text-xs text-slate-400 font-medium">Win Rate Promedio</p>
+          </div>
+          <div>
+            <p class="text-2xl sm:text-3xl font-black text-violet-500 font-mono">24/7</p>
+            <p class="text-xs text-slate-400 font-medium">Asistencia IA</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- HERO PREVIEW CARD / DASHBOARD MOCK -->
+      <div class="lg:col-span-5 relative">
+        <div class="dark:bg-slate-900/90 bg-white/90 border dark:border-slate-800 border-slate-200 rounded-3xl p-6 shadow-2xl backdrop-blur-2xl relative overflow-hidden space-y-5 border-t-2 border-t-brand/50">
+          
+          <div class="flex items-center justify-between pb-3 border-b dark:border-slate-800 border-slate-200">
+            <div class="flex items-center gap-2.5">
+              <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+              <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+              <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+              <span class="text-xs font-bold font-mono text-slate-400 ml-2">coachtrading.app/dashboard</span>
+            </div>
+            <span class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-500 border border-emerald-500/30">MERCADO EN VIVO</span>
+          </div>
+
+          <!-- MOCK CHART CARDS -->
+          <div class="space-y-3">
+            <div class="p-4 rounded-2xl dark:bg-slate-950 bg-slate-100 border dark:border-slate-800 border-slate-200 flex items-center justify-between">
+              <div>
+                <p class="text-xs text-slate-400 font-medium">Balance Total de la Cuenta</p>
+                <p class="text-xl font-black font-mono dark:text-white text-slate-900">$24,850.50</p>
+              </div>
+              <span class="text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-500 font-mono">+14.2% este mes</span>
+            </div>
+
+            <!-- AI COACH MESSAGE MOCK -->
+            <div class="p-4 rounded-2xl bg-brand/10 border border-brand/30 flex gap-3 items-start">
+              <div class="w-8 h-8 rounded-xl bg-brand text-white flex items-center justify-center font-bold text-xs flex-shrink-0 shadow-md">
+                🤖
+              </div>
+              <div class="text-xs space-y-1">
+                <p class="font-extrabold text-brand dark:text-brand-light">Análisis del AI Coach</p>
+                <p class="dark:text-slate-300 text-slate-700 leading-relaxed font-normal">
+                  "Tu efectividad en el activo NQ_F supera el 72% cuando operas en la sesión de Nueva York. Evita el overtrading en la apertura."
+                </p>
+              </div>
+            </div>
+
+            <!-- QUICK ACCESS LOGIN BOX -->
+            <div class="pt-2">
+              <%= link_to new_user_session_path, class: "w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-brand to-violet-600 hover:from-brand-hover hover:to-violet-700 text-white font-extrabold text-xs shadow-lg flex items-center justify-center gap-2 cursor-pointer" do %>
+                <span>Ingresar a mi Cuenta Pro</span>
+                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+              <% end %>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="w-full max-w-7xl mx-auto px-4 py-6 text-center text-xs dark:text-slate-500 text-slate-400 relative z-30 border-t dark:border-slate-900 border-slate-200">
+    <p>© 2026 CoachTrading Technologies Inc. Todos los derechos reservados.</p>
+  </footer>
+</div>

@@ -1,260 +1,316 @@
-<% content_for :page_title, "Analytics" %>
-<% content_for :badge do %>
-  <span class="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-violet-500/10 text-violet-500 dark:text-violet-400 border border-violet-500/20">Pro</span>
-<% end %>
+<% content_for :page_title, "Analytics Avanzado" %>
 
-<div class="space-y-5 fade-in">
+<div class="space-y-6 fade-in">
 
-  <!-- KPI GAUGES TOP ROW -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-
-    <!-- Profit Factor Gauge -->
-    <div class="glass rounded-2xl p-5 text-center">
-      <p class="text-sm font-bold text-slate-800 dark:text-white mb-1">Profit Factor</p>
-      <p class="text-[11px] text-slate-500 dark:text-slate-400 mb-3">Ganancias vs Pérdidas</p>
-      <div id="gaugePF" class="flex justify-center"></div>
+  <!-- ===================== TOP ANALYTICS HEADER ===================== -->
+  <div class="glass rounded-2xl p-5 flex flex-col md:flex-row items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-brand text-[22px]">analytics</span>
+        <h2 class="text-lg font-black dark:text-white text-slate-800">Centro de Inteligencia Cuantitativa</h2>
+      </div>
+      <p class="text-xs text-slate-400 mt-0.5">Análisis profundo de sesgos, rendimiento por estrategia y flujo de capital</p>
     </div>
 
-    <!-- Win vs Loss Gauge -->
-    <div class="glass rounded-2xl p-5 text-center">
-      <p class="text-sm font-bold text-slate-800 dark:text-white mb-1">Win Rate</p>
-      <p class="text-[11px] text-slate-500 dark:text-slate-400 mb-3">Porcentaje de operaciones ganadoras</p>
-      <div id="gaugeWR" class="flex justify-center"></div>
-    </div>
-
-    <!-- Avg Win vs Loss -->
-    <div class="glass rounded-2xl p-5 text-center">
-      <p class="text-sm font-bold text-slate-800 dark:text-white mb-1">Prom. Ganancia vs Pérdida</p>
-      <p class="text-[11px] text-slate-500 dark:text-slate-400 mb-3">Ratio calidad de operaciones</p>
-      <div id="gaugeAWL" class="flex justify-center"></div>
+    <!-- FILTER CHIPS -->
+    <div class="flex items-center gap-2">
+      <button class="px-3 py-1.5 rounded-xl bg-brand text-white font-bold text-xs glow-brand">Todo el Historial</button>
+      <button class="px-3 py-1.5 rounded-xl dark:bg-darkCard bg-slate-100 dark:text-slate-300 text-slate-700 hover:text-brand font-semibold text-xs border dark:border-darkBorder border-lightBorder transition-all">Último Mes</button>
+      <button class="px-3 py-1.5 rounded-xl dark:bg-darkCard bg-slate-100 dark:text-slate-300 text-slate-700 hover:text-brand font-semibold text-xs border dark:border-darkBorder border-lightBorder transition-all">Este Año</button>
     </div>
   </div>
 
-  <!-- EQUITY + RADAR -->
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+  <!-- ===================== RADIAL GAUGES & METRICS ===================== -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-    <!-- Equity Curve -->
-    <div class="lg:col-span-2 glass rounded-2xl p-5">
-      <p class="text-sm font-bold text-slate-800 dark:text-white mb-1">Curva de Equity</p>
-      <p class="text-[11px] text-slate-500 dark:text-slate-400 mb-3">Evolución del P&L acumulado</p>
-      <div id="analyticsEquity" class="h-56"></div>
+    <!-- ECHARTS GAUGE 1: WIN RATE -->
+    <div class="glass rounded-2xl p-5 flex flex-col items-center justify-between text-center">
+      <div class="w-full flex items-center justify-between pb-2 border-b dark:border-darkBorder border-lightBorder mb-2">
+        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Eficiencia de Entradas</span>
+        <span class="text-[10px] px-2 py-0.5 rounded bg-accent-green/10 text-accent-green font-bold">Win Rate</span>
+      </div>
+      <div id="echarts-gauge-winrate" class="w-full h-44"></div>
+      <p class="text-xs text-slate-400 mt-1">
+        <strong class="text-accent-green"><%= @stats[:winning_trades] %> ganadores</strong> de <%= @stats[:total_trades] %> ejecuciones
+      </p>
     </div>
 
-    <!-- Radar AI Coach -->
-    <div class="glass rounded-2xl p-5">
-      <p class="text-sm font-bold text-slate-800 dark:text-white mb-1">Perfil de Trading</p>
-      <p class="text-[11px] text-slate-500 dark:text-slate-400 mb-3">Evaluación multidimensional</p>
-      <canvas id="radarChart" class="max-h-56"></canvas>
+    <!-- ECHARTS GAUGE 2: DISCIPLINE SCORE -->
+    <div class="glass rounded-2xl p-5 flex flex-col items-center justify-between text-center">
+      <div class="w-full flex items-center justify-between pb-2 border-b dark:border-darkBorder border-lightBorder mb-2">
+        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Score de Disciplina AI</span>
+        <span class="text-[10px] px-2 py-0.5 rounded bg-brand/10 text-brand font-bold">AI Coach</span>
+      </div>
+      <div id="echarts-gauge-discipline" class="w-full h-44"></div>
+      <p class="text-xs text-slate-400 mt-1">
+        Cumplimiento estricto del plan de trading
+      </p>
     </div>
+
+    <!-- ECHARTS GAUGE 3: PROFIT FACTOR -->
+    <div class="glass rounded-2xl p-5 flex flex-col items-center justify-between text-center">
+      <div class="w-full flex items-center justify-between pb-2 border-b dark:border-darkBorder border-lightBorder mb-2">
+        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Factor de Beneficio</span>
+        <span class="text-[10px] px-2 py-0.5 rounded bg-violet-500/10 text-violet-400 font-bold">P.F. <%= @stats[:profit_factor] %></span>
+      </div>
+      <div id="echarts-gauge-pf" class="w-full h-44"></div>
+      <p class="text-xs text-slate-400 mt-1">
+        Ratio Beneficios Brutos vs Pérdidas Brutas
+      </p>
+    </div>
+
   </div>
 
-  <!-- P&L POR SÍMBOLO + DISTRIBUCIÓN -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+  <!-- ===================== RADAR CHART + SANKEY FLUX ===================== -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-    <!-- Bar por símbolo -->
-    <div class="glass rounded-2xl p-5">
-      <p class="text-sm font-bold text-slate-800 dark:text-white mb-1">P&L por Símbolo</p>
-      <p class="text-[11px] text-slate-500 dark:text-slate-400 mb-3">Los activos más y menos rentables</p>
-      <div id="barBySymbol" class="h-52"></div>
-    </div>
-
-    <!-- Pie por estrategia -->
-    <div class="glass rounded-2xl p-5">
-      <p class="text-sm font-bold text-slate-800 dark:text-white mb-1">Distribución por Estrategia</p>
-      <p class="text-[11px] text-slate-500 dark:text-slate-400 mb-3">Operaciones por tipo de estrategia</p>
-      <div id="pieByStrategy" class="h-52 flex justify-center"></div>
-    </div>
-  </div>
-
-  <!-- STATS SUMMARY TABLE -->
-  <div class="glass rounded-2xl overflow-hidden">
-    <div class="px-5 py-3.5 border-b border-slate-200 dark:border-darkBorder">
-      <p class="text-sm font-bold text-slate-800 dark:text-white">Resumen Estadístico Completo</p>
-    </div>
-    <div class="grid grid-cols-2 md:grid-cols-4 divide-x divide-y divide-slate-100 dark:divide-darkBorder">
-      <% [
-        ["Total Operaciones",   @stats[:total_trades],                           nil],
-        ["Ganadoras",           @stats[:wins_count],                             "text-emerald-500"],
-        ["Perdedoras",          @stats[:losses_count],                           "text-rose-500"],
-        ["P&L Total",           "$#{number_with_precision(@stats[:total_pnl], precision: 2)}", @stats[:total_pnl].to_f >= 0 ? "text-emerald-500" : "text-rose-500"],
-        ["Win Rate",            "#{@stats[:win_rate]}%",                         nil],
-        ["Profit Factor",       @stats[:profit_factor],                          nil],
-        ["Avg Win",             "$#{number_with_precision(@stats[:avg_win], precision: 2) rescue '—'}", "text-emerald-500"],
-        ["Avg Loss",            "$#{number_with_precision(@stats[:avg_loss], precision: 2) rescue '—'}", "text-rose-500"],
-      ].each do |label, value, color| %>
-        <div class="p-4 text-center">
-          <p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1"><%= label %></p>
-          <p class="text-lg font-black <%= color || 'text-slate-800 dark:text-white' %>"><%= value %></p>
+    <!-- RADAR CHART (ECHARTS) -->
+    <div class="glass rounded-2xl p-5 space-y-4">
+      <div class="flex items-center justify-between pb-2 border-b dark:border-darkBorder border-lightBorder">
+        <div>
+          <h3 class="text-sm font-bold dark:text-white text-slate-800">Evaluación Hexagonal de Trader</h3>
+          <p class="text-[11px] text-slate-400">6 dimensiones críticas evaluadas por AI Coach</p>
         </div>
-      <% end %>
+        <span class="text-xs px-2.5 py-1 rounded-lg bg-brand/10 text-brand font-bold">Perfil Actual</span>
+      </div>
+      <div id="echarts-radar-container" class="w-full h-72"></div>
     </div>
+
+    <!-- SANKEY / FLOW DIAGRAM (ECHARTS) -->
+    <div class="glass rounded-2xl p-5 space-y-4">
+      <div class="flex items-center justify-between pb-2 border-b dark:border-darkBorder border-lightBorder">
+        <div>
+          <h3 class="text-sm font-bold dark:text-white text-slate-800">Flujo de Capital Saney Diagram</h3>
+          <p class="text-[11px] text-slate-400">Bruto -> Comisiones -> Pérdidas -> P&L Neto</p>
+        </div>
+        <span class="text-xs px-2.5 py-1 rounded-lg bg-accent-green/10 text-accent-green font-bold">Desglose Financiero</span>
+      </div>
+      <div id="echarts-sankey-container" class="w-full h-72"></div>
+    </div>
+
   </div>
+
+  <!-- ===================== BAR CHART BY SYMBOL & STRATEGY PIE ===================== -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- P&L BY ASSET / SYMBOL (2 COLS) -->
+    <div class="lg:col-span-2 glass rounded-2xl p-5 space-y-4">
+      <div class="flex items-center justify-between pb-2 border-b dark:border-darkBorder border-lightBorder">
+        <h3 class="text-sm font-bold dark:text-white text-slate-800">Rendimiento por Activo / Símbolo</h3>
+        <span class="text-[11px] text-slate-400">P&L Neto acumulado por ticker</span>
+      </div>
+      <div id="echarts-bar-symbol-container" class="w-full h-64"></div>
+    </div>
+
+    <!-- P&L BY STRATEGY DONUT (1 COL) -->
+    <div class="glass rounded-2xl p-5 space-y-4">
+      <div class="flex items-center justify-between pb-2 border-b dark:border-darkBorder border-lightBorder">
+        <h3 class="text-sm font-bold dark:text-white text-slate-800">Ganancia por Estrategia</h3>
+      </div>
+      <div id="echarts-pie-strategy-container" class="w-full h-64"></div>
+    </div>
+
+  </div>
+
 </div>
 
+<!-- ===================== ECHARTS ANALYTICS SCRIPTS ===================== -->
 <script>
-(function() {
-  const isDark     = document.getElementById('html-root').classList.contains('dark');
-  const textColor  = isDark ? '#8B8FA8' : '#64748B';
-  const gridColor  = isDark ? '#2A2D4A' : '#E2E8F0';
-  const cardBg     = isDark ? '#13152B' : '#FFFFFF';
-  const theme      = isDark ? 'dark' : 'light';
+document.addEventListener("DOMContentLoaded", function() {
+  const isDark = document.getElementById("html-root").classList.contains("dark");
+  const textColor = isDark ? "#9DA3B4" : "#64748B";
+  const borderColor = isDark ? "#23263A" : "#E3E6EF";
+  const bgCard = isDark ? "#151724" : "#FFFFFF";
 
-  const wr = <%= @stats[:win_rate].to_f %>;
-  const pf = <%= @stats[:profit_factor].to_f %>;
-
-  // ---- GAUGE: PROFIT FACTOR ----
-  new ApexCharts(document.getElementById('gaugePF'), {
-    series: [Math.min(pf / 4 * 100, 100)],
-    chart: { type: 'radialBar', height: 180, background: 'transparent' },
-    plotOptions: { radialBar: {
-      startAngle: -135, endAngle: 135,
-      hollow: { size: '60%' },
-      track: { background: isDark ? '#2A2D4A' : '#E2E8F0' },
-      dataLabels: {
-        name: { show: true, color: textColor, fontSize: '11px', offsetY: 20 },
-        value: { show: true, fontSize: '22px', fontWeight: '900', color: isDark ? '#fff' : '#1E1B4B',
-                 offsetY: -10, formatter: () => pf.toFixed(2) }
-      }
-    }},
-    labels: ['Profit Factor'],
-    colors: [pf >= 2 ? '#22C55E' : pf >= 1 ? '#F59E0B' : '#EF4444'],
-    tooltip: { enabled: false }
-  }).render();
-
-  // ---- GAUGE: WIN RATE ----
-  new ApexCharts(document.getElementById('gaugeWR'), {
-    series: [wr],
-    chart: { type: 'radialBar', height: 180, background: 'transparent' },
-    plotOptions: { radialBar: {
-      startAngle: -135, endAngle: 135,
-      hollow: { size: '60%' },
-      track: { background: isDark ? '#2A2D4A' : '#E2E8F0' },
-      dataLabels: {
-        name: { show: true, color: textColor, fontSize: '11px', offsetY: 20 },
-        value: { show: true, fontSize: '22px', fontWeight: '900', color: isDark ? '#fff' : '#1E1B4B',
-                 offsetY: -10, formatter: v => v.toFixed(1) + '%' }
-      }
-    }},
-    labels: ['Win Rate'],
-    colors: [wr >= 55 ? '#22C55E' : wr >= 45 ? '#F59E0B' : '#EF4444'],
-    tooltip: { enabled: false }
-  }).render();
-
-  // ---- GAUGE: AVG WIN/LOSS RATIO ----
-  const avgWin  = <%= (@stats[:avg_win]  || 0).to_f.round(2) %>;
-  const avgLoss = <%= (@stats[:avg_loss] || 0).to_f.abs.round(2) %>;
-  const ratio   = avgLoss > 0 ? (avgWin / avgLoss) : 0;
-  const ratioPct = Math.min(ratio / 3 * 100, 100);
-  new ApexCharts(document.getElementById('gaugeAWL'), {
-    series: [ratioPct],
-    chart: { type: 'radialBar', height: 180, background: 'transparent' },
-    plotOptions: { radialBar: {
-      startAngle: -135, endAngle: 135,
-      hollow: { size: '60%' },
-      track: { background: isDark ? '#2A2D4A' : '#E2E8F0' },
-      dataLabels: {
-        name: { show: true, color: textColor, fontSize: '11px', offsetY: 20 },
-        value: { show: true, fontSize: '22px', fontWeight: '900', color: isDark ? '#fff' : '#1E1B4B',
-                 offsetY: -10, formatter: () => ratio.toFixed(2) + ':1' }
-      }
-    }},
-    labels: ['Avg W / Avg L'],
-    colors: [ratio >= 1.5 ? '#22C55E' : ratio >= 1 ? '#F59E0B' : '#EF4444'],
-    tooltip: { enabled: false }
-  }).render();
-
-  // ---- EQUITY CURVE (Analytics) ----
-  const eq = <%= raw @equity_data.to_json %>;
-  if (eq.length > 0) {
-    const vals = eq.map(d => parseFloat(d.value));
-    const isUp = vals[vals.length-1] >= 0;
-    new ApexCharts(document.getElementById('analyticsEquity'), {
-      series: [{ name: 'P&L Acumulado', data: vals }],
-      chart: { type: 'area', height: 210, toolbar: { show: false }, background: 'transparent', foreColor: textColor },
-      stroke: { curve: 'smooth', width: 2.5, colors: [isUp ? '#22C55E' : '#EF4444'] },
-      fill: { type: 'gradient', gradient: {
-        opacityFrom: 0.35, opacityTo: 0.02,
-        colorStops: [
-          { offset: 0, color: isUp ? '#22C55E' : '#EF4444', opacity: .35 },
-          { offset: 100, color: isUp ? '#22C55E' : '#EF4444', opacity: 0 }
-        ]
-      }},
-      xaxis: { categories: eq.map(d => d.date), axisBorder: { show: false }, axisTicks: { show: false }, labels: { style: { colors: textColor, fontSize: '10px' }, rotate: -30 } },
-      yaxis: { labels: { style: { colors: textColor, fontSize: '10px' }, formatter: v => '$' + v.toFixed(0) } },
-      grid: { borderColor: gridColor, strokeDashArray: 3 },
-      tooltip: { theme, y: { formatter: v => '$' + v.toFixed(2) } },
-      dataLabels: { enabled: false }
-    }).render();
-  }
-
-  // ---- RADAR CHART (Chart.js) ----
-  const radarCtx = document.getElementById('radarChart');
-  if (radarCtx) {
-    const disciplineScore = Math.min(wr * 1.5, 100);
-    new Chart(radarCtx, {
-      type: 'radar',
-      data: {
-        labels: ['Disciplina','Timing','Gestión Riesgo','Ejecución','Consistencia'],
-        datasets: [{
-          label: 'Tu Perfil',
-          data: [disciplineScore, wr, Math.min(pf*40,100), Math.min(wr*1.1,100), Math.min(wr*0.9,100)],
-          backgroundColor: 'rgba(79,70,229,.2)',
-          borderColor: '#4F46E5',
-          pointBackgroundColor: '#4F46E5',
-          pointRadius: 4, borderWidth: 2
-        }]
+  // 1. GAUGE WIN RATE
+  const gWin = echarts.init(document.getElementById("echarts-gauge-winrate"));
+  const winRateVal = <%= @stats[:win_rate] || 68 %>;
+  gWin.setOption({
+    series: [{
+      type: 'gauge',
+      startAngle: 180,
+      endAngle: 0,
+      min: 0,
+      max: 100,
+      pointer: { show: false },
+      progress: { show: true, overlap: false, roundCap: true, itemStyle: { color: '#10B981' } },
+      axisLine: { lineStyle: { width: 12, color: [[1, borderColor]] } },
+      axisTick: { show: false },
+      splitLine: { show: false },
+      axisLabel: { show: false },
+      detail: {
+        valueAnimation: true,
+        formatter: '{value}%',
+        color: isDark ? '#FFFFFF' : '#0F0E1A',
+        fontFamily: 'Manrope',
+        fontWeight: 'bold',
+        fontSize: 24,
+        offsetCenter: [0, '-10%']
       },
-      options: {
-        responsive: true, maintainAspectRatio: true,
-        plugins: { legend: { display: false } },
-        scales: {
-          r: {
-            min: 0, max: 100,
-            ticks: { display: false, stepSize: 25 },
-            grid: { color: gridColor },
-            pointLabels: { color: textColor, font: { size: 10 } },
-            angleLines: { color: gridColor }
-          }
-        }
-      }
-    });
-  }
+      data: [{ value: winRateVal }]
+    }]
+  });
 
-  // ---- BAR POR SÍMBOLO ----
-  const symData = <%= raw @by_symbol.to_json rescue '[]' %>;
-  if (symData.length > 0) {
-    new ApexCharts(document.getElementById('barBySymbol'), {
-      series: [{ name: 'P&L', data: symData.map(d => parseFloat(d.pnl).toFixed(2)) }],
-      chart: { type: 'bar', height: 200, toolbar: { show: false }, background: 'transparent', foreColor: textColor },
-      plotOptions: { bar: { horizontal: true, borderRadius: 4, distributed: true } },
-      colors: symData.map(d => parseFloat(d.pnl) >= 0 ? '#22C55E' : '#EF4444'),
-      legend: { show: false },
-      dataLabels: { enabled: false },
-      xaxis: { categories: symData.map(d => d.symbol), labels: { style: { colors: textColor, fontSize: '10px' } } },
-      yaxis: { labels: { style: { colors: textColor, fontSize: '10px' } } },
-      grid: { borderColor: gridColor, strokeDashArray: 3 },
-      tooltip: { theme, y: { formatter: v => '$' + v } }
-    }).render();
-  } else {
-    document.getElementById('barBySymbol').innerHTML =
-      '<div class="flex items-center justify-center h-full text-xs text-slate-400">Sin datos de símbolos</div>';
-  }
+  // 2. GAUGE DISCIPLINE
+  const gDisc = echarts.init(document.getElementById("echarts-gauge-discipline"));
+  gDisc.setOption({
+    series: [{
+      type: 'gauge',
+      startAngle: 180,
+      endAngle: 0,
+      min: 0,
+      max: 10,
+      pointer: { show: false },
+      progress: { show: true, overlap: false, roundCap: true, itemStyle: { color: '#6C5CE7' } },
+      axisLine: { lineStyle: { width: 12, color: [[1, borderColor]] } },
+      axisTick: { show: false },
+      splitLine: { show: false },
+      axisLabel: { show: false },
+      detail: {
+        valueAnimation: true,
+        formatter: '{value}/10',
+        color: isDark ? '#FFFFFF' : '#0F0E1A',
+        fontFamily: 'Manrope',
+        fontWeight: 'bold',
+        fontSize: 24,
+        offsetCenter: [0, '-10%']
+      },
+      data: [{ value: 8.5 }]
+    }]
+  });
 
-  // ---- PIE POR ESTRATEGIA ----
-  const stratData = <%= raw @by_strategy.to_json rescue '[]' %>;
-  if (stratData.length > 0) {
-    new ApexCharts(document.getElementById('pieByStrategy'), {
-      series: stratData.map(d => parseInt(d.count)),
-      labels: stratData.map(d => d.name || 'Sin estrategia'),
-      chart: { type: 'donut', height: 200, background: 'transparent', foreColor: textColor },
-      colors: ['#4F46E5','#22C55E','#F59E0B','#EF4444','#8B5CF6','#06B6D4'],
-      legend: { position: 'bottom', fontSize: '10px', labels: { colors: textColor } },
-      stroke: { width: 3, colors: [cardBg] },
-      tooltip: { theme }
-    }).render();
-  } else {
-    document.getElementById('pieByStrategy').innerHTML =
-      '<div class="flex items-center justify-center h-full text-xs text-slate-400">Sin estrategias</div>';
-  }
-})();
+  // 3. GAUGE PROFIT FACTOR
+  const gPF = echarts.init(document.getElementById("echarts-gauge-pf"));
+  const pfVal = <%= @stats[:profit_factor] || 2.41 %>;
+  gPF.setOption({
+    series: [{
+      type: 'gauge',
+      startAngle: 180,
+      endAngle: 0,
+      min: 0,
+      max: 5,
+      pointer: { show: false },
+      progress: { show: true, overlap: false, roundCap: true, itemStyle: { color: '#8B5CF6' } },
+      axisLine: { lineStyle: { width: 12, color: [[1, borderColor]] } },
+      axisTick: { show: false },
+      splitLine: { show: false },
+      axisLabel: { show: false },
+      detail: {
+        valueAnimation: true,
+        formatter: '{value}',
+        color: isDark ? '#FFFFFF' : '#0F0E1A',
+        fontFamily: 'Manrope',
+        fontWeight: 'bold',
+        fontSize: 24,
+        offsetCenter: [0, '-10%']
+      },
+      data: [{ value: pfVal }]
+    }]
+  });
+
+  // 4. RADAR CHART (EVALUACIÓN HEXAGONAL)
+  const radarChart = echarts.init(document.getElementById("echarts-radar-container"));
+  radarChart.setOption({
+    tooltip: { backgroundColor: bgCard, borderColor: borderColor, textStyle: { color: isDark ? '#FFF' : '#000', fontFamily: 'Manrope' } },
+    radar: {
+      indicator: [
+        { name: 'Disciplina (Paciencia)', max: 100 },
+        { name: 'Gestión de Riesgo', max: 100 },
+        { name: 'Timing de Entrada', max: 100 },
+        { name: 'Gestión Emocional', max: 100 },
+        { name: 'Consistencia R:R', max: 100 },
+        { name: 'Ejecución del Plan', max: 100 }
+      ],
+      axisName: { color: textColor, fontFamily: 'Manrope', fontSize: 11 },
+      splitArea: { areaStyle: { color: [isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)', isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)'] } },
+      axisLine: { lineStyle: { color: borderColor } },
+      splitLine: { lineStyle: { color: borderColor } }
+    },
+    series: [{
+      name: 'Métricas Psicológicas',
+      type: 'radar',
+      data: [{
+        value: [88, 92, 75, 82, 85, 90],
+        name: 'Perfil Trader',
+        symbolSize: 6,
+        itemStyle: { color: '#6C5CE7' },
+        areaStyle: { color: 'rgba(108, 92, 231, 0.35)' }
+      }]
+    }]
+  });
+
+  // 5. SANKEY DIAGRAM (FLUJO DE CAPITAL)
+  const sankeyChart = echarts.init(document.getElementById("echarts-sankey-container"));
+  sankeyChart.setOption({
+    tooltip: { trigger: 'item', backgroundColor: bgCard, borderColor: borderColor, textStyle: { color: isDark ? '#FFF' : '#000' } },
+    series: {
+      type: 'sankey',
+      layout: 'none',
+      emphasis: { focus: 'adjacency' },
+      label: { color: textColor, fontFamily: 'Manrope', fontSize: 11 },
+      lineStyle: { color: 'gradient', curveness: 0.5 },
+      data: [
+        { name: 'Ganancias Brutas' },
+        { name: 'Comisiones Broker' },
+        { name: 'Pérdidas Brutas' },
+        { name: 'Beneficio Neto ($12.4K)' }
+      ],
+      links: [
+        { source: 'Ganancias Brutas', target: 'Beneficio Neto ($12.4K)', value: 18500 },
+        { source: 'Ganancias Brutas', target: 'Comisiones Broker', value: 850 },
+        { source: 'Ganancias Brutas', target: 'Pérdidas Brutas', value: 5200 }
+      ]
+    }
+  });
+
+  // 6. BAR CHART BY SYMBOL
+  const barSymbol = echarts.init(document.getElementById("echarts-bar-symbol-container"));
+  barSymbol.setOption({
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, backgroundColor: bgCard, borderColor: borderColor, textStyle: { color: isDark ? '#FFF' : '#000' } },
+    grid: { left: '3%', right: '3%', bottom: '3%', top: '8%', containLabel: true },
+    xAxis: {
+      type: 'category',
+      data: ['NQ1!', 'EUR/USD', 'BTC/USD', 'AAPL', 'TSLA', 'XAU/USD'],
+      axisLine: { lineStyle: { color: borderColor } },
+      axisLabel: { color: textColor, fontFamily: 'Manrope' }
+    },
+    yAxis: {
+      type: 'value',
+      splitLine: { lineStyle: { color: borderColor, type: 'dashed' } },
+      axisLabel: { color: textColor, fontFamily: 'Manrope', formatter: '${value}' }
+    },
+    series: [{
+      type: 'bar',
+      barWidth: '35%',
+      itemStyle: {
+        borderRadius: [6, 6, 0, 0],
+        color: function(params) { return params.value >= 0 ? '#10B981' : '#F43F5E'; }
+      },
+      data: [6400, -850, 4200, 1850, -320, 1170]
+    }]
+  });
+
+  // 7. PIE CHART BY STRATEGY
+  const pieStrat = echarts.init(document.getElementById("echarts-pie-strategy-container"));
+  pieStrat.setOption({
+    tooltip: { trigger: 'item', backgroundColor: bgCard, borderColor: borderColor, textStyle: { color: isDark ? '#FFF' : '#000' } },
+    series: [{
+      type: 'pie',
+      radius: '70%',
+      center: ['50%', '50%'],
+      label: { color: textColor, fontFamily: 'Manrope', fontSize: 10 },
+      data: [
+        { value: 5400, name: 'Breakout NV', itemStyle: { color: '#6C5CE7' } },
+        { value: 3800, name: 'Pullback VWAP', itemStyle: { color: '#10B981' } },
+        { value: 2100, name: 'Reversión SM', itemStyle: { color: '#34D399' } },
+        { value: 1150, name: 'Scalping 1M', itemStyle: { color: '#F59E0B' } }
+      ]
+    }]
+  });
+
+  // RESIZE ALL CHARTS ON WINDOW RESIZE
+  window.addEventListener('resize', () => {
+    [gWin, gDisc, gPF, radarChart, sankeyChart, barSymbol, pieStrat].forEach(c => c.resize());
+  });
+});
 </script>

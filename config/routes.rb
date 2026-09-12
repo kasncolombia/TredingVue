@@ -1,11 +1,15 @@
 Rails.application.routes.draw do
-  root "dashboard#index"
+  root "pages#landing"
 
   devise_for :users, path: "cuenta", path_names: {
     sign_in: "ingresar",
     sign_out: "salir",
     sign_up: "registro"
   }
+
+  devise_scope :user do
+    get "cuenta/salir", to: "devise/sessions#destroy"
+  end
 
   resources :trades do
     collection do

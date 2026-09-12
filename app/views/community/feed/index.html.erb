@@ -1,59 +1,70 @@
-<% content_for :page_title, "Community" %>
+<% content_for :page_title, "Comunidad de Traders" %>
 
-<div class="fade-in">
+<div class="space-y-6 fade-in">
   <!-- HEADER -->
-  <div class="flex items-center justify-between mb-6">
+  <div class="glass rounded-3xl p-5 flex items-center justify-between border dark:border-darkBorder border-lightBorder">
     <div>
-      <h1 class="text-xl font-black text-slate-800 dark:text-white">🌐 Community</h1>
-      <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Feed, trading insights y más</p>
+      <div class="flex items-center gap-2.5">
+        <span class="material-symbols-outlined text-brand text-[24px]">forum</span>
+        <h1 class="text-xl font-black dark:text-white text-slate-800">Comunidad CoachTrading</h1>
+      </div>
+      <p class="text-xs text-slate-400 mt-0.5 font-medium">Feed social, trades compartidos y lecciones de mercado en vivo</p>
     </div>
-    <%= link_to new_community_feed_path, class: "px-4 py-2 text-xs font-bold bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-xl shadow-lg shadow-indigo-500/30 transition-all flex items-center gap-1.5 animate-float" do %>
-      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-      Nuevo Post
+    <%= link_to new_community_feed_path, class: "px-4 py-2.5 text-xs font-extrabold bg-brand hover:bg-brand-hover text-white rounded-2xl glow-brand transition-all flex items-center gap-1.5 shadow-md shadow-brand/20" do %>
+      <span class="material-symbols-outlined text-[18px]">add</span>
+      <span>Nuevo Post</span>
     <% end %>
   </div>
 
   <!-- NAV TABS -->
-  <div class="flex gap-1 mb-5 glass rounded-xl p-1">
-    <%= link_to community_feed_index_path, class: "px-3 py-2 text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-darkCard rounded-lg transition-all" do %>
-      <svg class="w-3.5 h-3.5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-      Feed
+  <div class="flex flex-wrap gap-2 glass rounded-2xl p-2 border dark:border-darkBorder border-lightBorder">
+    <%= link_to community_feed_index_path, class: "px-4 py-2 text-xs font-extrabold text-white bg-brand rounded-xl shadow-md transition-all flex items-center gap-2" do %>
+      <span class="material-symbols-outlined text-[17px]">feed</span>
+      <span>Feed</span>
     <% end %>
-    <%= link_to community_trade_shares_path, class: "px-3 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg hover:bg-indigo-50 dark:hover:bg-darkCard transition-all" do %>
-      📊 Trades Compartidos
+    <%= link_to community_trade_shares_path, class: "px-4 py-2 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-brand rounded-xl hover:bg-brand/10 transition-all flex items-center gap-2" do %>
+      <span class="material-symbols-outlined text-[17px]">share</span>
+      <span>Trades Compartidos</span>
     <% end %>
-    <%= link_to community_leaderboards_path, class: "px-3 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg hover:bg-indigo-50 dark:hover:bg-darkCard transition-all" do %>
-      🏆 Leaderboard
+    <%= link_to community_leaderboards_path, class: "px-4 py-2 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-brand rounded-xl hover:bg-brand/10 transition-all flex items-center gap-2" do %>
+      <span class="material-symbols-outlined text-[17px]">emoji_events</span>
+      <span>Leaderboard</span>
     <% end %>
-    <%= link_to community_chat_rooms_path, class: "px-3 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg hover:bg-indigo-50 dark:hover:bg-darkCard transition-all" do %>
-      💬 Chat
+    <%= link_to community_chat_rooms_path, class: "px-4 py-2 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-brand rounded-xl hover:bg-brand/10 transition-all flex items-center gap-2" do %>
+      <span class="material-symbols-outlined text-[17px]">chat</span>
+      <span>Salas de Chat</span>
     <% end %>
-    <%= link_to community_classrooms_path, class: "px-3 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg hover:bg-indigo-50 dark:hover:bg-darkCard transition-all" do %>
-      📚 Classroom
+    <%= link_to community_classrooms_path, class: "px-4 py-2 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-brand rounded-xl hover:bg-brand/10 transition-all flex items-center gap-2" do %>
+      <span class="material-symbols-outlined text-[17px]">school</span>
+      <span>Aulas</span>
     <% end %>
-    <%= link_to community_resources_path, class: "px-3 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg hover:bg-indigo-50 dark:hover:bg-darkCard transition-all" do %>
-      📦 Resources
+    <%= link_to community_resources_path, class: "px-4 py-2 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-brand rounded-xl hover:bg-brand/10 transition-all flex items-center gap-2" do %>
+      <span class="material-symbols-outlined text-[17px]">folder</span>
+      <span>Recursos</span>
     <% end %>
   </div>
 
   <!-- FEED POSTS -->
-  <div class="space-y-4">
+  <div class="space-y-5">
     <!-- NEW POST FORM -->
-    <div class="glass rounded-2xl p-4">
+    <div class="glass rounded-3xl p-6 space-y-4 border dark:border-darkBorder border-lightBorder">
       <%= form_with model: @new_post, url: community_feed_index_path, method: :post, local: true do |f| %>
-        <div class="flex gap-3">
-          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+        <div class="flex gap-4">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand to-violet-600 text-white font-extrabold text-sm flex items-center justify-center flex-shrink-0 shadow-md">
             <%= current_user.name&.first&.upcase %>
           </div>
-          <div class="flex-1">
-            <%= f.text_area :content, rows: 3, placeholder: "¿Qué estás pensando sobre trading hoy? Comparte tu experiencia...", class: "input-field w-full px-4 py-3 rounded-xl text-sm transition-all focus:outline-none" %>
-            <div class="flex items-center justify-between mt-2">
-              <select name="post[visibility]" class="input-field text-xs px-3 py-1.5 rounded-lg">
-                <option value="public">🌐 Público</option>
-                <option value="friends">👥 Solo seguidores</option>
-                <option value="private">🔒 Solo yo</option>
+          <div class="flex-1 space-y-3">
+            <%= f.text_area :content, rows: 3, placeholder: "¿Qué setup u observación sobre el mercado quieres compartir hoy con la comunidad?", class: "input-field w-full px-4 py-3 rounded-2xl text-xs focus:outline-none transition-all dark:bg-darkInput/80 bg-slate-50 border dark:border-darkBorder border-slate-300" %>
+            <div class="flex items-center justify-between">
+              <select name="post[visibility]" class="input-field text-xs px-3.5 py-2 rounded-xl dark:bg-darkInput bg-slate-50 border dark:border-darkBorder border-slate-300">
+                <option value="public">Público para la Comunidad</option>
+                <option value="friends">Solo seguidores</option>
+                <option value="private">Privado</option>
               </select>
-              <%= f.submit "Publicar", class: "px-4 py-1.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-indigo-500/30 transition-all cursor-pointer" %>
+              <%= f.button type: :submit, class: "px-5 py-2.5 bg-brand hover:bg-brand-hover text-white font-extrabold text-xs rounded-xl glow-brand transition-all cursor-pointer flex items-center gap-1.5 shadow-md" do %>
+                <span>Publicar</span>
+                <span class="material-symbols-outlined text-[17px]">send</span>
+              <% end %>
             </div>
           </div>
         </div>
@@ -61,23 +72,16 @@
     </div>
 
     <!-- POSTS LIST -->
-    <% @posts.each do |post| %>
-      <%= render "community/post_card", post: post %>
+    <% if @posts.present? %>
+      <% @posts.each do |post| %>
+        <%= render "community/post_card", post: post %>
+      <% end %>
+    <% else %>
+      <div class="glass rounded-3xl p-12 text-center text-slate-400 space-y-3 border dark:border-darkBorder border-lightBorder">
+        <span class="material-symbols-outlined text-brand text-[44px]">forum</span>
+        <p class="text-base font-extrabold dark:text-white text-slate-800">Aún no hay publicaciones en el feed</p>
+        <p class="text-xs max-w-md mx-auto">¡Sé el primero en compartir un análisis, gráfico o reflexión de tu sesión de trading!</p>
+      </div>
     <% end %>
   </div>
 </div>
-
-<% content_for :scripts do %>
-<script>
-  function toggleLike(postId) {
-    const btn = document.getElementById('like-btn-' + postId);
-    if (!btn) return;
-    fetch(`/community/feed/${postId}/react`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': document.querySelector("meta[name=csrf-token]").content }
-    }).then(r => r.json()).then(data => {
-      btn.innerHTML = data.reaction + ' ' + data.count;
-    });
-  }
-</script>
-<% end %>

@@ -1,132 +1,233 @@
 <%# app/views/devise/registrations/new.html.erb %>
-<div class="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden">
+<div class="min-h-screen relative flex flex-col justify-between py-6 px-4 sm:px-6 lg:px-8 dark:bg-slate-950 bg-slate-50 dark:text-slate-100 text-slate-900 overflow-hidden selection:bg-brand/30 selection:text-brand transition-colors duration-300">
 
-  <!-- BG GRADIENT ORBS -->
-  <div class="absolute inset-0 pointer-events-none overflow-hidden">
-    <div class="absolute -top-40 -right-40 w-96 h-96 bg-violet-600/20 dark:bg-violet-600/10 rounded-full blur-3xl"></div>
-    <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-indigo-600/20 dark:bg-indigo-600/10 rounded-full blur-3xl"></div>
-  </div>
+  <!-- BACKGROUND GLOW EFFECTS & GRID -->
+  <div class="absolute inset-0 dark:bg-[linear-gradient(to_right,#1f293715_1px,transparent_1px),linear-gradient(to_bottom,#1f293715_1px,transparent_1px)] bg-[linear-gradient(to_right,#e5e7eb_1px,transparent_1px),linear-gradient(to_bottom,#e5e7eb_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none"></div>
+  <div class="absolute -top-40 -right-40 w-96 h-96 bg-brand/20 rounded-full blur-[128px] pointer-events-none"></div>
+  <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-emerald-500/15 rounded-full blur-[128px] pointer-events-none"></div>
 
-  <div class="w-full max-w-md relative fade-in">
-
-    <!-- LOGO + TITULO -->
-    <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 shadow-2xl shadow-indigo-500/40 mb-4">
-        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-        </svg>
+  <!-- TOP BAR / LOGO & STATUS -->
+  <header class="w-full max-w-7xl mx-auto flex items-center justify-between py-4 px-2 z-30 relative">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand to-violet-600 flex items-center justify-center text-white shadow-lg shadow-brand/25 border border-white/10">
+        <span class="material-symbols-outlined text-[22px]">monitoring</span>
       </div>
-      <h1 class="text-2xl font-black text-slate-800 dark:text-white tracking-tight">Crea tu cuenta</h1>
-      <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Empieza a mejorar tu trading hoy — gratis</p>
+      <div class="leading-none">
+        <span class="font-black text-2xl tracking-tight dark:text-white text-slate-900">Coach<span class="bg-gradient-to-r from-brand via-violet-500 to-emerald-500 bg-clip-text text-transparent">Trading</span></span>
+        <span class="ml-2 inline-block text-[10px] font-extrabold uppercase tracking-widest px-2 py-0.5 rounded-full bg-brand/15 text-brand dark:text-brand-light border border-brand/30 align-top shadow-sm">PRO v2.5</span>
+      </div>
     </div>
 
-    <!-- CARD -->
-    <div class="glass rounded-2xl p-8 shadow-2xl shadow-indigo-500/10">
+    <div class="flex items-center gap-3 sm:gap-4">
+      <!-- THEME TOGGLE BUTTON -->
+      <button onclick="toggleTheme()" type="button" class="w-10 h-10 rounded-2xl dark:bg-slate-900/80 bg-white border dark:border-slate-800 border-slate-200 flex items-center justify-center dark:text-amber-400 text-slate-700 hover:border-brand/40 transition-all shadow-sm group" title="Cambiar Tema (Claro / Oscuro)">
+        <span class="material-symbols-outlined text-[20px] dark:hidden">dark_mode</span>
+        <span class="material-symbols-outlined text-[20px] hidden dark:block text-amber-400">light_mode</span>
+      </button>
 
-      <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "space-y-4" }) do |f| %>
+      <p class="text-xs dark:text-slate-400 text-slate-500 hidden sm:block font-medium">
+        ¿Ya eres miembro?
+        <%= link_to "Iniciar Sesión", new_session_path(resource_name), class: "text-brand font-bold hover:underline ml-1" %>
+      </p>
+    </div>
+  </header>
 
-        <!-- NOMBRE -->
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Nombre completo</label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-              </svg>
-            </div>
-            <%= f.text_field :name, autofocus: true,
-                placeholder: "Tu nombre",
-                class: "input-field w-full pl-10 pr-4 py-3 rounded-xl text-sm transition-all focus:outline-none" %>
+  <!-- MAIN SPLIT CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto my-auto py-8 flex items-center justify-center relative z-20">
+    <div class="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
+
+      <!-- LEFT COLUMN: HERO SHOWCASE -->
+      <div class="hidden lg:flex lg:col-span-6 xl:col-span-7 flex-col justify-center space-y-7 pr-2">
+
+        <div class="inline-flex items-center gap-2.5 self-start px-4 py-2 rounded-full dark:bg-slate-900/90 bg-white/90 border border-brand/30 text-brand dark:text-brand-light text-xs font-semibold backdrop-blur-xl shadow-md">
+          <span class="material-symbols-outlined text-emerald-500 text-[18px]">stars</span>
+          <span>Prueba 100% Gratuita — Sin tarjeta de crédito</span>
+        </div>
+
+        <div class="space-y-3">
+          <h1 class="text-4xl xl:text-5xl font-black tracking-tight dark:text-white text-slate-900 leading-[1.15]">
+            Toma el control de tu <br/>
+            <span class="bg-gradient-to-r from-brand via-violet-500 to-emerald-500 bg-clip-text text-transparent">psicología y rentabilidad</span>.
+          </h1>
+          <p class="text-base dark:text-slate-400 text-slate-600 max-w-xl leading-relaxed font-normal">
+            Únete a más de 2,400 traders profesionales que auditan su disciplina diaria con analítica institucional y acompañamiento de IA en tiempo real.
+          </p>
+        </div>
+
+        <!-- STATS CARDS -->
+        <div class="grid grid-cols-3 gap-4 my-2">
+          <div class="p-4.5 rounded-2xl dark:bg-slate-900/80 bg-white/90 border dark:border-slate-800 border-slate-200 shadow-xl backdrop-blur-xl hover:border-brand/40 transition-colors">
+            <span class="material-symbols-outlined text-brand text-[26px]">psychology</span>
+            <p class="text-2xl font-black dark:text-white text-slate-900 mt-2 font-mono">+42%</p>
+            <p class="text-xs dark:text-slate-400 text-slate-500 font-medium">Mayor Disciplina</p>
+          </div>
+          <div class="p-4.5 rounded-2xl dark:bg-slate-900/80 bg-white/90 border dark:border-slate-800 border-slate-200 shadow-xl backdrop-blur-xl hover:border-emerald-500/40 transition-colors">
+            <span class="material-symbols-outlined text-emerald-500 text-[26px]">insights</span>
+            <p class="text-2xl font-black dark:text-white text-slate-900 mt-2 font-mono">2.8x</p>
+            <p class="text-xs dark:text-slate-400 text-slate-500 font-medium">Promedio Win Rate</p>
+          </div>
+          <div class="p-4.5 rounded-2xl dark:bg-slate-900/80 bg-white/90 border dark:border-slate-800 border-slate-200 shadow-xl backdrop-blur-xl hover:border-violet-500/40 transition-colors">
+            <span class="material-symbols-outlined text-violet-500 text-[26px]">smart_toy</span>
+            <p class="text-2xl font-black dark:text-white text-slate-900 mt-2 font-mono">24/7</p>
+            <p class="text-xs dark:text-slate-400 text-slate-500 font-medium">AI Coach Activo</p>
           </div>
         </div>
 
-        <!-- EMAIL -->
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Correo electrónico</label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-              </svg>
-            </div>
-            <%= f.email_field :email, autocomplete: "email",
-                placeholder: "trader@ejemplo.com",
-                class: "input-field w-full pl-10 pr-4 py-3 rounded-xl text-sm transition-all focus:outline-none" %>
+        <!-- TESTIMONIAL CARD -->
+        <div class="p-5 rounded-2xl dark:bg-slate-900/80 bg-white/90 border dark:border-slate-800 border-slate-200 backdrop-blur-xl flex items-center gap-4 shadow-xl">
+          <div class="flex -space-x-2 shrink-0">
+            <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-brand to-violet-600 text-white font-black text-xs flex items-center justify-center border-2 dark:border-slate-950 border-white shadow-md">AR</div>
+            <div class="w-9 h-9 rounded-full bg-emerald-500 text-white font-black text-xs flex items-center justify-center border-2 dark:border-slate-950 border-white shadow-md">JV</div>
+            <div class="w-9 h-9 rounded-full bg-violet-600 text-white font-black text-xs flex items-center justify-center border-2 dark:border-slate-950 border-white shadow-md">MC</div>
+          </div>
+          <div class="text-xs space-y-0.5">
+            <p class="font-bold dark:text-slate-200 text-slate-800">"El AI Coach detectó mis sesgos emocionales y transformó mi estrategia."</p>
+            <p class="text-slate-400 font-medium">Carlos M. • Trader Fondeado $150K</p>
           </div>
         </div>
 
-        <!-- PASSWORD -->
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Contraseña</label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-              </svg>
-            </div>
-            <%= f.password_field :password, autocomplete: "new-password",
-                placeholder: "Mínimo 8 caracteres",
-                class: "input-field w-full pl-10 pr-4 py-3 rounded-xl text-sm transition-all focus:outline-none" %>
+      </div>
+
+      <!-- RIGHT COLUMN: REGISTRATION CARD -->
+      <div class="w-full lg:col-span-6 xl:col-span-5 max-w-md mx-auto">
+        <div class="dark:bg-slate-900/90 bg-white/90 border dark:border-slate-800 border-slate-200 p-8 sm:p-10 rounded-3xl shadow-2xl backdrop-blur-2xl relative overflow-hidden transition-all">
+
+          <div class="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500/15 rounded-full blur-2xl pointer-events-none"></div>
+
+          <div class="mb-7 text-center sm:text-left">
+            <h2 class="text-2xl sm:text-3xl font-black dark:text-white text-slate-900 tracking-tight">
+              Crea tu Cuenta Pro
+            </h2>
+            <p class="text-xs dark:text-slate-400 text-slate-500 mt-2 font-normal leading-relaxed">
+              Acceso inmediato e ilimitado al Journal, Analytics y AI Coach.
+            </p>
           </div>
-          <% if @minimum_password_length %>
-            <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-1">Mínimo <%= @minimum_password_length %> caracteres</p>
+
+          <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "space-y-4" }) do |f| %>
+
+            <!-- NOMBRE -->
+            <div>
+              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Nombre Completo</label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
+                  <span class="material-symbols-outlined text-[19px]">person</span>
+                </span>
+                <%= f.text_field :name, autofocus: true, placeholder: "Alex Rivera",
+                    class: "w-full dark:bg-slate-950/80 bg-slate-50 border dark:border-slate-800 border-slate-300 dark:text-white text-slate-900 rounded-2xl pl-11 pr-4 py-3 text-xs focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all placeholder:text-slate-400" %>
+              </div>
+            </div>
+
+            <!-- EMAIL -->
+            <div>
+              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Correo Electrónico</label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
+                  <span class="material-symbols-outlined text-[19px]">mail</span>
+                </span>
+                <%= f.email_field :email, autocomplete: "email", placeholder: "alex.rivera@ejemplo.com",
+                    class: "w-full dark:bg-slate-950/80 bg-slate-50 border dark:border-slate-800 border-slate-300 dark:text-white text-slate-900 rounded-2xl pl-11 pr-4 py-3 text-xs focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all placeholder:text-slate-400 font-mono" %>
+              </div>
+            </div>
+
+            <!-- PASSWORD -->
+            <div>
+              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Contraseña</label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
+                  <span class="material-symbols-outlined text-[19px]">lock</span>
+                </span>
+                <%= f.password_field :password, autocomplete: "new-password", id: "reg-password-field",
+                    oninput: "updateStrengthMeter(this.value)",
+                    placeholder: "Mínimo 8 caracteres",
+                    class: "w-full dark:bg-slate-950/80 bg-slate-50 border dark:border-slate-800 border-slate-300 dark:text-white text-slate-900 rounded-2xl pl-11 pr-4 py-3 text-xs focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all placeholder:text-slate-400 font-mono" %>
+              </div>
+
+              <!-- STRENGTH METER -->
+              <div class="mt-2 space-y-1">
+                <div class="flex h-1.5 w-full dark:bg-slate-950 bg-slate-200 rounded-full overflow-hidden gap-1 p-0.5 border dark:border-slate-800 border-slate-300">
+                  <div id="bar1" class="h-full w-1/4 rounded-full dark:bg-slate-800 bg-slate-300 transition-all"></div>
+                  <div id="bar2" class="h-full w-1/4 rounded-full dark:bg-slate-800 bg-slate-300 transition-all"></div>
+                  <div id="bar3" class="h-full w-1/4 rounded-full dark:bg-slate-800 bg-slate-300 transition-all"></div>
+                  <div id="bar4" class="h-full w-1/4 rounded-full dark:bg-slate-800 bg-slate-300 transition-all"></div>
+                </div>
+                <p id="strength-text" class="text-[10px] dark:text-slate-400 text-slate-500 font-medium">Fuerza de la clave: esperando datos...</p>
+              </div>
+            </div>
+
+            <!-- CONFIRM PASSWORD -->
+            <div>
+              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Confirmar Contraseña</label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
+                  <span class="material-symbols-outlined text-[19px]">lock_reset</span>
+                </span>
+                <%= f.password_field :password_confirmation, autocomplete: "new-password",
+                    placeholder: "Repite tu clave",
+                    class: "w-full dark:bg-slate-950/80 bg-slate-50 border dark:border-slate-800 border-slate-300 dark:text-white text-slate-900 rounded-2xl pl-11 pr-4 py-3 text-xs focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all placeholder:text-slate-400 font-mono" %>
+              </div>
+            </div>
+
+            <!-- TERMS -->
+            <div class="flex items-start gap-2.5 pt-1">
+              <input type="checkbox" id="terms-reg" required class="mt-0.5 w-4 h-4 rounded border-slate-300 dark:border-slate-800 dark:bg-slate-950 bg-white text-brand focus:ring-brand/30 cursor-pointer">
+              <label for="terms-reg" class="text-xs dark:text-slate-400 text-slate-600 leading-relaxed cursor-pointer select-none">
+                Acepto los <a href="#" class="text-brand font-bold hover:underline">Términos de Servicio</a> y la <a href="#" class="text-brand font-bold hover:underline">Política de Privacidad</a>.
+              </label>
+            </div>
+
+            <!-- SUBMIT BUTTON -->
+            <%= f.button type: :submit, class: "group relative w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-brand to-violet-600 hover:from-brand-hover hover:to-violet-700 text-white font-extrabold text-xs shadow-xl shadow-brand/25 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer mt-3" do %>
+              <span>Crear Cuenta de Trader Pro</span>
+              <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            <% end %>
+
           <% end %>
+
+          <!-- LOGIN LINK -->
+          <p class="text-center text-xs dark:text-slate-400 text-slate-500 mt-5">
+            ¿Ya tienes cuenta en CoachTrading?
+            <%= link_to "Iniciar Sesión", new_session_path(resource_name), class: "text-brand font-bold hover:underline ml-1" %>
+          </p>
+
         </div>
-
-        <!-- PASSWORD CONFIRM -->
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Confirmar contraseña</label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-              </svg>
-            </div>
-            <%= f.password_field :password_confirmation, autocomplete: "new-password",
-                placeholder: "Repite tu contraseña",
-                class: "input-field w-full pl-10 pr-4 py-3 rounded-xl text-sm transition-all focus:outline-none" %>
-          </div>
-        </div>
-
-        <!-- TERMS -->
-        <div class="flex items-start gap-2">
-          <input type="checkbox" id="terms" required class="mt-0.5 w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 flex-shrink-0">
-          <label for="terms" class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed cursor-pointer">
-            Acepto los <a href="#" class="text-indigo-600 dark:text-indigo-400 hover:underline font-medium">Términos de Servicio</a> y la <a href="#" class="text-indigo-600 dark:text-indigo-400 hover:underline font-medium">Política de Privacidad</a>
-          </label>
-        </div>
-
-        <!-- SUBMIT -->
-        <%= f.submit "Crear cuenta gratuita",
-            class: "w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-indigo-500/30 transition-all duration-200 cursor-pointer transform hover:scale-[1.01] active:scale-[0.99]" %>
-
-      <% end %>
-
-      <!-- DIVIDER -->
-      <div class="flex items-center gap-3 my-5">
-        <div class="flex-1 h-px bg-slate-200 dark:bg-slate-700"></div>
-        <span class="text-xs text-slate-400">o</span>
-        <div class="flex-1 h-px bg-slate-200 dark:bg-slate-700"></div>
       </div>
 
-      <!-- LOGIN LINK -->
-      <p class="text-center text-xs text-slate-500 dark:text-slate-400">
-        ¿Ya tienes cuenta?
-        <%= link_to "Iniciar sesión", new_session_path(resource_name),
-            class: "text-indigo-600 dark:text-indigo-400 font-bold hover:underline" %>
-      </p>
     </div>
+  </main>
 
-    <!-- SOCIAL PROOF -->
-    <div class="mt-6 glass rounded-xl px-5 py-3 flex items-center justify-between">
-      <div class="flex -space-x-2">
-        <% ["from-indigo-600 to-blue-500","from-violet-600 to-indigo-400","from-emerald-500 to-teal-400","from-amber-500 to-orange-400"].each_with_index do |grad, i| %>
-          <div class="w-7 h-7 rounded-full bg-gradient-to-br <%= grad %> border-2 border-white dark:border-darkCard flex items-center justify-center text-white text-[9px] font-bold"><%= ("A".ord + i).chr %></div>
-        <% end %>
-      </div>
-      <p class="text-xs text-slate-500 dark:text-slate-400 ml-3">
-        <span class="font-bold text-indigo-600 dark:text-indigo-400">+2,400 traders</span> ya mejoran su disciplina
-      </p>
-    </div>
-  </div>
+  <!-- FOOTER -->
+  <footer class="w-full max-w-7xl mx-auto px-4 py-4 text-center text-xs dark:text-slate-500 text-slate-400 relative z-30">
+    <p>© 2026 CoachTrading Technologies Inc. Todos los derechos reservados.</p>
+  </footer>
 </div>
+
+<script>
+  function updateStrengthMeter(val) {
+    const b1 = document.getElementById('bar1');
+    const b2 = document.getElementById('bar2');
+    const b3 = document.getElementById('bar3');
+    const b4 = document.getElementById('bar4');
+    const txt = document.getElementById('strength-text');
+    if (!b1 || !b2 || !b3 || !b4 || !txt) return;
+
+    let score = 0;
+    if (val.length >= 6) score++;
+    if (val.length >= 10) score++;
+    if (/[A-Z]/.test(val) && /[0-9]/.test(val)) score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+
+    const isDark = document.getElementById('html-root')?.classList.contains('dark');
+    const defaultBg = isDark ? 'h-full w-1/4 rounded-full bg-slate-800 transition-all' : 'h-full w-1/4 rounded-full bg-slate-300 transition-all';
+    [b1,b2,b3,b4].forEach(b => b.className = defaultBg);
+
+    if (val.length === 0) {
+      txt.textContent = 'Fuerza de la clave: esperando datos...';
+      return;
+    }
+
+    if (score >= 1) { b1.className = 'h-full w-1/4 rounded-full bg-rose-500 transition-all'; txt.textContent = 'Fuerza: Débil'; }
+    if (score >= 2) { b2.className = 'h-full w-1/4 rounded-full bg-amber-500 transition-all'; txt.textContent = 'Fuerza: Aceptable'; }
+    if (score >= 3) { b3.className = 'h-full w-1/4 rounded-full bg-emerald-500 transition-all'; txt.textContent = 'Fuerza: Buena 🔥'; }
+    if (score >= 4) { b4.className = 'h-full w-1/4 rounded-full bg-brand transition-all'; txt.textContent = 'Fuerza: Inviolable 🚀'; }
+  }
+</script>

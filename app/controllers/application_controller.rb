@@ -12,6 +12,6 @@ end
 
 module Community
   class ApplicationController < ::ApplicationController
-    layout "community"
+    layout "application"
   end
 end
