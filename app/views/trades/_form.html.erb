@@ -1,196 +1,422 @@
 <%# _form.html.erb — partial compartido por new y edit %>
 <% content_for :page_title, @trade.new_record? ? "Nueva Operación" : "Editar #{@trade.symbol}" %>
 
-<div class="max-w-3xl mx-auto fade-in">
+<div class="fade-in">
+  <!-- BREADCRUMB Y TOGGLE DE MODO -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+    <div class="flex items-center gap-2 text-xs text-slate-400">
+      <%= link_to "Operaciones", trades_path, class: "hover:text-brand transition-colors" %>
+      <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+      <span class="text-slate-600 dark:text-slate-300 font-bold"><%= trade.new_record? ? "Nueva Operación" : "Editar #{trade.symbol}" %></span>
+    </div>
 
-  <!-- BREADCRUMB -->
-  <div class="flex items-center gap-2 text-xs text-slate-400 mb-5">
-    <%= link_to "Operaciones", trades_path, class: "hover:text-indigo-500 transition-colors" %>
-    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-    <span class="text-slate-600 dark:text-slate-300 font-medium"><%= trade.new_record? ? "Nueva Operación" : "Editar #{trade.symbol}" %></span>
+    <!-- UI: TABS MODO PRINCIPIANTE / EXPERTO -->
+    <div class="flex p-1 bg-slate-200/50 dark:bg-darkBorder/50 rounded-xl max-w-[280px] w-full border border-slate-300/50 dark:border-darkBorder relative">
+      <div id="mode-slider" class="absolute top-1 left-1 bottom-1 w-[calc(50%-4px)] bg-white dark:bg-slate-700 rounded-lg shadow-sm transition-transform duration-300 ease-out z-0"></div>
+      
+      <button type="button" id="btn-beginner" onclick="setMode('beginner')" class="relative z-10 flex-1 py-1.5 text-xs font-bold rounded-lg text-brand transition-colors flex items-center justify-center gap-1.5 focus:outline-none">
+        <span class="material-symbols-outlined text-[16px]">school</span> Principiante
+      </button>
+      <button type="button" id="btn-expert" onclick="setMode('expert')" class="relative z-10 flex-1 py-1.5 text-xs font-bold rounded-lg text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors flex items-center justify-center gap-1.5 focus:outline-none">
+        <span class="material-symbols-outlined text-[16px]">psychology_alt</span> PRO / Experto
+      </button>
+    </div>
   </div>
 
-  <%= form_with model: trade, local: true, html: { class: "space-y-5", id: "trade-form" } do |f| %>
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+    
+    <!-- COLUMNA IZQUIERDA: FORMULARIO (2/3) -->
+    <div class="lg:col-span-2">
+      <%= form_with model: trade, local: true, html: { class: "space-y-6", id: "trade-form" } do |f| %>
 
-    <!-- SECCIÓN 1: BÁSICO -->
-    <div class="glass rounded-2xl p-6">
-      <div class="flex items-center gap-2 mb-5">
-        <div class="w-7 h-7 rounded-lg bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xs font-black">1</div>
-        <h2 class="text-sm font-bold text-slate-800 dark:text-white">Información Básica</h2>
-      </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Símbolo <span class="text-rose-500">*</span></label>
-          <%= f.text_field :symbol, placeholder: "BTC/USDT, AAPL...",
-              class: "input-field w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-all uppercase" %>
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Dirección <span class="text-rose-500">*</span></label>
-          <div class="flex gap-2">
-            <label class="flex-1 cursor-pointer">
-              <input type="radio" name="trade[direction]" value="LONG" class="sr-only peer" <%= trade.direction == 'LONG' ? 'checked' : '' %>>
-              <div class="peer-checked:bg-emerald-500/20 peer-checked:border-emerald-500 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 input-field border py-2.5 rounded-xl text-xs font-bold text-center transition-all cursor-pointer">▲ LONG</div>
-            </label>
-            <label class="flex-1 cursor-pointer">
-              <input type="radio" name="trade[direction]" value="SHORT" class="sr-only peer" <%= trade.direction == 'SHORT' ? 'checked' : '' %>>
-              <div class="peer-checked:bg-rose-500/20 peer-checked:border-rose-500 peer-checked:text-rose-600 dark:peer-checked:text-rose-400 input-field border py-2.5 rounded-xl text-xs font-bold text-center transition-all cursor-pointer">▼ SHORT</div>
-            </label>
+        <!-- SECCIÓN 1: BÁSICO -->
+        <div class="glass rounded-2xl p-5 md:p-6 shadow-sm relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-1 h-full bg-brand"></div>
+          <div class="flex items-center gap-2 mb-5">
+            <div class="w-8 h-8 rounded-xl bg-brand/15 text-brand flex items-center justify-center text-sm font-black flex-shrink-0">1</div>
+            <div>
+              <h2 class="text-sm font-bold text-slate-800 dark:text-white">Elige tu Activo y Dirección</h2>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Define qué operaste y hacia dónde.</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex justify-between">
+                <span>Símbolo <span class="text-rose-500">*</span></span>
+              </label>
+              <%= f.text_field :symbol, placeholder: "Ej: NQ1!, BTCUSD, AAPL", required: true,
+                  class: "input-field w-full px-4 py-2.5 rounded-xl text-sm font-bold focus:outline-none transition-all uppercase" %>
+            </div>
+            
+            <div>
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 align-middle">
+                Dirección <span class="text-rose-500">*</span>
+              </label>
+              <div class="flex gap-2">
+                <label class="flex-1 cursor-pointer">
+                  <input type="radio" name="trade[direction]" value="LONG" class="sr-only peer dir-radio" <%= trade.direction == 'LONG' ? 'checked' : (trade.new_record? ? 'checked' : '') %>>
+                  <div class="peer-checked:bg-emerald-500/20 peer-checked:border-emerald-500 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 input-field border py-2.5 rounded-xl text-xs font-black text-center transition-all cursor-pointer flex items-center justify-center gap-1">
+                    <span class="material-symbols-outlined text-[16px]">trending_up</span> LONG
+                  </div>
+                </label>
+                <label class="flex-1 cursor-pointer">
+                  <input type="radio" name="trade[direction]" value="SHORT" class="sr-only peer dir-radio" <%= trade.direction == 'SHORT' ? 'checked' : '' %>>
+                  <div class="peer-checked:bg-rose-500/20 peer-checked:border-rose-500 peer-checked:text-rose-600 dark:peer-checked:text-rose-400 input-field border py-2.5 rounded-xl text-xs font-black text-center transition-all cursor-pointer flex items-center justify-center gap-1">
+                    <span class="material-symbols-outlined text-[16px]">trending_down</span> SHORT
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- EXCLUSIVO EXPERTO -->
+            <div class="expert-only hidden">
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Estrategia</label>
+              <%= f.collection_select :strategy_id, current_user.strategies, :id, :name,
+                  { prompt: "Opcional (Ej: Breakout)" },
+                  class: "input-field w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-all" %>
+            </div>
+            
+            <div class="expert-only hidden">
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Resultado Manual</label>
+              <%= f.select :result, [["WIN","WIN"],["LOSS","LOSS"],["BREAKEVEN","BREAKEVEN"]],
+                  { prompt: "Automático (según P&L)" },
+                  class: "input-field w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-all" %>
+            </div>
+
+            <div class="expert-only hidden">
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Fecha Entrada</label>
+              <%= f.datetime_local_field :entry_at, step: 60,
+                  class: "input-field w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-all" %>
+            </div>
+            
+            <div class="expert-only hidden">
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Fecha Salida</label>
+              <%= f.datetime_local_field :exit_at, step: 60,
+                  class: "input-field w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-all" %>
+            </div>
           </div>
         </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Estrategia</label>
-          <%= f.collection_select :strategy_id, current_user.strategies, :id, :name,
-              { prompt: "Selecciona estrategia" },
-              class: "input-field w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-all" %>
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Resultado</label>
-          <%= f.select :result, [["WIN","WIN"],["LOSS","LOSS"],["BREAKEVEN","BREAKEVEN"],["OPEN","OPEN"]],
-              { prompt: "Resultado" },
-              class: "input-field w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-all" %>
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Fecha/Hora Entrada</label>
-          <%= f.datetime_local_field :entry_at,
-              class: "input-field w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-all" %>
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Fecha/Hora Salida</label>
-          <%= f.datetime_local_field :exit_at,
-              class: "input-field w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-all" %>
-        </div>
-      </div>
-    </div>
 
-    <!-- SECCIÓN 2: EJECUCIÓN -->
-    <div class="glass rounded-2xl p-6">
-      <div class="flex items-center gap-2 mb-5">
-        <div class="w-7 h-7 rounded-lg bg-violet-500/15 text-violet-600 dark:text-violet-400 flex items-center justify-center text-xs font-black">2</div>
-        <h2 class="text-sm font-bold text-slate-800 dark:text-white">Datos de Ejecución</h2>
-        <span class="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 font-semibold border border-amber-500/20">⚡ Cálculo automático</span>
-      </div>
-      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Precio entrada</label>
-          <%= f.number_field :entry_price, step: "any", placeholder: "0.00", id: "entry_price",
-              class: "input-field w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-all" %>
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Precio salida</label>
-          <%= f.number_field :exit_price, step: "any", placeholder: "0.00", id: "exit_price",
-              class: "input-field w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-all" %>
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Tamaño</label>
-          <%= f.number_field :position_size, step: "any", placeholder: "1.0", id: "position_size",
-              class: "input-field w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-all" %>
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Stop Loss</label>
-          <%= f.number_field :stop_loss, step: "any", placeholder: "0.00", id: "stop_loss",
-              class: "input-field w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-all" %>
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Take Profit</label>
-          <%= f.number_field :take_profit, step: "any", placeholder: "0.00",
-              class: "input-field w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-all" %>
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Comisión ($)</label>
-          <%= f.number_field :commission, step: "any", placeholder: "0.00",
-              class: "input-field w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-all" %>
-        </div>
-      </div>
-      <div class="mt-4 p-4 rounded-xl border border-dashed border-indigo-400/40 dark:border-indigo-500/30 bg-indigo-50/50 dark:bg-indigo-900/10">
-        <p class="text-[10px] font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-2">Resultado calculado</p>
-        <div class="grid grid-cols-3 gap-4 text-center">
-          <div><p class="text-[10px] text-slate-500 mb-0.5">P&L Estimado</p><p id="calc-pnl" class="text-lg font-black text-slate-800 dark:text-white">—</p></div>
-          <div><p class="text-[10px] text-slate-500 mb-0.5">R Multiple</p><p id="calc-r" class="text-lg font-black text-slate-800 dark:text-white">—</p></div>
-          <div><p class="text-[10px] text-slate-500 mb-0.5">P&L %</p><p id="calc-pct" class="text-lg font-black text-slate-800 dark:text-white">—</p></div>
-        </div>
-      </div>
-    </div>
+        <!-- SECCIÓN 2: EJECUCIÓN -->
+        <div class="glass rounded-2xl p-5 md:p-6 shadow-sm relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-1 h-full bg-violet-500"></div>
+          <div class="flex items-center gap-2 mb-5">
+            <div class="w-8 h-8 rounded-xl bg-violet-500/15 text-violet-600 dark:text-violet-400 flex items-center justify-center text-sm font-black flex-shrink-0">2</div>
+            <div>
+              <h2 class="text-sm font-bold text-slate-800 dark:text-white">Ejecución y Resultados</h2>
+              <p id="hint-execution" class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Ingresa a qué precio compraste y vendiste.</p>
+            </div>
+          </div>
 
-    <!-- SECCIÓN 3: CONTEXTO -->
-    <div class="glass rounded-2xl p-6">
-      <div class="flex items-center gap-2 mb-5">
-        <div class="w-7 h-7 rounded-lg bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xs font-black">3</div>
-        <h2 class="text-sm font-bold text-slate-800 dark:text-white">Contexto y Reflexión</h2>
-      </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Setup / Patrón</label>
-          <%= f.text_field :setup, placeholder: "Doble techo, ruptura...",
-              class: "input-field w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-all" %>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">P. Entrada <span class="text-rose-500">*</span></label>
+              <%= f.number_field :entry_price, step: "any", placeholder: "0.00", id: "entry_price", required: true,
+                  class: "input-field w-full px-4 py-2.5 rounded-xl font-mono text-sm focus:outline-none transition-all" %>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">P. Salida <span class="text-rose-500">*</span></label>
+              <%= f.number_field :exit_price, step: "any", placeholder: "0.00", id: "exit_price", required: true,
+                  class: "input-field w-full px-4 py-2.5 rounded-xl font-mono text-sm focus:outline-none transition-all" %>
+            </div>
+            
+            <!-- EXCLUSIVO EXPERTO -->
+            <div class="expert-only hidden">
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
+                <span>Tamaño/Lots</span>
+              </label>
+              <%= f.number_field :position_size, step: "any", placeholder: "1", id: "position_size", value: trade.position_size || 1,
+                  class: "input-field w-full px-4 py-2.5 rounded-xl font-mono text-sm focus:outline-none transition-all" %>
+            </div>
+            
+            <div class="expert-only hidden">
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Stop Loss</label>
+              <%= f.number_field :stop_loss, step: "any", placeholder: "0.00", id: "stop_loss",
+                  class: "input-field w-full px-4 py-2.5 rounded-xl font-mono text-sm focus:outline-none transition-all" %>
+            </div>
+            
+            <div class="expert-only hidden">
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Take Profit</label>
+              <%= f.number_field :take_profit, step: "any", placeholder: "0.00",
+                  class: "input-field w-full px-4 py-2.5 rounded-xl font-mono text-sm focus:outline-none transition-all" %>
+            </div>
+            
+            <div class="expert-only hidden">
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Comisión ($)</label>
+              <%= f.number_field :commission, step: "any", placeholder: "0.00",
+                  class: "input-field w-full px-4 py-2.5 rounded-xl font-mono text-sm focus:outline-none transition-all" %>
+            </div>
+          </div>
+          
+          <!-- CALCULADORA EN VIVO -->
+          <div class="mt-5 p-4 rounded-xl border border-brand/20 bg-brand/5">
+            <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 text-center">
+              <div>
+                <p class="text-[10px] font-bold text-slate-500 mb-1">P&L Estimado</p>
+                <p id="calc-pnl" class="text-xl font-black text-slate-800 dark:text-white font-mono">—</p>
+              </div>
+              <div class="expert-only hidden">
+                <p class="text-[10px] font-bold text-slate-500 mb-1">R-Multiple (Riesgo)</p>
+                <p id="calc-r" class="text-xl font-black text-slate-800 dark:text-white font-mono">—</p>
+              </div>
+              <div>
+                <p class="text-[10px] font-bold text-slate-500 mb-1">Diferencial Pts.</p>
+                <p id="calc-pct" class="text-xl font-black text-slate-800 dark:text-white font-mono">—</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mt-4 pt-4 expert-only hidden border-t dark:border-darkBorder border-lightBorder">
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
+              <span>P&L Final Neto <span class="text-rose-500">*</span></span>
+              <span class="text-[9px] text-slate-400">El sistema lo auto-escribe</span>
+            </label>
+            <%= f.number_field :pnl, step: "any", id: "actual_pnl", required: true,
+                class: "input-field w-full md:w-1/3 px-4 py-2.5 rounded-xl font-mono text-sm focus:outline-none transition-all font-black text-brand", placeholder: "Calculado o manual" %>
+          </div>
         </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Estado emocional</label>
-          <%= f.select :emotion,
-              [["😌 Tranquilo","calm"],["😤 Ansioso","anxious"],["😁 Confiado","confident"],["😰 Temeroso","fearful"],["😑 Neutral","neutral"]],
-              { prompt: "¿Cómo te sentías?" },
-              class: "input-field w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-all" %>
-        </div>
-        <div class="sm:col-span-2">
-          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Tags (separados por coma)</label>
-          <%= f.text_field :tags_string, placeholder: "breakout, cripto, htf...",
-              class: "input-field w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-all" %>
-        </div>
-        <div class="sm:col-span-2">
-          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Notas / Reflexión</label>
-          <%= f.text_area :notes, rows: 3, placeholder: "¿Por qué entraste? ¿Qué salió bien/mal?",
-              class: "input-field w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-all resize-none" %>
-        </div>
-      </div>
-    </div>
 
-    <!-- ERRORS -->
-    <% if trade.errors.any? %>
-    <div class="glass rounded-2xl p-4 border-l-4 border-rose-500">
-      <p class="text-xs font-bold text-rose-500 mb-2"><%= trade.errors.count %> error(es) al guardar:</p>
-      <ul class="space-y-1">
-        <% trade.errors.full_messages.each do |msg| %>
-          <li class="text-xs text-rose-400 flex items-start gap-1.5"><span class="mt-0.5">•</span><%= msg %></li>
+        <!-- SECCIÓN 3: PSICOLOGÍA -->
+        <div class="glass rounded-2xl p-5 md:p-6 shadow-sm relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
+          <div class="flex items-center gap-2 mb-5">
+            <div class="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center text-sm font-black flex-shrink-0">3</div>
+            <div>
+              <h2 class="text-sm font-bold text-slate-800 dark:text-white">Estado Emocional</h2>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">El Coach evaluará si estabas calmado o actuaste por revancha.</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">¿Cómo te sentías al operar? <span class="text-rose-500">*</span></label>
+              <%= f.select :emotion,
+                  [["😌 Relajado y según el plan","calm"],["😤 Ansioso / FOMO / Miedo de quedarme fuera","anxious"],["💪 Confiado / Seguro","confident"],["😰 Asustado / Cerre antes de tiempo","fearful"],["😑 Neutral / Aburrido","neutral"]],
+                  { prompt: "Sé brutalmente honesto..." }, required: true,
+                  class: "input-field w-full px-4 py-2.5 rounded-xl text-sm font-bold focus:outline-none transition-all" %>
+            </div>
+            
+            <div class="expert-only hidden">
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Tags (Contexto)</label>
+              <%= f.text_field :tags_string, placeholder: "ej: #NoticiasMacro, #ContraTendencia",
+                  class: "input-field w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-all" %>
+            </div>
+            
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Mi bitácora / Notas de aprendizaje</label>
+              <%= f.text_area :notes, rows: 3, placeholder: "Describe brevemente: ¿Qué salió bien? ¿Qué salió mal? ¿Rompió regla de riesgo?",
+                  class: "input-field w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-all resize-none" %>
+            </div>
+          </div>
+        </div>
+
+        <!-- ERRORS DE VALIDACIÓN -->
+        <% if trade.errors.any? %>
+        <div class="rounded-2xl p-4 border border-rose-500/30 bg-rose-500/10">
+          <p class="text-xs font-bold text-rose-500 mb-2 flex items-center gap-1">
+            <span class="material-symbols-outlined text-[16px]">error</span> <%= trade.errors.count %> error(es) detectados:
+          </p>
+          <ul class="space-y-1 pl-6 list-disc text-xs text-rose-400">
+            <% trade.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
         <% end %>
-      </ul>
-    </div>
-    <% end %>
 
-    <!-- ACCIONES -->
-    <div class="flex items-center justify-end gap-3 pb-4">
-      <%= link_to "Cancelar", trades_path, class: "px-5 py-2.5 text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white rounded-xl border border-slate-200 dark:border-darkBorder hover:bg-slate-50 dark:hover:bg-darkCard transition-all" %>
-      <%= f.submit trade.new_record? ? "💾 Guardar Operación" : "✏️ Actualizar Operación",
-          class: "px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-indigo-500/30 cursor-pointer transition-all transform hover:scale-[1.02]" %>
+        <!-- ACCIONES -->
+        <div class="flex items-center justify-end gap-3 pb-8">
+          <%= link_to "Cancelar", trades_path, class: "px-5 py-3 text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white rounded-xl border border-slate-200 dark:border-darkBorder hover:bg-slate-100 dark:hover:bg-darkCard transition-all" %>
+          
+          <button type="submit" class="px-8 py-3 bg-brand hover:scale-[1.02] active:scale-[0.98] text-white font-extrabold text-sm rounded-xl shadow-[0_4px_15px_-3px_rgba(108,92,231,0.5)] cursor-pointer transition-all flex items-center gap-2 border border-white/10">
+            <span class="material-symbols-outlined text-[18px]">save</span>
+            <%= trade.new_record? ? "Guardar Operación" : "Actualizar Operación" %>
+          </button>
+        </div>
+      <% end %>
     </div>
 
-  <% end %>
+    <!-- COLUMNA DERECHA: ASISTENTE ONBOARDING (DINÁMICO) (1/3) -->
+    <div class="lg:col-span-1 border dark:border-brand/20 border-brand/30 rounded-2xl bg-gradient-to-br from-brand/5 to-transparent p-5 sticky top-6 shadow-[0_8px_30px_rgba(108,92,231,0.08)] transition-all" id="coach-panel-container">
+      <div class="flex items-center gap-3 mb-4 border-b dark:border-brand/10 border-brand/20 pb-3">
+        <div class="w-10 h-10 rounded-xl bg-brand text-white flex items-center justify-center shadow-md flex-shrink-0 relative">
+          <span class="material-symbols-outlined text-[20px] absolute z-10">smart_toy</span>
+          <span class="absolute inline-flex h-full w-full rounded-xl bg-brand opacity-40 animate-ping"></span>
+        </div>
+        <div>
+          <h3 class="text-sm font-black dark:text-white text-slate-900">Coach en Línea</h3>
+          <p id="coach-panel-title" class="text-[10px] text-brand font-bold uppercase tracking-widest">Modo Básico Activo</p>
+        </div>
+      </div>
+      
+      <!-- CONTENIDO PRINCIPIANTE -->
+      <div id="coach-content-beginner" class="space-y-4 text-xs dark:text-slate-300 text-slate-600 leading-relaxed">
+        <p>¡Bienvenido al modo principiante! Aquí las cosas son simples para que ganes el <strong>hábito de registrar</strong> todo lo que haces.</p>
+        
+        <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 font-medium">
+          <p class="font-bold mb-1 flex items-center gap-1">
+            <span class="material-symbols-outlined text-[14px]">bolt</span> Solo necesitas 3 cosas:
+          </p>
+          <ul class="list-decimal pl-4 mt-1 space-y-0.5">
+            <li>Saber qué operaste (El Símbolo).</li>
+            <li>Dónde entraste y saliste (Precio).</li>
+            <li>Cómo te sentiste <em>(Importante para mis diagnósticos)</em>.</li>
+          </ul>
+        </div>
+        
+        <p class="text-[11px] italic text-slate-400 mt-2">
+          Cuando te sientas confiado en calcular lotajes, stop losses o R-Multiples, cambia al <strong class="text-brand">Modo PRO 🔬</strong> arriba. Yo calcularé matemáticamente tus riesgos.
+        </p>
+      </div>
+
+      <!-- CONTENIDO EXPERTO -->
+      <div id="coach-content-expert" class="space-y-4 text-xs dark:text-slate-300 text-slate-600 leading-relaxed hidden">
+        <p>¡Estás en la trinchera avanzada! Entregarme más datos me permite hacer diagnósticos hiper-precisos sobre tus fugas de capital.</p>
+        
+        <div class="p-3 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-600 dark:text-violet-400 font-medium">
+          <p class="font-bold mb-1 flex items-center gap-1">
+            <span class="material-symbols-outlined text-[14px]">warning</span> Regla de Oro (Stop Loss)
+          </p>
+          Si dejas tu <strong>Stop Loss</strong> vacío o en 0, no podré calcular tu <em>R-Multiple</em> (R:R). El RR me sirve para decirte si estás arriesgando demasiado para ganar muy poco.
+        </div>
+        
+        <ul class="space-y-2 mt-4 text-[11px]">
+          <li class="flex items-start gap-1.5">
+            <span class="material-symbols-outlined text-brand text-[14px] mt-0.5">check_circle</span>
+            <span>Usa <strong>Tamaño</strong> (Lotes/Contratos) para que la ganancia/pérdida se calcule exacto.</span>
+          </li>
+          <li class="flex items-start gap-1.5">
+            <span class="material-symbols-outlined text-brand text-[14px] mt-0.5">check_circle</span>
+            <span>Escribe horas exactas si usaste sesión Americana, Asiática o Europea.</span>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
 </div>
 
 <script>
-(function() {
-  function calc() {
+// ---------- UI TOGGLE TAB PRINCIPIANTE / EXPERTO ----------
+let currentMode = 'beginner';
+
+window.setMode = function(targetMode) {
+  currentMode = targetMode;
+  const slider = document.getElementById('mode-slider');
+  const btnB = document.getElementById('btn-beginner');
+  const btnE = document.getElementById('btn-expert');
+  const coachTitle = document.getElementById('coach-panel-title');
+  const coachB = document.getElementById('coach-content-beginner');
+  const coachE = document.getElementById('coach-content-expert');
+  const hintExe = document.getElementById('hint-execution');
+
+  // Mover el background slider toggle (tabs)
+  if (targetMode === 'beginner') {
+    slider.style.transform = 'translateX(0)';
+    btnB.classList.add('text-brand');
+    btnB.classList.remove('text-slate-500', 'dark:text-slate-400');
+    btnE.classList.add('text-slate-500', 'dark:text-slate-400');
+    btnE.classList.remove('text-brand');
+    
+    // UI Panel asistenten
+    coachTitle.textContent = "MODO BÁSICO ACTIVO";
+    coachB.classList.remove('hidden');
+    coachE.classList.add('hidden');
+    
+    hintExe.textContent = "Ingresa a qué precio compraste y vendiste.";
+  } else {
+    slider.style.transform = 'translateX(100%)';
+    btnE.classList.add('text-brand');
+    btnE.classList.remove('text-slate-500', 'dark:text-slate-400');
+    btnB.classList.add('text-slate-500', 'dark:text-slate-400');
+    btnB.classList.remove('text-brand');
+
+    coachTitle.textContent = "MODO EXPERTO ACTIVO 🔬";
+    coachE.classList.remove('hidden');
+    coachB.classList.add('hidden');
+    
+    hintExe.textContent = "El sistema gestionará tamaño de contratos, fees y RR ratio matemáticamente.";
+  }
+
+  // Ocultar / Mostrar los divs con clase "expert-only"
+  const expertElements = document.querySelectorAll('.expert-only');
+  expertElements.forEach(el => {
+    if (targetMode === 'beginner') {
+      el.classList.add('hidden');
+    } else {
+      el.classList.remove('hidden');
+    }
+  });
+  
+  // Limpiar campos que se ocultan (Stop Loss, Size, TP, si estamos en beginner)
+  if (targetMode === 'beginner') {
+    document.getElementById('position_size').value = 1;
+    document.getElementById('stop_loss').value = "";
+    // PNL input oculto en beginner debe seguir el simulador forzosamente
+  }
+  
+  // Trigger calc forzoso
+  if(window.triggerCalc) window.triggerCalc();
+};
+
+// ---------- CALCULADORA EN VIVO ----------
+document.addEventListener("DOMContentLoaded", function() {
+  
+  window.triggerCalc = function() {
     const entry = parseFloat(document.getElementById('entry_price')?.value) || 0;
     const exit  = parseFloat(document.getElementById('exit_price')?.value) || 0;
     const size  = parseFloat(document.getElementById('position_size')?.value) || 1;
     const sl    = parseFloat(document.getElementById('stop_loss')?.value) || 0;
+    const pnlOutput = document.getElementById('actual_pnl');
+    
+    const directionEl = document.querySelector('input[name="trade[direction]"]:checked');
+    const isLong = directionEl && directionEl.value === 'LONG';
+
     if (entry <= 0 || exit <= 0) return;
-    const pnl  = (exit - entry) * size;
-    const pct  = ((exit - entry) / entry) * 100;
-    const risk = sl > 0 ? Math.abs(entry - sl) * size : null;
-    const r    = risk ? (pnl / risk).toFixed(2) + 'R' : '—';
+    
+    const pointsCaptured = isLong ? (exit - entry) : (entry - exit);
+    const pnl = pointsCaptured * size;
+    
+    let riskPoints = 0;
+    if (sl > 0) {
+       riskPoints = isLong ? (entry - sl) : (sl - entry);
+    }
+    const riskDollar = riskPoints * size;
+    const r = (riskDollar > 0) ? (pnl / riskDollar).toFixed(2) + 'R' : '—';
+    
     const g = 'text-emerald-500', rd = 'text-rose-500', w = 'text-slate-800 dark:text-white';
+    
     const pEl = document.getElementById('calc-pnl');
     const rEl = document.getElementById('calc-r');
     const pct2 = document.getElementById('calc-pct');
+    
     pEl.textContent = (pnl >= 0 ? '+' : '') + '$' + pnl.toFixed(2);
-    pEl.className   = 'text-lg font-black ' + (pnl >= 0 ? g : rd);
-    pct2.textContent = (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%';
-    pct2.className  = 'text-lg font-black ' + (pct >= 0 ? g : rd);
-    rEl.textContent = r;
-    rEl.className   = 'text-lg font-black ' + w;
-  }
+    pEl.className   = 'text-xl font-black font-mono ' + (pnl >= 0 ? g : rd);
+    
+    pct2.textContent = (pointsCaptured >= 0 ? '+' : '') + pointsCaptured.toFixed(2) + ' pts';
+    pct2.className  = 'text-xl font-black font-mono ' + (pointsCaptured >= 0 ? g : rd);
+    
+    if(rEl) {
+      rEl.textContent = r;
+      rEl.className   = 'text-xl font-black font-mono ' + w;
+    }
+
+    // El input del form real siempre recibe el calculo
+    if (pnlOutput && document.activeElement.id !== 'actual_pnl') {
+      pnlOutput.value = pnl.toFixed(2);
+    }
+  };
+
   ['entry_price','exit_price','position_size','stop_loss'].forEach(id => {
-    document.getElementById(id)?.addEventListener('input', calc);
+    document.getElementById(id)?.addEventListener('input', window.triggerCalc);
   });
-  calc(); // trigger on edit
-})();
+  
+  document.querySelectorAll('.dir-radio').forEach(el => {
+    el.addEventListener('change', window.triggerCalc);
+  });
+  
+  // Set default mode on mount (Beginner by default)
+  setMode('beginner');
+});
 </script>

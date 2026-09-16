@@ -1,6 +1,63 @@
-<% content_for :page_title, "Dashboard" %>
+<% content_for :page_title do %>
+  <div class="flex items-center gap-2.5">
+    <span>Dashboard</span>
+    <% if @stats[:is_demo] %>
+      <span class="text-[10px] px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-400 font-extrabold border border-amber-500/30 tracking-wider">MODO DEMO</span>
+    <% else %>
+      <span class="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 font-extrabold border border-emerald-500/30 tracking-wider flex items-center gap-1">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        REAL EN VIVO
+      </span>
+    <% end %>
+  </div>
+<% end %>
 
 <div class="space-y-6 fade-in">
+
+  <!-- ===================== STATUS BANNER (DEMO VS REAL) ===================== -->
+  <% if @stats[:is_demo] %>
+    <div class="rounded-2xl p-4 bg-gradient-to-r from-amber-500/10 via-brand/10 to-amber-500/10 border border-amber-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-lg">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center flex-shrink-0 animate-pulse">
+          <span class="material-symbols-outlined text-[22px]">visibility</span>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h4 class="text-xs md:text-sm font-extrabold dark:text-white text-slate-900 uppercase tracking-wider">Modo Demostración Activo</h4>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30">DATOS DE MUESTRA</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-0.5">
+            Estás viendo una simulación comercial pre-cargada. En cuanto agregues tu primera operación, el sistema calculará tus estadísticas reales automáticamente.
+          </p>
+        </div>
+      </div>
+      <%= link_to new_trade_path, class: "px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition-all flex-shrink-0 shadow-md" do %>
+        <span class="material-symbols-outlined text-[16px]">add_circle</span>
+        <span>Crear Primera Operación Real</span>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="rounded-2xl p-3.5 bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-between gap-3 shadow-sm">
+      <div class="flex items-center gap-3">
+        <div class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse flex-shrink-0"></div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h4 class="text-xs font-bold dark:text-emerald-300 text-emerald-700 uppercase tracking-wider">Métricas Reales en Vivo</h4>
+            <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">CUENTA REAL</span>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-0.5">
+            Calculado en tiempo real desde <strong><%= @stats[:total_trades] %></strong> operaciones registradas en tu diario.
+          </p>
+        </div>
+      </div>
+      <div class="hidden sm:flex items-center gap-2">
+        <%= link_to new_trade_path, class: "px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-xs font-bold transition-all border border-emerald-500/30 flex items-center gap-1" do %>
+          <span class="material-symbols-outlined text-[15px]">add</span>
+          <span>Nueva Operación</span>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
 
   <!-- ===================== LIVE TICKER STRIP ===================== -->
   <div class="glass rounded-2xl p-3 flex items-center justify-between gap-4 overflow-x-auto">
@@ -48,10 +105,11 @@
         <%= @stats[:total_pnl] >= 0 ? '+' : '' %>$<%= number_with_precision(@stats[:total_pnl], precision: 2, delimiter: ',') %>
       </p>
       <div class="flex items-center justify-between mt-2 text-[11px]">
-        <span class="text-accent-green font-bold flex items-center gap-0.5">
-          <span class="material-symbols-outlined text-[14px]">arrow_upward</span> +14.2%
+        <span class="<%= @stats[:pnl_change_pct] >= 0 ? 'text-accent-green' : 'text-loss' %> font-bold flex items-center gap-0.5">
+          <span class="material-symbols-outlined text-[14px]"><%= @stats[:pnl_change_pct] >= 0 ? 'arrow_upward' : 'arrow_downward' %></span>
+          <%= @stats[:pnl_change_pct] >= 0 ? '+' : '' %><%= @stats[:pnl_change_pct] %>%
         </span>
-        <span class="text-slate-400"><%= @stats[:total_trades] %> trades totales</span>
+        <span class="text-slate-400"><%= @stats[:total_trades] %> trades</span>
       </div>
     </div>
 
@@ -98,7 +156,7 @@
         </div>
       </div>
       <p class="text-2xl md:text-3xl font-black mt-2 font-mono text-amber-400">
-        <%= @stats[:avg_win] && @stats[:avg_loss] && @stats[:avg_loss] > 0 ? ( @stats[:avg_win] / @stats[:avg_loss] ).round(2) : "1.85" %> R
+        <%= @stats[:rr_ratio] %> R
       </p>
       <div class="flex items-center justify-between mt-2 text-[11px]">
         <span class="text-accent-green font-bold">Win: +$<%= number_with_precision(@stats[:avg_win] || 0, precision: 0) %></span>
@@ -163,7 +221,7 @@
           <span class="text-[10px] px-2 py-0.5 rounded bg-brand/10 text-brand font-bold">PRO</span>
         </div>
         <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
-          "Estás manteniendo un ratio de recompensa superior a 1.8. Tu mayor ventaja ocurre en trades con la estrategia Breakout."
+          "<%= @ai_diagnosis %>"
         </p>
         <%= link_to ai_coach_path, class: "w-full py-2 px-3 rounded-xl bg-brand/15 hover:bg-brand/25 text-brand dark:text-brand-light text-xs font-bold border border-brand/20 transition-all flex items-center justify-center gap-1.5" do %>
           <span>Consultar Diagnóstico Completo</span>
@@ -242,7 +300,7 @@
             <% else %>
               <tr>
                 <td colspan="5" class="py-8 text-center text-slate-400">
-                  No hay operaciones registradas todavía. ¡Haz clic en <strong>Nueva</strong> para comenzar!
+                  No hay operaciones registradas todavía. ¡Haz clic en <strong>Nueva</strong> para comenzar tu diario!
                 </td>
               </tr>
             <% end %>
@@ -266,24 +324,9 @@ document.addEventListener("DOMContentLoaded", function() {
   const equityContainer = document.getElementById("echarts-equity-container");
   if (equityContainer) {
     const equityChart = echarts.init(equityContainer);
-
-    <% 
-      cumulative = 0
-      trades_data = (@recent_trades || []).reverse.map.with_index do |t, idx|
-        cumulative += t.pnl
-        { trade: "Trade ##{idx + 1} (#{t.symbol})", pnl: cumulative.round(2) }
-      end
-      if trades_data.empty?
-        trades_data = [
-          { trade: "T1 (NQ1!)", pnl: 250 }, { trade: "T2 (EURUSD)", pnl: 180 },
-          { trade: "T3 (BTC)", pnl: 480 }, { trade: "T4 (NQ1!)", pnl: 320 },
-          { trade: "T5 (AAPL)", pnl: 750 }, { trade: "T6 (XAU)", pnl: 1120 }
-        ]
-      end
-    %>
-    const rawData = <%= trades_data.to_json.html_safe %>;
-    const xAxisData = rawData.map(d => d.trade);
-    const seriesData = rawData.map(d => d.pnl);
+    const rawData = <%= @equity_data.to_json.html_safe %>;
+    const xAxisData = rawData.map(d => d.trade || d.date);
+    const seriesData = rawData.map(d => d.value);
 
     const equityOption = {
       tooltip: {
@@ -293,7 +336,8 @@ document.addEventListener("DOMContentLoaded", function() {
         textStyle: { color: isDark ? "#FFFFFF" : "#0F0E1A", fontFamily: "Manrope" },
         formatter: function(params) {
           const item = params[0];
-          return `<strong>${item.name}</strong><br/>Equity Acumulada: <span style="color:#10B981;font-weight:bold">$${item.value}</span>`;
+          const color = item.value >= 0 ? '#10B981' : '#F43F5E';
+          return `<strong>${item.name}</strong><br/>Equity Acumulada: <span style="color:${color};font-weight:bold">$${item.value}</span>`;
         }
       },
       grid: { left: "3%", right: "3%", bottom: "3%", top: "8%", containLabel: true },
@@ -333,8 +377,8 @@ document.addEventListener("DOMContentLoaded", function() {
   const donutContainer = document.getElementById("echarts-donut-container");
   if (donutContainer) {
     const donutChart = echarts.init(donutContainer);
-    const winCount = <%= @stats[:winning_trades] || 12 %>;
-    const lossCount = <%= @stats[:losing_trades] || 5 %>;
+    const winCount = <%= @stats[:winning_trades] %>;
+    const lossCount = <%= @stats[:losing_trades] %>;
 
     const donutOption = {
       tooltip: {
@@ -365,6 +409,10 @@ document.addEventListener("DOMContentLoaded", function() {
   const barContainer = document.getElementById("echarts-bar-day-container");
   if (barContainer) {
     const barChart = echarts.init(barContainer);
+    const dailyData = <%= @pnl_by_day.to_json.html_safe %>;
+    const xAxisData = Object.keys(dailyData);
+    const seriesData = Object.values(dailyData);
+
     const barOption = {
       tooltip: {
         trigger: "axis",
@@ -382,7 +430,7 @@ document.addEventListener("DOMContentLoaded", function() {
       grid: { left: "3%", right: "3%", bottom: "3%", top: "8%", containLabel: true },
       xAxis: {
         type: "category",
-        data: ["Lun", "Mar", "Mié", "Jue", "Vie"],
+        data: xAxisData,
         axisLine: { lineStyle: { color: borderColor } },
         axisLabel: { color: textColor, fontFamily: "Manrope", fontSize: 11 }
       },
@@ -401,7 +449,7 @@ document.addEventListener("DOMContentLoaded", function() {
             return params.value >= 0 ? "#10B981" : "#F43F5E";
           }
         },
-        data: [420, -150, 680, 310, -80]
+        data: seriesData
       }]
     };
     barChart.setOption(barOption);
