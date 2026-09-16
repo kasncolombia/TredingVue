@@ -4,9 +4,11 @@ class Trade < ApplicationRecord
   has_many :trade_notes,  dependent: :destroy
   has_many :ai_analyses,  dependent: :destroy
 
+  before_validation :set_result
+
   validates :symbol, :direction, :entry_price, :exit_price, :pnl, presence: true
   validates :direction, inclusion: { in: %w[LONG SHORT] }
-  validates :result,    inclusion: { in: %w[WIN LOSS BREAKEVEN] }, allow_nil: true
+  validates :result,    inclusion: { in: %w[WIN LOSS BREAKEVEN] }
 
   scope :wins,       -> { where(result: "WIN") }
   scope :losses,     -> { where(result: "LOSS") }

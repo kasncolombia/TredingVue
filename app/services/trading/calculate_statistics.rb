@@ -30,6 +30,8 @@ module Trading
         total_trades: total_count,
         wins_count: wins.count,
         losses_count: losses.count,
+        winning_trades: wins.count,
+        losing_trades: losses.count,
         avg_win: avg_win,
         avg_loss: avg_loss
       }
@@ -38,7 +40,7 @@ module Trading
     private
 
     def default_stats
-      { total_pnl: 0, win_rate: 0, loss_rate: 0, profit_factor: 0, total_trades: 0, wins_count: 0, losses_count: 0, avg_win: 0, avg_loss: 0 }
+      { total_pnl: 0, win_rate: 0, loss_rate: 0, profit_factor: 0, total_trades: 0, wins_count: 0, losses_count: 0, winning_trades: 0, losing_trades: 0, avg_win: 0, avg_loss: 0 }
     end
   end
 end

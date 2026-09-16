@@ -1,5 +1,14 @@
 <!DOCTYPE html>
 <html lang="es" id="html-root" class="dark">
+<!-- THEME FLASH PREVENTION: se aplica ANTES de renderizar cualquier contenido -->
+<script>
+  (function(){
+    var s = localStorage.getItem('tj-theme');
+    var r = document.documentElement;
+    if (s === 'light') { r.classList.remove('dark'); }
+    else { r.classList.add('dark'); }
+  })();
+</script>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -64,8 +73,18 @@
        BASE
     ────────────────────────────────────────── */
     * { box-sizing: border-box; }
-    body { font-family: "Manrope", sans-serif; transition: background .3s, color .3s; }
+    body { font-family: "Manrope", sans-serif; }
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+
+    /* ── TRANSICIÓN GLOBAL UNIFICADA ──
+       Se activa solo DESPUÉS del primer render para evitar flash blanco.
+       La clase .theme-ready se agrega dinámicamente tras cargar. */
+    .theme-ready,
+    .theme-ready *,
+    .theme-ready *::before,
+    .theme-ready *::after {
+      transition: background-color .25s ease, border-color .25s ease, color .25s ease, box-shadow .25s ease !important;
+    }
 
     /* ──────────────────────────────────────────
        SCROLLBAR
@@ -78,30 +97,39 @@
 
     /* ──────────────────────────────────────────
        DARK MODE & HARMONIC FRAME
+       Jerarquía de profundidad en dark:
+         Canvas exterior : #070810  (más oscuro — el "hueco")
+         Sidebar/Header  : #0E1020  (superficie nivel 1)
+         Content inner   : #121526  (superficie nivel 2 — ligeramente más claro, se distingue)
+         Cards/Glass     : #161A2E  (superficie nivel 3)
     ────────────────────────────────────────── */
     .dark body { background: #090A10; color: #F1F2F6; }
-    .dark .glass        { background: rgba(18,20,32,.88); backdrop-filter: blur(14px); border: 1px solid #1E2235; }
-    .dark .sidebar-bg   { background: #0E1018; border-right: 1px solid #1E2235; transition: width .3s cubic-bezier(0.4,0,0.2,1), background-color .3s, border-color .3s; }
-    .dark .header-bg    { background: rgba(14,16,24,.92); border-bottom: 1px solid #1E2235; backdrop-filter: blur(14px); transition: background-color .3s, border-color .3s; }
-    .dark .stat-card    { background: #131522; border: 1px solid #1E2235; }
-    .dark .input-field  { background: #0D0E16; border: 1px solid #1E2235; color: #F1F2F6; }
+    .dark .glass        { background: rgba(20,23,38,.90); backdrop-filter: blur(14px); border: 1px solid #1E2235; }
+    .dark .sidebar-bg   { background: #0C0E1A; border-right: 1px solid #1A1D30; transition: width .3s cubic-bezier(0.4,0,0.2,1); }
+    .dark .header-bg    { background: rgba(12,14,26,.95); border-bottom: 1px solid #1A1D30; backdrop-filter: blur(14px); }
+    .dark .stat-card    { background: #141729; border: 1px solid #1E2235; }
+    .dark .input-field  { background: #0D0E18; border: 1px solid #1E2235; color: #F1F2F6; }
     .dark .input-field::placeholder { color: #4A4D6A; }
     .dark .input-field:focus { border-color: #6C5CE7; box-shadow: 0 0 0 3px rgba(108,92,231,.15); }
-    .dark .table-header { background: rgba(14,16,24,.7); }
-    .dark .table-row-hover:hover { background: rgba(18,20,32,.5); }
-    .dark .dropdown-bg  { background: #131522; border: 1px solid #1E2235; }
+    .dark .table-header { background: rgba(14,16,28,.7); }
+    .dark .table-row-hover:hover { background: rgba(20,23,42,.5); }
+    .dark .dropdown-bg  { background: #141729; border: 1px solid #1E2235; }
     .dark .nav-item     { color: #8286A8; }
     .dark .nav-item:hover { background: #1A1D2E; color: #E5E0ED; }
     .dark .nav-active   { background: #6C5CE7; color: #fff !important; }
     .dark .nav-active .material-symbols-outlined { color: #fff; }
+
+    /* Dark content canvas — profundidad sutil respecto a sidebar/header */
+    .dark .content-canvas    { background: #070810; }
+    .dark .content-inner     { background: #10122A; border-color: #1A1D30; box-shadow: 0 1px 3px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.02); }
 
     /* ──────────────────────────────────────────
        LIGHT MODE & HARMONIC FRAME
     ────────────────────────────────────────── */
     html:not(.dark) body { background: #F6F7FC; color: #0F0E1A; }
     html:not(.dark) .glass        { background: rgba(255,255,255,.94); backdrop-filter: blur(14px); border: 1px solid #E2E6F0; box-shadow: 0 2px 20px rgba(108,92,231,.05); }
-    html:not(.dark) .sidebar-bg   { background: #FFFFFF; border-right: 1px solid #E2E6F0; transition: width .3s cubic-bezier(0.4,0,0.2,1), background-color .3s, border-color .3s; }
-    html:not(.dark) .header-bg    { background: rgba(255,255,255,.94); border-bottom: 1px solid #E2E6F0; backdrop-filter: blur(14px); transition: background-color .3s, border-color .3s; }
+    html:not(.dark) .sidebar-bg   { background: #FFFFFF; border-right: 1px solid #E2E6F0; transition: width .3s cubic-bezier(0.4,0,0.2,1); }
+    html:not(.dark) .header-bg    { background: rgba(255,255,255,.94); border-bottom: 1px solid #E2E6F0; backdrop-filter: blur(14px); }
     html:not(.dark) .stat-card    { background: #FFFFFF; border: 1px solid #E2E6F0; box-shadow: 0 2px 12px rgba(108,92,231,.05); }
     html:not(.dark) .input-field  { background: rgba(246,247,252,.6); border: 1px solid #E2E6F0; color: #0F0E1A; }
     html:not(.dark) .input-field::placeholder { color: #9DA3B4; }
@@ -113,6 +141,10 @@
     html:not(.dark) .nav-item:hover { background: rgba(108,92,231,.06); color: #6C5CE7; }
     html:not(.dark) .nav-active   { background: #6C5CE7; color: #fff !important; }
     html:not(.dark) .nav-active .material-symbols-outlined { color: #fff; }
+
+    /* Light content canvas */
+    html:not(.dark) .content-canvas { background: #EEF0F8; }
+    html:not(.dark) .content-inner  { background: #FFFFFF; border-color: #E2E6F0; box-shadow: 0 2px 16px rgba(108,92,231,.06); }
 
     /* ──────────────────────────────────────────
        COLLAPSED SIDEBAR DESKTOP STYLES
@@ -312,8 +344,8 @@
     </header>
 
     <!-- PAGE CONTENT (CANVAS CON PROFUNDIDAD SUTIL EN DARK Y LIGHT) -->
-    <div class="flex-1 overflow-y-auto p-4 md:p-6 dark:bg-[#07080E] bg-[#F1F3FA] transition-colors duration-300">
-      <div class="min-h-full rounded-2xl dark:bg-[#0E1019]/90 bg-white p-4 md:p-6 border dark:border-[#1E2235] border-[#E2E6F0] shadow-sm">
+    <div class="flex-1 overflow-y-auto p-4 md:p-6 content-canvas">
+      <div class="min-h-full rounded-2xl content-inner p-4 md:p-6 border shadow-sm">
         <% if notice && notice != "Signed out successfully." && notice != "Signed in successfully." && !notice.include?("Cerró sesión") %><div class="mb-4 px-4 py-3 rounded-xl bg-profit/10 border border-profit/20 text-profit text-sm fade-in flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">check_circle</span><%= notice %></div><% end %>
         <% if alert  %><div class="mb-4 px-4 py-3 rounded-xl bg-loss/10 border border-loss/20 text-loss text-sm fade-in flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">error</span><%= alert %></div><% end %>
         <%= yield %>
@@ -398,12 +430,13 @@
 </body>
 <script>
   // ── THEME MANAGER ──
-  (function() {
-    const saved = localStorage.getItem('tj-theme');
-    const root = document.getElementById('html-root');
-    if (saved === 'light') { root.classList.remove('dark'); }
-    else { root.classList.add('dark'); }
-  })();
+  // La detección inicial está en el <head> para evitar flash.
+  // Aquí solo activamos las transiciones DESPUÉS del primer render.
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      document.documentElement.classList.add('theme-ready');
+    });
+  });
 
   function toggleTheme() {
     const root = document.getElementById('html-root');

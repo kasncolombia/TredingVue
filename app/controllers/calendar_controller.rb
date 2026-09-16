@@ -70,15 +70,12 @@ class CalendarController < ApplicationController
           direction:    direction,
           entry_price:  entry_p,
           exit_price:   exit_p,
-          quantity:     rand(1..5),
           pnl:          pnl,
           entry_at:     date.to_time + (9 + i * 2).hours + rand(0..45).minutes,
           exit_at:      date.to_time + (10 + i * 2).hours + rand(0..45).minutes,
           result:       is_win ? "WIN" : "LOSS",
           r_multiple:   is_win ? rand(1.5..3.8).round(2) : -1.0,
-          emotion:      ["Calmo", "Focado", "Ansioso", "Disciplinado"].sample,
-          mistakes:     is_win ? [] : ["Falta de paciencia", "Overtrading"].sample(1),
-          setup_rating: rand(3..5)
+          emotion:      ["Calmo", "Focado", "Ansioso", "Disciplinado"].sample
         )
       end
     end
