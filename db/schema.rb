@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_10_230000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_17_000002) do
   create_table "ai_analyses", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "discipline_score"
@@ -84,6 +84,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_230000) do
     t.integer "user_id", null: false
     t.index ["chat_room_id"], name: "index_messages_on_chat_room_id"
     t.index ["user_id"], name: "index_messages_on_user_id"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.string "category", default: "system"
+    t.datetime "created_at", null: false
+    t.text "message", null: false
+    t.boolean "read", default: false, null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
   create_table "posts", force: :cascade do |t|
@@ -203,15 +214,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_230000) do
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.decimal "initial_capital", precision: 15, scale: 2
+    t.string "main_market"
     t.string "name", default: "", null: false
+    t.boolean "onboarding_completed", default: false, null: false
     t.string "preferred_currency", default: "USD"
     t.datetime "remember_created_at"
     t.datetime "reset_password_sent_at"
     t.string "reset_password_token"
+    t.string "role", default: "user", null: false
     t.string "timezone", default: "UTC"
+    t.string "trader_type"
+    t.string "trading_goal"
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["role"], name: "index_users_on_role"
   end
 
   add_foreign_key "ai_analyses", "trades"
@@ -225,6 +242,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_230000) do
   add_foreign_key "enrollments", "users"
   add_foreign_key "messages", "chat_rooms"
   add_foreign_key "messages", "users"
+  add_foreign_key "notifications", "users"
   add_foreign_key "posts", "users"
   add_foreign_key "reactions", "posts"
   add_foreign_key "reactions", "users"

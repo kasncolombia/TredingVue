@@ -23696,3 +23696,108 @@ Processing by TradesController#new as HTML
 Completed 200 OK in 468ms (Views: 36.6ms | ActiveRecord: 361.8ms (3 queries, 0 cached) | GC: 15.6ms)
 
 
+Generating image variants require the image_processing gem. Please add `gem "image_processing", "~> 1.2"` to your Gemfile or set `config.active_storage.variant_processor = :disabled`.
+Started GET "/" for ::1 at 2026-09-17 10:54:35 -0500
+  [1m[36mActiveRecord::SchemaMigration Load (2.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='CoachTradingApp'*/[0m
+Processing by PagesController#landing as HTML
+  Rendering layout layouts/application.html.erb
+  Rendering pages/landing.html.erb within layouts/application
+  Rendered pages/landing.html.erb within layouts/application (Duration: 15.8ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 359.6ms | GC: 0.0ms)
+Completed 200 OK in 850ms (Views: 592.8ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/favicon.ico" for ::1 at 2026-09-17 10:55:01 -0500
+  
+ActionController::RoutingError (No route matches [GET] "/favicon.ico"):
+  
+Started GET "/cuenta/ingresar" for ::1 at 2026-09-17 10:56:03 -0500
+Processing by Devise::SessionsController#new as HTML
+  Rendering layout layouts/application.html.erb
+  Rendering devise/sessions/new.html.erb within layouts/application
+  Rendered devise/sessions/new.html.erb within layouts/application (Duration: 466.9ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 468.5ms | GC: 0.0ms)
+Completed 200 OK in 571ms (Views: 496.7ms | ActiveRecord: 26.4ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started POST "/cuenta/ingresar" for ::1 at 2026-09-17 10:56:07 -0500
+Processing by Devise::SessionsController#create as HTML
+  Parameters: {"authenticity_token" => "[FILTERED]", "user" => {"email" => "[FILTERED]", "password" => "[FILTERED]", "remember_me" => "0"}}
+  [1m[36mUser Load (5.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."email" = 'trader@coachtrading.com' ORDER BY "users"."id" ASC LIMIT 1 /*action='create',application='CoachTradingApp',controller='sessions'*/[0m
+Redirected to http://localhost:3000/
+Completed 303 See Other in 1431ms (ActiveRecord: 5.2ms (1 query, 0 cached) | GC: 15.6ms)
+
+
+Started GET "/" for ::1 at 2026-09-17 10:56:08 -0500
+Processing by PagesController#landing as HTML
+  [1m[36mUser Load (0.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='landing',application='CoachTradingApp',controller='pages'*/[0m
+  ↳ app/controllers/pages_controller.rb:5:in 'PagesController#landing'
+Redirected to http://localhost:3000/dashboard
+↳ app/controllers/pages_controller.rb:6:in 'PagesController#landing'
+Completed 302 Found in 12ms (ActiveRecord: 0.1ms (1 query, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/dashboard" for ::1 at 2026-09-17 10:56:09 -0500
+Processing by DashboardController#index as HTML
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  [1m[36mTrade Load (16.3ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/services/trading/calculate_statistics.rb:4:in 'Kernel#Array'
+  [1m[36mTrade Load (0.6ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC, "trades"."entry_at" ASC /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/services/trading/calculate_drawdown.rb:4:in 'Trading::CalculateDrawdown#initialize'
+  Rendering layout layouts/application.html.erb
+  Rendering dashboard/index.html.erb within layouts/application
+  [1m[36mTrade Load (0.3ms)[0m  [1m[34mSELECT "trades".* FROM "trades" WHERE "trades"."user_id" = 2 ORDER BY "trades"."entry_at" DESC LIMIT 5 /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/views/dashboard/index.html.erb:276
+  Rendered dashboard/index.html.erb within layouts/application (Duration: 82.8ms | GC: 0.0ms)
+  [1m[36mTrade Count (2.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='index',application='CoachTradingApp',controller='dashboard'*/[0m
+  ↳ app/views/layouts/application.html.erb:261
+  Rendered layout layouts/application.html.erb (Duration: 89.1ms | GC: 0.0ms)
+Completed 200 OK in 698ms (Views: 99.2ms | ActiveRecord: 22.7ms (5 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/trades/new" for ::1 at 2026-09-17 10:56:55 -0500
+Processing by TradesController#new as HTML
+  [1m[36mUser Load (0.3ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 2 ORDER BY "users"."id" ASC LIMIT 1 /*action='new',application='CoachTradingApp',controller='trades'*/[0m
+  Rendering layout layouts/application.html.erb
+  Rendering trades/new.html.erb within layouts/application
+  [1m[36mStrategy Load (7.7ms)[0m  [1m[34mSELECT "strategies".* FROM "strategies" WHERE "strategies"."user_id" = 2 /*action='new',application='CoachTradingApp',controller='trades'*/[0m
+  ↳ app/views/trades/_form.html.erb:96
+  Rendered trades/_form.html.erb (Duration: 181.8ms | GC: 0.0ms)
+  Rendered trades/new.html.erb within layouts/application (Duration: 218.3ms | GC: 0.0ms)
+  [1m[36mTrade Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "trades" WHERE "trades"."user_id" = 2 /*action='new',application='CoachTradingApp',controller='trades'*/[0m
+  ↳ app/views/layouts/application.html.erb:261
+  Rendered layout layouts/application.html.erb (Duration: 222.4ms | GC: 0.0ms)
+Completed 200 OK in 317ms (Views: 225.2ms | ActiveRecord: 8.7ms (3 queries, 0 cached) | GC: 0.0ms)
+
+
+Generating image variants require the image_processing gem. Please add `gem "image_processing", "~> 1.2"` to your Gemfile or set `config.active_storage.variant_processor = :disabled`.
+  [1m[36mActiveRecord::InternalMetadata Load (0.3ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='CoachTradingApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='CoachTradingApp'*/[0m
+Migrating to AddRoleToUsers (20260917000000)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CoachTradingApp'*/[0m
+  [1m[35m (2.1ms)[0m  [1m[35mALTER TABLE "users" ADD "role" varchar DEFAULT 'user' NOT NULL /*application='CoachTradingApp'*/[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE INDEX "index_users_on_role" ON "users" ("role") /*application='CoachTradingApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20260917000000') RETURNING "version" /*application='CoachTradingApp'*/[0m
+  [1m[36mTRANSACTION (9.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CoachTradingApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='CoachTradingApp'*/[0m
+Generating image variants require the image_processing gem. Please add `gem "image_processing", "~> 1.2"` to your Gemfile or set `config.active_storage.variant_processor = :disabled`.
+  [1m[36mActiveRecord::InternalMetadata Load (0.2ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='CoachTradingApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='CoachTradingApp'*/[0m
+Migrating to AddOnboardingToUsers (20260917000001)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CoachTradingApp'*/[0m
+  [1m[35m (1.6ms)[0m  [1m[35mALTER TABLE "users" ADD "onboarding_completed" boolean DEFAULT FALSE NOT NULL /*application='CoachTradingApp'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mALTER TABLE "users" ADD "trader_type" varchar /*application='CoachTradingApp'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mALTER TABLE "users" ADD "main_market" varchar /*application='CoachTradingApp'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mALTER TABLE "users" ADD "trading_goal" varchar /*application='CoachTradingApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20260917000001') RETURNING "version" /*application='CoachTradingApp'*/[0m
+  [1m[36mTRANSACTION (7.2ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CoachTradingApp'*/[0m
+Migrating to CreateNotifications (20260917000002)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CoachTradingApp'*/[0m
+  [1m[35m (1.3ms)[0m  [1m[35mCREATE TABLE "notifications" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "user_id" integer NOT NULL, "title" varchar NOT NULL, "message" text NOT NULL, "category" varchar DEFAULT 'system', "read" boolean DEFAULT FALSE NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_b080fb4855"
+FOREIGN KEY ("user_id")
+  REFERENCES "users" ("id")
+) /*application='CoachTradingApp'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_notifications_on_user_id" ON "notifications" ("user_id") /*application='CoachTradingApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.2ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20260917000002') RETURNING "version" /*application='CoachTradingApp'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CoachTradingApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='CoachTradingApp'*/[0m

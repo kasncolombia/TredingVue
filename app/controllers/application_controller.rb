@@ -8,6 +8,12 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.permit(:sign_up, keys: [:name])
     devise_parameter_sanitizer.permit(:account_update, keys: [:name, :timezone, :preferred_currency, :initial_capital])
   end
+
+  def require_pro!
+    unless current_user&.pro?
+      redirect_to new_subscription_path, alert: "El AI Coach es exclusivo para usuarios PRO. Por favor actualiza tu membresía."
+    end
+  end
 end
 
 module Community

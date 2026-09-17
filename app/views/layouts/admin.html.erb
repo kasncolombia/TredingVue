@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es" id="html-root" class="dark">
+<script>
+  (function(){
+    var s = localStorage.getItem('tj-theme');
+    var r = document.documentElement;
+    if (s === 'light') { r.classList.remove('dark'); }
+    else { r.classList.add('dark'); }
+  })();
+</script>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= content_for?(:title) ? yield(:title) + " | " : "" %>Admin - CoachTrading</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: { extend: {
+        colors: {
+          brand:    "#6C5CE7",
+          "brand-hover": "#5847D2",
+          "brand-light": "#EDEAFE",
+          "accent-green": "#10B981",
+          profit: "#10B981",
+          loss:   "#F43F5E",
+          darkBg:       "#0D0E15",
+          darkCard:     "#151724",
+          darkCardAlt:  "#1A1D2D",
+          darkInput:    "#11121C",
+          darkHover:    "#1E2133",
+          darkBorder:   "#23263A",
+          lightBg:      "#F8F9FD",
+          lightCard:    "#FFFFFF",
+          lightBorder:  "#E3E6EF",
+        },
+        fontFamily: {
+          sans: ["Manrope", "sans-serif"],
+          mono: ["JetBrains Mono", "monospace"]
+        }
+      }}
+    }
+  </script>
+
+  <style>
+    body { font-family: "Manrope", sans-serif; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+    .theme-ready, .theme-ready *, .theme-ready *::before, .theme-ready *::after {
+      transition: background-color .25s ease, border-color .25s ease, color .25s ease, box-shadow .25s ease !important;
+    }
+    .dark body { background: #090A10; color: #F1F2F6; }
+    .dark .sidebar-bg { background: #0C0E1A; border-right: 1px solid #1A1D30; transition: width .3s ease; }
+    .dark .header-bg { background: rgba(12,14,26,.95); border-bottom: 1px solid #1A1D30; backdrop-filter: blur(14px); }
+    .dark .content-canvas { background: #070810; }
+    .dark .content-inner { background: #10122A; border-color: #1A1D30; }
+    .dark .nav-item { color: #8286A8; }
+    .dark .nav-item:hover { background: #1A1D2E; color: #E5E0ED; }
+    .dark .nav-active { background: rgba(108,92,231,.2); color: #6C5CE7 !important; border: 1px solid rgba(108,92,231,.5); }
+    .dark .table-header { background: rgba(14,16,28,.7); }
+    
+    html:not(.dark) body { background: #F6F7FC; color: #0F0E1A; }
+    html:not(.dark) .sidebar-bg { background: #FFFFFF; border-right: 1px solid #E2E6F0; transition: width .3s ease; }
+    html:not(.dark) .header-bg { background: rgba(255,255,255,.94); border-bottom: 1px solid #E2E6F0; backdrop-filter: blur(14px); }
+    html:not(.dark) .content-canvas { background: #EEF0F8; }
+    html:not(.dark) .content-inner { background: #FFFFFF; border-color: #E2E6F0; }
+    html:not(.dark) .nav-item { color: #64748B; }
+    html:not(.dark) .nav-item:hover { background: rgba(108,92,231,.06); color: #6C5CE7; }
+    html:not(.dark) .nav-active { background: rgba(108,92,231,.1); color: #6C5CE7 !important; border: 1px solid rgba(108,92,231,.3); }
+    html:not(.dark) .table-header { background: rgba(236,238,255,.8); }
+
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 12px; font-size: 14px; font-weight: 600; text-decoration: none; border: 1px solid transparent; }
+    
+    @keyframes fadeSlideIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+    .fade-in { animation: fadeSlideIn .4s ease forwards; }
+
+    #sidebar-container.collapsed { width: 4.5rem !important; }
+    #sidebar-container.collapsed .sidebar-text-hide { display: none !important; }
+    #sidebar-container.collapsed .nav-item { justify-content: center; padding: 10px 0; }
+  </style>
+  <%= csrf_meta_tags %>
+</head>
+<body class="flex h-screen overflow-hidden antialiased">
+  
+  <div id="mobile-sidebar-backdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 hidden md:hidden"></div>
+
+  <aside id="sidebar-container" class="w-64 sidebar-bg flex flex-col justify-between flex-shrink-0 transition-all duration-300 transform -translate-x-full md:translate-x-0 fixed md:static inset-y-0 left-0 z-40">
+    <div class="flex flex-col h-full">
+      <div class="h-14 flex items-center justify-between px-4 border-b dark:border-darkBorder border-lightBorder flex-shrink-0">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-xl bg-slate-800 dark:bg-white flex items-center justify-center flex-shrink-0 text-white dark:text-slate-900">
+            <span class="material-symbols-outlined text-[18px]">admin_panel_settings</span>
+          </div>
+          <div class="sidebar-text-hide">
+            <p class="font-extrabold text-sm leading-none dark:text-white text-slate-900 tracking-tight">Admin<span class="text-brand">Panel</span></p>
+          </div>
+        </div>
+        <button onclick="toggleMobileSidebar()" class="md:hidden flex items-center text-slate-500"><span class="material-symbols-outlined">close</span></button>
+      </div>
+
+      <nav class="p-4 space-y-1.5 flex-1">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2 pl-2 sidebar-text-hide">Gestión</div>
+        <a href="<%= admin_users_path %>" class="nav-item <%= current_page?(admin_users_path) ? 'nav-active' : '' %>">
+          <span class="material-symbols-outlined text-[20px]">group</span>
+          <span class="sidebar-text-hide">Usuarios</span>
+        </a>
+        <a href="<%= format('%s#metricas', admin_root_path) %>" class="nav-item">
+          <span class="material-symbols-outlined text-[20px]">bar_chart</span>
+          <span class="sidebar-text-hide">Métricas (WIP)</span>
+        </a>
+        <a href="<%= dashboard_path %>" class="nav-item mt-4 border-t dark:border-darkBorder pt-4">
+          <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+          <span class="sidebar-text-hide">Volver a la App</span>
+        </a>
+      </nav>
+
+      <div class="p-3 border-t dark:border-darkBorder border-lightBorder">
+        <div class="flex items-center gap-3 px-2 py-2 rounded-xl dark:bg-darkCardAlt bg-slate-50">
+          <div class="w-8 h-8 rounded-full bg-brand flex items-center justify-center text-xs text-white font-bold"><%= current_user.email.first.upcase %></div>
+          <div class="overflow-hidden flex-1 sidebar-text-hide">
+            <p class="text-xs font-semibold truncate dark:text-white"><%= current_user.email %></p>
+            <p class="text-[10px] text-profit font-semibold">Administrador</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    <header class="h-14 header-bg px-4 flex items-center justify-between flex-shrink-0">
+      <div class="flex items-center gap-3">
+        <button onclick="toggleMobileSidebar()" class="md:hidden p-1 p-1.5 rounded-xl dark:text-slate-400 text-slate-500 hover:bg-slate-200 dark:hover:bg-darkHover">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+        <button onclick="toggleDesktopSidebar()" class="hidden md:flex p-1.5 text-slate-500 hover:bg-slate-200 dark:hover:bg-darkHover rounded-xl">
+          <span id="desktop-sidebar-icon" class="material-symbols-outlined text-[20px]">menu_open</span>
+        </button>
+        <h1 class="text-sm font-bold dark:text-white text-slate-800"><%= yield(:page_title) %></h1>
+      </div>
+      <div>
+        <button onclick="toggleTheme()" class="p-1.5 dark:text-slate-400 text-slate-500 hover:bg-slate-200 dark:hover:bg-darkHover rounded-xl flex items-center">
+          <span class="material-symbols-outlined text-[20px]">contrast</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="flex-1 overflow-y-auto p-4 content-canvas">
+      <div class="min-h-full rounded-2xl content-inner p-4 border dark:border-darkBorder shadow-sm relative">
+        <% if notice %><div class="mb-4 px-4 py-3 rounded-xl bg-profit/10 border border-profit/20 text-profit text-sm fade-in"><%= notice %></div><% end %>
+        <% if alert %><div class="mb-4 px-4 py-3 rounded-xl bg-loss/10 border border-loss/20 text-loss text-sm fade-in"><%= alert %></div><% end %>
+        <%= yield %>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('theme-ready')));
+    function toggleTheme() {
+      const root = document.getElementById('html-root');
+      if (root.classList.contains('dark')) {
+        root.classList.remove('dark'); localStorage.setItem('tj-theme', 'light');
+      } else {
+        root.classList.add('dark'); localStorage.setItem('tj-theme', 'dark');
+      }
+    }
+    function toggleDesktopSidebar() {
+      const s = document.getElementById('sidebar-container');
+      const i = document.getElementById('desktop-sidebar-icon');
+      s.classList.toggle('collapsed');
+      i.textContent = s.classList.contains('collapsed') ? 'menu' : 'menu_open';
+    }
+    function toggleMobileSidebar() {
+      const s = document.getElementById('sidebar-container');
+      const b = document.getElementById('mobile-sidebar-backdrop');
+      s.classList.toggle('-translate-x-full');
+      b.classList.toggle('hidden');
+    }
+  </script>
+</body>
+</html>

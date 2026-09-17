@@ -7,4 +7,18 @@ class Users::ProfileController < ApplicationController
     @win_trades = current_user.trades.where(result: "WIN").count
     @loss_trades = current_user.trades.where(result: "LOSS").count
   end
+
+  def update
+    if current_user.update(profile_params)
+      redirect_to request.referer || dashboard_path, notice: "Perfil actualizado correctamente."
+    else
+      redirect_to request.referer || profile_path, alert: "No se pudo actualizar la configuración."
+    end
+  end
+
+  private
+
+  def profile_params
+    params.require(:user).permit(:onboarding_completed, :trader_type, :main_market, :trading_goal, :timezone)
+  end
 end

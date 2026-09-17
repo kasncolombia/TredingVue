@@ -2,6 +2,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
+  enum role: { user: "user", admin: "admin" }
+
   has_many :trades,           dependent: :destroy
   has_many :strategies,       dependent: :destroy
   has_many :ai_conversations, dependent: :destroy
@@ -15,6 +17,7 @@ class User < ApplicationRecord
   has_many :classrooms,       dependent: :destroy
   has_many :resources,        dependent: :destroy
   has_many :chat_rooms,       dependent: :destroy
+  has_many :notifications,    dependent: :destroy
 
   has_many :enrollments,       dependent: :destroy
 
@@ -33,5 +36,9 @@ class User < ApplicationRecord
 
   def total_pnl
     trades.sum(:pnl)
+  end
+
+  def pro?
+    pro_status == true && (subscription_expires_at.nil? || subscription_expires_at > Time.current)
   end
 end

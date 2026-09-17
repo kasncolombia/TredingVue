@@ -31,6 +31,16 @@ Rails.application.routes.draw do
   get "calendar", to: "calendar#show", as: :calendar
   get "up" => "rails/health#show", as: :rails_health_check
   get "perfil", to: "users/profile#show", as: :profile
+  patch "perfil", to: "users/profile#update"
+  put "perfil", to: "users/profile#update"
+  
+  resources :notifications, only: [:index] do
+    collection do
+      patch :mark_all_read
+    end
+  end
+
+  resource :subscription, only: [:new, :create, :destroy]
 
   # Community Routes
   namespace :community do
@@ -49,5 +59,10 @@ Rails.application.routes.draw do
     resources :resources, only: [:index, :new, :show, :create]
     get :widget, to: "widgets#embed"
     get "profile/:id", to: "profiles#show", as: :public_profile
+  end
+
+  namespace :admin do
+    root "users#index"
+    resources :users
   end
 end

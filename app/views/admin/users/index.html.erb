@@ -1,0 +1,66 @@
+<% content_for :page_title, "Gestión de Usuarios" %>
+
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h2 class="text-xl font-bold dark:text-white text-slate-800">Usuarios Activos</h2>
+    <p class="text-xs text-slate-500 mt-1">Administra accesos, roles y métricas de los traders en la plataforma.</p>
+  </div>
+</div>
+
+<div class="overflow-x-auto rounded-xl border dark:border-darkBorder border-lightBorder">
+  <table class="w-full text-left border-collapse">
+    <thead>
+      <tr class="table-header border-b dark:border-darkBorder border-lightBorder">
+        <th class="p-3 text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 tracking-wider">Usuario / Email</th>
+        <th class="p-3 text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 tracking-wider">Rol</th>
+        <th class="p-3 text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 tracking-wider">Trades</th>
+        <th class="p-3 text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 tracking-wider">Win Rate</th>
+        <th class="p-3 text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 tracking-wider">P&L Neto</th>
+        <th class="p-3 text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 tracking-wider text-right">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @users.each do |user| %>
+        <tr class="border-b dark:border-darkBorder border-lightBorder hover:bg-slate-50 dark:hover:bg-darkHover transition-colors fade-in">
+          <td class="p-3">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-brand/10 text-brand flex items-center justify-center font-bold text-xs"><%= user.email.first.upcase %></div>
+              <div>
+                <div class="text-sm font-bold dark:text-white"><%= user.name.presence || "Sin Nombre" %></div>
+                <div class="text-[11px] text-slate-500"><%= user.email %></div>
+              </div>
+            </div>
+          </td>
+          <td class="p-3">
+            <% if user.admin? %>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-brand/10 text-brand border border-brand/20">ADMIN</span>
+            <% else %>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">USER</span>
+            <% end %>
+          </td>
+          <td class="p-3 text-xs font-semibold dark:text-slate-200"><%= user.trade_count %></td>
+          <td class="p-3 text-xs font-semibold <%= user.win_rate > 50 ? 'text-profit' : (user.win_rate == 0 ? 'text-slate-500' : 'text-loss') %>">
+            <%= number_to_percentage(user.win_rate, precision: 1) %>
+          </td>
+          <td class="p-3 text-xs font-semibold <%= user.total_pnl >= 0 ? 'text-profit' : 'text-loss' %>">
+            <%= number_to_currency(user.total_pnl) %>
+          </td>
+          <td class="p-3 text-right">
+            <%= link_to edit_admin_user_path(user), class: "p-1.5 inline-flex text-slate-400 hover:text-brand hover:bg-brand/10 rounded-lg transition-colors" do %>
+              <span class="material-symbols-outlined text-[18px]">edit</span>
+            <% end %>
+            <%= link_to admin_user_path(user), data: { turbo_method: :delete, turbo_confirm: "¿Eliminar definitivamente al usuario #{user.email}?" }, class: "p-1.5 inline-flex text-slate-400 hover:text-loss hover:bg-loss/10 rounded-lg transition-colors" do %>
+              <span class="material-symbols-outlined text-[18px]">delete</span>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  
+  <% if @users.empty? %>
+    <div class="p-8 text-center text-slate-500 text-sm">
+      No hay usuarios registrados.
+    </div>
+  <% end %>
+</div>

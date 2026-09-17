@@ -22,6 +22,7 @@ class TradesController < ApplicationController
   def create
     @trade = current_user.trades.build(trade_params)
     if @trade.save
+      Trading::AlertManager.new(current_user).evaluate_trade(@trade)
       redirect_to trades_path, notice: "Operación registrada exitosamente."
     else
       @strategies = current_user.strategies
@@ -54,24 +55,17 @@ class TradesController < ApplicationController
   def import_csv
     file = params[:csv_file]
     if file.present?
-      require "csv"
-      csv_text = file.read.force_encoding("UTF-8")
-      count    = 0
       begin
-        CSV.parse(csv_text, headers: true).each do |row|
-          trade = current_user.trades.build(
-            symbol:      row["symbol"] || row["Symbol"],
-            direction:   row["direction"] || row["Side"] || "LONG",
-            entry_price: row["entry_price"] || row["Entry"],
-            exit_price:  row["exit_price"]  || row["Exit"],
-            pnl:         row["pnl"] || row["PnL"],
-            entry_at:    row["entry_at"] || row["Date"]
-          )
-          count += 1 if trade.save
-        end
-        redirect_to trades_path, notice: "#{count} operaciones importadas exitosamente."
-      rescue CSV::MalformedCSVError => e
-        redirect_to import_trades_path, alert: "Error en el formato del CSV: #{e.message}"
+        csv_text = file.read.force_encoding("UTF-8")
+        
+        count = Trading::CsvImporter.new(current_user, csv_text).call
+        
+        # Disparar alertas globales de overtrading o drawdowns masivos después del import.
+        Trading::AlertManager.new(current_user).evaluate_all if count > 0
+        
+        redirect_to trades_path, notice: "#{count} operaciones importadas exitosamente desde CSV."
+      rescue => e
+        redirect_to import_trades_path, alert: "Error procesando el CSV multi-broker: #{e.message}"
       end
     else
       redirect_to import_trades_path, alert: "Selecciona un archivo CSV válido."

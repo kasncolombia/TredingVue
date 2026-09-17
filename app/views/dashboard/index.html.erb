@@ -12,6 +12,41 @@
   </div>
 <% end %>
 
+<% if current_user && !current_user.onboarding_completed %>
+  <!-- ONBOARDING OVERLAY MODAL -->
+  <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-md bg-black/60 fade-in">
+    <div class="glass max-w-lg w-full rounded-[2rem] p-8 border dark:border-darkBorder border-brand/30 shadow-2xl relative shadow-brand/20">
+      <div class="w-16 h-16 rounded-2xl bg-brand/10 text-brand flex items-center justify-center font-bold mb-6 border border-brand/20">
+        <span class="material-symbols-outlined text-[32px]">rocket_launch</span>
+      </div>
+      <h2 class="text-2xl font-black dark:text-white text-slate-900 mb-2">¡Bienvenido a CoachTrading PRO!</h2>
+      <p class="text-sm dark:text-slate-400 text-slate-600 mb-6">Hemos preparado un modo de demostración automático para que pruebes las funcionalidades mientras registras tu primera operación real. ¿Cómo te defines como trader?</p>
+      
+      <div class="space-y-4 pt-4 border-t dark:border-darkBorder border-lightBorder">
+        <%= form_with model: current_user, url: profile_path, method: :put, class: "space-y-5" do |f| %>
+          <%= f.hidden_field :onboarding_completed, value: true %>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1.5">Nivel de Trading</label>
+              <%= f.select :trader_type, [['Empezando (Demo)', 'beginner'], ['Intermedio', 'intermediate'], ['Fondeado (Pro)', 'funded']], {}, class: "w-full py-2.5 rounded-xl border border-lightBorder dark:border-darkBorder bg-slate-50/50 dark:bg-darkInput text-sm dark:text-white focus:ring-2 focus:ring-brand" %>
+            </div>
+            <div>
+              <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1.5">Mercado Principal</label>
+              <%= f.select :main_market, [['Futuros (NQ/ES)', 'futures'], ['Forex', 'forex'], ['Crypto', 'crypto']], {}, class: "w-full py-2.5 rounded-xl border border-lightBorder dark:border-darkBorder bg-slate-50/50 dark:bg-darkInput text-sm dark:text-white focus:ring-2 focus:ring-brand" %>
+            </div>
+          </div>
+
+          <button type="submit" class="w-full mt-2 py-3 rounded-xl bg-brand hover:bg-brand-hover text-white font-black shadow-lg shadow-brand/25 transition-all text-sm glow-brand flex justify-center items-center gap-2">
+            <span>Comenzar mi viaje</span>
+            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+          </button>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
 <div class="space-y-6 fade-in">
 
   <!-- ===================== STATUS BANNER (DEMO VS REAL) ===================== -->

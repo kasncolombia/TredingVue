@@ -1,4 +1,6 @@
 class AiCoachController < ApplicationController
+  before_action :require_pro!
+  
   def show
     @stats          = Trading::CalculateStatistics.new(current_user.trades).call
     @recent_trade   = current_user.trades.recent.first
