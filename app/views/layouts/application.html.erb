@@ -112,7 +112,8 @@
     .dark .input-field::placeholder { color: #4A4D6A; }
     .dark .input-field:focus { border-color: #6C5CE7; box-shadow: 0 0 0 3px rgba(108,92,231,.15); }
     .dark .table-header { background: rgba(14,16,28,.7); }
-    .dark .table-row-hover:hover { background: rgba(20,23,42,.5); }
+    .dark .table-row-hover:hover { background: rgba(108,92,231,.15); }
+    .dark .table-row-hover:hover td { color: #E5E0ED; }
     .dark .dropdown-bg  { background: #141729; border: 1px solid #1E2235; }
     .dark .nav-item     { color: #8286A8; }
     .dark .nav-item:hover { background: #1A1D2E; color: #E5E0ED; }
@@ -135,7 +136,8 @@
     html:not(.dark) .input-field::placeholder { color: #9DA3B4; }
     html:not(.dark) .input-field:focus { border-color: #6C5CE7; box-shadow: 0 0 0 3px rgba(108,92,231,.12); }
     html:not(.dark) .table-header { background: rgba(236,238,255,.8); }
-    html:not(.dark) .table-row-hover:hover { background: rgba(108,92,231,.04); }
+    html:not(.dark) .table-row-hover:hover { background: rgba(108,92,231,.08); }
+    html:not(.dark) .table-row-hover:hover td { color: #0F0E1A; }
     html:not(.dark) .dropdown-bg  { background: #FFFFFF; border: 1px solid #E2E6F0; box-shadow: 0 4px 24px rgba(108,92,231,.1); }
     html:not(.dark) .nav-item     { color: #64748B; }
     html:not(.dark) .nav-item:hover { background: rgba(108,92,231,.06); color: #6C5CE7; }
@@ -258,11 +260,15 @@
           { label: "Perfil",       path: profile_path,               icon: "person" },
           { label: "Comunidad",    path: community_feed_index_path,  icon: "forum" },
           { label: "Operaciones",  path: trades_path,                icon: "swap_horiz", count: current_user.trades.count },
+          { label: "Importar CSV", path: import_trades_path,         icon: "file_upload" },
           { label: "Calendario",   path: calendar_path,              icon: "calendar_month" },
           { label: "Analytics",    path: analytics_path,             icon: "monitoring" },
           { label: "AI Coach",     path: ai_coach_path,              icon: "smart_toy" },
           { label: "Estrategias",  path: strategies_path,            icon: "strategy" },
         ] %>
+        <% if current_user.admin? %>
+          <% nav_items << { label: "Panel Admin", path: admin_root_path, icon: "admin_panel_settings" } %>
+        <% end %>
         <% nav_items.each do |item| %>
           <% active = current_page?(item[:path]) %>
           <a href="<%= item[:path] %>" class="nav-item <%= active ? 'nav-active' : '' %>" title="<%= item[:label] %>">
@@ -283,7 +289,14 @@
           </div>
           <div class="overflow-hidden flex-1 sidebar-text-hide">
             <p class="text-xs font-semibold truncate dark:text-white text-slate-800"><%= current_user.name || current_user.email %></p>
-            <p class="text-[10px] font-medium text-brand dark:text-brand-light">Pro Trader</p>
+            <% if current_user.admin? %>
+              <p class="text-[10px] font-bold text-amber-500 flex items-center gap-0.5">
+                <span class="material-symbols-outlined text-[12px]">verified</span>
+                Administrador
+              </p>
+            <% else %>
+              <p class="text-[10px] font-medium text-brand dark:text-brand-light">Pro Trader</p>
+            <% end %>
           </div>
           <%= link_to destroy_user_session_path, data: { turbo_method: :delete }, class: "p-1.5 dark:text-slate-400 text-slate-400 hover:text-loss rounded-lg transition-all cursor-pointer ml-auto sidebar-text-hide", title: "Cerrar Sesión" do %>
             <span class="material-symbols-outlined text-[18px]">logout</span>
@@ -298,7 +311,7 @@
   <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
 
     <!-- TOP HEADER -->
-    <header class="h-14 header-bg px-4 md:px-6 flex items-center justify-between flex-shrink-0">
+    <header class="h-14 header-bg px-4 md:px-6 flex items-center justify-between flex-shrink-0 relative z-[100]">
       <div class="flex items-center gap-2 md:gap-3">
         <!-- MOBILE HAMBURGER -->
         <button onclick="toggleMobileSidebar()" class="md:hidden p-1.5 rounded-xl dark:text-slate-400 text-slate-500 hover:bg-brand/10 transition-all">
@@ -317,21 +330,31 @@
       </div>
 
       <div class="flex items-center gap-1 md:gap-2">
+        <% if current_user.admin? %>
+          <%= link_to admin_root_path, class: "px-2.5 py-1.5 text-xs font-extrabold bg-amber-500/15 text-amber-400 border border-amber-500/30 hover:bg-amber-500/25 rounded-xl transition-all flex items-center gap-1.5 shadow-sm", title: "Acceso al Panel Admin" do %>
+            <span class="material-symbols-outlined text-[16px]">admin_panel_settings</span>
+            <span class="hidden sm:inline">Panel Admin</span>
+          <% end %>
+        <% end %>
+
         <!-- NOTIFICATIONS (Real-time with Turbo) -->
-        <div class="relative group" id="notifications-dropdown-container">
+        <div class="relative group z-[100]" id="notifications-dropdown-container">
           <%= turbo_stream_from "notifications_#{current_user.id}" %>
           <button type="button" class="relative w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-xl dark:text-slate-400 text-slate-500 hover:bg-brand/10 border border-transparent hover:border-brand/20 dark:hover:border-darkBorder transition-all duration-200" title="Notificaciones" onclick="document.getElementById('notif-panel').classList.toggle('hidden')">
             <span class="material-symbols-outlined text-[20px]">notifications</span>
             <%= render partial: "notifications/counter", locals: { count: current_user.notifications.unread.count } %>
           </button>
 
-          <!-- Dropdown Panel -->
-          <div id="notif-panel" class="hidden absolute right-0 top-full mt-2 w-[320px] sm:w-[380px] glass rounded-2xl border dark:border-darkBorder border-lightBorder shadow-2xl z-50 overflow-hidden fade-in">
-            <div class="p-3 border-b dark:border-darkBorder border-lightBorder flex items-center justify-between dark:bg-darkCardAlt/95 bg-white/95">
-              <h4 class="text-sm font-bold dark:text-white text-slate-900">Alertas y Notificaciones</h4>
-              <%= button_to "Marcar todas leídas", mark_all_read_notifications_path, method: :patch, class: "text-[10px] text-brand hover:text-brand-hover font-bold bg-transparent border-none cursor-pointer" %>
+          <!-- Dropdown Panel Solid UI -->
+          <div id="notif-panel" class="hidden absolute right-0 top-full mt-2 w-[340px] sm:w-[400px] dark:bg-[#141729] bg-white rounded-2xl border dark:border-[#23263A] border-slate-200 shadow-2xl z-[9999] overflow-hidden fade-in">
+            <div class="p-3.5 border-b dark:border-[#23263A] border-slate-100 flex items-center justify-between dark:bg-[#1A1D2D] bg-slate-50">
+              <h4 class="text-xs font-extrabold uppercase tracking-wider dark:text-white text-slate-900 flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[16px] text-brand">notifications</span>
+                Alertas y Notificaciones
+              </h4>
+              <%= button_to "Marcar todas leídas", mark_all_read_notifications_path, method: :patch, class: "text-[10px] text-brand hover:text-brand-hover font-extrabold bg-transparent border-none cursor-pointer uppercase tracking-wider" %>
             </div>
-            <div id="notifications_list" class="max-h-80 overflow-y-auto dark:bg-darkBg/90 bg-slate-50/90 flex flex-col">
+            <div id="notifications_list" class="max-h-80 overflow-y-auto dark:bg-[#141729] bg-white flex flex-col divide-y dark:divide-[#1E2235] divide-slate-100">
               <% current_user.notifications.recent.limit(20).each do |n| %>
                 <%= render partial: "notifications/notification", locals: { notification: n } %>
               <% end %>

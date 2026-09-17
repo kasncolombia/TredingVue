@@ -1,18 +1,27 @@
-<div id="<%= dom_id(notification) %>" class="p-3 border-b dark:border-darkBorder border-lightBorder hover:bg-slate-100 dark:hover:bg-darkHover transition-all fade-in <%= 'bg-brand/5 dark:bg-brand/10' unless notification.read? %>">
+<div id="<%= dom_id(notification) %>" class="p-3.5 border-b dark:border-[#23263A] border-slate-100 dark:hover:bg-[#1E2133] hover:bg-slate-50 transition-all fade-in <%= notification.read? ? 'dark:bg-[#141729] bg-white opacity-80' : 'dark:bg-[#1A1D3A] bg-indigo-50/50' %>">
   <div class="flex items-start gap-3">
     <% case notification.category %>
     <% when 'warning', 'danger' %>
-      <div class="w-8 h-8 rounded-full bg-loss/10 text-loss flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
+      <div class="w-8 h-8 rounded-xl bg-loss/15 text-loss flex items-center justify-center flex-shrink-0 mt-0.5 border border-loss/20">
         <span class="material-symbols-outlined text-[16px]">warning</span>
       </div>
+    <% when 'system' %>
+      <div class="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-500 flex items-center justify-center flex-shrink-0 mt-0.5 border border-emerald-500/20">
+        <span class="material-symbols-outlined text-[16px]">verified</span>
+      </div>
     <% else %>
-      <div class="w-8 h-8 rounded-full bg-brand/10 text-brand flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
+      <div class="w-8 h-8 rounded-xl bg-brand/15 text-brand flex items-center justify-center flex-shrink-0 mt-0.5 border border-brand/20">
         <span class="material-symbols-outlined text-[16px]">notifications</span>
       </div>
     <% end %>
-    <div class="flex-1">
-      <p class="text-[13px] font-extrabold dark:text-white text-slate-900 leading-tight"><%= notification.title %></p>
-      <p class="text-[11px] dark:text-slate-300 text-slate-600 mt-1 leading-snug"><%= notification.message %></p>
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center justify-between gap-2">
+        <p class="text-[13px] font-extrabold dark:text-white text-slate-900 leading-tight truncate"><%= notification.title %></p>
+        <% unless notification.read? %>
+          <span class="w-2 h-2 rounded-full bg-brand shrink-0"></span>
+        <% end %>
+      </div>
+      <p class="text-[11px] dark:text-slate-300 text-slate-600 mt-1 leading-relaxed"><%= notification.message %></p>
       <p class="text-[9px] text-slate-400 mt-1.5 uppercase tracking-widest font-bold"><%= time_ago_in_words(notification.created_at) %> atrás</p>
     </div>
   </div>

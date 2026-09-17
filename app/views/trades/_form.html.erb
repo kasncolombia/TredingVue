@@ -43,16 +43,41 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 z-20">
             <div>
               <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
-                <span>Símbolo <span class="text-rose-500">*</span></span>
+                <span>Símbolo / Activo <span class="text-rose-500">*</span></span>
                 <div class="relative group cursor-help flex items-center justify-center text-slate-400 hover:text-brand transition-colors">
                   <span class="material-symbols-outlined text-[14px]">info</span>
-                  <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2.5 bg-slate-900 border border-slate-700/50 text-white text-[10.5px] rounded-xl shadow-xl opacity-0 translate-y-2 pointer-events-none group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 z-50 font-normal leading-relaxed text-center hidden group-hover:block">
-                    El nombre exacto (ticker) del activo en tu broker.<br><strong class="text-brand-light">Ej: NQ1!, BTCUSD, AAPL.</strong>
+                  <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 p-2.5 bg-slate-900 border border-slate-700/50 text-white text-[10.5px] rounded-xl shadow-xl opacity-0 translate-y-2 pointer-events-none group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 z-50 font-normal leading-relaxed text-center hidden group-hover:block">
+                    Selecciona un activo frecuente o escribe cualquier ticker personalizado.
                   </div>
                 </div>
               </label>
-              <%= f.text_field :symbol, placeholder: "Ej: NQ1!, BTCUSD, AAPL", required: true,
+
+              <%= f.text_field :symbol, placeholder: "Escribe o elige un activo (Ej: NQ1!, BTCUSD)", required: true, id: "trade_symbol_input", list: "popular-symbols-list",
                   class: "input-field w-full px-4 py-2.5 rounded-xl text-sm font-bold focus:outline-none transition-all uppercase relative z-10" %>
+
+              <datalist id="popular-symbols-list">
+                <option value="NQ1!">Futuros Nasdaq (NQ1!)</option>
+                <option value="ES1!">Futuros S&P 500 (ES1!)</option>
+                <option value="BTCUSD">Bitcoin / USD (BTCUSD)</option>
+                <option value="ETHUSD">Ethereum / USD (ETHUSD)</option>
+                <option value="EURUSD">Euro / US Dollar (EURUSD)</option>
+                <option value="GBPUSD">Pound / US Dollar (GBPUSD)</option>
+                <option value="XAUUSD">Gold / Oro (XAUUSD)</option>
+                <option value="AAPL">Apple Inc. (AAPL)</option>
+                <option value="NVDA">NVIDIA Corp. (NVDA)</option>
+                <option value="TSLA">Tesla Inc. (TSLA)</option>
+                <option value="SPY">SPDR S&P 500 ETF (SPY)</option>
+                <option value="QQQ">Invesco QQQ (QQQ)</option>
+              </datalist>
+
+              <!-- QUICK SELECTION CHIPS -->
+              <div class="flex flex-wrap gap-1.5 mt-2">
+                <% %w[NQ1! ES1! BTCUSD ETHUSD EURUSD AAPL NVDA].each do |chip| %>
+                  <button type="button" onclick="selectSymbol('<%= chip %>')" class="px-2 py-0.5 text-[10.5px] font-bold rounded-lg dark:bg-darkCard bg-slate-100 dark:text-slate-300 text-slate-700 border dark:border-darkBorder border-slate-200 hover:border-brand hover:text-brand dark:hover:text-brand-light transition-all cursor-pointer">
+                    <%= chip %>
+                  </button>
+                <% end %>
+              </div>
             </div>
             
             <div>
@@ -532,4 +557,12 @@ document.addEventListener("DOMContentLoaded", function() {
   // Set default mode on mount (Beginner by default)
   setMode('beginner');
 });
+
+window.selectSymbol = function(sym) {
+  const input = document.getElementById('trade_symbol_input');
+  if (input) {
+    input.value = sym;
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+};
 </script>

@@ -1,10 +1,11 @@
 class Trade < ApplicationRecord
   belongs_to :user
   belongs_to :strategy, optional: true
-  has_many :trade_notes,  dependent: :destroy
   has_many :ai_analyses,  dependent: :destroy
+  has_one  :ai_analysis,  -> { order(created_at: :desc) }, dependent: :destroy
 
   before_validation :set_result
+  before_validation :set_entry_at
 
   validates :symbol, :direction, :entry_price, :exit_price, :pnl, presence: true
   validates :direction, inclusion: { in: %w[LONG SHORT] }
@@ -29,5 +30,9 @@ class Trade < ApplicationRecord
 
   def set_result
     self.result = pnl.to_f >= 0 ? "WIN" : "LOSS" if result.blank?
+  end
+
+  def set_entry_at
+    self.entry_at ||= Time.current
   end
 end

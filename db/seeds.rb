@@ -1,5 +1,15 @@
 puts "Sembrando base de datos enriquecida para AI Trading Journal..."
 
+# Usuario principal admin
+admin_user = User.find_or_create_by!(email: "admin@admin.com") do |u|
+  u.name                = "System Admin"
+  u.password            = "password123"
+  u.role                = "admin"
+  u.timezone            = "America/Mexico_City"
+  u.preferred_currency  = "USD"
+  u.initial_capital     = 50_000
+end
+
 # Usuario principal demo
 demo_user = User.find_or_create_by!(email: "trader@coachtrading.com") do |u|
   u.name                = "Trader Demo"

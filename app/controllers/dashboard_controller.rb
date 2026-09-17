@@ -7,6 +7,14 @@ class DashboardController < ApplicationController
     @pnl_by_day    = Trading::CalculateDailyPnl.new(all_trades).call
 
     @ai_diagnosis  = generate_ai_diagnosis(@stats)
+
+    if current_user.notifications.empty?
+      current_user.notifications.create!(
+        title: "¡Bienvenido a CoachTrading PRO! 🚀",
+        message: "Tu diario de trading inteligente está activo. Registra tu primera operación o prueba el AI Coach.",
+        category: "system"
+      )
+    end
   end
 
   private

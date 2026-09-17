@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_17_000002) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_17_000003) do
   create_table "ai_analyses", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "discipline_score"
@@ -217,11 +217,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_17_000002) do
     t.string "main_market"
     t.string "name", default: "", null: false
     t.boolean "onboarding_completed", default: false, null: false
+    t.string "paypal_subscription_id"
     t.string "preferred_currency", default: "USD"
+    t.boolean "pro_status", default: false, null: false
     t.datetime "remember_created_at"
     t.datetime "reset_password_sent_at"
     t.string "reset_password_token"
     t.string "role", default: "user", null: false
+    t.datetime "subscription_expires_at"
     t.string "timezone", default: "UTC"
     t.string "trader_type"
     t.string "trading_goal"

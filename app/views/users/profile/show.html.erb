@@ -23,7 +23,14 @@
         <div class="space-y-1.5">
           <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
             <h2 class="text-2xl font-black dark:text-white text-slate-900 tracking-tight"><%= current_user.name.presence || "Trader Profesional" %></h2>
-            <span class="px-3 py-0.5 rounded-full text-[11px] font-extrabold bg-brand/15 text-brand border border-brand/25">Funded Trader</span>
+            <% if current_user.admin? %>
+              <span class="px-3 py-0.5 rounded-full text-[11px] font-extrabold bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">shield_person</span>
+                ADMINISTRADOR
+              </span>
+            <% else %>
+              <span class="px-3 py-0.5 rounded-full text-[11px] font-extrabold bg-brand/15 text-brand border border-brand/25">Funded Trader</span>
+            <% end %>
             <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-accent-green/15 text-accent-green border border-accent-green/20">Verificado</span>
           </div>
 
@@ -43,7 +50,14 @@
       </div>
 
       <!-- ACCIONES CERRAR SESION & CONFIGURACION -->
-      <div class="flex items-center gap-3 w-full sm:w-auto justify-center">
+      <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto justify-center">
+        <% if current_user.admin? %>
+          <%= link_to admin_root_path, class: "px-4 py-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 border border-amber-500/30 text-xs font-extrabold transition-all flex items-center gap-1.5 shadow-sm" do %>
+            <span class="material-symbols-outlined text-[16px]">admin_panel_settings</span>
+            <span>Panel Admin</span>
+          <% end %>
+        <% end %>
+
         <a href="#config-section" class="px-4 py-2.5 rounded-xl dark:bg-darkInput bg-slate-100 dark:text-slate-200 text-slate-700 hover:text-brand border dark:border-darkBorder border-lightBorder text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm">
           <span class="material-symbols-outlined text-[16px]">settings</span>
           <span>Ajustes</span>

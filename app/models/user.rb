@@ -2,7 +2,7 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
-  enum role: { user: "user", admin: "admin" }
+  enum :role, { user: "user", admin: "admin" }
 
   has_many :trades,           dependent: :destroy
   has_many :strategies,       dependent: :destroy
@@ -25,6 +25,8 @@ class User < ApplicationRecord
 
   scope :recent, -> { order(created_at: :desc) }
 
+  after_create_commit :send_welcome_notification
+
   def trade_count
     trades.count
   end
@@ -40,5 +42,17 @@ class User < ApplicationRecord
 
   def pro?
     pro_status == true && (subscription_expires_at.nil? || subscription_expires_at > Time.current)
+  end
+
+  private
+
+  def send_welcome_notification
+    notifications.create!(
+      title: "¡Bienvenido a CoachTrading PRO! 🚀",
+      message: "Tu plataforma de trading asistida por IA está lista. Configura tus estrategias, importa tu historial CSV o consulta a tu AI Coach para comenzar.",
+      category: "system"
+    )
+  rescue => e
+    Rails.logger.error "Error al crear notificación de bienvenida: #{e.message}"
   end
 end
