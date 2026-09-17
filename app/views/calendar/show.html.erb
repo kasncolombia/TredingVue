@@ -153,29 +153,29 @@
 
 <!-- MODAL DETALLE DEL DÍA -->
 <div id="day-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[100] hidden flex items-center justify-center p-4">
-  <div class="w-full max-w-lg rounded-3xl overflow-hidden border dark:border-brand/40 border-brand/50 shadow-[0_12px_48px_rgba(108,92,231,0.25)] fade-in relative" style="background: linear-gradient(180deg, var(--tw-gradient-from, rgba(20,23,41,1)) 0%, var(--tw-gradient-to, rgba(14,16,28,1)) 100%);">
+  <div class="glass w-full max-w-lg rounded-3xl overflow-hidden border dark:border-brand/40 border-brand/50 shadow-2xl fade-in relative">
     
     <!-- EFECTO GLOW INTERNO -->
     <div class="absolute top-0 right-0 w-48 h-48 bg-brand/20 blur-[60px] -translate-y-1/2 translate-x-1/4 rounded-full pointer-events-none"></div>
 
-    <div class="p-6 md:p-7 border-b dark:border-white/5 border-white/10 flex items-center justify-between relative z-10">
+    <div class="p-6 md:p-7 border-b dark:border-darkBorder border-slate-200 flex items-center justify-between relative z-10">
       <div>
-        <h3 id="modal-date-title" class="text-xl md:text-2xl font-black text-white tracking-tight">Operaciones del Día</h3>
+        <h3 id="modal-date-title" class="text-xl md:text-2xl font-black dark:text-white text-slate-900 tracking-tight">Operaciones del Día</h3>
         <p id="modal-date-subtitle" class="text-xs md:text-sm text-slate-400 mt-1 font-semibold flex items-center gap-1.5"></p>
       </div>
-      <button onclick="closeDayModal()" class="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition-all bg-slate-900/50 backdrop-blur-md border border-white/5">
+      <button onclick="closeDayModal()" class="text-slate-400 hover:text-brand p-2 rounded-xl hover:bg-brand/10 transition-all border border-transparent hover:border-brand/20">
         <span class="material-symbols-outlined text-[20px]">close</span>
       </button>
     </div>
 
     <!-- LISTA DE TRADES -->
-    <div id="modal-trades-list" class="px-6 md:px-7 py-5 max-h-[50vh] overflow-y-auto space-y-3 relative z-10" style="scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent;"></div>
+    <div id="modal-trades-list" class="px-6 md:px-7 py-5 max-h-[50vh] overflow-y-auto space-y-3 relative z-10"></div>
 
-    <div class="p-5 md:p-6 bg-slate-950/40 border-t dark:border-white/5 border-white/10 flex items-center justify-end gap-3 relative z-10 backdrop-blur-xl">
-      <button onclick="closeDayModal()" class="px-5 py-2.5 text-xs font-bold rounded-xl bg-slate-800 hover:bg-slate-700 text-white transition-all border border-slate-600">
+    <div class="p-5 md:p-6 dark:bg-darkCard bg-slate-50 border-t dark:border-darkBorder border-slate-200 flex items-center justify-end gap-3 relative z-10 backdrop-blur-xl">
+      <button onclick="closeDayModal()" class="px-5 py-2.5 text-xs font-bold rounded-xl dark:bg-slate-800 bg-slate-200 dark:hover:bg-slate-700 hover:bg-slate-300 dark:text-white text-slate-800 transition-all border dark:border-slate-600 border-slate-300">
         Cerrar
       </button>
-      <a href="<%= new_trade_path %>" class="px-5 py-2.5 text-xs font-black rounded-xl bg-brand text-white hover:bg-brand-hover glow-brand transition-all flex items-center gap-2">
+      <a href="<%= new_trade_path %>" class="px-5 py-2.5 text-xs font-black rounded-xl bg-brand text-white hover:bg-brand-hover glow-brand transition-all flex items-center gap-2 border border-white/10">
         <span class="material-symbols-outlined text-[16px]">add</span> <span class="hidden sm:inline">Nueva Operación</span>
       </a>
     </div>
@@ -199,7 +199,7 @@
       list.innerHTML = `
         <div class="text-center py-10 text-xs text-slate-400 space-y-2">
           <span class="material-symbols-outlined text-[32px] text-slate-500">event_busy</span>
-          <p class="font-bold text-slate-300">No realizaste ejecuciones este día.</p>
+          <p class="font-bold dark:text-slate-300 text-slate-700">No realizaste ejecuciones este día.</p>
           <p class="text-[11px]">Mantener la disciplina y estar fuera del mercado también es operar.</p>
         </div>
       `;
