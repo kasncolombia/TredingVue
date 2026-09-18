@@ -139,6 +139,7 @@
 
       <!-- RIGHT COLUMN: LOGIN CARD -->
       <div class="w-full lg:col-span-6 xl:col-span-5 max-w-md mx-auto">
+        <turbo-frame id="auth_card" target="_top" class="block w-full">
         <div class="dark:bg-slate-900/90 bg-white/90 border dark:border-slate-800 border-slate-200 p-8 sm:p-10 rounded-3xl shadow-2xl backdrop-blur-2xl relative overflow-hidden transition-all">
 
           <div class="absolute -top-24 -right-24 w-48 h-48 bg-brand/15 rounded-full blur-2xl pointer-events-none"></div>
@@ -170,6 +171,20 @@
           </div>
 
           <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "space-y-4" }) do |f| %>
+
+            <% if resource.errors.any? %>
+              <div class="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-500 text-xs space-y-1 backdrop-blur-md">
+                <div class="font-extrabold flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[16px]">error</span>
+                  <span>Error al ingresar:</span>
+                </div>
+                <ul class="list-disc list-inside space-y-0.5 font-medium pl-1 text-[11px]">
+                  <% resource.errors.full_messages.each do |msg| %>
+                    <li><%= msg %></li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
 
             <!-- EMAIL -->
             <div>
@@ -239,6 +254,7 @@
           </p>
 
         </div>
+        </turbo-frame>
       </div>
 
     </div>

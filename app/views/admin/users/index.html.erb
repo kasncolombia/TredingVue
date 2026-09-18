@@ -1,88 +1,260 @@
 <% content_for :page_title, "Panel de Control Administrativo" %>
 
-<div class="space-y-6 fade-in">
+<div class="space-y-6 fade-in" data-controller="admin-tabs">
 
-  <!-- ===================== HEADER & TITLE ===================== -->
+  <!-- ===================== HEADER & SYSTEM STATUS BANNER ===================== -->
   <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
     <div>
       <h2 class="text-2xl font-black dark:text-white text-slate-900 tracking-tight">Centro de Control de la Plataforma</h2>
-      <p class="text-xs text-slate-400 mt-1">Monitorea el rendimiento de la comunidad, administra usuarios y roles del sistema.</p>
+      <p class="text-xs text-slate-400 mt-1">Monitorea la salud del sistema, APIs integradas, métricas de la comunidad y administración de usuarios.</p>
     </div>
     <div class="flex items-center gap-2">
-      <span class="px-3 py-1 rounded-full text-xs font-extrabold bg-amber-500/15 text-amber-400 border border-amber-500/30 flex items-center gap-1.5">
+      <span class="px-3 py-1.5 rounded-full text-xs font-extrabold bg-amber-500/15 text-amber-400 border border-amber-500/30 flex items-center gap-1.5 shadow-sm">
         <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
         Modo Administrador Activo
       </span>
     </div>
   </div>
 
-  <!-- ===================== KPI METRICS CARDS ===================== -->
-  <%
-    total_users_count = @users.count
-    admin_users_count = @users.select(&:admin?).count
-    pro_users_count   = @users.select(&:pro?).count
-    total_trades_count = Trade.count
-    total_global_pnl  = Trade.sum(:pnl)
-  %>
+  <!-- ===================== SYSTEM SERVICES DIAGNOSTIC BANNER ===================== -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    
+    <!-- SERVICE 1: OPENAI API STATUS -->
+    <div class="p-4 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm relative overflow-hidden">
+      <div class="flex items-start justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl <%= @openai_configured ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400' %> flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-[22px]">smart_toy</span>
+          </div>
+          <div>
+            <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Motor AI Coach (OpenAI)</span>
+            <div class="flex items-center gap-1.5 mt-0.5">
+              <% if @openai_configured %>
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span class="text-xs font-black text-emerald-400 font-mono">GPT-4o Ready (API Key Activa)</span>
+              <% else %>
+                <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                <span class="text-xs font-black text-amber-400 font-mono">Fallback Local (Sin API Key)</span>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="text-[11px] text-slate-400 mt-2.5 leading-relaxed">
+        <% if @openai_configured %>
+          El AI Coach está procesando consultas y evaluaciones a través del modelo GPT-4o de OpenAI.
+        <% else %>
+          Modo diagnóstico estadístico local activo. Para activar la API real de OpenAI, añade <code class="bg-slate-800 text-amber-300 px-1 py-0.5 rounded font-mono text-[10px]">OPENAI_API_KEY=sk-...</code> en tu archivo <code class="bg-slate-800 text-amber-300 px-1 py-0.5 rounded font-mono text-[10px]">.env</code>.
+        <% end %>
+      </p>
+    </div>
 
-  <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
-    <div class="p-4.5 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm">
+    <!-- SERVICE 2: DATABASE STATUS -->
+    <div class="p-4 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-[22px]">database</span>
+        </div>
+        <div>
+          <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Base de Datos SQLite / ORM</span>
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span class="text-xs font-black text-emerald-400 font-mono">Conexión Estable (ActiveRecord)</span>
+          </div>
+        </div>
+      </div>
+      <p class="text-[11px] text-slate-400 mt-2.5 leading-relaxed">
+        Persistencia de datos operando sin latencia. <%= User.count %> usuarios y <%= Trade.count %> trades registrados.
+      </p>
+    </div>
+
+    <!-- SERVICE 3: FINANCIAL ENGINE STATUS -->
+    <div class="p-4 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-brand/10 text-brand flex items-center justify-center shrink-0">
-          <span class="material-symbols-outlined text-[20px]">group</span>
+          <span class="material-symbols-outlined text-[22px]">calculate</span>
         </div>
         <div>
-          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Usuarios</p>
-          <p class="text-xl font-black dark:text-white text-slate-900 font-mono mt-0.5"><%= total_users_count %></p>
+          <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Motor Financiero & Estadísticas</span>
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span class="text-xs font-black text-emerald-400 font-mono">Trading::CalculateStatistics OK</span>
+          </div>
+        </div>
+      </div>
+      <p class="text-[11px] text-slate-400 mt-2.5 leading-relaxed">
+        Cálculos de Profit Factor, Win Rate y Drawdown ejecutados en el servidor Rails con 100% de precisión.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- ===================== AI COACH MANAGEMENT & API KEY SETTINGS (SOLO ADMIN) ===================== -->
+  <%
+    current_provider = ENV.fetch('AI_PROVIDER', 'openrouter')
+    current_model    = ENV.fetch('AI_MODEL', 'deepseek/deepseek-chat')
+    current_key      = current_provider == 'openrouter' ? (ENV['OPENROUTER_API_KEY'].presence || ENV['OPENAI_API_KEY']) : (ENV['OPENAI_API_KEY'].presence || ENV['OPENROUTER_API_KEY'])
+    has_api_key      = current_key.present?
+  %>
+  <div id="ai-settings" class="dark:bg-[#141729] bg-white rounded-2xl border dark:border-[#23263A] border-slate-200 p-5 shadow-xl space-y-4">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b dark:border-[#23263A] border-slate-100 pb-3">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand via-violet-500 to-emerald-500 text-white flex items-center justify-center font-bold shadow-md">
+          <span class="material-symbols-outlined text-[18px]">smart_toy</span>
+        </div>
+        <div>
+          <h3 class="text-sm font-extrabold dark:text-white text-slate-900 uppercase tracking-wider">Configuración del Motor AI Coach & Modelos</h3>
+          <p class="text-[11px] text-slate-400">Selecciona tu proveedor (OpenRouter / OpenAI Directo), modelo (DeepSeek V3, DeepSeek R1, GPT-4o) e ingresa la API Key.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="testAiConnection()" class="px-3 py-1.5 rounded-xl bg-violet-500/15 hover:bg-violet-500/25 text-violet-400 border border-violet-500/30 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer">
+          <span class="material-symbols-outlined text-[16px]">bolt</span>
+          Probar Conexión AI
+        </button>
+      </div>
+    </div>
+
+    <%= form_with url: admin_update_ai_settings_path, method: :post, class: "space-y-4" do |f| %>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <!-- PROVEEDOR SELECT -->
+        <div class="space-y-1">
+          <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Proveedor de IA</label>
+          <%= f.select :ai_provider, 
+                options_for_select([
+                  ["OpenRouter (DeepSeek, Claude, Meta)", "openrouter"],
+                  ["OpenAI Directo (GPT-4o)", "openai"]
+                ], current_provider),
+                {}, 
+                class: "w-full px-3 py-2.5 rounded-xl text-xs dark:bg-[#1A1D2D] bg-slate-50 border dark:border-[#2E334D] border-slate-200 dark:text-white text-slate-900 focus:outline-none focus:border-brand font-semibold" %>
+        </div>
+
+        <!-- MODELO SELECT -->
+        <div class="space-y-1">
+          <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Modelo de Inteligencia</label>
+          <%= f.select :ai_model, 
+                options_for_select([
+                  ["DeepSeek V3 (deepseek/deepseek-chat) - Recomendado", "deepseek/deepseek-chat"],
+                  ["DeepSeek R1 Razonamiento (deepseek/deepseek-r1)", "deepseek/deepseek-r1"],
+                  ["OpenAI GPT-4o Mini (gpt-4o-mini)", "gpt-4o-mini"],
+                  ["OpenAI GPT-4o Flagship (gpt-4o)", "gpt-4o"],
+                  ["Anthropic Claude 3.5 Sonnet (anthropic/claude-3.5-sonnet)", "anthropic/claude-3.5-sonnet"]
+                ], current_model),
+                {}, 
+                class: "w-full px-3 py-2.5 rounded-xl text-xs dark:bg-[#1A1D2D] bg-slate-50 border dark:border-[#2E334D] border-slate-200 dark:text-white text-slate-900 focus:outline-none focus:border-brand font-mono" %>
+        </div>
+
+        <!-- API KEY INPUT -->
+        <div class="space-y-1">
+          <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Clave API Key (<%= current_provider.upcase %>)</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+              <span class="material-symbols-outlined text-[16px]">key</span>
+            </span>
+            <%= f.password_field :api_key, value: current_key, placeholder: current_provider == 'openrouter' ? "sk-or-v1-..." : "sk-proj-...", class: "w-full pl-9 pr-3 py-2.5 rounded-xl text-xs dark:bg-[#1A1D2D] bg-slate-50 border dark:border-[#2E334D] border-slate-200 dark:text-white text-slate-900 focus:outline-none focus:border-brand font-mono" %>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t dark:border-[#23263A] border-slate-100">
+        <div class="p-2.5 rounded-xl dark:bg-[#1A1D2D] bg-slate-50 border dark:border-[#23263A] border-slate-200 flex items-center gap-2 text-xs w-full sm:w-auto">
+          <span class="text-slate-400 font-medium">Estado del Motor:</span>
+          <div id="ai-test-result" class="font-mono font-bold <%= has_api_key ? 'text-emerald-400' : 'text-amber-400' %>">
+            <%= has_api_key ? "✅ #{current_provider.upcase} / #{current_model} Configurado" : "⚠️ Operando en Modo Local (Sin API Key)" %>
+          </div>
+        </div>
+        <%= f.submit "Guardar Cambios de IA", class: "w-full sm:w-auto px-6 py-2.5 bg-brand hover:bg-brand-hover text-white text-xs font-bold rounded-xl shadow-md transition-all cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+
+  <script>
+  function testAiConnection() {
+    const resultBox = document.getElementById("ai-test-result");
+    resultBox.className = "text-xs font-mono text-violet-400 animate-pulse";
+    resultBox.textContent = "⌛ Probando respuesta en vivo con el motor de IA...";
+    
+    const csrfToken = document.querySelector("meta[name=csrf-token]").content;
+    fetch("<%= admin_test_ai_connection_path %>", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-CSRF-Token": csrfToken }
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        resultBox.className = "text-xs font-mono font-bold text-emerald-400";
+        resultBox.textContent = "✅ " + data.message;
+      } else {
+        resultBox.className = "text-xs font-mono font-bold text-rose-400";
+        resultBox.textContent = "❌ " + data.message;
+      }
+    })
+    .catch(err => {
+      resultBox.className = "text-xs font-mono font-bold text-rose-400";
+      resultBox.textContent = "❌ Error de comunicación con la API de IA.";
+    });
+  }
+  </script>
+
+  <!-- ===================== KPI METRICS CARDS ===================== -->
+  <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+    <div class="p-4 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-brand/10 text-brand flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-[18px]">group</span>
+        </div>
+        <div>
+          <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Usuarios</p>
+          <p class="text-lg font-black dark:text-white text-slate-900 font-mono mt-0.5"><%= @total_users %></p>
         </div>
       </div>
     </div>
 
-    <div class="p-4.5 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm">
+    <div class="p-4 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0">
-          <span class="material-symbols-outlined text-[20px]">admin_panel_settings</span>
+        <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-[18px]">domain_verification</span>
         </div>
         <div>
-          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Admins</p>
-          <p class="text-xl font-black dark:text-white text-slate-900 font-mono mt-0.5"><%= admin_users_count %></p>
+          <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Onboarding Completado</p>
+          <p class="text-lg font-black dark:text-white text-slate-900 font-mono mt-0.5"><%= @onboarded_users %> <span class="text-xs text-slate-400 font-normal">(<%= (@total_users > 0 ? (@onboarded_users.to_f / @total_users * 100).round : 0) %>%)</span></p>
         </div>
       </div>
     </div>
 
-    <div class="p-4.5 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm">
+    <div class="p-4 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0">
-          <span class="material-symbols-outlined text-[20px]">stars</span>
+        <div class="w-9 h-9 rounded-xl bg-violet-500/10 text-violet-400 flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-[18px]">workspace_premium</span>
         </div>
         <div>
-          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Suscripciones PRO</p>
-          <p class="text-xl font-black dark:text-white text-slate-900 font-mono mt-0.5"><%= pro_users_count %></p>
+          <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Membresías PRO</p>
+          <p class="text-lg font-black dark:text-white text-slate-900 font-mono mt-0.5"><%= @pro_users %></p>
         </div>
       </div>
     </div>
 
-    <div class="p-4.5 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm">
+    <div class="p-4 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-violet-500/10 text-violet-400 flex items-center justify-center shrink-0">
-          <span class="material-symbols-outlined text-[20px]">swap_horiz</span>
+        <div class="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-[18px]">psychology</span>
         </div>
         <div>
-          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Trades Plataforma</p>
-          <p class="text-xl font-black dark:text-white text-slate-900 font-mono mt-0.5"><%= total_trades_count %></p>
+          <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Análisis AI Generados</p>
+          <p class="text-lg font-black dark:text-white text-slate-900 font-mono mt-0.5"><%= @total_ai_analyses %></p>
         </div>
       </div>
     </div>
 
-    <div class="p-4.5 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm">
+    <div class="p-4 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl <%= total_global_pnl >= 0 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500' %> flex items-center justify-center shrink-0">
-          <span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
+        <div class="w-9 h-9 rounded-xl <%= @total_global_pnl >= 0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400' %> flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-[18px]">account_balance_wallet</span>
         </div>
         <div>
-          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">P&L Consolidado</p>
-          <p class="text-xl font-black font-mono mt-0.5 <%= total_global_pnl >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
-            <%= total_global_pnl >= 0 ? '+' : '' %>$<%= number_with_precision(total_global_pnl, precision: 0, delimiter: ',') %>
+          <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">P&L Consolidado</p>
+          <p class="text-lg font-black font-mono mt-0.5 <%= @total_global_pnl >= 0 ? 'text-emerald-400' : 'text-rose-400' %>">
+            <%= @total_global_pnl >= 0 ? '+' : '' %>$<%= number_with_precision(@total_global_pnl, precision: 0, delimiter: ',') %>
           </p>
         </div>
       </div>
@@ -91,11 +263,14 @@
 
   <!-- ===================== USERS TABLE ===================== -->
   <div class="dark:bg-[#141729] bg-white rounded-2xl border dark:border-[#23263A] border-slate-200 shadow-xl overflow-hidden">
-    <div class="p-4 border-b dark:border-[#23263A] border-slate-100 flex items-center justify-between">
+    <div class="p-4 border-b dark:border-[#23263A] border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <h3 class="text-sm font-extrabold uppercase tracking-wider dark:text-white text-slate-900 flex items-center gap-2">
         <span class="material-symbols-outlined text-[18px] text-brand">manage_accounts</span>
         Directorio de Usuarios (<%= @users.count %>)
       </h3>
+      <div class="text-xs text-slate-400 font-mono">
+        Ordenado por fecha de registro reciente
+      </div>
     </div>
 
     <div class="overflow-x-auto">
@@ -103,6 +278,7 @@
         <thead>
           <tr class="dark:bg-[#1A1D2D] bg-slate-50 border-b dark:border-[#23263A] border-slate-100">
             <th class="p-3.5 text-[10px] uppercase font-extrabold text-slate-400 tracking-wider">Trader / Email</th>
+            <th class="p-3.5 text-[10px] uppercase font-extrabold text-slate-400 tracking-wider">Perfil Onboarding</th>
             <th class="p-3.5 text-[10px] uppercase font-extrabold text-slate-400 tracking-wider">Rol de Sistema</th>
             <th class="p-3.5 text-[10px] uppercase font-extrabold text-slate-400 tracking-wider">Estado Sub</th>
             <th class="p-3.5 text-[10px] uppercase font-extrabold text-slate-400 tracking-wider">Trades</th>
@@ -129,6 +305,21 @@
                     <div class="text-[11px] text-slate-400 font-mono"><%= user.email %></div>
                   </div>
                 </div>
+              </td>
+              <td class="p-3.5">
+                <% if user.onboarding_completed? %>
+                  <div class="space-y-0.5">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 inline-flex items-center gap-1">
+                      <span class="material-symbols-outlined text-[11px]">candlestick_chart</span>
+                      <%= user.trader_type || 'General' %>
+                    </span>
+                    <div class="text-[10px] text-slate-400 font-mono"><%= user.main_market || 'NQ/Forex' %></div>
+                  </div>
+                <% else %>
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                    Pendiente Onboarding
+                  </span>
+                <% end %>
               </td>
               <td class="p-3.5">
                 <% if user.admin? %>

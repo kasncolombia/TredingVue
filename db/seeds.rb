@@ -1,23 +1,34 @@
 puts "Sembrando base de datos enriquecida para AI Trading Journal..."
 
 # Usuario principal admin
-admin_user = User.find_or_create_by!(email: "admin@admin.com") do |u|
-  u.name                = "System Admin"
-  u.password            = "password123"
-  u.role                = "admin"
-  u.timezone            = "America/Mexico_City"
-  u.preferred_currency  = "USD"
-  u.initial_capital     = 50_000
-end
+admin_user = User.find_or_initialize_by(email: "admin@admin.com")
+admin_user.name                 = "System Admin"
+admin_user.password             = "password123"
+admin_user.password_confirmation= "password123"
+admin_user.role                 = "admin"
+admin_user.timezone             = "America/Mexico_City"
+admin_user.preferred_currency   = "USD"
+admin_user.initial_capital      = 50_000
+admin_user.onboarding_completed = true
+admin_user.trader_type          = "Futures"
+admin_user.main_market          = "NQ / MNQ (Nasdaq 100)"
+admin_user.trading_goal         = "Gestionar plataforma y comunidad"
+admin_user.save!
 
 # Usuario principal demo
-demo_user = User.find_or_create_by!(email: "trader@coachtrading.com") do |u|
-  u.name                = "Trader Demo"
-  u.password            = "password123"
-  u.timezone            = "America/Mexico_City"
-  u.preferred_currency  = "USD"
-  u.initial_capital     = 10_000
-end
+demo_user = User.find_or_initialize_by(email: "trader@coachtrading.com")
+demo_user.name                  = "Trader Demo"
+demo_user.password              = "password123"
+demo_user.password_confirmation = "password123"
+demo_user.role                  = "user"
+demo_user.timezone              = "America/Mexico_City"
+demo_user.preferred_currency    = "USD"
+demo_user.initial_capital       = 10_000
+demo_user.onboarding_completed  = true
+demo_user.trader_type           = "Futures"
+demo_user.main_market           = "NQ / MNQ (Nasdaq 100)"
+demo_user.trading_goal          = "Mejorar disciplina y frenar el revenge trading"
+demo_user.save!
 
 # Asegurar que TODOS los usuarios registrados tengan datos de prueba
 target_users = User.all.to_a

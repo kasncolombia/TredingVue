@@ -2,12 +2,14 @@ class AiCoachController < ApplicationController
   before_action :require_pro!
   
   def show
-    @stats          = Trading::CalculateStatistics.new(current_user.trades).call
-    @recent_trade   = current_user.trades.recent.first
-    @last_analysis  = @recent_trade&.ai_analyses&.last
-    @conversation   = current_user.ai_conversations.last ||
-                      current_user.ai_conversations.create!(title: "Sesión de Coaching")
-    @messages       = @conversation.ai_messages.order(:created_at)
+    @ai_provider       = ENV.fetch('AI_PROVIDER', 'openrouter')
+    @ai_model          = ENV.fetch('AI_MODEL', 'deepseek/deepseek-chat')
+    @stats             = Trading::CalculateStatistics.new(current_user.trades).call
+    @recent_trade      = current_user.trades.recent.first
+    @last_analysis     = @recent_trade&.ai_analyses&.last
+    @conversation      = current_user.ai_conversations.last ||
+                         current_user.ai_conversations.create!(title: "Sesión de Coaching")
+    @messages          = @conversation.ai_messages.order(:created_at)
   end
 
   def analyze_trade
@@ -41,5 +43,17 @@ class AiCoachController < ApplicationController
     conversation.ai_messages.create!(role: "assistant", content: reply)
 
     render json: { message: reply }
+  end
+
+  def reset
+    @conversation = current_user.ai_conversations.last
+    if @conversation
+      @conversation.destroy
+    end
+    
+    respond_to do |format|
+      format.json { render json: { success: true, message: "Chat reiniciado" } }
+      format.html { redirect_to ai_coach_path, notice: "Chat con el AI Coach limpiado exitosamente." }
+    end
   end
 end

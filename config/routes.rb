@@ -11,6 +11,14 @@ Rails.application.routes.draw do
     get "cuenta/salir", to: "devise/sessions#destroy"
   end
 
+  # Onboarding Routes
+  get  "onboarding/paso_1",    to: "onboarding#paso_1",    as: :onboarding_paso_1
+  post "onboarding/paso_2",    to: "onboarding#paso_2",    as: :onboarding_paso_2
+  get  "onboarding/paso_2",    to: "onboarding#paso_2"
+  post "onboarding/paso_3",    to: "onboarding#paso_3",    as: :onboarding_paso_3
+  get  "onboarding/paso_3",    to: "onboarding#paso_3"
+  post "onboarding/completar", to: "onboarding#completar", as: :onboarding_completar
+
   resources :trades do
     collection do
       get  :import
@@ -25,6 +33,7 @@ Rails.application.routes.draw do
   resource :ai_coach, controller: "ai_coach", only: [:show] do
     post :analyze_trade
     post :chat
+    delete :reset
   end
 
   get "dashboard", to: "dashboard#index", as: :dashboard
@@ -64,5 +73,7 @@ Rails.application.routes.draw do
   namespace :admin do
     root "users#index"
     resources :users
+    post "update_ai_settings", to: "users#update_ai_settings", as: :update_ai_settings
+    post "test_ai_connection", to: "users#test_ai_connection", as: :test_ai_connection
   end
 end

@@ -104,6 +104,7 @@
 
       <!-- RIGHT COLUMN: REGISTRATION CARD -->
       <div class="w-full lg:col-span-6 xl:col-span-5 max-w-md mx-auto">
+        <turbo-frame id="auth_card" target="_top" class="block w-full">
         <div class="dark:bg-slate-900/90 bg-white/90 border dark:border-slate-800 border-slate-200 p-8 sm:p-10 rounded-3xl shadow-2xl backdrop-blur-2xl relative overflow-hidden transition-all">
 
           <div class="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500/15 rounded-full blur-2xl pointer-events-none"></div>
@@ -131,6 +132,20 @@
           </div>
 
           <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "space-y-4 relative z-10" }) do |f| %>
+
+            <% if resource.errors.any? %>
+              <div class="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-500 text-xs space-y-1 backdrop-blur-md">
+                <div class="font-extrabold flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[16px]">error</span>
+                  <span>No se pudo crear la cuenta:</span>
+                </div>
+                <ul class="list-disc list-inside space-y-0.5 font-medium pl-1 text-[11px]">
+                  <% resource.errors.full_messages.each do |msg| %>
+                    <li><%= msg %></li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
 
             <!-- NOMBRE -->
             <div>
@@ -173,15 +188,35 @@
                 </button>
               </div>
 
-              <!-- STRENGTH METER -->
-              <div class="mt-2 space-y-1">
-                <div class="flex h-1.5 w-full dark:bg-slate-950 bg-slate-200 rounded-full overflow-hidden gap-1 p-0.5 border dark:border-slate-800 border-slate-300">
-                  <div id="bar1" class="h-full w-1/4 rounded-full dark:bg-slate-800 bg-slate-300 transition-all"></div>
-                  <div id="bar2" class="h-full w-1/4 rounded-full dark:bg-slate-800 bg-slate-300 transition-all"></div>
-                  <div id="bar3" class="h-full w-1/4 rounded-full dark:bg-slate-800 bg-slate-300 transition-all"></div>
-                  <div id="bar4" class="h-full w-1/4 rounded-full dark:bg-slate-800 bg-slate-300 transition-all"></div>
+              <!-- STRENGTH METER CON BURBUJAS Y NIVELES ANIMADOS -->
+              <div class="mt-2.5 space-y-2 p-3 rounded-2xl dark:bg-slate-950/70 bg-slate-100/80 border dark:border-slate-800/80 border-slate-200/80 backdrop-blur-md">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="text-[11px] font-bold dark:text-slate-400 text-slate-500">Nivel de Seguridad</span>
+                  <span id="strength-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider transition-all duration-300 flex items-center gap-1 dark:bg-slate-900 bg-slate-200 dark:text-slate-400 text-slate-600 border dark:border-slate-800 border-slate-300">
+                    <span class="material-symbols-outlined text-[13px]">lock</span> Ingresa tu clave
+                  </span>
                 </div>
-                <p id="strength-text" class="text-[10px] dark:text-slate-400 text-slate-500 font-medium">Fuerza de la clave: esperando datos...</p>
+
+                <!-- BARS -->
+                <div class="flex items-center gap-1.5 h-2 w-full">
+                  <div id="bar1" class="h-2 flex-1 rounded-full dark:bg-slate-800 bg-slate-300 transition-all duration-300"></div>
+                  <div id="bar2" class="h-2 flex-1 rounded-full dark:bg-slate-800 bg-slate-300 transition-all duration-300"></div>
+                  <div id="bar3" class="h-2 flex-1 rounded-full dark:bg-slate-800 bg-slate-300 transition-all duration-300"></div>
+                  <div id="bar4" class="h-2 flex-1 rounded-full dark:bg-slate-800 bg-slate-300 transition-all duration-300"></div>
+                </div>
+
+                <!-- BURBUJAS DE REQUISITOS (CHIPS) -->
+                <div class="flex flex-wrap gap-1.5 pt-1">
+                  <span id="chip-len" class="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-medium dark:bg-slate-900 bg-white dark:text-slate-500 text-slate-400 border dark:border-slate-800 border-slate-200 transition-all duration-200">
+                    <span class="material-symbols-outlined text-[12px]">radio_button_unchecked</span> 8+ caracteres
+                  </span>
+                  <span id="chip-num" class="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-medium dark:bg-slate-900 bg-white dark:text-slate-500 text-slate-400 border dark:border-slate-800 border-slate-200 transition-all duration-200">
+                    <span class="material-symbols-outlined text-[12px]">radio_button_unchecked</span> Mayúscula + Nro
+                  </span>
+                  <span id="chip-spec" class="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-medium dark:bg-slate-900 bg-white dark:text-slate-500 text-slate-400 border dark:border-slate-800 border-slate-200 transition-all duration-200">
+                    <span class="material-symbols-outlined text-[12px]">radio_button_unchecked</span> Símbolo (!@#)
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -221,6 +256,7 @@
           </p>
 
         </div>
+        </turbo-frame>
       </div>
 
     </div>
@@ -247,31 +283,79 @@
   }
 
   function updateStrengthMeter(val) {
-    const b1 = document.getElementById('bar1');
-    const b2 = document.getElementById('bar2');
-    const b3 = document.getElementById('bar3');
-    const b4 = document.getElementById('bar4');
-    const txt = document.getElementById('strength-text');
-    if (!b1 || !b2 || !b3 || !b4 || !txt) return;
+    const bars = [
+      document.getElementById('bar1'),
+      document.getElementById('bar2'),
+      document.getElementById('bar3'),
+      document.getElementById('bar4')
+    ];
+    const badge = document.getElementById('strength-badge');
+    const chipLen = document.getElementById('chip-len');
+    const chipNum = document.getElementById('chip-num');
+    const chipSpec = document.getElementById('chip-spec');
+
+    if (!bars[0] || !badge) return;
+
+    const hasMinLen = val.length >= 8;
+    const hasUpperNum = /[A-Z]/.test(val) && /[0-9]/.test(val);
+    const hasSpec = /[^A-Za-z0-9]/.test(val);
+
+    updateChip(chipLen, hasMinLen, '8+ caracteres');
+    updateChip(chipNum, hasUpperNum, 'Mayúscula + Nro');
+    updateChip(chipSpec, hasSpec, 'Símbolo (!@#)');
 
     let score = 0;
-    if (val.length >= 6) score++;
-    if (val.length >= 10) score++;
-    if (/[A-Z]/.test(val) && /[0-9]/.test(val)) score++;
-    if (/[^A-Za-z0-9]/.test(val)) score++;
-
-    const isDark = document.getElementById('html-root')?.classList.contains('dark');
-    const defaultBg = isDark ? 'h-full w-1/4 rounded-full bg-slate-800 transition-all' : 'h-full w-1/4 rounded-full bg-slate-300 transition-all';
-    [b1,b2,b3,b4].forEach(b => b.className = defaultBg);
+    if (val.length >= 1) score = 1;
+    if (val.length >= 8) score = 2;
+    if (hasMinLen && hasUpperNum) score = 3;
+    if (hasMinLen && hasUpperNum && hasSpec && val.length >= 10) score = 4;
 
     if (val.length === 0) {
-      txt.textContent = 'Fuerza de la clave: esperando datos...';
-      return;
+      score = 0;
+      badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider transition-all duration-300 flex items-center gap-1 dark:bg-slate-900 bg-slate-200 dark:text-slate-400 text-slate-600 border dark:border-slate-800 border-slate-300';
+      badge.innerHTML = '<span class="material-symbols-outlined text-[13px]">lock</span> Ingresa tu clave';
+    } else if (score === 1) {
+      badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider transition-all duration-300 flex items-center gap-1 bg-rose-500/15 text-rose-500 border border-rose-500/30 shadow-sm shadow-rose-500/20';
+      badge.innerHTML = '<span class="material-symbols-outlined text-[13px]">warning</span> Débil';
+    } else if (score === 2) {
+      badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider transition-all duration-300 flex items-center gap-1 bg-amber-500/15 text-amber-500 border border-amber-500/30 shadow-sm shadow-amber-500/20';
+      badge.innerHTML = '<span class="material-symbols-outlined text-[13px]">shield</span> Aceptable';
+    } else if (score === 3) {
+      badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider transition-all duration-300 flex items-center gap-1 bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-sm shadow-emerald-500/20';
+      badge.innerHTML = '<span class="material-symbols-outlined text-[13px]">verified</span> Buena 🔥';
+    } else if (score === 4) {
+      badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider transition-all duration-300 flex items-center gap-1 bg-brand/20 text-brand-light border border-brand/40 shadow-md shadow-brand/30 animate-pulse';
+      badge.innerHTML = '<span class="material-symbols-outlined text-[13px]">rocket_launch</span> Inviolable 🚀';
     }
 
-    if (score >= 1) { b1.className = 'h-full w-1/4 rounded-full bg-rose-500 transition-all'; txt.textContent = 'Fuerza: Débil'; }
-    if (score >= 2) { b2.className = 'h-full w-1/4 rounded-full bg-amber-500 transition-all'; txt.textContent = 'Fuerza: Aceptable'; }
-    if (score >= 3) { b3.className = 'h-full w-1/4 rounded-full bg-emerald-500 transition-all'; txt.textContent = 'Fuerza: Buena 🔥'; }
-    if (score >= 4) { b4.className = 'h-full w-1/4 rounded-full bg-brand transition-all'; txt.textContent = 'Fuerza: Inviolable 🚀'; }
+    const isDark = document.getElementById('html-root')?.classList.contains('dark');
+    const emptyStyle = isDark ? 'h-2 flex-1 rounded-full bg-slate-800 transition-all duration-300' : 'h-2 flex-1 rounded-full bg-slate-300 transition-all duration-300';
+
+    const activeStyles = [
+      'h-2 flex-1 rounded-full bg-rose-500 shadow-sm shadow-rose-500/50 transition-all duration-300',
+      'h-2 flex-1 rounded-full bg-amber-500 shadow-sm shadow-amber-500/50 transition-all duration-300',
+      'h-2 flex-1 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50 transition-all duration-300',
+      'h-2 flex-1 rounded-full bg-gradient-to-r from-brand to-violet-500 shadow-md shadow-brand/50 transition-all duration-300'
+    ];
+
+    bars.forEach((bar, idx) => {
+      if (!bar) return;
+      if (idx < score) {
+        bar.className = activeStyles[score - 1];
+      } else {
+        bar.className = emptyStyle;
+      }
+    });
+  }
+
+  function updateChip(el, ok, text) {
+    if (!el) return;
+    if (ok) {
+      el.className = 'inline-flex items-center gap-1 text-[10px] px-2.5 py-0.5 rounded-full font-bold bg-emerald-500/15 text-emerald-500 border border-emerald-500/30 transition-all duration-200 shadow-sm';
+      el.innerHTML = `<span class="material-symbols-outlined text-[12px]">check_circle</span> ${text}`;
+    } else {
+      el.className = 'inline-flex items-center gap-1 text-[10px] px-2.5 py-0.5 rounded-full font-medium dark:bg-slate-900 bg-white dark:text-slate-500 text-slate-400 border dark:border-slate-800 border-slate-200 transition-all duration-200';
+      el.innerHTML = `<span class="material-symbols-outlined text-[12px]">radio_button_unchecked</span> ${text}`;
+    }
   }
 </script>

@@ -421,6 +421,9 @@
           </div>
         </div>
         <div class="flex items-center gap-1">
+          <button onclick="resetFloatingChat()" class="p-1.5 dark:text-rose-400/80 text-rose-500/80 hover:bg-rose-500/10 hover:text-rose-500 rounded-lg transition-all" title="Limpiar Chat">
+            <span class="material-symbols-outlined text-[16px]">delete</span>
+          </button>
           <%= link_to ai_coach_path, class: "p-1.5 dark:text-slate-400 text-slate-400 hover:text-brand rounded-lg hover:bg-brand/10 transition-all", title: "Vista Completa" do %>
             <span class="material-symbols-outlined text-[16px]">open_in_full</span>
           <% end %>
@@ -586,7 +589,10 @@
     container.innerHTML += `
       <div id="${typingId}" class="flex gap-2 items-start">
         <div class="w-6 h-6 rounded-lg bg-brand flex items-center justify-center text-white text-[10px] flex-shrink-0"><span class="material-symbols-outlined text-[13px]">smart_toy</span></div>
-        <div class="p-2.5 rounded-2xl rounded-tl-none bg-brand/10 border border-brand/20 text-slate-400 text-[11px] animate-pulse">Analizando tu consulta...</div>
+        <div class="p-2.5 rounded-2xl rounded-tl-none bg-brand/10 border border-brand/20 text-slate-400 text-[11px] font-mono flex items-center gap-1.5 animate-pulse">
+          <span class="w-1.5 h-1.5 rounded-full bg-violet-400 animate-ping"></span>
+          Coach IA analizando...
+        </div>
       </div>`;
     input.value = '';
     container.scrollTop = container.scrollHeight;
@@ -610,6 +616,31 @@
       container.innerHTML += `<div class="text-loss text-[10px] text-center">Error al conectar con el AI Coach.</div>`;
     }
     container.scrollTop = container.scrollHeight;
+  }
+
+  function resetFloatingChat() {
+    if (!confirm('¿Seguro que deseas reiniciar el chat flotante?')) return;
+    
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    const container = document.getElementById('floating-chat-messages');
+    
+    fetch('/ai_coach/reset', {
+      method: 'DELETE',
+      headers: { 'X-CSRF-Token': csrfToken, 'Accept': 'application/json' }
+    }).then(r => r.json()).then(data => {
+      if (data.success) {
+        container.innerHTML = `
+          <div class="flex gap-2 items-start fade-in">
+            <div class="w-6 h-6 rounded-lg bg-brand flex items-center justify-center text-white text-[10px] flex-shrink-0">
+              <span class="material-symbols-outlined text-[13px]">smart_toy</span>
+            </div>
+            <div class="p-2.5 rounded-2xl rounded-tl-none bg-brand/10 border border-brand/20 dark:text-slate-200 text-slate-700">
+              Chat reiniciado. ¿En qué te ayudo ahora?
+            </div>
+          </div>
+        `;
+      }
+    });
   }
 </script>
 </html>
