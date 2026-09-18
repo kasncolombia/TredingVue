@@ -6,15 +6,11 @@ module Ai
     def initialize(user, stats = nil)
       @user       = user
       @stats      = stats || Trading::CalculateStatistics.new(user).call
-      @provider   = ENV.fetch('AI_PROVIDER', 'openrouter')
-      @model      = ENV.fetch('AI_MODEL', 'deepseek/deepseek-chat')
+      @provider   = ENV.fetch('AI_PROVIDER', 'google')
+      @model      = ENV.fetch('AI_MODEL', 'gemini-3.6-flash')
       @last_error = nil
       
-      @api_key    = if @provider == 'openrouter'
-                      ENV['OPENROUTER_API_KEY'].presence || ENV['OPENAI_API_KEY']
-                    else
-                      ENV['OPENAI_API_KEY'].presence || ENV['OPENROUTER_API_KEY']
-                    end
+      @api_key    = ENV['GEMINI_API_KEY'].presence || ENV['OPENROUTER_API_KEY'].presence || ENV['OPENAI_API_KEY']
     end
 
     def evaluate_trade(trade)
@@ -64,20 +60,27 @@ module Ai
     end
 
     def call_openai_for_chat(question)
+      recent_trades = @user.trades.order(created_at: :desc).limit(10).map do |t|
+        "[#{t.created_at&.strftime('%Y-%m-%d')}] #{t.symbol} #{t.direction} | #{t.result} ($#{t.pnl.to_f.round(2)}) | Emoción: #{t.emotion || 'N/A'}"
+      end.join("\n        ")
+
       system_prompt = <<~PROMPT
         IDENTIDAD: CoachTrading PRO AI Coach. Misión: Analizar rendimiento y disciplina, no predecir mercado ni dar señales operativas.
         REGLA CORE: NUNCA calcules ni inventes métricas financieras. Usa SOLAMENTE las métricas dadas.
         PERFIL TRADER: Tipo: #{@user.trader_type || 'General'} | Mercado Principal: #{@user.main_market || 'Varios'} | Meta: #{@user.trading_goal || 'Mejorar Disciplina'}.
         
-        MÉTRICAS (Backend Truth):
+        MÉTRICAS GLOBALES (Backend Truth):
         - Operaciones totales: #{@user.trades.count}
         - Win Rate: #{@stats[:win_rate]}%
         - Profit Factor: #{@stats[:profit_factor]}
         - R:R Promedio: #{@stats[:rr_ratio]}
         
+        ÚLTIMAS 10 OPERACIONES (Contexto Reciente):
+        #{recent_trades.presence || 'Sin operaciones recientes.'}
+        
         INSTRUCCIONES:
         1. Sé directo, breve, profesional y libre de jerga innecesaria (máximo 3 párrafos cortos).
-        2. Basa tus análisis en patrones detectables (emoción, FOMO, estrategias).
+        2. Basa tus análisis en patrones detectables de sus métricas o de sus últimas operaciones.
         3. Nunca prometas dinero. Fomenta el respeto al Stop Loss y gestión emocional.
         4. Si te piden una señal futura de entrada/salida, responde que eres analista post-operativo.
       PROMPT
@@ -90,8 +93,18 @@ module Ai
     end
 
     def make_api_request(system_text, user_text, response_format: 'text')
-      is_openrouter = (@provider == 'openrouter' || @model.to_s.include?('deepseek'))
-      endpoint = is_openrouter ? URI('https://openrouter.ai/api/v1/chat/completions') : URI('https://api.openai.com/v1/chat/completions')
+      is_openrouter = (@provider == 'openrouter' || @model.to_s.include?('/'))
+      is_google     = (@provider == 'google' || (@model.to_s.include?('gemini') && !is_openrouter))
+      
+      endpoint_url = if is_google
+                       'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions'
+                     elsif is_openrouter
+                       'https://openrouter.ai/api/v1/chat/completions'
+                     else
+                       'https://api.openai.com/v1/chat/completions'
+                     end
+                     
+      endpoint = URI(endpoint_url)
 
       http = Net::HTTP.new(endpoint.host, endpoint.port)
       http.use_ssl = true
@@ -115,10 +128,10 @@ module Ai
           { role: "system", content: system_text },
           { role: "user", content: user_text }
         ],
-        max_tokens: 800
+        max_tokens: ENV.fetch('AI_MAX_TOKENS', 500).to_i
       }
       
-      body[:response_format] = { type: response_format } if response_format == 'json_object' && !is_openrouter
+      body[:response_format] = { type: response_format } if response_format == 'json_object' && (!is_openrouter && !is_google)
 
       request.body = body.to_json
       response = http.request(request)

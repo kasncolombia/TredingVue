@@ -38,8 +38,8 @@ class Admin::UsersController < Admin::BaseController
   end
 
   def update_ai_settings
-    provider = params[:ai_provider].to_s.presence || 'openrouter'
-    model    = params[:ai_model].to_s.presence || (provider == 'openrouter' ? 'deepseek/deepseek-chat' : 'gpt-4o-mini')
+    provider = params[:ai_provider].to_s.presence || 'google'
+    model    = params[:ai_model].to_s.presence || (provider == 'google' ? 'gemini-3.6-flash' : 'gpt-4o-mini')
     api_key  = params[:api_key].to_s.strip
 
     ENV['AI_PROVIDER'] = provider
@@ -74,9 +74,9 @@ class Admin::UsersController < Admin::BaseController
   end
 
   def test_ai_connection
-    provider = ENV.fetch('AI_PROVIDER', 'openrouter')
-    model    = ENV.fetch('AI_MODEL', 'deepseek/deepseek-chat')
-    key      = provider == 'openrouter' ? (ENV['OPENROUTER_API_KEY'].presence || ENV['OPENAI_API_KEY']) : (ENV['OPENAI_API_KEY'].presence || ENV['OPENROUTER_API_KEY'])
+    provider = ENV.fetch('AI_PROVIDER', 'google')
+    model    = ENV.fetch('AI_MODEL', 'gemini-3.6-flash')
+    key      = ENV['GEMINI_API_KEY'].presence || ENV['OPENROUTER_API_KEY'].presence || ENV['OPENAI_API_KEY']
 
     if key.blank?
       render json: { success: false, message: "No hay API Key configurada para #{provider.upcase}." }

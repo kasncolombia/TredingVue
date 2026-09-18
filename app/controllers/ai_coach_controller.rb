@@ -2,8 +2,8 @@ class AiCoachController < ApplicationController
   before_action :require_pro!
   
   def show
-    @ai_provider       = ENV.fetch('AI_PROVIDER', 'openrouter')
-    @ai_model          = ENV.fetch('AI_MODEL', 'deepseek/deepseek-chat')
+    @ai_provider       = ENV.fetch('AI_PROVIDER', 'google')
+    @ai_model          = ENV.fetch('AI_MODEL', 'gemini-3.6-flash')
     @stats             = Trading::CalculateStatistics.new(current_user.trades).call
     @recent_trade      = current_user.trades.recent.first
     @last_analysis     = @recent_trade&.ai_analyses&.last

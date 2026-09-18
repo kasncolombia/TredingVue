@@ -91,9 +91,9 @@
 
   <!-- ===================== AI COACH MANAGEMENT & API KEY SETTINGS (SOLO ADMIN) ===================== -->
   <%
-    current_provider = ENV.fetch('AI_PROVIDER', 'openrouter')
-    current_model    = ENV.fetch('AI_MODEL', 'deepseek/deepseek-chat')
-    current_key      = current_provider == 'openrouter' ? (ENV['OPENROUTER_API_KEY'].presence || ENV['OPENAI_API_KEY']) : (ENV['OPENAI_API_KEY'].presence || ENV['OPENROUTER_API_KEY'])
+    current_provider = ENV.fetch('AI_PROVIDER', 'google')
+    current_model    = ENV.fetch('AI_MODEL', 'gemini-3.6-flash')
+    current_key      = ENV['GEMINI_API_KEY'].presence || ENV['OPENROUTER_API_KEY'].presence || ENV['OPENAI_API_KEY']
     has_api_key      = current_key.present?
   %>
   <div id="ai-settings" class="dark:bg-[#141729] bg-white rounded-2xl border dark:border-[#23263A] border-slate-200 p-5 shadow-xl space-y-4">
@@ -122,6 +122,7 @@
           <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Proveedor de IA</label>
           <%= f.select :ai_provider, 
                 options_for_select([
+                  ["Google AI Studio (Gemini Directo)", "google"],
                   ["OpenRouter (DeepSeek, Claude, Meta)", "openrouter"],
                   ["OpenAI Directo (GPT-4o)", "openai"]
                 ], current_provider),
@@ -134,8 +135,9 @@
           <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Modelo de Inteligencia</label>
           <%= f.select :ai_model, 
                 options_for_select([
-                  ["DeepSeek V3 (deepseek/deepseek-chat) - Recomendado", "deepseek/deepseek-chat"],
-                  ["DeepSeek R1 Razonamiento (deepseek/deepseek-r1)", "deepseek/deepseek-r1"],
+                  ["Google Gemini 3.6 Flash (Directo Google) - Recomendado", "gemini-3.6-flash"],
+                  ["Google Gemini 2.0 Flash (Directo Google)", "gemini-2.0-flash"],
+                  ["DeepSeek V3 (openrouter: deepseek-chat)", "deepseek/deepseek-chat"],
                   ["OpenAI GPT-4o Mini (gpt-4o-mini)", "gpt-4o-mini"],
                   ["OpenAI GPT-4o Flagship (gpt-4o)", "gpt-4o"],
                   ["Anthropic Claude 3.5 Sonnet (anthropic/claude-3.5-sonnet)", "anthropic/claude-3.5-sonnet"]
