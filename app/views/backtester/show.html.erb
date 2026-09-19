@@ -1,0 +1,353 @@
+<% content_for :page_title do %>
+  <div class="flex items-center gap-2.5">
+    <span>Simulador de Backtesting</span>
+    <span class="text-[9px] px-2 py-0.5 rounded-md bg-brand/20 text-brand font-extrabold uppercase border border-brand/30">Beta</span>
+  </div>
+<% end %>
+
+<div class="fade-in pb-12">
+
+  <%# ── HERO HEADER ── %>
+  <div class="mb-8">
+    <h1 class="text-2xl md:text-3xl font-black dark:text-white text-slate-800 leading-tight">
+      Bienvenido al <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand to-cyan-400">Backtesting</span>
+    </h1>
+    <p class="text-sm dark:text-slate-400 text-slate-500 mt-1.5 max-w-xl">
+      Elige cómo quieres probar tu estrategia — construyendo datos históricos o poniéndola a prueba bajo las reglas de una firma de fondeo.
+    </p>
+  </div>
+
+  <%# ── SESSION TYPE SELECTOR ── %>
+  <div id="session-type-selector" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+    
+    <%# Card 1: Backtesting %>
+    <label id="card-backtest" for="type-backtest" class="relative cursor-pointer group block">
+      <input type="radio" name="session_type" id="type-backtest" value="backtest" class="sr-only peer" checked>
+      <div class="peer-checked:border-brand peer-checked:bg-brand/5 dark:peer-checked:bg-brand/10 border-2 border-slate-200 dark:border-darkBorder bg-white dark:bg-darkCard rounded-2xl p-6 transition-all duration-200 hover:border-brand/50 h-full">
+        <div class="flex items-start gap-4">
+          <div class="w-11 h-11 rounded-xl bg-brand/10 text-brand flex items-center justify-center flex-shrink-0 group-[.peer-checked]:bg-brand group-[.peer-checked]:text-white">
+            <span class="material-symbols-outlined text-[22px]">history</span>
+          </div>
+          <div>
+            <h3 class="text-sm font-extrabold dark:text-white text-slate-800">Sesión de Backtesting</h3>
+            <p class="text-xs dark:text-slate-400 text-slate-500 mt-1 leading-relaxed">Simula operaciones históricas para perfeccionar tu estrategia sin riesgo real.</p>
+          </div>
+        </div>
+        <div class="mt-4 pt-4 border-t dark:border-darkBorder border-slate-100">
+          <ul class="space-y-1.5 text-xs dark:text-slate-300 text-slate-600">
+            <li class="flex items-center gap-2"><span class="material-symbols-outlined text-brand text-[14px]">check_circle</span> Sin riesgo financiero</li>
+            <li class="flex items-center gap-2"><span class="material-symbols-outlined text-brand text-[14px]">check_circle</span> Perfecciona entradas y salidas</li>
+            <li class="flex items-center gap-2"><span class="material-symbols-outlined text-brand text-[14px]">check_circle</span> Métricas aisladas del capital real</li>
+          </ul>
+        </div>
+      </div>
+      <div class="absolute top-4 right-4 w-5 h-5 rounded-full border-2 border-slate-300 dark:border-slate-600 peer-checked:border-brand peer-checked:bg-brand flex items-center justify-center transition-all opacity-0 hidden" id="check-backtest">
+        <span class="material-symbols-outlined text-white text-[12px]">check</span>
+      </div>
+    </label>
+
+    <%# Card 2: Prop Firm Simulation %>
+    <label id="card-prop" for="type-prop" class="relative cursor-pointer group block">
+      <input type="radio" name="session_type" id="type-prop" value="prop_firm" class="sr-only peer">
+      <div class="peer-checked:border-emerald-500 peer-checked:bg-emerald-500/5 dark:peer-checked:bg-emerald-500/10 border-2 border-slate-200 dark:border-darkBorder bg-white dark:bg-darkCard rounded-2xl p-6 transition-all duration-200 hover:border-emerald-500/50 h-full">
+        <div class="flex items-start gap-4">
+          <div class="w-11 h-11 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-[22px]">verified</span>
+          </div>
+          <div>
+            <h3 class="text-sm font-extrabold dark:text-white text-slate-800">Sesión Prop Firm</h3>
+            <p class="text-xs dark:text-slate-400 text-slate-500 mt-1 leading-relaxed">Pon a prueba tu estrategia respetando las reglas de drawdown de una firma de fondeo.</p>
+          </div>
+        </div>
+        <div class="mt-4 pt-4 border-t dark:border-darkBorder border-slate-100">
+          <ul class="space-y-1.5 text-xs dark:text-slate-300 text-slate-600">
+            <li class="flex items-center gap-2"><span class="material-symbols-outlined text-emerald-500 text-[14px]">check_circle</span> Simula reglas de evaluación</li>
+            <li class="flex items-center gap-2"><span class="material-symbols-outlined text-emerald-500 text-[14px]">check_circle</span> Alerta de máximo drawdown diario</li>
+            <li class="flex items-center gap-2"><span class="material-symbols-outlined text-emerald-500 text-[14px]">check_circle</span> Evalúa si pasarías la prueba</li>
+          </ul>
+        </div>
+      </div>
+    </label>
+  </div>
+
+  <%# ── MAIN GRID: FORM + HOW TO START ── %>
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <%# FORM PANEL %>
+    <div class="lg:col-span-2 glass rounded-2xl shadow-sm overflow-hidden">
+      
+      <%# Form Header %>
+      <div class="px-6 py-4 border-b dark:border-darkBorder border-lightBorder dark:bg-[#1A1D2D]/50 bg-slate-50 flex items-center gap-2">
+        <span class="material-symbols-outlined text-brand text-[20px]">tune</span>
+        <h2 class="text-sm font-bold dark:text-white text-slate-800">Configurar Nueva Sesión</h2>
+        <span id="session-label" class="ml-auto text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-brand/15 text-brand border border-brand/20 uppercase">Backtesting</span>
+      </div>
+
+      <div class="p-6 space-y-5">
+        
+        <%# Session Name %>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">
+              Nombre de la Sesión <span class="text-rose-500">*</span>
+            </label>
+            <input type="text" placeholder="Ej: Estrategia Breakout NQ - Sep 2023"
+              class="input-field w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-brand dark:placeholder-slate-500 placeholder-slate-400">
+          </div>
+
+          <%# Account Balance %>
+          <div>
+            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">
+              Saldo de Cuenta Simulado ($) <span class="text-rose-500">*</span>
+            </label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-mono text-sm">$</span>
+              <input type="number" value="100000" min="100" step="500"
+                class="input-field w-full pl-7 pr-3 py-2.5 rounded-xl text-sm font-mono focus:outline-none focus:border-brand">
+            </div>
+            <div class="flex gap-2 mt-2">
+              <% [10000, 50000, 100000, 150000].each do |amt| %>
+                <button type="button" onclick="document.querySelector('[type=number]').value = '<%= amt %>'"
+                  class="px-2 py-1 text-[10px] font-bold rounded-lg dark:bg-darkCard bg-slate-100 dark:text-slate-300 text-slate-600 border dark:border-darkBorder border-slate-200 hover:border-brand hover:text-brand transition-all">
+                  $<%= number_with_precision(amt, precision: 0, delimiter: ',') %>
+                </button>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <%# Strategy + Asset %>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Estrategia</label>
+            <select class="input-field w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-brand">
+              <option value="">Auto-detectar de mis estrategias</option>
+              <% current_user.strategies.each do |s| %>
+                <option value="<%= s.id %>"><%= s.name %></option>
+              <% end %>
+            </select>
+            <%= link_to new_strategy_path, class: "mt-2 text-[11px] font-bold text-brand hover:underline flex items-center gap-1" do %>
+              <span class="material-symbols-outlined text-[14px]">add_circle</span> Crear nueva estrategia
+            <% end %>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">
+              Activo / Instrumento <span class="text-rose-500">*</span>
+            </label>
+            <input type="text" id="bt-asset" list="bt-assets-list" placeholder="Ej: NQ1!, BTCUSD, XAUUSD..."
+              class="input-field w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-brand">
+            <datalist id="bt-assets-list">
+              <option value="NQ1!">Futuros Nasdaq (NQ1!)</option>
+              <option value="ES1!">Futuros S&P 500 (ES1!)</option>
+              <option value="BTCUSD">Bitcoin / USD</option>
+              <option value="XAUUSD">Oro (XAUUSD)</option>
+              <option value="EURUSD">Euro / Dólar</option>
+              <option value="GC1!">Futuros Oro (GC1!)</option>
+              <option value="CL1!">Petróleo Crudo (CL1!)</option>
+              <option value="NVDA">NVIDIA Corp.</option>
+              <option value="SPY">SPDR S&P 500 ETF</option>
+            </datalist>
+            <div class="flex flex-wrap gap-1.5 mt-2">
+              <% %w[NQ1! ES1! BTCUSD XAUUSD EURUSD].each do |chip| %>
+                <button type="button" onclick="document.getElementById('bt-asset').value='<%= chip %>'"
+                  class="px-2 py-0.5 text-[10px] font-bold rounded-lg dark:bg-darkCard bg-slate-100 dark:text-slate-300 text-slate-600 border dark:border-darkBorder border-slate-200 hover:border-brand hover:text-brand transition-all">
+                  <%= chip %>
+                </button>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <%# Date Range: solo en Backtest %>
+        <div id="date-range-section">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">
+                Fecha Inicial <span class="text-rose-500">*</span>
+              </label>
+              <input type="date" id="bt-start-date" value="2024-01-01"
+                class="input-field w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-brand">
+            </div>
+            <div>
+              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Fecha Final</label>
+              <input type="date" id="bt-end-date" value="<%= Date.today.to_s %>"
+                class="input-field w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-brand">
+              <div class="flex gap-1.5 mt-2 flex-wrap">
+                <% [['+ 1 Sem', 7], ['+ 1 Mes', 30], ['+ 3 Meses', 90], ['YTD', 0]].each do |label, days| %>
+                  <button type="button"
+                    onclick="offsetEndDate(<%= days %>)"
+                    class="px-2 py-0.5 text-[10px] font-bold rounded-lg dark:bg-darkCard bg-slate-100 dark:text-slate-300 text-slate-600 border dark:border-darkBorder border-slate-200 hover:border-brand hover:text-brand transition-all" title="<%= label %>">
+                    <%= label %>
+                  </button>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <%# Prop Firm Rules (solo visible en modo prop_firm) %>
+        <div id="prop-rules-section" class="hidden">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+            <div>
+              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Pérdida Máx. Diaria (%)</label>
+              <input type="number" value="2" step="0.5" min="0.5" max="10"
+                placeholder="Ej: 2%"
+                class="input-field w-full px-3 py-2.5 rounded-xl text-sm font-mono focus:outline-none focus:border-rose-500">
+              <p class="text-[10px] text-slate-400 mt-1">Límite diario del fondeo</p>
+            </div>
+            <div>
+              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Drawdown Máx. Total (%)</label>
+              <input type="number" value="8" step="0.5" min="1" max="20"
+                placeholder="Ej: 8%"
+                class="input-field w-full px-3 py-2.5 rounded-xl text-sm font-mono focus:outline-none focus:border-rose-500">
+              <p class="text-[10px] text-slate-400 mt-1">Trailing o estático</p>
+            </div>
+            <div>
+              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Objetivo de Ganancia (%)</label>
+              <input type="number" value="8" step="0.5" min="1" max="100"
+                placeholder="Ej: 8%"
+                class="input-field w-full px-3 py-2.5 rounded-xl text-sm font-mono focus:outline-none focus:border-emerald-500">
+              <p class="text-[10px] text-slate-400 mt-1">Meta para pasar fase</p>
+            </div>
+          </div>
+        </div>
+
+        <%# Notes %>
+        <div>
+          <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Notas de la Sesión (opcional)</label>
+          <textarea rows="2" placeholder="Ej: Probaré mi setup de Breakout en horario de apertura NY..."
+            class="input-field w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-brand resize-none"></textarea>
+        </div>
+
+        <%# CTA Button %>
+        <div class="flex items-center justify-end gap-3 pt-2">
+          <%= link_to new_trade_path(trade: { portfolio_mode: 'backtest' }),
+                class: "px-8 py-3 bg-brand hover:scale-[1.02] active:scale-[0.98] text-white font-extrabold text-sm rounded-xl shadow-[0_4px_15px_-3px_rgba(0,157,250,0.4)] cursor-pointer transition-all flex items-center gap-2 border border-white/10",
+                id: "start-session-btn" do %>
+            <span class="material-symbols-outlined text-[18px]">rocket_launch</span>
+            Iniciar Sesión de Simulación
+          <% end %>
+        </div>
+
+      </div>
+    </div>
+
+    <%# RIGHT PANEL: HOW TO START + MY SESSIONS %>
+    <div class="space-y-5">
+      
+      <%# How to Start Card %>
+      <div class="glass rounded-2xl p-5 shadow-sm">
+        <h3 class="text-xs font-extrabold uppercase tracking-widest dark:text-white text-slate-700 mb-4 flex items-center gap-2">
+          <span class="material-symbols-outlined text-brand text-[16px]">help_outline</span>
+          Cómo Empezar
+        </h3>
+        <ol class="space-y-4">
+          <% steps = [
+            { icon: "tune", title: "Configura tu sesión", desc: "Dale un nombre, elige el balance simulado y el activo que deseas práctica.", color: "text-brand" },
+            { icon: "play_arrow", title: "Inicia la sesión", desc: "Haz clic en 'Iniciar'. Cada operación que registres en el diario se asociará automáticamente al backtest.", color: "text-cyan-500" },
+            { icon: "bar_chart", title: "Revisa tus métricas",  desc: "Tu Win Rate, Profit Factor y Equity Curve de la simulación aparecerán aislados del capital real.", color: "text-emerald-500" },
+            { icon: "smart_toy", title: "Consulta al AI Coach", desc: "El AI Coach te dirá si tu estrategia habría sido rentable históricamente.", color: "text-violet-400" },
+          ] %>
+          <% steps.each_with_index do |step, i| %>
+            <li class="flex gap-3">
+              <div class="w-7 h-7 rounded-xl flex-shrink-0 bg-slate-100 dark:bg-darkCard flex items-center justify-center <%= step[:color] %>">
+                <span class="material-symbols-outlined text-[15px]"><%= step[:icon] %></span>
+              </div>
+              <div>
+                <p class="text-xs font-bold dark:text-slate-200 text-slate-700"><%= "#{i+1}. #{step[:title]}" %></p>
+                <p class="text-[11px] dark:text-slate-400 text-slate-500 mt-0.5 leading-relaxed"><%= step[:desc] %></p>
+              </div>
+            </li>
+          <% end %>
+        </ol>
+      </div>
+
+      <%# My Simulation Results %>
+      <div class="glass rounded-2xl shadow-sm overflow-hidden">
+        <div class="px-4 py-3 border-b dark:border-darkBorder border-lightBorder dark:bg-[#1A1D2D]/50 bg-slate-50">
+          <h3 class="text-xs font-extrabold dark:text-white text-slate-700 uppercase tracking-widest">Mis Resultados</h3>
+        </div>
+        <div class="p-5">
+          <% if @stats.present? %>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="text-center p-3 rounded-xl bg-slate-100 dark:bg-darkCard">
+                <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">P&L Sim.</p>
+                <p class="text-lg font-black font-mono <%= @stats[:total_pnl] >= 0 ? 'text-accent-green' : 'text-loss' %>">
+                  <%= @stats[:total_pnl] >= 0 ? '+' : '' %>$<%= number_with_precision(@stats[:total_pnl], precision: 0) %>
+                </p>
+              </div>
+              <div class="text-center p-3 rounded-xl bg-slate-100 dark:bg-darkCard">
+                <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Win Rate</p>
+                <p class="text-lg font-black font-mono dark:text-white text-slate-800"><%= @stats[:win_rate] %>%</p>
+              </div>
+              <div class="text-center p-3 rounded-xl bg-slate-100 dark:bg-darkCard">
+                <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Trades</p>
+                <p class="text-lg font-black font-mono dark:text-white text-slate-800"><%= @stats[:total_trades] %></p>
+              </div>
+              <div class="text-center p-3 rounded-xl bg-slate-100 dark:bg-darkCard">
+                <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Profit Factor</p>
+                <p class="text-lg font-black font-mono text-cyan-400"><%= @stats[:profit_factor] %></p>
+              </div>
+            </div>
+            <%= link_to dashboard_path(mode: 'backtest'), class: "mt-4 w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold dark:text-brand text-brand hover:bg-brand/10 transition-colors border border-brand/20" do %>
+              <span class="material-symbols-outlined text-[15px]">monitoring</span> Ver gráficas completas
+            <% end %>
+          <% else %>
+            <div class="text-center py-6">
+              <span class="material-symbols-outlined text-[36px] text-slate-300 dark:text-slate-600">bar_chart</span>
+              <p class="text-xs dark:text-slate-400 text-slate-500 mt-2">Aún sin simulaciones registradas.</p>
+              <p class="text-[11px] dark:text-slate-500 text-slate-400 mt-1">Configura y registra tu primera sesión de prueba.</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const radios = document.querySelectorAll('input[name="session_type"]');
+  const sessionLabel = document.getElementById('session-label');
+  const dateSection = document.getElementById('date-range-section');
+  const propSection = document.getElementById('prop-rules-section');
+  const startBtn   = document.getElementById('start-session-btn');
+
+  function updateUI() {
+    const selected = document.querySelector('input[name="session_type"]:checked').value;
+    const isProp = selected === 'prop_firm';
+    
+    if (isProp) {
+      sessionLabel.textContent = 'Modo Prop Firm';
+      sessionLabel.className = 'ml-auto text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-500 border border-emerald-500/20 uppercase';
+      dateSection.classList.add('hidden');
+      propSection.classList.remove('hidden');
+      startBtn.href = "<%= new_trade_path(trade: { portfolio_mode: 'prop_firm' }) %>";
+    } else {
+      sessionLabel.textContent = 'Backtesting';
+      sessionLabel.className = 'ml-auto text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-brand/15 text-brand border border-brand/20 uppercase';
+      dateSection.classList.remove('hidden');
+      propSection.classList.add('hidden');
+      startBtn.href = "<%= new_trade_path(trade: { portfolio_mode: 'backtest' }) %>";
+    }
+  }
+
+  radios.forEach(r => r.addEventListener('change', updateUI));
+  updateUI();
+});
+
+function offsetEndDate(days) {
+  const start = document.getElementById('bt-start-date').value;
+  const startDate = new Date(start);
+  let newDate;
+  if (days === 0) { // YTD
+    newDate = new Date('<%= Date.today.to_s %>');
+  } else {
+    newDate = new Date(startDate.getTime() + days * 86400000);
+  }
+  document.getElementById('bt-end-date').value = newDate.toISOString().split('T')[0];
+}
+</script>

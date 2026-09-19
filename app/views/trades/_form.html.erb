@@ -40,6 +40,38 @@
             </div>
           </div>
 
+          <div class="mb-6 pb-6 border-b border-lightBorder dark:border-darkBorder">
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-3 flex items-center justify-between">
+              <span>Portafolio / Modalidad <span class="text-brand">*</span></span>
+              <div class="relative group cursor-help flex items-center justify-center text-slate-400 hover:text-brand transition-colors">
+                <span class="material-symbols-outlined text-[14px]">info</span>
+                <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 p-2.5 bg-slate-900 border border-slate-700/50 text-white text-[10.5px] rounded-xl shadow-xl opacity-0 translate-y-2 pointer-events-none group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 z-50 font-normal leading-relaxed text-center hidden group-hover:block">
+                  Selecciona a qué cuenta aislar este Trade. Los Backtests o Cuentas de Fondeo no afectarán tu P&L principal.
+                </div>
+              </div>
+            </label>
+            <div class="flex gap-2 text-xs font-bold w-full overflow-x-auto snap-x hide-scrollbar">
+              <label class="flex-1 cursor-pointer min-w-[95px] snap-center">
+                <%= f.radio_button :portfolio_mode, "real_account", class: "sr-only peer pm-radio", checked: (trade.portfolio_mode == 'real_account' || trade.portfolio_mode.nil?) %>
+                <div class="peer-checked:bg-emerald-500/15 peer-checked:border-emerald-500 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 input-field border py-2.5 rounded-xl text-center transition-all cursor-pointer flex flex-col md:flex-row items-center justify-center gap-1.5 shadow-sm">
+                  <span class="material-symbols-outlined text-[18px]">account_balance_wallet</span> Real
+                </div>
+              </label>
+              <label class="flex-1 cursor-pointer min-w-[95px] snap-center">
+                <%= f.radio_button :portfolio_mode, "prop_firm", class: "sr-only peer pm-radio", checked: trade.portfolio_mode == 'prop_firm' %>
+                <div class="peer-checked:bg-brand/15 peer-checked:border-brand peer-checked:text-brand dark:peer-checked:text-brand-light input-field border py-2.5 rounded-xl text-center transition-all cursor-pointer flex flex-col md:flex-row items-center justify-center gap-1.5 shadow-sm">
+                  <span class="material-symbols-outlined text-[18px]">verified</span> Fondeo
+                </div>
+              </label>
+              <label class="flex-1 cursor-pointer min-w-[95px] snap-center">
+                <%= f.radio_button :portfolio_mode, "backtest", class: "sr-only peer pm-radio", checked: trade.portfolio_mode == 'backtest' %>
+                <div class="peer-checked:bg-slate-200 dark:peer-checked:bg-slate-700 peer-checked:border-slate-400 dark:peer-checked:border-slate-500 peer-checked:text-slate-800 dark:peer-checked:text-white input-field border py-2.5 rounded-xl text-center transition-all cursor-pointer flex flex-col md:flex-row items-center justify-center gap-1.5 shadow-sm">
+                  <span class="material-symbols-outlined text-[18px]">history</span> Backtest
+                </div>
+              </label>
+            </div>
+          </div>
+
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 z-20">
             <div>
               <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">

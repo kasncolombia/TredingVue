@@ -1,0 +1,183 @@
+<% content_for :page_title, "Prop Firm Business" %>
+
+<div class="flex flex-col gap-6 fade-in pb-10">
+  <!-- HEADER & SUMMARY -->
+  <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div>
+      <h1 class="text-xl font-black dark:text-white text-slate-800 flex items-center gap-2">
+        <span class="material-symbols-outlined text-brand text-[24px]">business_center</span>
+        Control de Fondeo
+      </h1>
+      <p class="text-xs dark:text-slate-400 text-slate-500 mt-1">
+        Gestiona el flujo de caja de tus pruebas y cuentas financiadas. Trata a tus cuentas fondeadas como un negocio.
+      </p>
+    </div>
+  </div>
+
+  <!-- KPI CARDS SLIDER (MOBILE FRIENDLY) -->
+  <div class="w-full overflow-x-auto snap-x hide-scrollbar pb-2 -mx-4 px-4 md:mx-0 md:px-0">
+    <div class="flex md:grid md:grid-cols-4 gap-4 min-w-[max-content] md:min-w-0">
+      
+      <!-- GASTOS -->
+      <div class="w-[220px] md:w-auto snap-center stat-card rounded-2xl p-4 md:p-5 flex flex-col justify-between group">
+        <div class="flex items-start justify-between mb-3">
+          <p class="text-[10px] sm:text-xs font-bold dark:text-slate-400 text-slate-500 uppercase tracking-widest">Inversión / Gastos</p>
+          <div class="w-8 h-8 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center">
+            <span class="material-symbols-outlined text-[16px]">receipt_long</span>
+          </div>
+        </div>
+        <p class="text-2xl sm:text-3xl font-black dark:text-white text-slate-800 font-mono">$<%= number_with_precision(@total_expenses, precision: 2, delimiter: ',') %></p>
+      </div>
+
+      <!-- PAYOUTS -->
+      <div class="w-[220px] md:w-auto snap-center stat-card rounded-2xl p-4 md:p-5 flex flex-col justify-between group">
+        <div class="flex items-start justify-between mb-3">
+          <p class="text-[10px] sm:text-xs font-bold dark:text-slate-400 text-slate-500 uppercase tracking-widest">Retiros (Payouts)</p>
+          <div class="w-8 h-8 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+            <span class="material-symbols-outlined text-[16px]">account_balance</span>
+          </div>
+        </div>
+        <p class="text-2xl sm:text-3xl font-black text-emerald-500 font-mono">$<%= number_with_precision(@total_payouts, precision: 2, delimiter: ',') %></p>
+      </div>
+
+      <!-- BALANCE NETO -->
+      <div class="w-[220px] md:w-auto snap-center stat-card rounded-2xl p-4 md:p-5 flex flex-col justify-between group">
+        <div class="flex items-start justify-between mb-3">
+          <p class="text-[10px] sm:text-xs font-bold dark:text-slate-400 text-slate-500 uppercase tracking-widest">Profit Neto</p>
+          <div class="w-8 h-8 rounded-full <%= @net_profit >= 0 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500' %> flex items-center justify-center">
+            <span class="material-symbols-outlined text-[16px]">savings</span>
+          </div>
+        </div>
+        <p class="text-2xl sm:text-3xl font-black <%= @net_profit >= 0 ? 'text-emerald-500' : 'text-rose-500' %> font-mono">
+          <%= @net_profit >= 0 ? '+' : '' %>$<%= number_with_precision(@net_profit, precision: 2, delimiter: ',') %>
+        </p>
+      </div>
+
+      <!-- ROI -->
+      <div class="w-[220px] md:w-auto snap-center stat-card border-none bg-gradient-to-br from-brand/10 to-transparent dark:from-brand/20 dark:to-transparent rounded-2xl p-4 md:p-5 flex flex-col justify-between relative overflow-hidden">
+        <div class="absolute -right-4 -top-4 text-brand opacity-10">
+          <span class="material-symbols-outlined text-[80px]">trending_up</span>
+        </div>
+        <div class="flex items-start justify-between mb-3 relative z-10">
+          <p class="text-[10px] sm:text-xs font-bold text-brand uppercase tracking-widest">Business ROI</p>
+        </div>
+        <p class="text-2xl sm:text-3xl font-black text-brand dark:text-brand-light font-mono relative z-10">
+          <%= @roi %>%
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- TRANSACTION FORM -->
+    <div class="glass rounded-2xl p-5 shadow-sm lg:col-span-1 h-fit">
+      <h3 class="text-sm font-bold dark:text-white text-slate-800 mb-4 border-b dark:border-darkBorder border-lightBorder pb-3 flex items-center gap-2">
+        <span class="material-symbols-outlined text-[18px]">add_circle</span> Guardar Recibo
+      </h3>
+      
+      <%= form_with model: @new_transaction, url: prop_transactions_path, class: "space-y-4" do |f| %>
+        <div>
+          <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Monto ($ USD)</label>
+          <%= f.number_field :amount, step: "any", min: 0.01, required: true, placeholder: "150.00", class: "input-field w-full px-3 py-2 rounded-xl text-sm font-mono focus:outline-none focus:border-brand" %>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <label class="cursor-pointer">
+            <%= f.radio_button :transaction_type, "expense", class: "sr-only peer pm-radio", checked: true %>
+            <div class="peer-checked:bg-rose-500/10 peer-checked:border-rose-500 peer-checked:text-rose-600 dark:peer-checked:text-rose-400 input-field border py-2 rounded-xl text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1 text-xs">
+              <span class="material-symbols-outlined text-[16px]">money_off</span> Gasto
+            </div>
+          </label>
+          <label class="cursor-pointer">
+            <%= f.radio_button :transaction_type, "payout", class: "sr-only peer pm-radio" %>
+            <div class="peer-checked:bg-emerald-500/10 peer-checked:border-emerald-500 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 input-field border py-2 rounded-xl text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1 text-xs">
+              <span class="material-symbols-outlined text-[16px]">payments</span> Retiro
+            </div>
+          </label>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Compañía (Prop Firm)</label>
+          <%= f.text_field :company_name, required: true, list: "prop-firms-list", placeholder: "Ej. Apex, TopStep, TradeDay", class: "input-field w-full px-3 py-2 rounded-xl text-sm focus:outline-none focus:border-brand" %>
+          <datalist id="prop-firms-list">
+            <option value="Apex Trader Funding"></option>
+            <option value="TopStep"></option>
+            <option value="TradeDay"></option>
+            <option value="MyFundedFutures"></option>
+          </datalist>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Descripción</label>
+          <%= f.text_field :description, placeholder: "Ej. Compra de 50k, PA Payout 1", class: "input-field w-full px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-brand" %>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Fecha</label>
+          <%= f.date_field :transaction_date, required: true, value: Date.today, class: "input-field w-full px-3 py-2 rounded-xl text-sm focus:outline-none focus:border-brand" %>
+        </div>
+
+        <button type="submit" class="w-full py-2.5 rounded-xl bg-brand hover:bg-brand-hover text-white font-bold text-xs glow-brand transition-all flex items-center justify-center gap-1.5 shadow-md">
+          <span class="material-symbols-outlined text-[16px]">save</span> Registrar
+        </button>
+      <% end %>
+    </div>
+
+    <!-- TRANSACTIONS LIST -->
+    <div class="glass rounded-2xl shadow-sm lg:col-span-2 overflow-hidden flex flex-col h-full">
+      <div class="p-4 border-b dark:border-darkBorder border-lightBorder flex items-center justify-between dark:bg-[#1A1D2D] bg-slate-50">
+        <h3 class="text-sm font-bold dark:text-white text-slate-800">Historial (Ledger)</h3>
+        <button class="px-3 py-1.5 text-[10px] font-bold dark:bg-darkCard bg-white border dark:border-darkBorder border-lightBorder rounded-lg flex items-center gap-1 opacity-50 cursor-not-allowed" title="Próximamente importar CSV">
+          <span class="material-symbols-outlined text-[14px]">upload_file</span> Importar CSV
+        </button>
+      </div>
+
+      <div class="overflow-x-auto flex-1">
+        <% if @transactions.any? %>
+          <table class="w-full text-left text-xs whitespace-nowrap">
+            <thead class="uppercase dark:text-slate-400 text-slate-500 border-b dark:border-darkBorder border-lightBorder table-header text-[10px] font-extrabold tracking-wider">
+              <tr>
+                <th class="px-4 py-3">Fecha</th>
+                <th class="px-4 py-3">Compañía</th>
+                <th class="px-4 py-3">Concepto</th>
+                <th class="px-4 py-3 text-right">Monto</th>
+                <th class="px-4 py-3 text-center">Acción</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y dark:divide-[#1E2235] divide-slate-100">
+              <% @transactions.each do |tx| %>
+                <tr class="table-row-hover dark:text-slate-300 text-slate-700 transition-colors">
+                  <td class="px-4 py-3"><%= tx.transaction_date.strftime("%d %b, %y") %></td>
+                  <td class="px-4 py-3 font-semibold"><%= tx.company_name %></td>
+                  <td class="px-4 py-3">
+                    <span class="block text-xs font-bold dark:text-slate-200 text-slate-800"><%= tx.description.presence || (tx.transaction_type == 'expense' ? 'Gasto Eval' : 'Payout') %></span>
+                  </td>
+                  <td class="px-4 py-3 text-right font-mono font-black <%= tx.transaction_type == 'payout' ? 'text-emerald-500' : 'text-slate-500 dark:text-slate-400' %>">
+                    <%= tx.transaction_type == 'payout' ? '+' : '-' %>$<%= number_with_precision(tx.amount, precision: 2, delimiter: ',') %>
+                  </td>
+                  <td class="px-4 py-3 text-center">
+                    <%= button_to prop_transaction_path(tx), method: :delete, data: { turbo_confirm: "¿Borrar este recibo?" }, class: "p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition-colors inline-block" do %>
+                      <span class="material-symbols-outlined text-[16px] block">delete</span>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% else %>
+          <div class="flex flex-col items-center justify-center p-12 text-center h-full">
+            <div class="w-16 h-16 rounded-full bg-slate-100 dark:bg-darkCard flex items-center justify-center text-brand mb-4">
+              <span class="material-symbols-outlined text-[28px]">business_center</span>
+            </div>
+            <h4 class="text-sm font-bold dark:text-white text-slate-800">Ningún recibo registrado</h4>
+            <p class="text-xs text-slate-500 mt-1 max-w-[250px]">
+              Empieza a trackear cuánto gastas en retos y reseteos vs cuánto logras retirar en Payouts reales.
+            </p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+</div>

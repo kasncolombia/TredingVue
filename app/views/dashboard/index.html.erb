@@ -4,9 +4,9 @@
     <% if @stats[:is_demo] %>
       <span class="text-[10px] px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-400 font-extrabold border border-amber-500/30 tracking-wider">MODO DEMO</span>
     <% else %>
-      <span class="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 font-extrabold border border-emerald-500/30 tracking-wider flex items-center gap-1">
-        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-        REAL EN VIVO
+      <span class="text-[10px] px-2.5 py-0.5 rounded-full <%= @current_mode == 'backtest' ? 'bg-slate-500/15 text-slate-500 dark:text-slate-400 border-slate-500/30' : (@current_mode == 'prop_firm' ? 'bg-brand/15 text-brand border-brand/30' : 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30') %> font-extrabold border tracking-wider flex items-center gap-1">
+        <% if @current_mode == 'real_account' %><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span><% end %>
+        <%= @current_mode.upcase.gsub('_', ' ') %>
       </span>
     <% end %>
   </div>
@@ -69,6 +69,19 @@
 <% end %>
 
 <div class="space-y-6 fade-in">
+  
+  <!-- INTERRUPTOR DE PORTAFOLIO GLOBAL (BACKTEST VS REAL) -->
+  <div class="flex p-1 bg-slate-200/50 dark:bg-darkBorder/50 rounded-xl w-max border border-slate-300/50 dark:border-darkBorder max-w-full overflow-x-auto snap-x hide-scrollbar">
+    <%= link_to dashboard_path(mode: 'real_account'), class: "snap-center py-1.5 px-4 text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 #{@current_mode == 'real_account' ? 'bg-white dark:bg-slate-700 text-emerald-500 shadow-sm' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'}" do %>
+      <span class="material-symbols-outlined text-[16px]">account_balance_wallet</span> Real
+    <% end %>
+    <%= link_to dashboard_path(mode: 'prop_firm'), class: "snap-center py-1.5 px-4 text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 #{@current_mode == 'prop_firm' ? 'bg-white dark:bg-slate-700 text-brand shadow-sm' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'}" do %>
+      <span class="material-symbols-outlined text-[16px]">verified</span> Fondeo
+    <% end %>
+    <%= link_to dashboard_path(mode: 'backtest'), class: "snap-center py-1.5 px-4 text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 #{@current_mode == 'backtest' ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'}" do %>
+      <span class="material-symbols-outlined text-[16px]">history</span> Backtest
+    <% end %>
+  </div>
 
   <!-- ===================== STATUS BANNER (DEMO VS REAL) ===================== -->
   <% if @stats[:is_demo] %>

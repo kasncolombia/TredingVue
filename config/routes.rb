@@ -30,6 +30,14 @@ Rails.application.routes.draw do
 
   resource :analytics, only: [:show]
 
+  # Pro Tools Hub (Backtesting + Prop Firms)
+  get  "pro-tools",           to: "pro_tools#index",    as: :pro_tools
+  resources :backtest_sessions, path: "pro-tools/sesiones", only: [:create, :show, :destroy]
+  resources :prop_transactions,  path: "pro-tools/prop-firms", only: [:index, :create, :destroy], as: :prop_ledger
+  # Legacy aliases (keep working links)
+  get  "prop_firms",          to: redirect("/pro-tools"), as: :prop_transactions
+  get  "backtester",          to: redirect("/pro-tools"), as: :backtester
+
   resource :ai_coach, controller: "ai_coach", only: [:show] do
     post :analyze_trade
     post :chat

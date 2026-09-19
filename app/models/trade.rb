@@ -1,6 +1,7 @@
 class Trade < ApplicationRecord
   belongs_to :user
   belongs_to :strategy, optional: true
+  belongs_to :prop_firm_account, optional: true
   has_many :ai_analyses,  dependent: :destroy
   has_one  :ai_analysis,  -> { order(created_at: :desc) }, dependent: :destroy
 
@@ -17,6 +18,12 @@ class Trade < ApplicationRecord
   scope :shorts,     -> { where(direction: "SHORT") }
   scope :by_symbol,  ->(sym) { where(symbol: sym) }
   scope :recent,     -> { order(entry_at: :desc) }
+
+  enum :portfolio_mode, { real_account: 0, prop_firm: 1, backtest: 2 }, default: :real_account
+
+  scope :is_real,       -> { where(portfolio_mode: :real_account) }
+  scope :is_prop_firm,  -> { where(portfolio_mode: :prop_firm) }
+  scope :is_backtest,   -> { where(portfolio_mode: :backtest) }
 
   def win?
     result == "WIN" || pnl.to_f > 0

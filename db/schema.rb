@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_17_000003) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_19_183000) do
   create_table "ai_analyses", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "discipline_score"
@@ -39,6 +39,26 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_17_000003) do
     t.string "role", null: false
     t.datetime "updated_at", null: false
     t.index ["ai_conversation_id"], name: "index_ai_messages_on_ai_conversation_id"
+  end
+
+  create_table "backtest_sessions", force: :cascade do |t|
+    t.decimal "account_size", precision: 12, scale: 2, default: "100000.0"
+    t.string "asset"
+    t.datetime "created_at", null: false
+    t.date "end_date"
+    t.decimal "max_daily_loss_pct", precision: 5, scale: 2, default: "2.0"
+    t.decimal "max_drawdown_pct", precision: 5, scale: 2, default: "8.0"
+    t.string "name", null: false
+    t.text "notes"
+    t.decimal "profit_target_pct", precision: 5, scale: 2, default: "8.0"
+    t.string "prop_company"
+    t.string "session_type", default: "backtest", null: false
+    t.date "start_date"
+    t.string "status", default: "active"
+    t.integer "strategy_id"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_backtest_sessions_on_user_id"
   end
 
   create_table "chat_rooms", force: :cascade do |t|
@@ -105,6 +125,68 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_17_000003) do
     t.integer "user_id", null: false
     t.string "visibility"
     t.index ["user_id"], name: "index_posts_on_user_id"
+  end
+
+  create_table "prop_firm_accounts", force: :cascade do |t|
+    t.string "account_size", null: false
+    t.decimal "activation_fee", precision: 10, scale: 2, default: "0.0"
+    t.datetime "created_at", null: false
+    t.decimal "custom_consistency_pct", precision: 5, scale: 2
+    t.decimal "custom_daily_loss_limit", precision: 12, scale: 2
+    t.string "custom_drawdown_type"
+    t.decimal "custom_max_drawdown", precision: 12, scale: 2
+    t.integer "custom_min_trading_days"
+    t.decimal "custom_profit_target", precision: 12, scale: 2
+    t.decimal "eval_fee", precision: 10, scale: 2, default: "0.0"
+    t.string "firm_name", null: false
+    t.string "name", null: false
+    t.string "phase", null: false
+    t.string "plan_name", null: false
+    t.integer "prop_firm_rule_template_id"
+    t.date "start_date"
+    t.string "status", default: "activa", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["prop_firm_rule_template_id"], name: "index_prop_firm_accounts_on_prop_firm_rule_template_id"
+    t.index ["user_id"], name: "index_prop_firm_accounts_on_user_id"
+  end
+
+  create_table "prop_firm_accounts_strategies", id: false, force: :cascade do |t|
+    t.integer "prop_firm_account_id", null: false
+    t.integer "strategy_id", null: false
+    t.index ["prop_firm_account_id"], name: "idx_prop_accounts_strategies_pfa_id"
+    t.index ["strategy_id"], name: "index_prop_firm_accounts_strategies_on_strategy_id"
+  end
+
+  create_table "prop_firm_rule_templates", force: :cascade do |t|
+    t.string "account_size", null: false
+    t.decimal "consistency_pct", precision: 5, scale: 2
+    t.datetime "created_at", null: false
+    t.decimal "daily_loss_limit", precision: 12, scale: 2
+    t.decimal "default_activation_fee", precision: 10, scale: 2
+    t.decimal "default_eval_fee", precision: 10, scale: 2
+    t.string "drawdown_type", default: "eod", null: false
+    t.string "firm_name", null: false
+    t.integer "max_contracts"
+    t.decimal "max_drawdown", precision: 12, scale: 2
+    t.integer "min_trading_days", default: 0
+    t.string "phase", null: false
+    t.string "plan_name", null: false
+    t.decimal "profit_target", precision: 12, scale: 2
+    t.datetime "updated_at", null: false
+    t.index ["firm_name", "plan_name", "account_size", "phase"], name: "idx_prop_rule_templates_uniqueness", unique: true
+  end
+
+  create_table "prop_transactions", force: :cascade do |t|
+    t.decimal "amount", precision: 12, scale: 2, null: false
+    t.string "company_name", null: false
+    t.datetime "created_at", null: false
+    t.string "description"
+    t.date "transaction_date", null: false
+    t.string "transaction_type", default: "expense", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_prop_transactions_on_user_id"
   end
 
   create_table "reactions", force: :cascade do |t|
@@ -188,7 +270,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_17_000003) do
     t.text "notes"
     t.decimal "pnl", precision: 15, scale: 2, null: false
     t.decimal "pnl_percent", precision: 8, scale: 4
+    t.integer "portfolio_mode", default: 0, null: false
     t.decimal "position_size", precision: 20, scale: 8
+    t.integer "prop_firm_account_id"
     t.decimal "r_multiple", precision: 8, scale: 2
     t.string "result"
     t.decimal "risk_amount", precision: 15, scale: 2
@@ -202,6 +286,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_17_000003) do
     t.string "timeframe"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
+    t.index ["prop_firm_account_id"], name: "index_trades_on_prop_firm_account_id"
     t.index ["strategy_id"], name: "index_trades_on_strategy_id"
     t.index ["user_id", "entry_at"], name: "index_trades_on_user_id_and_entry_at"
     t.index ["user_id", "result"], name: "index_trades_on_user_id_and_result"
@@ -238,6 +323,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_17_000003) do
   add_foreign_key "ai_analyses", "users"
   add_foreign_key "ai_conversations", "users"
   add_foreign_key "ai_messages", "ai_conversations"
+  add_foreign_key "backtest_sessions", "users"
   add_foreign_key "classrooms", "users", column: "author_id"
   add_foreign_key "comments", "posts"
   add_foreign_key "comments", "users"
@@ -247,6 +333,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_17_000003) do
   add_foreign_key "messages", "users"
   add_foreign_key "notifications", "users"
   add_foreign_key "posts", "users"
+  add_foreign_key "prop_firm_accounts", "prop_firm_rule_templates"
+  add_foreign_key "prop_firm_accounts", "users"
+  add_foreign_key "prop_transactions", "users"
   add_foreign_key "reactions", "posts"
   add_foreign_key "reactions", "users"
   add_foreign_key "resources", "users", column: "author_id"
@@ -257,6 +346,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_17_000003) do
   add_foreign_key "trade_notes", "trades"
   add_foreign_key "trade_shares", "trades"
   add_foreign_key "trade_shares", "users"
+  add_foreign_key "trades", "prop_firm_accounts"
   add_foreign_key "trades", "strategies"
   add_foreign_key "trades", "users"
 end
