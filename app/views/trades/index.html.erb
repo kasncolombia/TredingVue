@@ -5,15 +5,15 @@
 
 <div class="space-y-5 fade-in">
 
-  <!-- MINI-KPIs -->
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+  <!-- MINI-KPIs (MOBILE SLIDER) -->
+  <div class="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 scrollbar-hide sm:grid sm:grid-cols-2 md:grid-cols-4 sm:gap-4 sm:overflow-visible sm:pb-0">
     <% [
       { label: "P&L Filtrado", tooltip: "Ganancia o pérdida neta acumulada de las operaciones evaluadas.", value: "#{ @stats[:total_pnl].to_f >= 0 ? '+' : '' }$#{number_with_precision(@stats[:total_pnl], precision: 2, delimiter: ',')}",  color: @stats[:total_pnl].to_f >= 0 ? 'text-accent-green' : 'text-loss', icon: "payments" },
       { label: "Win Rate", tooltip: "Tasa de Acierto. Porcentaje de operaciones ganadoras sobre el total.", value: "#{@stats[:win_rate]}%", color: 'text-brand', icon: "check_circle" },
       { label: "Profit Factor", tooltip: "Factor de Beneficio: Monto ganado por cada dólar perdido. Todo valor superior a 1 implica que la cuenta crece.", value: @stats[:profit_factor].to_s, color: 'dark:text-white text-slate-800', icon: "balance" },
       { label: "Resultados W/L", tooltip: "Distribución exacta de victorias (W: Wins) frente a bates fallidos/derrotas (L: Losses)", value: "#{@stats[:wins_count]}W / #{@stats[:losses_count]}L", color: 'dark:text-white text-slate-800', icon: "equalizer" },
     ].each do |kpi| %>
-      <div class="stat-card rounded-2xl px-4 py-3.5 flex items-center justify-between">
+      <div class="stat-card rounded-2xl px-4 py-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 min-w-[160px] sm:min-w-0 snap-start flex-shrink-0 sm:flex-shrink">
         <div>
           <div class="flex items-center gap-1 mb-0.5">
             <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider"><%= kpi[:label] %></p>
@@ -37,36 +37,46 @@
   </div>
 
   <!-- FILTROS & ACCIONES -->
-  <div class="glass p-3.5 rounded-2xl">
-    <%= form_with url: trades_path, method: :get, local: true, class: "flex flex-wrap gap-2.5 items-center" do |f| %>
-      <%= f.text_field :symbol, placeholder: "Símbolo (BTC...)", value: params[:symbol],
-          class: "input-field px-3.5 py-2 rounded-xl text-xs focus:outline-none w-36 transition-all" %>
-      <%= f.select :direction, [["Dirección", ""], ["LONG", "LONG"], ["SHORT", "SHORT"]],
-          { selected: params[:direction] },
-          class: "input-field px-3 py-2 rounded-xl text-xs focus:outline-none transition-all" %>
-      <%= f.select :result, [["Resultado", ""], ["WIN", "WIN"], ["LOSS", "LOSS"], ["BREAKEVEN", "BREAKEVEN"]],
-          { selected: params[:result] },
-          class: "input-field px-3 py-2 rounded-xl text-xs focus:outline-none transition-all" %>
-      <%= f.collection_select :strategy_id, current_user.strategies, :id, :name,
-          { prompt: "Estrategia", selected: params[:strategy_id] },
-          class: "input-field px-3 py-2 rounded-xl text-xs focus:outline-none transition-all" %>
-      <%= f.button type: :submit, class: "px-4 py-2 bg-brand hover:bg-brand-hover text-white text-xs font-bold rounded-xl cursor-pointer glow-brand transition-all flex items-center gap-1" do %>
-        <span class="material-symbols-outlined text-[16px]">search</span>
-        <span>Filtrar</span>
-      <% end %>
-      <%= link_to trades_path, class: "px-3 py-2 text-xs text-slate-400 hover:text-brand rounded-xl hover:bg-brand/10 transition-all font-medium" do %>Limpiar<% end %>
+  <div class="glass p-4 rounded-xl sm:rounded-2xl">
+    <div class="flex flex-col lg:flex-row justify-between gap-3 sm:gap-4">
+      
+      <!-- CONTROLS & FILTER FORM -->
+      <%= form_with url: trades_path, method: :get, local: true, class: "flex-1 flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full" do |f| %>
+        
+        <!-- ZONA DE INPUTS SCROLLABLE -->
+        <div class="flex overflow-x-auto snap-x snap-mandatory gap-2 pb-1 sm:pb-0 w-full scrollbar-hide">
+          <%= f.text_field :symbol, placeholder: "Símbolo (BTC)", value: params[:symbol], class: "input-field px-4 py-2.5 rounded-xl text-xs focus:outline-none min-w-[120px] snap-start shrink-0 h-10" %>
+          <%= f.select :direction, [["Dirección", ""], ["LONG", "LONG"], ["SHORT", "SHORT"]], { selected: params[:direction] }, class: "input-field px-4 py-2.5 rounded-xl text-xs focus:outline-none min-w-[110px] snap-start shrink-0 h-10" %>
+          <%= f.select :result, [["Resultado", ""], ["WIN", "WIN"], ["LOSS", "LOSS"], ["BREAKEVEN", "BREAKEVEN"]], { selected: params[:result] }, class: "input-field px-4 py-2.5 rounded-xl text-xs focus:outline-none min-w-[110px] snap-start shrink-0 h-10" %>
+          <%= f.collection_select :strategy_id, current_user.strategies, :id, :name, { prompt: "Estrategia", selected: params[:strategy_id] }, class: "input-field px-4 py-2.5 rounded-xl text-xs focus:outline-none min-w-[130px] snap-start shrink-0 h-10" %>
+        </div>
 
-      <div class="ml-auto flex gap-2">
-        <%= link_to new_trade_path, class: "flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold bg-brand hover:bg-brand-hover text-white rounded-xl glow-brand transition-all" do %>
-          <span class="material-symbols-outlined text-[16px]">add</span>
-          <span>Nueva Operación</span>
-        <% end %>
-        <%= link_to import_trades_path, class: "flex items-center gap-1.5 px-3 py-2 text-xs font-bold dark:bg-darkInput bg-slate-100 dark:text-slate-300 text-slate-700 hover:text-brand rounded-xl border dark:border-darkBorder border-lightBorder transition-all" do %>
+        <!-- BOTONES DE FILTRADO -->
+        <div class="flex items-center gap-2 w-full sm:w-auto shrink-0 justify-end sm:justify-start">
+          <%= f.button type: :submit, class: "flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-5 h-10 bg-brand/15 hover:bg-brand/25 text-brand dark:text-brand-light text-xs font-bold rounded-xl transition-all" do %>
+            <span class="material-symbols-outlined text-[16px]">search</span>
+            <span>Filtrar</span>
+          <% end %>
+          <%= link_to trades_path, class: "flex items-center justify-center px-3 h-10 text-slate-400 hover:text-brand rounded-xl hover:bg-brand/10 transition-all", title: "Limpiar filtros" do %>
+            <span class="material-symbols-outlined text-[18px]">close</span>
+          <% end %>
+        </div>
+      <% end %>
+
+      <!-- ACTIONS ROW (NUEVA OPERACION Y CSV) -->
+      <div class="flex items-center gap-2 w-full lg:w-auto shrink-0 pt-3 lg:pt-0 border-t lg:border-none dark:border-darkBorder border-lightBorder">
+        <%= link_to import_trades_path, class: "flex-1 lg:flex-none flex items-center justify-center gap-1.5 px-4 h-10 dark:bg-darkInput bg-slate-100 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl border dark:border-darkBorder transition-all hover:text-brand shadow-sm" do %>
           <span class="material-symbols-outlined text-[16px]">upload_file</span>
           <span>CSV</span>
         <% end %>
+        
+        <%= link_to new_trade_path, class: "flex-[2] lg:flex-none flex items-center justify-center gap-1.5 px-5 h-10 bg-brand hover:bg-brand-hover text-white text-xs font-extrabold rounded-xl glow-brand shadow-md transition-all" do %>
+          <span class="material-symbols-outlined text-[16px]">add</span>
+          <span>Nueva Operación</span>
+        <% end %>
       </div>
-    <% end %>
+      
+    </div>
   </div>
 
   <!-- TABLA DE TRADES -->

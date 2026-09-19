@@ -9,13 +9,9 @@
   <!-- TOP BAR / LOGO & STATUS -->
   <header class="w-full max-w-7xl mx-auto flex items-center justify-between py-4 px-2 z-30 relative">
     <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand to-violet-600 flex items-center justify-center text-white shadow-lg shadow-brand/25 border border-white/10">
-        <span class="material-symbols-outlined text-[22px]">monitoring</span>
-      </div>
-      <div class="leading-none">
-        <span class="font-black text-2xl tracking-tight dark:text-white text-slate-900">Coach<span class="bg-gradient-to-r from-brand via-violet-500 to-emerald-500 bg-clip-text text-transparent">Trading</span></span>
-        <span class="ml-2 inline-block text-[10px] font-extrabold uppercase tracking-widest px-2 py-0.5 rounded-full bg-brand/15 text-brand dark:text-brand-light border border-brand/30 align-top shadow-sm">PRO v2.5</span>
-      </div>
+      <%= link_to root_path, class: "flex items-center justify-start transition-transform hover:scale-105 py-2" do %>
+        <%= image_tag "tradetres_logo.png", class: "h-12 sm:h-16 w-auto object-contain drop-shadow-lg" %>
+      <% end %>
     </div>
 
     <div class="flex items-center gap-3 sm:gap-4">
@@ -47,7 +43,7 @@
         <div class="space-y-3">
           <h1 class="text-4xl xl:text-5xl font-black tracking-tight dark:text-white text-slate-900 leading-[1.15]">
             Toma el control de tu <br/>
-            <span class="bg-gradient-to-r from-brand via-violet-500 to-emerald-500 bg-clip-text text-transparent">psicología y rentabilidad</span>.
+            <span class="bg-gradient-to-r from-brand via-cyan-500 to-emerald-500 bg-clip-text text-transparent">psicología y rentabilidad</span>.
           </h1>
           <p class="text-base dark:text-slate-400 text-slate-600 max-w-xl leading-relaxed font-normal">
             Únete a más de 2,400 traders profesionales que auditan su disciplina diaria con analítica institucional y acompañamiento de IA en tiempo real.
@@ -70,14 +66,14 @@
             <div class="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0 border border-emerald-500/20 shadow-inner">
               <span class="material-symbols-outlined text-[24px]">trending_up</span>
             </div>
-            <div>
-              <p class="text-2xl sm:text-3xl font-black dark:text-white text-slate-900 leading-none tracking-tight">2.8x</p>
-              <p class="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mt-1">Win Rate</p>
+            <div class="leading-none">
+              <span class="font-black text-2xl tracking-tight dark:text-white text-slate-900">Trade<span class="bg-gradient-to-r from-brand via-cyan-400 to-emerald-500 bg-clip-text text-transparent">Tres</span></span>
+              <span class="ml-2 inline-block text-[10px] font-extrabold uppercase tracking-widest px-2 py-0.5 rounded-full bg-brand/15 text-brand dark:text-brand-light border border-brand/30 align-top shadow-sm">PRO</span>
             </div>
           </div>
 
           <div class="flex-1 p-5 flex items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-            <div class="w-12 h-12 rounded-full bg-violet-500/10 text-violet-500 flex items-center justify-center shrink-0 border border-violet-500/20 shadow-inner">
+            <div class="w-12 h-12 rounded-full bg-cyan-500/10 text-cyan-500 flex items-center justify-center shrink-0 border border-cyan-500/20 shadow-inner">
               <span class="material-symbols-outlined text-[24px]">support_agent</span>
             </div>
             <div>
@@ -90,9 +86,9 @@
         <!-- TESTIMONIAL CARD -->
         <div class="p-5 rounded-2xl dark:bg-slate-900/80 bg-white/90 border dark:border-slate-800 border-slate-200 backdrop-blur-xl flex items-center gap-4 shadow-xl">
           <div class="flex -space-x-2 shrink-0">
-            <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-brand to-violet-600 text-white font-black text-xs flex items-center justify-center border-2 dark:border-slate-950 border-white shadow-md">AR</div>
+            <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-brand to-cyan-500 text-white font-black text-xs flex items-center justify-center border-2 dark:border-slate-950 border-white shadow-md">AR</div>
             <div class="w-9 h-9 rounded-full bg-emerald-500 text-white font-black text-xs flex items-center justify-center border-2 dark:border-slate-950 border-white shadow-md">JV</div>
-            <div class="w-9 h-9 rounded-full bg-violet-600 text-white font-black text-xs flex items-center justify-center border-2 dark:border-slate-950 border-white shadow-md">MC</div>
+            <div class="w-9 h-9 rounded-full bg-cyan-600 text-white font-black text-xs flex items-center justify-center border-2 dark:border-slate-950 border-white shadow-md">MC</div>
           </div>
           <div class="text-xs space-y-0.5">
             <p class="font-bold dark:text-slate-200 text-slate-800">"El AI Coach detectó mis sesgos emocionales y transformó mi estrategia."</p>
@@ -242,7 +238,7 @@
             </div>
 
             <!-- SUBMIT BUTTON -->
-            <%= f.button type: :submit, class: "group relative w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-brand to-violet-600 hover:from-brand-hover hover:to-violet-700 text-white font-extrabold text-xs shadow-xl shadow-brand/25 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer mt-3" do %>
+            <%= f.button type: :submit, class: "group relative w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-brand to-cyan-500 hover:from-brand-hover hover:to-cyan-600 text-white font-extrabold text-xs shadow-xl shadow-brand/25 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer mt-3" do %>
               <span>Crear Cuenta de Trader Pro</span>
               <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
             <% end %>

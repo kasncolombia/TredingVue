@@ -347,7 +347,7 @@
           </button>
 
           <!-- Dropdown Panel Solid UI -->
-          <div id="notif-panel" class="hidden absolute right-0 top-full mt-2 w-[340px] sm:w-[400px] dark:bg-[#141729] bg-white rounded-2xl border dark:border-[#23263A] border-slate-200 shadow-2xl z-[9999] overflow-hidden fade-in">
+          <div id="notif-panel" class="hidden fixed left-4 right-4 top-16 md:absolute md:left-auto md:right-0 md:top-full md:mt-2 md:w-[400px] dark:bg-[#141729] bg-white rounded-2xl border dark:border-[#23263A] border-slate-200 shadow-2xl z-[9999] overflow-hidden fade-in">
             <div class="p-3.5 border-b dark:border-[#23263A] border-slate-100 flex items-center justify-between dark:bg-[#1A1D2D] bg-slate-50">
               <h4 class="text-xs font-extrabold uppercase tracking-wider dark:text-white text-slate-900 flex items-center gap-1.5">
                 <span class="material-symbols-outlined text-[16px] text-brand">notifications</span>
@@ -473,8 +473,8 @@
   <% else %>
   <!-- AUTH LAYOUT (sin sidebar) -->
   <div class="flex-1 overflow-y-auto">
-    <% if notice && notice != "Signed out successfully." && notice != "Signed in successfully." && !notice.include?("Cerró sesión") %><div style="position:fixed;top:1rem;right:1rem;z-index:99;" class="px-4 py-3 rounded-xl bg-profit/10 border border-profit/20 text-profit text-sm fade-in"><%= notice %></div><% end %>
-    <% if alert  %><div style="position:fixed;top:1rem;right:1rem;z-index:99;" class="px-4 py-3 rounded-xl bg-loss/10 border border-loss/20 text-loss text-sm fade-in"><%= alert %></div><% end %>
+    <% if notice && notice != "Signed out successfully." && notice != "Signed in successfully." && !notice.include?("Cerró sesión") %><div class="fixed top-4 left-4 right-4 sm:left-auto sm:right-4 z-[99] px-4 py-3 rounded-xl bg-profit/10 border border-profit/20 text-profit text-sm fade-in shadow-xl sm:max-w-sm"><%= notice %></div><% end %>
+    <% if alert  %><div class="fixed top-4 left-4 right-4 sm:left-auto sm:right-4 z-[99] px-4 py-3 rounded-xl bg-loss/10 border border-loss/20 text-loss text-sm fade-in shadow-xl sm:max-w-sm"><%= alert %></div><% end %>
     <%= yield %>
   </div>
   <% end %>
@@ -591,7 +591,7 @@
       <div id="${typingId}" class="flex gap-2 items-start">
         <div class="w-6 h-6 rounded-lg bg-brand flex items-center justify-center text-white text-[10px] flex-shrink-0"><span class="material-symbols-outlined text-[13px]">smart_toy</span></div>
         <div class="p-2.5 rounded-2xl rounded-tl-none bg-brand/10 border border-brand/20 text-slate-400 text-[11px] font-mono flex items-center gap-1.5 animate-pulse">
-          <span class="w-1.5 h-1.5 rounded-full bg-violet-400 animate-ping"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
           Coach IA analizando...
         </div>
       </div>`;

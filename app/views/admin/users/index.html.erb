@@ -17,10 +17,10 @@
   </div>
 
   <!-- ===================== SYSTEM SERVICES DIAGNOSTIC BANNER ===================== -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+  <div class="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 scrollbar-hide md:grid md:grid-cols-3 md:overflow-visible md:pb-0">
     
     <!-- SERVICE 1: OPENAI API STATUS -->
-    <div class="p-4 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm relative overflow-hidden">
+    <div class="p-4 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm relative overflow-hidden min-w-[85vw] md:min-w-0 snap-start flex-shrink-0 md:flex-shrink">
       <div class="flex items-start justify-between">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl <%= @openai_configured ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400' %> flex items-center justify-center shrink-0">
@@ -50,7 +50,7 @@
     </div>
 
     <!-- SERVICE 2: DATABASE STATUS -->
-    <div class="p-4 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm">
+    <div class="p-4 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm min-w-[85vw] md:min-w-0 snap-start flex-shrink-0 md:flex-shrink">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
           <span class="material-symbols-outlined text-[22px]">database</span>
@@ -69,7 +69,7 @@
     </div>
 
     <!-- SERVICE 3: FINANCIAL ENGINE STATUS -->
-    <div class="p-4 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm">
+    <div class="p-4 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm min-w-[85vw] md:min-w-0 snap-start flex-shrink-0 md:flex-shrink">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-brand/10 text-brand flex items-center justify-center shrink-0">
           <span class="material-symbols-outlined text-[22px]">calculate</span>
@@ -99,7 +99,7 @@
   <div id="ai-settings" class="dark:bg-[#141729] bg-white rounded-2xl border dark:border-[#23263A] border-slate-200 p-5 shadow-xl space-y-4">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b dark:border-[#23263A] border-slate-100 pb-3">
       <div class="flex items-center gap-2.5">
-        <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand via-violet-500 to-emerald-500 text-white flex items-center justify-center font-bold shadow-md">
+        <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand via-cyan-500 to-emerald-500 text-white flex items-center justify-center font-bold shadow-md">
           <span class="material-symbols-outlined text-[18px]">smart_toy</span>
         </div>
         <div>
@@ -108,7 +108,7 @@
         </div>
       </div>
       <div class="flex items-center gap-2">
-        <button onclick="testAiConnection()" class="px-3 py-1.5 rounded-xl bg-violet-500/15 hover:bg-violet-500/25 text-violet-400 border border-violet-500/30 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer">
+        <button onclick="testAiConnection()" class="px-3 py-1.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-400 border border-cyan-500/30 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer">
           <span class="material-symbols-outlined text-[16px]">bolt</span>
           Probar Conexión AI
         </button>
@@ -173,7 +173,7 @@
   <script>
   function testAiConnection() {
     const resultBox = document.getElementById("ai-test-result");
-    resultBox.className = "text-xs font-mono text-violet-400 animate-pulse";
+    resultBox.className = "text-xs font-mono text-cyan-400 animate-pulse";
     resultBox.textContent = "⌛ Probando respuesta en vivo con el motor de IA...";
     
     const csrfToken = document.querySelector("meta[name=csrf-token]").content;
@@ -199,8 +199,8 @@
   </script>
 
   <!-- ===================== KPI METRICS CARDS ===================== -->
-  <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
-    <div class="p-4 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm">
+  <div class="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 scrollbar-hide lg:grid lg:grid-cols-5 lg:overflow-visible lg:pb-0">
+    <div class="p-4 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm min-w-[70vw] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
       <div class="flex items-center gap-3">
         <div class="w-9 h-9 rounded-xl bg-brand/10 text-brand flex items-center justify-center shrink-0">
           <span class="material-symbols-outlined text-[18px]">group</span>
@@ -212,7 +212,7 @@
       </div>
     </div>
 
-    <div class="p-4 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm">
+    <div class="p-4 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm min-w-[70vw] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
       <div class="flex items-center gap-3">
         <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
           <span class="material-symbols-outlined text-[18px]">domain_verification</span>
@@ -224,9 +224,9 @@
       </div>
     </div>
 
-    <div class="p-4 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm">
+    <div class="p-4 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm min-w-[70vw] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
       <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl bg-violet-500/10 text-violet-400 flex items-center justify-center shrink-0">
+        <div class="w-9 h-9 rounded-xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center shrink-0">
           <span class="material-symbols-outlined text-[18px]">workspace_premium</span>
         </div>
         <div>
@@ -236,7 +236,7 @@
       </div>
     </div>
 
-    <div class="p-4 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm">
+    <div class="p-4 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm min-w-[70vw] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
       <div class="flex items-center gap-3">
         <div class="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0">
           <span class="material-symbols-outlined text-[18px]">psychology</span>
@@ -248,7 +248,7 @@
       </div>
     </div>
 
-    <div class="p-4 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm">
+    <div class="p-4 rounded-2xl dark:bg-[#141729] bg-white border dark:border-[#23263A] border-slate-200 shadow-sm min-w-[70vw] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
       <div class="flex items-center gap-3">
         <div class="w-9 h-9 rounded-xl <%= @total_global_pnl >= 0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400' %> flex items-center justify-center shrink-0">
           <span class="material-symbols-outlined text-[18px]">account_balance_wallet</span>
@@ -294,7 +294,7 @@
             <tr class="hover:bg-slate-50 dark:hover:bg-[#1E2133] transition-colors">
               <td class="p-3.5">
                 <div class="flex items-center gap-3">
-                  <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-brand to-violet-600 text-white flex items-center justify-center font-black text-xs shrink-0 shadow-sm">
+                  <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-brand to-cyan-600 text-white flex items-center justify-center font-black text-xs shrink-0 shadow-sm">
                     <%= user.name&.first&.upcase || user.email.first.upcase %>
                   </div>
                   <div>

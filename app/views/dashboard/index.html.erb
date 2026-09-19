@@ -18,11 +18,11 @@
     <div class="dark:bg-[#141729] bg-white max-w-xl w-full rounded-[2rem] p-6 sm:p-8 border dark:border-[#23263A] border-slate-200 shadow-2xl relative shadow-brand/20">
       
       <div class="flex items-center gap-4 mb-6">
-        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand to-violet-600 text-white flex items-center justify-center font-bold shrink-0 shadow-lg shadow-brand/30">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand to-cyan-500 text-white flex items-center justify-center font-bold shrink-0 shadow-lg shadow-brand/30">
           <span class="material-symbols-outlined text-[30px]">rocket_launch</span>
         </div>
         <div>
-          <h2 class="text-xl sm:text-2xl font-black dark:text-white text-slate-900 tracking-tight">¡Bienvenido a CoachTrading PRO!</h2>
+          <h2 class="text-xl sm:text-2xl font-black dark:text-white text-slate-900 tracking-tight">¡Bienvenido a TradeTres PRO!</h2>
           <p class="text-xs dark:text-slate-400 text-slate-500 mt-1">Personaliza tu entorno de trading asistido por IA en segundos.</p>
         </div>
       </div>
@@ -58,7 +58,7 @@
             <span>El AI Coach ajustará las alertas de riesgo y drawdown según estos datos.</span>
           </div>
 
-          <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-brand via-violet-600 to-emerald-500 hover:opacity-95 text-white font-extrabold text-xs shadow-xl shadow-brand/25 transition-all flex justify-center items-center gap-2 cursor-pointer mt-2">
+          <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-brand via-cyan-500 to-emerald-500 hover:opacity-95 text-white font-extrabold text-xs shadow-xl shadow-brand/25 transition-all flex justify-center items-center gap-2 cursor-pointer mt-2">
             <span>Comenzar mi Experiencia Pro</span>
             <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
           </button>
@@ -116,30 +116,30 @@
   <% end %>
 
   <!-- ===================== LIVE TICKER STRIP ===================== -->
-  <div class="glass rounded-2xl p-3 flex items-center justify-between gap-4 overflow-x-auto">
-    <div class="flex items-center gap-6 min-w-max text-xs">
-      <div class="flex items-center gap-2">
+  <div class="glass rounded-2xl p-2 sm:p-3 flex items-center justify-between gap-3 sm:gap-4 overflow-x-auto">
+    <div class="flex items-center gap-3 sm:gap-6 min-w-max text-[10px] sm:text-xs">
+      <div class="flex items-center gap-1.5 sm:gap-2">
         <span class="font-black dark:text-white text-slate-800">NQ1!</span>
         <span class="font-mono text-accent-green">19,842.50</span>
-        <span class="text-[10px] text-accent-green bg-accent-green/10 px-1.5 py-0.5 rounded font-bold">+1.24%</span>
+        <span class="text-[9px] sm:text-[10px] text-accent-green bg-accent-green/10 px-1 sm:px-1.5 py-0.5 rounded font-bold">+1.24%</span>
       </div>
-      <div class="w-px h-4 bg-slate-300 dark:bg-darkBorder"></div>
-      <div class="flex items-center gap-2">
+      <div class="w-px h-3 sm:h-4 bg-slate-300 dark:bg-darkBorder"></div>
+      <div class="flex items-center gap-1.5 sm:gap-2">
         <span class="font-black dark:text-white text-slate-800">EUR/USD</span>
         <span class="font-mono dark:text-slate-200 text-slate-700">1.0845</span>
-        <span class="text-[10px] text-loss bg-loss/10 px-1.5 py-0.5 rounded font-bold">-0.18%</span>
+        <span class="text-[9px] sm:text-[10px] text-loss bg-loss/10 px-1 sm:px-1.5 py-0.5 rounded font-bold">-0.18%</span>
       </div>
-      <div class="w-px h-4 bg-slate-300 dark:bg-darkBorder"></div>
-      <div class="flex items-center gap-2">
+      <div class="w-px h-3 sm:h-4 bg-slate-300 dark:bg-darkBorder"></div>
+      <div class="flex items-center gap-1.5 sm:gap-2">
         <span class="font-black dark:text-white text-slate-800">BTC/USD</span>
         <span class="font-mono text-accent-green">64,120.00</span>
-        <span class="text-[10px] text-accent-green bg-accent-green/10 px-1.5 py-0.5 rounded font-bold">+3.80%</span>
+        <span class="text-[9px] sm:text-[10px] text-accent-green bg-accent-green/10 px-1 sm:px-1.5 py-0.5 rounded font-bold">+3.80%</span>
       </div>
-      <div class="w-px h-4 bg-slate-300 dark:bg-darkBorder"></div>
-      <div class="flex items-center gap-2">
+      <div class="w-px h-3 sm:h-4 bg-slate-300 dark:bg-darkBorder"></div>
+      <div class="flex items-center gap-1.5 sm:gap-2">
         <span class="font-black dark:text-white text-slate-800">XAU/USD</span>
         <span class="font-mono text-accent-green">2,512.40</span>
-        <span class="text-[10px] text-accent-green bg-accent-green/10 px-1.5 py-0.5 rounded font-bold">+0.45%</span>
+        <span class="text-[9px] sm:text-[10px] text-accent-green bg-accent-green/10 px-1 sm:px-1.5 py-0.5 rounded font-bold">+0.45%</span>
       </div>
     </div>
     <div class="hidden md:flex items-center gap-2 text-[11px] text-slate-400 font-medium">
@@ -147,22 +147,22 @@
     </div>
   </div>
 
-  <!-- ===================== TOP KPI CARDS ===================== -->
-  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+  <!-- ===================== TOP KPI CARDS (MOBILE SLIDER) ===================== -->
+  <div class="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 scrollbar-hide sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-4 sm:overflow-visible sm:pb-0">
     <!-- P&L ACUMULADO -->
-    <div class="stat-card rounded-2xl p-4 md:p-5 relative overflow-hidden">
+    <div class="stat-card rounded-2xl p-3 sm:p-4 md:p-5 relative overflow-hidden min-w-[160px] sm:min-w-0 snap-start flex-shrink-0 sm:flex-shrink">
       <div class="flex items-center justify-between">
-        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">P&L Acumulado</span>
-        <div class="w-8 h-8 rounded-xl bg-accent-green/15 text-accent-green flex items-center justify-center">
-          <span class="material-symbols-outlined text-[18px]">payments</span>
+        <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">P&L Acumulado</span>
+        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-accent-green/15 text-accent-green flex items-center justify-center">
+          <span class="material-symbols-outlined text-[16px] sm:text-[18px]">payments</span>
         </div>
       </div>
-      <p class="text-2xl md:text-3xl font-black mt-2 font-mono <%= pnl_class(@stats[:total_pnl]) %>">
+      <p class="text-lg sm:text-2xl md:text-3xl font-black mt-1.5 sm:mt-2 font-mono <%= pnl_class(@stats[:total_pnl]) %>">
         <%= @stats[:total_pnl] >= 0 ? '+' : '' %>$<%= number_with_precision(@stats[:total_pnl], precision: 2, delimiter: ',') %>
       </p>
-      <div class="flex items-center justify-between mt-2 text-[11px]">
+      <div class="flex items-center justify-between mt-1.5 sm:mt-2 text-[10px] sm:text-[11px]">
         <span class="<%= @stats[:pnl_change_pct] >= 0 ? 'text-accent-green' : 'text-loss' %> font-bold flex items-center gap-0.5">
-          <span class="material-symbols-outlined text-[14px]"><%= @stats[:pnl_change_pct] >= 0 ? 'arrow_upward' : 'arrow_downward' %></span>
+          <span class="material-symbols-outlined text-[12px] sm:text-[14px]"><%= @stats[:pnl_change_pct] >= 0 ? 'arrow_upward' : 'arrow_downward' %></span>
           <%= @stats[:pnl_change_pct] >= 0 ? '+' : '' %><%= @stats[:pnl_change_pct] %>%
         </span>
         <span class="text-slate-400"><%= @stats[:total_trades] %> trades</span>
@@ -170,53 +170,53 @@
     </div>
 
     <!-- WIN RATE -->
-    <div class="stat-card rounded-2xl p-4 md:p-5 relative overflow-hidden">
+    <div class="stat-card rounded-2xl p-3 sm:p-4 md:p-5 relative overflow-hidden min-w-[160px] sm:min-w-0 snap-start flex-shrink-0 sm:flex-shrink">
       <div class="flex items-center justify-between">
-        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Win Rate</span>
-        <div class="w-8 h-8 rounded-xl bg-brand/15 text-brand flex items-center justify-center">
-          <span class="material-symbols-outlined text-[18px]">check_circle</span>
+        <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Win Rate</span>
+        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-brand/15 text-brand flex items-center justify-center">
+          <span class="material-symbols-outlined text-[16px] sm:text-[18px]">check_circle</span>
         </div>
       </div>
-      <p class="text-2xl md:text-3xl font-black mt-2 font-mono dark:text-white text-slate-900">
+      <p class="text-lg sm:text-2xl md:text-3xl font-black mt-1.5 sm:mt-2 font-mono dark:text-white text-slate-900">
         <%= @stats[:win_rate] %>%
       </p>
-      <div class="flex items-center justify-between mt-2 text-[11px]">
+      <div class="flex items-center justify-between mt-1.5 sm:mt-2 text-[10px] sm:text-[11px]">
         <span class="text-slate-400"><%= @stats[:winning_trades] %>W / <%= @stats[:losing_trades] %>L</span>
-        <span class="text-brand font-bold">Objetivo: 65%</span>
+        <span class="text-brand font-bold">Obj: 65%</span>
       </div>
     </div>
 
     <!-- PROFIT FACTOR -->
-    <div class="stat-card rounded-2xl p-4 md:p-5 relative overflow-hidden">
+    <div class="stat-card rounded-2xl p-3 sm:p-4 md:p-5 relative overflow-hidden min-w-[160px] sm:min-w-0 snap-start flex-shrink-0 sm:flex-shrink">
       <div class="flex items-center justify-between">
-        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Profit Factor</span>
-        <div class="w-8 h-8 rounded-xl bg-violet-500/15 text-violet-500 flex items-center justify-center">
-          <span class="material-symbols-outlined text-[18px]">balance</span>
+        <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Profit Factor</span>
+        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-cyan-500/15 text-cyan-500 flex items-center justify-center">
+          <span class="material-symbols-outlined text-[16px] sm:text-[18px]">balance</span>
         </div>
       </div>
-      <p class="text-2xl md:text-3xl font-black mt-2 font-mono text-violet-400">
+      <p class="text-lg sm:text-2xl md:text-3xl font-black mt-1.5 sm:mt-2 font-mono text-cyan-400">
         <%= @stats[:profit_factor] %>
       </p>
-      <div class="flex items-center justify-between mt-2 text-[11px]">
+      <div class="flex items-center justify-between mt-1.5 sm:mt-2 text-[10px] sm:text-[11px]">
         <span class="text-slate-400">Ganancia / Pérdida</span>
-        <span class="text-accent-green font-bold">Saludable (>1.5)</span>
+        <span class="text-accent-green font-bold">Saludable</span>
       </div>
     </div>
 
     <!-- PROMEDIO WIN / LOSS -->
-    <div class="stat-card rounded-2xl p-4 md:p-5 relative overflow-hidden">
+    <div class="stat-card rounded-2xl p-3 sm:p-4 md:p-5 relative overflow-hidden min-w-[160px] sm:min-w-0 snap-start flex-shrink-0 sm:flex-shrink">
       <div class="flex items-center justify-between">
-        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Ratio R:R Prom.</span>
-        <div class="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-500 flex items-center justify-center">
-          <span class="material-symbols-outlined text-[18px]">award_star</span>
+        <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">R:R Prom.</span>
+        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-amber-500/15 text-amber-500 flex items-center justify-center">
+          <span class="material-symbols-outlined text-[16px] sm:text-[18px]">award_star</span>
         </div>
       </div>
-      <p class="text-2xl md:text-3xl font-black mt-2 font-mono text-amber-400">
+      <p class="text-lg sm:text-2xl md:text-3xl font-black mt-1.5 sm:mt-2 font-mono text-amber-400">
         <%= @stats[:rr_ratio] %> R
       </p>
-      <div class="flex items-center justify-between mt-2 text-[11px]">
-        <span class="text-accent-green font-bold">Win: +$<%= number_with_precision(@stats[:avg_win] || 0, precision: 0) %></span>
-        <span class="text-loss font-bold">Loss: -$<%= number_with_precision(@stats[:avg_loss] || 0, precision: 0) %></span>
+      <div class="flex items-center justify-between mt-1.5 sm:mt-2 text-[10px] sm:text-[11px]">
+        <span class="text-accent-green font-bold">+$<%= number_with_precision(@stats[:avg_win] || 0, precision: 0) %></span>
+        <span class="text-loss font-bold">-$<%= number_with_precision(@stats[:avg_loss] || 0, precision: 0) %></span>
       </div>
     </div>
   </div>
@@ -225,14 +225,14 @@
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
     <!-- EQUITY CURVE (ECHARTS 2 COLS) -->
-    <div class="lg:col-span-2 glass rounded-2xl p-5 md:p-6 space-y-4">
+    <div class="lg:col-span-2 glass rounded-2xl p-3 sm:p-5 md:p-6 space-y-3 sm:space-y-4">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b dark:border-darkBorder border-lightBorder">
         <div>
           <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-brand text-[20px]">show_chart</span>
-            <h3 class="text-base font-extrabold dark:text-white text-slate-900">Curva de Equity Acumulada</h3>
+            <span class="material-symbols-outlined text-brand text-[18px] sm:text-[20px]">show_chart</span>
+            <h3 class="text-sm sm:text-base font-extrabold dark:text-white text-slate-900">Curva de Equity</h3>
           </div>
-          <p class="text-xs text-slate-400 mt-0.5">Evolución de capital trade a trade</p>
+          <p class="text-[10px] sm:text-xs text-slate-400 mt-0.5">Evolución de capital trade a trade</p>
         </div>
         <div class="flex items-center gap-2">
           <span class="text-xs px-2.5 py-1 rounded-lg bg-accent-green/10 text-accent-green font-bold border border-accent-green/20">
@@ -242,7 +242,7 @@
       </div>
 
       <!-- ECHARTS CONTAINER -->
-      <div id="echarts-equity-container" class="w-full h-72"></div>
+      <div id="echarts-equity-container" class="w-full h-48 sm:h-72"></div>
     </div>
 
     <!-- WIN/LOSS DONUT + QUICK DIAGNOSIS (1 COL) -->
@@ -299,7 +299,7 @@
           <p class="text-[11px] text-slate-400">Rendimiento por jornada laboral</p>
         </div>
       </div>
-      <div id="echarts-bar-day-container" class="w-full h-64"></div>
+      <div id="echarts-bar-day-container" class="w-full h-44 sm:h-64"></div>
     </div>
 
     <!-- RECENT TRADES TABLE (2 COLS) -->
@@ -392,7 +392,7 @@ document.addEventListener("DOMContentLoaded", function() {
         textStyle: { color: isDark ? "#FFFFFF" : "#0F0E1A", fontFamily: "Manrope" },
         formatter: function(params) {
           const item = params[0];
-          const color = item.value >= 0 ? '#10B981' : '#F43F5E';
+          const color = item.value >= 0 ? '#009DFA' : '#F43F5E';
           return `<strong>${item.name}</strong><br/>Equity Acumulada: <span style="color:${color};font-weight:bold">$${item.value}</span>`;
         }
       },
@@ -414,12 +414,12 @@ document.addEventListener("DOMContentLoaded", function() {
         type: "line",
         smooth: true,
         symbolSize: 8,
-        itemStyle: { color: "#10B981" },
-        lineStyle: { width: 3, color: "#10B981" },
+        itemStyle: { color: "#009DFA" },
+        lineStyle: { width: 3, color: "#009DFA" },
         areaStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: "rgba(16, 185, 129, 0.4)" },
-            { offset: 1, color: "rgba(16, 185, 129, 0.0)" }
+            { offset: 0, color: "rgba(0, 157, 250, 0.4)" },
+            { offset: 1, color: "rgba(0, 157, 250, 0.0)" }
           ])
         },
         data: seriesData

@@ -3,15 +3,15 @@
 <div class="space-y-6 fade-in">
 
   <!-- MONTH SELECTOR & HEADER -->
-  <div class="glass rounded-3xl p-6 flex flex-col md:flex-row items-center justify-between gap-4 border dark:border-darkBorder border-lightBorder">
+  <div class="glass rounded-2xl sm:rounded-3xl p-4 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4 border dark:border-darkBorder border-lightBorder">
     <div>
-      <div class="flex items-center gap-2.5">
-        <span class="material-symbols-outlined text-brand text-[24px]">calendar_month</span>
-        <h2 class="text-xl font-black dark:text-white text-slate-900 capitalize">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-brand text-[20px] sm:text-[24px]">calendar_month</span>
+        <h2 class="text-base sm:text-xl font-black dark:text-white text-slate-900 capitalize">
           <%= l(@current_month, format: "%B %Y") rescue @current_month.strftime("%B %Y") %>
         </h2>
       </div>
-      <p class="text-xs text-slate-400 mt-1 font-medium">Mapa térmico de operaciones, densidad P&L y resumen diario</p>
+      <p class="text-[10px] sm:text-xs text-slate-400 mt-0.5 sm:mt-1 font-medium">Mapa térmico y resumen diario</p>
     </div>
 
     <!-- MONTH NAVIGATION -->
@@ -30,44 +30,44 @@
     </div>
   </div>
 
-  <!-- MONTHLY KPIS -->
-  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+  <!-- MONTHLY KPIS (MOBILE SLIDER) -->
+  <div class="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 scrollbar-hide sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-4 sm:overflow-visible sm:pb-0">
     <!-- P&L Mensual -->
-    <div class="stat-card rounded-3xl p-5 relative overflow-hidden">
-      <span class="text-xs font-bold uppercase tracking-wider text-slate-400">P&L Mensual</span>
-      <p class="text-2xl font-black font-mono mt-1 <%= @month_stats[:total_pnl] >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
+    <div class="stat-card rounded-2xl sm:rounded-3xl p-3 sm:p-5 relative overflow-hidden min-w-[150px] sm:min-w-0 snap-start flex-shrink-0 sm:flex-shrink">
+      <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">P&L Mensual</span>
+      <p class="text-lg sm:text-2xl font-black font-mono mt-1 <%= @month_stats[:total_pnl] >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
         <%= @month_stats[:total_pnl] >= 0 ? '+' : '' %>$<%= number_with_precision(@month_stats[:total_pnl], precision: 2, delimiter: ',') %>
       </p>
-      <p class="text-[11px] text-slate-400 mt-1 font-medium"><%= @month_stats[:total_trades] %> ejecuciones este mes</p>
+      <p class="text-[10px] sm:text-[11px] text-slate-400 mt-1 font-medium"><%= @month_stats[:total_trades] %> ejecuciones</p>
     </div>
 
     <!-- Días Verdes / Rojos -->
-    <div class="stat-card rounded-3xl p-5 relative overflow-hidden">
-      <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Días Verdes / Rojos</span>
+    <div class="stat-card rounded-2xl sm:rounded-3xl p-3 sm:p-5 relative overflow-hidden min-w-[150px] sm:min-w-0 snap-start flex-shrink-0 sm:flex-shrink">
+      <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Días V / R</span>
       <div class="flex items-center gap-2 mt-1 font-mono">
-        <span class="text-2xl font-black text-emerald-500"><%= @green_days %>V</span>
+        <span class="text-lg sm:text-2xl font-black text-emerald-500"><%= @green_days %>V</span>
         <span class="text-slate-400">/</span>
-        <span class="text-2xl font-black text-rose-500"><%= @red_days %>R</span>
+        <span class="text-lg sm:text-2xl font-black text-rose-500"><%= @red_days %>R</span>
       </div>
-      <p class="text-[11px] text-slate-400 mt-1 font-medium">Tasa de efectividad: <strong class="text-emerald-500"><%= @month_stats[:win_rate] %>%</strong></p>
+      <p class="text-[10px] sm:text-[11px] text-slate-400 mt-1 font-medium">WR: <strong class="text-emerald-500"><%= @month_stats[:win_rate] %>%</strong></p>
     </div>
 
     <!-- Mejor Día -->
-    <div class="stat-card rounded-3xl p-5 relative overflow-hidden">
-      <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Mejor Día</span>
-      <p class="text-2xl font-black font-mono text-emerald-500 mt-1">
+    <div class="stat-card rounded-2xl sm:rounded-3xl p-3 sm:p-5 relative overflow-hidden min-w-[150px] sm:min-w-0 snap-start flex-shrink-0 sm:flex-shrink">
+      <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Mejor Día</span>
+      <p class="text-lg sm:text-2xl font-black font-mono text-emerald-500 mt-1">
         +$<%= number_with_precision(@best_day, precision: 2, delimiter: ',') %>
       </p>
-      <p class="text-[11px] text-slate-400 mt-1 font-medium">Máximo beneficio en 24h</p>
+      <p class="text-[10px] sm:text-[11px] text-slate-400 mt-1 font-medium">Máx beneficio 24h</p>
     </div>
 
     <!-- Peor Día -->
-    <div class="stat-card rounded-3xl p-5 relative overflow-hidden">
-      <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Peor Día</span>
-      <p class="text-2xl font-black font-mono text-rose-500 mt-1">
+    <div class="stat-card rounded-2xl sm:rounded-3xl p-3 sm:p-5 relative overflow-hidden min-w-[150px] sm:min-w-0 snap-start flex-shrink-0 sm:flex-shrink">
+      <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Peor Día</span>
+      <p class="text-lg sm:text-2xl font-black font-mono text-rose-500 mt-1">
         $<%= number_with_precision(@worst_day, precision: 2, delimiter: ',') %>
       </p>
-      <p class="text-[11px] text-slate-400 mt-1 font-medium">Máximo drawdown en 24h</p>
+      <p class="text-[10px] sm:text-[11px] text-slate-400 mt-1 font-medium">Máx drawdown 24h</p>
     </div>
   </div>
 
@@ -86,7 +86,7 @@
     </div>
 
     <!-- GRID DE DIAS -->
-    <div class="grid grid-cols-7 gap-2 md:gap-3">
+    <div class="grid grid-cols-7 gap-1 sm:gap-2 md:gap-3">
       <% @calendar_days.each do |date| %>
         <% 
           is_current_month = date.month == @current_month.month
@@ -110,7 +110,7 @@
           end
         %>
 
-        <div class="min-h-[75px] md:min-h-[115px] p-2 md:p-3.5 rounded-xl md:rounded-2xl border transition-all duration-300 relative group flex flex-col justify-between cursor-pointer hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/20 hover:border-brand/50 hover:z-10 <%= card_bg_class %> <%= is_today ? 'ring-2 ring-brand' : '' %>"
+        <div class="min-h-[55px] sm:min-h-[75px] md:min-h-[115px] p-1.5 sm:p-2 md:p-3.5 rounded-lg sm:rounded-xl md:rounded-2xl border transition-all duration-300 relative group flex flex-col justify-between cursor-pointer hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/20 hover:border-brand/50 hover:z-10 <%= card_bg_class %> <%= is_today ? 'ring-2 ring-brand' : '' %>"
              data-date="<%= date.to_s %>"
              data-trades="<%= day_trades.to_json(include: :strategy) %>"
              onclick="showDayDetails(this)">
