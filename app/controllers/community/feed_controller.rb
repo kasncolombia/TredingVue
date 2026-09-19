@@ -23,8 +23,10 @@ module Community
       if @post.save
         redirect_to community_feed_index_path, notice: "Publicación creada"
       else
-        @posts = Post.public_posts.recent
-        render :index
+        @new_post = @post
+        @posts = Post.public_posts.recent.limit(20)
+        @trade_shares = current_user.trade_shares.where(privacy: "public").recent.limit(10)
+        render :index, status: :unprocessable_entity
       end
     end
 

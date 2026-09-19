@@ -237,14 +237,10 @@
 
       <!-- LOGO -->
       <div class="h-14 flex items-center justify-between px-4 border-b dark:border-darkBorder border-lightBorder flex-shrink-0">
-        <div class="flex items-center gap-3">
-          <div id="sidebar-logo-icon" class="w-8 h-8 rounded-xl bg-brand flex items-center justify-center shadow-lg flex-shrink-0" style="animation: pulse-glow 3s infinite;">
-            <span class="material-symbols-outlined text-white text-[18px]">monitoring</span>
-          </div>
-          <div class="sidebar-text-hide">
-            <p class="font-extrabold text-sm leading-none dark:text-white text-slate-900 tracking-tight">Coach<span class="text-brand">Trading</span></p>
-            <p class="text-[10px] font-bold uppercase tracking-wider mt-0.5 dark:text-brand-light text-brand">PRO</p>
-          </div>
+        <div class="flex items-center gap-3 w-full">
+          <%= link_to dashboard_path, id: "sidebar-logo-icon", class: "flex items-center justify-start flex-shrink-0 transition-transform hover:scale-105" do %>
+            <%= image_tag "tradetres_logo.png", class: "h-7 md:h-8 w-auto object-contain drop-shadow-md" %>
+          <% end %>
         </div>
         <!-- CLOSE mobile -->
         <button onclick="toggleMobileSidebar()" class="md:hidden flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-xl bg-slate-200/70 dark:bg-darkCardAlt text-slate-600 dark:text-slate-300 hover:text-rose-500 transition-all border dark:border-darkBorder border-slate-300">
@@ -312,18 +308,23 @@
 
     <!-- TOP HEADER -->
     <header class="h-14 header-bg px-4 md:px-6 flex items-center justify-between flex-shrink-0 relative z-[100]">
-      <div class="flex items-center gap-2 md:gap-3">
+      <div class="flex items-center gap-2 md:gap-3 min-w-0">
         <!-- MOBILE HAMBURGER -->
-        <button onclick="toggleMobileSidebar()" class="md:hidden p-1.5 rounded-xl dark:text-slate-400 text-slate-500 hover:bg-brand/10 transition-all">
-          <span class="material-symbols-outlined text-[20px]">menu</span>
+        <button onclick="toggleMobileSidebar()" class="md:hidden p-1.5 -ml-1 rounded-xl dark:text-slate-400 text-slate-500 hover:bg-brand/10 transition-all flex-shrink-0">
+          <span class="material-symbols-outlined text-[24px]">menu</span>
         </button>
 
+        <!-- LOGO (Solo Visible en Mobile Header) -->
+        <%= link_to dashboard_path, class: "md:hidden flex items-center flex-shrink-0 mr-1" do %>
+          <%= image_tag "tradetres_logo.png", class: "h-5 xs:h-6 w-auto object-contain" %>
+        <% end %>
+
         <!-- DESKTOP TOGGLE SIDEBAR BUTTON -->
-        <button onclick="toggleDesktopSidebar()" class="hidden md:flex items-center justify-center p-1.5 rounded-xl dark:text-slate-400 text-slate-500 hover:bg-brand/10 dark:hover:bg-darkHover transition-all cursor-pointer border border-transparent hover:border-brand/20" title="Colapsar/Expandir Menú Sidebar">
+        <button onclick="toggleDesktopSidebar()" class="hidden md:flex items-center justify-center p-1.5 rounded-xl dark:text-slate-400 text-slate-500 hover:bg-brand/10 dark:hover:bg-darkHover transition-all cursor-pointer border border-transparent hover:border-brand/20 flex-shrink-0" title="Colapsar/Expandir Menú Sidebar">
           <span id="desktop-sidebar-icon" class="material-symbols-outlined text-[20px]">menu_open</span>
         </button>
 
-        <h1 class="text-sm md:text-base font-bold dark:text-white text-slate-800 truncate">
+        <h1 class="text-sm md:text-base font-bold dark:text-white text-slate-800 truncate border-l pl-3 ml-1 dark:border-[#23263A] border-slate-200 hidden xs:block">
           <%= content_for?(:page_title) ? yield(:page_title) : "Dashboard" %>
         </h1>
         <% if content_for?(:badge) %><div class="hidden sm:block"><%= yield(:badge) %></div><% end %>

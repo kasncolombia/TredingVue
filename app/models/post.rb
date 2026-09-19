@@ -10,4 +10,12 @@ class Post < ApplicationRecord
   scope :active, -> { where(status: "active") }
   scope :public_posts, -> { where(visibility: "public", status: "active") }
   scope :recent, -> { order(created_at: :desc) }
+
+  before_validation :set_default_status, on: :create
+
+  private
+
+  def set_default_status
+    self.status ||= "active"
+  end
 end

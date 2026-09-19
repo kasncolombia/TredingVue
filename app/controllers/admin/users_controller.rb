@@ -47,6 +47,8 @@ class Admin::UsersController < Admin::BaseController
 
     if provider == 'openrouter'
       ENV['OPENROUTER_API_KEY'] = api_key if api_key.present?
+    elsif provider == 'google'
+      ENV['GEMINI_API_KEY'] = api_key if api_key.present?
     else
       ENV['OPENAI_API_KEY'] = api_key if api_key.present?
     end
@@ -59,6 +61,7 @@ class Admin::UsersController < Admin::BaseController
       'AI_PROVIDER'        => provider,
       'AI_MODEL'           => model,
       'OPENROUTER_API_KEY' => ENV['OPENROUTER_API_KEY'],
+      'GEMINI_API_KEY'     => ENV['GEMINI_API_KEY'],
       'OPENAI_API_KEY'     => ENV['OPENAI_API_KEY']
     }.each do |key, val|
       next if val.blank?

@@ -8,14 +8,25 @@
   <!-- MINI-KPIs -->
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
     <% [
-      { label: "P&L Filtrado",  value: "#{ @stats[:total_pnl].to_f >= 0 ? '+' : '' }$#{number_with_precision(@stats[:total_pnl], precision: 2, delimiter: ',')}",  color: @stats[:total_pnl].to_f >= 0 ? 'text-accent-green' : 'text-loss', icon: "payments" },
-      { label: "Win Rate",      value: "#{@stats[:win_rate]}%", color: 'text-brand', icon: "check_circle" },
-      { label: "Profit Factor", value: @stats[:profit_factor].to_s, color: 'dark:text-white text-slate-800', icon: "balance" },
-      { label: "Resultados W/L",value: "#{@stats[:wins_count]}W / #{@stats[:losses_count]}L", color: 'dark:text-white text-slate-800', icon: "equalizer" },
+      { label: "P&L Filtrado", tooltip: "Ganancia o pérdida neta acumulada de las operaciones evaluadas.", value: "#{ @stats[:total_pnl].to_f >= 0 ? '+' : '' }$#{number_with_precision(@stats[:total_pnl], precision: 2, delimiter: ',')}",  color: @stats[:total_pnl].to_f >= 0 ? 'text-accent-green' : 'text-loss', icon: "payments" },
+      { label: "Win Rate", tooltip: "Tasa de Acierto. Porcentaje de operaciones ganadoras sobre el total.", value: "#{@stats[:win_rate]}%", color: 'text-brand', icon: "check_circle" },
+      { label: "Profit Factor", tooltip: "Factor de Beneficio: Monto ganado por cada dólar perdido. Todo valor superior a 1 implica que la cuenta crece.", value: @stats[:profit_factor].to_s, color: 'dark:text-white text-slate-800', icon: "balance" },
+      { label: "Resultados W/L", tooltip: "Distribución exacta de victorias (W: Wins) frente a bates fallidos/derrotas (L: Losses)", value: "#{@stats[:wins_count]}W / #{@stats[:losses_count]}L", color: 'dark:text-white text-slate-800', icon: "equalizer" },
     ].each do |kpi| %>
       <div class="stat-card rounded-2xl px-4 py-3.5 flex items-center justify-between">
         <div>
-          <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5"><%= kpi[:label] %></p>
+          <div class="flex items-center gap-1 mb-0.5">
+            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider"><%= kpi[:label] %></p>
+            <div class="relative group flex items-center">
+              <span class="material-symbols-outlined text-[14px] text-slate-400 cursor-help group-hover:text-brand transition-colors">info</span>
+              
+              <!-- Custom Tooltip -->
+              <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2.5 dark:bg-[#1A1D2D] bg-slate-800 border dark:border-[#2A2E45] border-slate-700 rounded-xl text-white text-[11px] font-normal normal-case leading-snug opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100] shadow-2xl text-center pointer-events-none">
+                <%= kpi[:tooltip] %>
+                <div class="absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent dark:border-t-[#1A1D2D] border-t-slate-900 drop-shadow-md"></div>
+              </div>
+            </div>
+          </div>
           <p class="text-lg font-black font-mono <%= kpi[:color] %>"><%= kpi[:value] %></p>
         </div>
         <div class="w-8 h-8 rounded-xl bg-brand/10 text-brand flex items-center justify-center">
@@ -70,8 +81,31 @@
             <th class="py-3 px-4 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">Estrategia</th>
             <th class="py-3 px-4 text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider">Entrada</th>
             <th class="py-3 px-4 text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider">Salida</th>
-            <th class="py-3 px-4 text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider">P&L Neto</th>
-            <th class="py-3 px-4 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider">R Multiple</th>
+            <th class="py-3 px-4 text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+              <div class="flex justify-end items-center gap-1">
+                <span>P&L Neto</span>
+                <div class="relative group flex items-center">
+                  <span class="material-symbols-outlined text-[14px] cursor-help opacity-70 group-hover:text-brand transition-colors">info</span>
+                  <div class="absolute bottom-full right-1 mb-2 w-48 p-2.5 dark:bg-[#1A1D2D] bg-slate-800 border dark:border-[#2A2E45] border-slate-700 rounded-xl text-white text-[11px] font-normal normal-case leading-snug opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100] shadow-2xl text-center pointer-events-none">
+                    Ganancias y Pérdidas Netas acumuladas/realizadas.
+                    <div class="absolute top-full right-2 border-[5px] border-transparent dark:border-t-[#1A1D2D] border-t-slate-800 drop-shadow-md"></div>
+                  </div>
+                </div>
+              </div>
+            </th>
+            <th class="py-3 px-4 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+              <div class="flex justify-center items-center gap-1">
+                <span>R Multiple</span>
+                <div class="relative group flex items-center">
+                  <span class="material-symbols-outlined text-[14px] cursor-help opacity-70 group-hover:text-brand transition-colors">info</span>
+                  <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 p-2.5 dark:bg-[#1A1D2D] bg-slate-800 border dark:border-[#2A2E45] border-slate-700 rounded-xl text-white text-[11px] font-normal normal-case leading-snug opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100] shadow-2xl text-center pointer-events-none">
+                    <strong class="text-brand block mb-1 tracking-widest text-[9px] uppercase">Riesgo / Recompensa</strong>
+                    Si ganaste 2.0R, significa que ganaste el doble de lo que pusiste inicialmente en riesgo.
+                    <div class="absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent dark:border-t-[#1A1D2D] border-t-slate-800 drop-shadow-md"></div>
+                  </div>
+                </div>
+              </div>
+            </th>
             <th class="py-3 px-4 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider">Resultado</th>
             <th class="py-3 px-4 text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider">Acciones</th>
           </tr>

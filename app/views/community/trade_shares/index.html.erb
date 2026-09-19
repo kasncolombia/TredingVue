@@ -73,7 +73,7 @@
           <div class="flex items-center gap-4">
             <span class="flex items-center gap-1">
               <span class="material-symbols-outlined text-[15px] text-brand">notes</span>
-              <span><%= share.trade&.trade_notes&.count || 0 %> notas</span>
+              <span><%= (share.trade&.notes.present? ? 1 : 0) %> notas</span>
             </span>
             <span class="flex items-center gap-1">
               <span class="material-symbols-outlined text-[15px] text-emerald-500">smart_toy</span>

@@ -39,9 +39,15 @@
             <%= @trade.result || (@trade.pnl >= 0 ? "WIN" : "LOSS") %>
           </span>
         </div>
-        <p class="text-xs text-slate-400">
-          Entrada: <strong><%= @trade.entry_at&.strftime("%d %b %Y %H:%M") || "—" %></strong>
-          <% if @trade.exit_at %> • Salida: <strong><%= @trade.exit_at.strftime("%d %b %Y %H:%M") %></strong><% end %>
+        <p class="text-xs text-slate-400 flex items-center justify-start flex-wrap gap-2 mt-1">
+          <span>Ent: <strong><%= @trade.entry_at&.strftime("%d %b %Y %H:%M") || "—" %></strong></span>
+          <% if @trade.exit_at %> <span>• Sal: <strong><%= @trade.exit_at.strftime("%d %b %Y %H:%M") %></strong></span><% end %>
+          <% if @trade.exit_at && @trade.entry_at %>
+            <% duration = ((@trade.exit_at - @trade.entry_at) / 60).round %>
+            <span class="px-2 py-0.5 rounded bg-slate-200 dark:bg-[#23263A] text-slate-600 dark:text-slate-300 text-[10px] font-bold">
+              ⏱ Duración: <%= duration >= 60 ? "#{duration/60}h #{duration%60}m" : "#{duration} min" %>
+            </span>
+          <% end %>
         </p>
       </div>
 
@@ -77,9 +83,9 @@
       <div>
         <div class="flex items-center gap-2">
           <span class="material-symbols-outlined text-brand text-[20px]">candlestick_chart</span>
-          <h3 class="text-sm font-bold dark:text-white text-slate-800">Gráfico Interactivo de Velas (TradingView Lightweight Charts)</h3>
+          <h3 class="text-sm font-bold dark:text-white text-slate-800">Representación Visual de la Operación</h3>
         </div>
-        <p class="text-[11px] text-slate-400">Puntos exactos de Entrada, Stop Loss y Take Profit</p>
+        <p class="text-[11px] text-slate-400 mt-0.5">Mapeo de tus niveles de Entrada, Stop Loss y Take Profit frente al mercado real.</p>
       </div>
       <div class="flex items-center gap-3 text-xs">
         <span class="flex items-center gap-1 text-accent-green font-bold">
@@ -99,8 +105,41 @@
     </div>
 
     <!-- TRADINGVIEW CONTAINER -->
-    <div id="tradingview-candlestick-container" class="w-full h-96 rounded-xl overflow-hidden"></div>
+    <div id="tradingview-candlestick-container" class="w-full h-96 rounded-xl overflow-hidden border dark:border-darkBorder border-lightBorder relative"></div>
+    
+    <!-- SUPPORT BANNER PARA PRINCIPIANTES -->
+    <div class="mt-4 p-4 rounded-xl bg-gradient-to-r from-brand/10 to-violet-500/5 border border-brand/20 flex gap-3 text-xs text-slate-600 dark:text-slate-300 shadow-sm relative overflow-hidden">
+      <!-- Glow effect -->
+      <div class="absolute -top-4 -right-4 w-16 h-16 bg-brand/20 blur-2xl rounded-full pointer-events-none"></div>
+      
+      <span class="material-symbols-outlined text-brand text-[26px] mt-0.5 relative z-10">school</span>
+      <div class="relative z-10 w-full">
+        <strong class="dark:text-white text-slate-800 text-[13px] block mb-1">Guía rápida para interpretar el gráfico</strong>
+        <p class="leading-relaxed">Esta cuadrícula interactiva sitúa la vida de tu trade. Los marcadores muestran exactamente dónde <strong class="text-accent-green">Entraste al mercado</strong> ⬆️ y dónde <strong class="text-loss">Saliste o Cerraste</strong> 🟩. Las líneas punteadas de color marcan tus reglas: <span class="text-indigo-500 font-bold">Take Profit</span> (tu meta de ganancia planeada) y el <span class="text-loss font-bold">Stop Loss</span> (límite de pérdida perimetral que fijaste al operar).</p>
+        <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-2 italic border-t dark:border-brand/20 border-brand/10 pt-2">
+          <span class="text-brand font-bold mr-1">💡 El objetivo de la gráfica en tu Trading Journal</span> no es volver a analizar velas pasadas, sino diagnosticar visualmente si respetaste la distancia de seguridad entre tu cierre y las líneas de riesgo (Stop Loss) de forma disciplinada. (*Velas representativas interpoladas).
+        </p>
+      </div>
+    </div>
   </div>
+
+  <!-- ===================== SCREENSHOT (SI EXISTE) ===================== -->
+  <% if @trade.screenshot_url.present? %>
+    <div class="glass rounded-2xl p-5 space-y-4">
+      <div class="flex items-center justify-between pb-2 border-b dark:border-darkBorder border-lightBorder">
+        <div class="flex items-center gap-2">
+           <span class="material-symbols-outlined text-brand text-[20px]">image</span>
+           <h3 class="text-sm font-bold dark:text-white text-slate-800">Captura de Pantalla / Análisis Original</h3>
+        </div>
+        <%= link_to @trade.screenshot_url, target: "_blank", class: "text-xs font-bold text-brand hover:underline flex items-center gap-1" do %>
+          <span>Ver Imagen Completa</span> <span class="material-symbols-outlined text-[13px]">open_in_new</span>
+        <% end %>
+      </div>
+      <div class="rounded-xl overflow-hidden border dark:border-darkBorder border-lightBorder max-h-[600px] flex items-center justify-center bg-slate-100 dark:bg-[#0D0E18]">
+        <%= image_tag @trade.screenshot_url, class: "w-full h-auto object-contain max-h-[600px]", alt: "Captura de pantalla de la operativa en vivo" %>
+      </div>
+    </div>
+  <% end %>
 
   <!-- ===================== TECHNICAL DETAILS & AI COACH ===================== -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">

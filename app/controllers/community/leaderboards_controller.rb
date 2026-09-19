@@ -1,18 +1,20 @@
 module Community
   class LeaderboardsController < ApplicationController
     def index
-      @users = User.includes(:trades).select("users.*, COUNT(trades.id) as trades_count, COALESCE(SUM(trades.pnl), 0) as total_pnl, COALESCE(AVG(CASE WHEN trades.result = 'WIN' THEN 1.0 ELSE 0.0 END), 0) as win_rate")
-        .joins("LEFT JOIN trades ON trades.user_id = users.id")
-        .group("users.id")
-        .order("total_pnl DESC, trades_count DESC")
-        .limit(50)
+      # Carga solo los usuarios que tengan al menos 1 operación y procesa las estadísticas vía Ruby
+      @users = User.includes(:trades).where.not(trades: { id: nil }).to_a
+      
+      @users.each do |user|
+        stats = Trading::CalculateStatistics.new(user.trades).call
+        user.define_singleton_method(:total_pnl) { stats[:total_pnl] }
+        user.define_singleton_method(:win_rate) { stats[:win_rate] }
+      end
 
-      @top_traders = @users.limit(10)
-      @top_winners = User.left_joins(:trades)
-        .select("users.*, COUNT(trades.id) as total_trades, SUM(CASE WHEN trades.result = 'WIN' THEN 1 ELSE 0 END) as wins")
-        .group("users.id")
-        .order("win_rate DESC")
-        .limit(10)
+      # Orden global por P&L
+      @users.sort_by! { |u| -u.total_pnl }
+      
+      @top_traders = @users.take(10)
+      @top_winners = @users.sort_by { |u| -(u.win_rate || 0) }.take(10)
     end
   end
 end
