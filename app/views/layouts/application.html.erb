@@ -238,8 +238,8 @@
       <!-- LOGO -->
       <div class="h-14 flex items-center justify-between px-4 border-b dark:border-darkBorder border-lightBorder flex-shrink-0">
         <div class="flex items-center gap-3 w-full">
-          <%= link_to dashboard_path, id: "sidebar-logo-icon", class: "flex items-center justify-start flex-shrink-0 transition-transform hover:scale-105" do %>
-            <%= image_tag "tradetres_logo.png", class: "h-7 md:h-8 w-auto object-contain drop-shadow-md" %>
+          <%= link_to dashboard_path, id: "sidebar-logo-icon", class: "flex items-center justify-start flex-shrink-0 transition-transform hover:scale-105 ml-1" do %>
+            <%= image_tag "tradetres_logo.png", class: "h-9 md:h-10 w-auto object-contain drop-shadow-md" %>
           <% end %>
         </div>
         <!-- CLOSE mobile -->
@@ -316,7 +316,7 @@
 
         <!-- LOGO (Solo Visible en Mobile Header) -->
         <%= link_to dashboard_path, class: "md:hidden flex items-center flex-shrink-0 mr-1" do %>
-          <%= image_tag "tradetres_logo.png", class: "h-5 xs:h-6 w-auto object-contain" %>
+          <%= image_tag "tradetres_logo.png", class: "h-7 xs:h-8 sm:h-9 w-auto object-contain" %>
         <% end %>
 
         <!-- DESKTOP TOGGLE SIDEBAR BUTTON -->
