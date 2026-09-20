@@ -211,11 +211,12 @@
         const pnl = parseFloat(t.pnl || 0);
         const isWin = pnl >= 0;
         return `
-          <div class="p-4 rounded-2xl dark:bg-darkInput bg-white border dark:border-darkBorder border-slate-200 flex items-center justify-between shadow-sm">
+          <a href="/trades/${t.id}" class="p-4 rounded-2xl dark:bg-darkInput bg-white border dark:border-darkBorder border-slate-200 flex items-center justify-between shadow-sm hover:border-brand transition-all block">
             <div>
               <div class="flex items-center gap-2">
                 <span class="font-black text-sm dark:text-white text-slate-900 font-mono">${t.symbol}</span>
                 <span class="text-[10px] px-2.5 py-0.5 rounded-full font-black ${t.direction === 'LONG' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-500 border border-rose-500/20'}">${t.direction}</span>
+                <span class="text-[10px] text-brand font-bold flex items-center gap-0.5">Ver detalles <span class="material-symbols-outlined text-[12px]">arrow_forward</span></span>
               </div>
               <p class="text-[11px] text-slate-400 mt-1 font-medium">Estrategia: ${t.strategy ? t.strategy.name : 'Intraday'}</p>
             </div>
@@ -225,7 +226,7 @@
               </p>
               <span class="text-[11px] font-mono text-slate-400 font-semibold">${t.r_multiple || 0}R</span>
             </div>
-          </div>
+          </a>
         `;
       }).join('');
     }

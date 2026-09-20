@@ -12,517 +12,521 @@
   </div>
 <% end %>
 
-<% if current_user && !current_user.onboarding_completed %>
-  <!-- ONBOARDING OVERLAY MODAL -->
-  <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-md bg-black/70 fade-in">
-    <div class="dark:bg-[#141729] bg-white max-w-xl w-full rounded-[2rem] p-6 sm:p-8 border dark:border-[#23263A] border-slate-200 shadow-2xl relative shadow-brand/20">
-      
-      <div class="flex items-center gap-4 mb-6">
-        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand to-cyan-500 text-white flex items-center justify-center font-bold shrink-0 shadow-lg shadow-brand/30">
-          <span class="material-symbols-outlined text-[30px]">rocket_launch</span>
-        </div>
-        <div>
-          <h2 class="text-xl sm:text-2xl font-black dark:text-white text-slate-900 tracking-tight">¡Bienvenido a TradeTres PRO!</h2>
-          <p class="text-xs dark:text-slate-400 text-slate-500 mt-1">Personaliza tu entorno de trading asistido por IA en segundos.</p>
-        </div>
-      </div>
-      
-      <div class="space-y-4 pt-4 border-t dark:border-[#23263A] border-slate-100">
-        <%= form_with model: current_user, url: profile_path, method: :put, class: "space-y-4" do |f| %>
-          <%= f.hidden_field :onboarding_completed, value: true %>
-          
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-1.5">Perfil de Trader</label>
-              <%= f.select :trader_type, [['Empezando (Demo)', 'beginner'], ['Intermedio / Consistente', 'intermediate'], ['Fondeado Pro ($50k-$150k)', 'funded']], {}, class: "w-full py-2.5 px-3.5 rounded-xl border border-slate-200 dark:border-[#23263A] bg-slate-50 dark:bg-[#0D0E18] text-xs font-bold dark:text-white focus:ring-2 focus:ring-brand focus:outline-none" %>
-            </div>
-            <div>
-              <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-1.5">Mercado Principal</label>
-              <%= f.select :main_market, [['Futuros (NQ / ES)', 'futures'], ['Forex (EURUSD/GBPUSD)', 'forex'], ['Crypto (BTC / ETH)', 'crypto'], ['Acciones / Options', 'stocks']], {}, class: "w-full py-2.5 px-3.5 rounded-xl border border-slate-200 dark:border-[#23263A] bg-slate-50 dark:bg-[#0D0E18] text-xs font-bold dark:text-white focus:ring-2 focus:ring-brand focus:outline-none" %>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-1.5">Capital Inicial ($)</label>
-              <%= f.number_field :initial_capital, value: (current_user.initial_capital || 10000), step: 500, class: "w-full py-2.5 px-3.5 rounded-xl border border-slate-200 dark:border-[#23263A] bg-slate-50 dark:bg-[#0D0E18] text-xs font-mono font-bold dark:text-white focus:ring-2 focus:ring-brand focus:outline-none" %>
-            </div>
-            <div>
-              <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-1.5">Zona Horaria</label>
-              <%= f.time_zone_select :timezone, nil, { default: "UTC" }, class: "w-full py-2.5 px-3.5 rounded-xl border border-slate-200 dark:border-[#23263A] bg-slate-50 dark:bg-[#0D0E18] text-xs font-bold dark:text-white focus:ring-2 focus:ring-brand focus:outline-none" %>
-            </div>
-          </div>
-
-          <div class="p-3 rounded-xl bg-brand/10 border border-brand/20 text-brand text-xs flex items-center gap-2">
-            <span class="material-symbols-outlined text-[18px]">smart_toy</span>
-            <span>El AI Coach ajustará las alertas de riesgo y drawdown según estos datos.</span>
-          </div>
-
-          <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-brand via-cyan-500 to-emerald-500 hover:opacity-95 text-white font-extrabold text-xs shadow-xl shadow-brand/25 transition-all flex justify-center items-center gap-2 cursor-pointer mt-2">
-            <span>Comenzar mi Experiencia Pro</span>
-            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-          </button>
-        <% end %>
-      </div>
-    </div>
-  </div>
-<% end %>
-
 <div class="space-y-6 fade-in">
   
-  <!-- INTERRUPTOR DE PORTAFOLIO GLOBAL (BACKTEST VS REAL) -->
-  <div class="flex p-1 bg-slate-200/50 dark:bg-darkBorder/50 rounded-xl w-max border border-slate-300/50 dark:border-darkBorder max-w-full overflow-x-auto snap-x hide-scrollbar">
-    <%= link_to dashboard_path(mode: 'real_account'), class: "snap-center py-1.5 px-4 text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 #{@current_mode == 'real_account' ? 'bg-white dark:bg-slate-700 text-emerald-500 shadow-sm' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'}" do %>
-      <span class="material-symbols-outlined text-[16px]">account_balance_wallet</span> Real
-    <% end %>
-    <%= link_to dashboard_path(mode: 'prop_firm'), class: "snap-center py-1.5 px-4 text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 #{@current_mode == 'prop_firm' ? 'bg-white dark:bg-slate-700 text-brand shadow-sm' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'}" do %>
-      <span class="material-symbols-outlined text-[16px]">verified</span> Fondeo
-    <% end %>
-    <%= link_to dashboard_path(mode: 'backtest'), class: "snap-center py-1.5 px-4 text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 #{@current_mode == 'backtest' ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'}" do %>
-      <span class="material-symbols-outlined text-[16px]">history</span> Backtest
-    <% end %>
-  </div>
-
-  <!-- ===================== STATUS BANNER (DEMO VS REAL) ===================== -->
-  <% if @stats[:is_demo] %>
-    <div class="rounded-2xl p-4 bg-gradient-to-r from-amber-500/10 via-brand/10 to-amber-500/10 border border-amber-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-lg">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center flex-shrink-0 animate-pulse">
-          <span class="material-symbols-outlined text-[22px]">visibility</span>
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <h4 class="text-xs md:text-sm font-extrabold dark:text-white text-slate-900 uppercase tracking-wider">Modo Demostración Activo</h4>
-            <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30">DATOS DE MUESTRA</span>
-          </div>
-          <p class="text-xs text-slate-400 mt-0.5">
-            Estás viendo una simulación comercial pre-cargada. En cuanto agregues tu primera operación, el sistema calculará tus estadísticas reales automáticamente.
-          </p>
-        </div>
-      </div>
-      <%= link_to new_trade_path, class: "px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition-all flex-shrink-0 shadow-md" do %>
-        <span class="material-symbols-outlined text-[16px]">add_circle</span>
-        <span>Crear Primera Operación Real</span>
+  <!-- INTERRUPTOR DE PORTAFOLIO GLOBAL Y CUENTAS MULTIPLES -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <div class="flex p-1 bg-slate-200/50 dark:bg-darkBorder/50 rounded-xl w-max border border-slate-300/50 dark:border-darkBorder max-w-full overflow-x-auto snap-x hide-scrollbar">
+      <%= link_to dashboard_path(mode: 'real_account'), class: "snap-center py-1.5 px-4 text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 #{@current_mode == 'real_account' ? 'bg-white dark:bg-slate-700 text-emerald-500 shadow-sm' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'}" do %>
+        <span class="material-symbols-outlined text-[16px]">account_balance_wallet</span> Cuenta Personal
+      <% end %>
+      <%= link_to dashboard_path(mode: 'prop_firm'), class: "snap-center py-1.5 px-4 text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 #{@current_mode == 'prop_firm' ? 'bg-white dark:bg-slate-700 text-brand shadow-sm' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'}" do %>
+        <span class="material-symbols-outlined text-[16px]">verified</span> Fondeo (FTMO/Apex)
+      <% end %>
+      <%= link_to dashboard_path(mode: 'backtest'), class: "snap-center py-1.5 px-4 text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 #{@current_mode == 'backtest' ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'}" do %>
+        <span class="material-symbols-outlined text-[16px]">history</span> Backtest
       <% end %>
     </div>
-  <% else %>
-    <div class="rounded-2xl p-3.5 bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-between gap-3 shadow-sm">
+  </div>
+
+  <div>
+    <h2 class="text-xl font-bold dark:text-white text-slate-900">Dashboard de Rendimiento</h2>
+    <p class="text-xs text-slate-400 mt-1">Visión integral cuantitativa de tus operaciones, estadísticas clave y calendario.</p>
+  </div>
+
+  <!-- FILA 1: KPI CARDS (Balance, Win%, Profit Factor, Avg W/L, Expectancy) -->
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+    
+    <!-- Balance & P&L -->
+    <div class="glass rounded-xl p-4 flex flex-col justify-between h-full">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Balance & P&L</span>
+        <span class="material-symbols-outlined text-emerald-500 text-[18px]">payments</span>
+      </div>
+      <div>
+        <p class="text-2xl font-black font-mono <%= @stats[:total_pnl] >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
+          <%= @stats[:total_pnl] >= 0 ? '+' : '' %>$<%= number_with_precision(@stats[:total_pnl], precision: 2, delimiter: ',') %>
+        </p>
+        <p class="text-[11px] text-slate-400 mt-1">P&L Neto Acumulado</p>
+      </div>
+    </div>
+
+    <!-- Trade Win % -->
+    <div class="glass rounded-xl p-4 flex flex-col justify-between h-full">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Trade Win %</span>
+        <span class="material-symbols-outlined text-brand text-[18px]">check_circle</span>
+      </div>
       <div class="flex items-center gap-3">
-        <div class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse flex-shrink-0"></div>
+        <div id="mini-gauge-winrate" class="w-12 h-12 flex-shrink-0"></div>
         <div>
-          <div class="flex items-center gap-2">
-            <h4 class="text-xs font-bold dark:text-emerald-300 text-emerald-700 uppercase tracking-wider">Métricas Reales en Vivo</h4>
-            <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">CUENTA REAL</span>
+          <p class="text-2xl font-black font-mono dark:text-white text-slate-800"><%= @stats[:win_rate] %>%</p>
+          <div class="flex items-center gap-2 text-[10px] mt-0.5">
+            <span class="text-emerald-500 font-bold"><%= @stats[:winning_trades] %>W</span>
+            <span class="text-rose-500 font-bold"><%= @stats[:losing_trades] %>L</span>
           </div>
-          <p class="text-[11px] text-slate-400 mt-0.5">
-            Calculado en tiempo real desde <strong><%= @stats[:total_trades] %></strong> operaciones registradas en tu diario.
+        </div>
+      </div>
+    </div>
+
+    <!-- Profit Factor -->
+    <div class="glass rounded-xl p-4 flex flex-col justify-between h-full">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Profit Factor</span>
+        <span class="material-symbols-outlined text-cyan-400 text-[18px]">balance</span>
+      </div>
+      <div>
+        <p class="text-2xl font-black font-mono text-cyan-400"><%= @stats[:profit_factor] %></p>
+        <p class="text-[11px] text-slate-400 mt-1">Ratio Beneficio/Pérdida</p>
+      </div>
+    </div>
+
+    <!-- Avg Win / Loss -->
+    <div class="glass rounded-xl p-4 flex flex-col justify-between h-full">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Avg Win/Loss</span>
+        <span class="material-symbols-outlined text-amber-400 text-[18px]">award_star</span>
+      </div>
+      <div>
+        <p class="text-2xl font-black font-mono text-amber-400"><%= @stats[:rr_ratio] %> R</p>
+        <div class="flex items-center justify-between text-[10px] font-mono mt-1">
+          <span class="text-emerald-500 font-bold">+$<%= number_with_precision(@stats[:avg_win], precision: 0) %></span>
+          <span class="text-rose-500 font-bold">-$<%= number_with_precision(@stats[:avg_loss], precision: 0) %></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trade Expectancy -->
+    <div class="glass rounded-xl p-4 flex flex-col justify-between h-full col-span-2 md:col-span-1">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Trade Expectancy</span>
+        <span class="material-symbols-outlined text-indigo-400 text-[18px]">moving</span>
+      </div>
+      <div>
+        <p class="text-2xl font-black font-mono <%= @stats[:expectancy].to_f >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
+          <%= @stats[:expectancy].to_f >= 0 ? '+' : '' %>$<%= number_with_precision(@stats[:expectancy].to_f, precision: 2) %>
+        </p>
+        <p class="text-[11px] text-slate-400 mt-1">Expectativa matemática por trade</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FILA 2: GRÁFICOS PRINCIPALES (Curva P&L, Drawdown, AI Score Radar) -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+    <!-- Curva de P&L -->
+    <div class="glass rounded-2xl p-4 md:p-5 flex flex-col">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
+          <span class="material-symbols-outlined text-emerald-500 text-[18px]">ssid_chart</span> Curva de P&L Acumulado
+        </h3>
+        <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 font-bold">Crecimiento</span>
+      </div>
+      <div id="echarts-equity-container" class="w-full h-52"></div>
+    </div>
+    
+    <!-- Drawdown -->
+    <div class="glass rounded-2xl p-4 md:p-5 flex flex-col">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
+          <span class="material-symbols-outlined text-rose-500 text-[18px]">water_drop</span> Drawdown Temporal
+        </h3>
+        <span class="text-[10px] px-2 py-0.5 rounded bg-rose-500/10 text-rose-500 font-bold">Riesgo</span>
+      </div>
+      <div id="echarts-drawdown-container" class="w-full h-52"></div>
+    </div>
+
+    <!-- AI Coach Score Radar -->
+    <div class="glass rounded-2xl p-4 md:p-5 flex flex-col">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
+          <span class="material-symbols-outlined text-brand text-[18px]">radar</span> Coach Score AI
+        </h3>
+        <span class="text-[10px] px-2 py-0.5 rounded bg-brand/10 text-brand font-bold">Diagnóstico</span>
+      </div>
+      <div id="echarts-radar-container" class="w-full h-44"></div>
+      <div class="mt-auto pt-2 flex items-center justify-between border-t dark:border-darkBorder border-slate-200">
+        <span class="text-[11px] font-bold text-slate-400">PUNTAJE GLOBAL</span>
+        <span class="text-xl font-black font-mono text-brand">85 / 100</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILA 3: Daily PNL / Duration / Trades Recientes -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+    <!-- Daily P&L -->
+    <div class="glass rounded-2xl p-4 md:p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
+          <span class="material-symbols-outlined text-emerald-500 text-[18px]">bar_chart</span> P&L por Día
+        </h3>
+      </div>
+      <div id="echarts-bar-day-container" class="w-full h-48"></div>
+    </div>
+
+    <!-- Trade Duration Scatter -->
+    <div class="glass rounded-2xl p-4 md:p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
+          <span class="material-symbols-outlined text-cyan-400 text-[18px]">timer</span> Duración vs Resultado (Mins)
+        </h3>
+      </div>
+      <div id="echarts-scatter-container" class="w-full h-48"></div>
+    </div>
+
+    <!-- Trades Recientes -->
+    <div class="glass rounded-2xl p-4 md:p-5 flex flex-col">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
+          <span class="material-symbols-outlined text-amber-400 text-[18px]">list_alt</span> Últimas Operaciones
+        </h3>
+        <%= link_to trades_path, class: "text-[11px] font-bold text-brand hover:underline" do %>
+          Ver Todo
+        <% end %>
+      </div>
+      <div class="flex-1 overflow-y-auto space-y-2">
+        <% if @recent_trades.any? %>
+          <% @recent_trades.each do |t| %>
+            <%= link_to trade_path(t), class: "flex items-center justify-between p-2.5 rounded-xl dark:bg-darkCard bg-slate-50 hover:bg-slate-100 dark:hover:bg-darkHover transition border dark:border-darkBorder border-slate-200" do %>
+              <div class="flex items-center gap-2.5">
+                <span class="w-6 h-6 rounded-md flex items-center justify-center text-[10px] font-black text-white <%= t.direction == 'LONG' ? 'bg-emerald-500' : 'bg-rose-500' %>">
+                  <%= t.direction[0] %>
+                </span>
+                <div>
+                  <p class="text-xs font-black dark:text-white text-slate-800"><%= t.symbol %></p>
+                  <p class="text-[10px] text-slate-400"><%= t.entry_at&.strftime("%d/%m %H:%M") %></p>
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="text-xs font-black font-mono <%= t.pnl >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
+                  <%= t.pnl >= 0 ? '+' : '' %>$<%= number_with_precision(t.pnl, precision: 2) %>
+                </p>
+                <span class="text-[9px] font-mono text-slate-400 font-bold"><%= t.r_multiple || 0 %>R</span>
+              </div>
+            <% end %>
+          <% end %>
+        <% else %>
+          <div class="text-center py-8 text-xs text-slate-400">
+            <p>Sin operaciones registradas aún.</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILA 4: CALENDARIO DE TRADING ACTIVOS & RACHAS -->
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
+    <!-- Mini Heatmap Calendario del Mes -->
+    <div class="lg:col-span-3 glass rounded-2xl p-4 md:p-5 flex flex-col">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-brand text-[18px]">calendar_month</span>
+          <h3 class="text-sm font-bold dark:text-white text-slate-800">Calendario Térmico Mensual</h3>
+        </div>
+        <%= link_to calendar_path, class: "text-[11px] font-bold text-brand hover:underline flex items-center gap-1" do %>
+          Vista Calendario Completa <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+        <% end %>
+      </div>
+
+      <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+        <div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div class="text-brand">Sáb</div><div class="text-brand">Dom</div>
+      </div>
+      
+      <div class="grid grid-cols-7 gap-1.5 flex-1">
+        <% 
+          today = Date.current
+          start_d = today.beginning_of_month.beginning_of_week(:monday)
+          end_d = today.end_of_month.end_of_week(:sunday)
+          (start_d..end_d).each do |date|
+            pnl = @pnl_by_day[date.to_s]&.to_f || 0
+            has_trades = @pnl_by_day.key?(date.to_s)
+            is_current_m = date.month == today.month
+            
+            card_class = if !is_current_m
+              "opacity-25 dark:bg-darkCard bg-slate-100 text-slate-400"
+            elsif has_trades
+              pnl >= 0 ? "bg-emerald-500/15 border border-emerald-500/30 text-emerald-500 font-bold" : "bg-rose-500/15 border border-rose-500/30 text-rose-500 font-bold"
+            else
+              "dark:bg-darkCard/60 bg-slate-100/60 text-slate-400 hover:border-brand/30"
+            end
+        %>
+          <%= link_to calendar_path(month: date.strftime('%Y-%m')), class: "min-h-[42px] p-1 rounded-xl border transition flex flex-col justify-between #{card_class} #{date == today ? 'ring-2 ring-brand' : ''}" do %>
+            <span class="text-[9px] font-black"><%= date.day %></span>
+            <% if has_trades %>
+              <span class="text-[8px] font-mono font-bold truncate self-end"><%= pnl >= 0 ? '+' : '' %>$<%= pnl.round %></span>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Rachas y Estadísticas Rápidas -->
+    <div class="flex flex-col gap-4">
+      <div class="glass rounded-2xl p-4 flex-1 flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-brand text-[16px]">bolt</span> Racha Actual
+          </h3>
+          <span class="text-[10px] font-bold text-slate-400">Días</span>
+        </div>
+        <div class="text-center py-2">
+          <p class="text-3xl font-black font-mono <%= @current_streak_type == :win ? 'text-emerald-500' : (@current_streak_type == :loss ? 'text-rose-500' : 'text-slate-400') %>">
+            <%= @current_streak_type == :win ? '+' : (@current_streak_type == :loss ? '-' : '') %><%= @current_streak %>
+          </p>
+          <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-wider font-bold">
+            <%= @current_streak_type == :win ? 'Días Verdes Racha' : (@current_streak_type == :loss ? 'Días Rojos Racha' : 'Sin racha') %>
           </p>
         </div>
-      </div>
-      <div class="hidden sm:flex items-center gap-2">
-        <%= link_to new_trade_path, class: "px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-xs font-bold transition-all border border-emerald-500/30 flex items-center gap-1" do %>
-          <span class="material-symbols-outlined text-[15px]">add</span>
-          <span>Nueva Operación</span>
-        <% end %>
-      </div>
-    </div>
-  <% end %>
-
-  <!-- ===================== LIVE TICKER STRIP ===================== -->
-  <div class="glass rounded-2xl p-2 sm:p-3 flex items-center justify-between gap-3 sm:gap-4 overflow-x-auto">
-    <div class="flex items-center gap-3 sm:gap-6 min-w-max text-[10px] sm:text-xs">
-      <div class="flex items-center gap-1.5 sm:gap-2">
-        <span class="font-black dark:text-white text-slate-800">NQ1!</span>
-        <span class="font-mono text-accent-green">19,842.50</span>
-        <span class="text-[9px] sm:text-[10px] text-accent-green bg-accent-green/10 px-1 sm:px-1.5 py-0.5 rounded font-bold">+1.24%</span>
-      </div>
-      <div class="w-px h-3 sm:h-4 bg-slate-300 dark:bg-darkBorder"></div>
-      <div class="flex items-center gap-1.5 sm:gap-2">
-        <span class="font-black dark:text-white text-slate-800">EUR/USD</span>
-        <span class="font-mono dark:text-slate-200 text-slate-700">1.0845</span>
-        <span class="text-[9px] sm:text-[10px] text-loss bg-loss/10 px-1 sm:px-1.5 py-0.5 rounded font-bold">-0.18%</span>
-      </div>
-      <div class="w-px h-3 sm:h-4 bg-slate-300 dark:bg-darkBorder"></div>
-      <div class="flex items-center gap-1.5 sm:gap-2">
-        <span class="font-black dark:text-white text-slate-800">BTC/USD</span>
-        <span class="font-mono text-accent-green">64,120.00</span>
-        <span class="text-[9px] sm:text-[10px] text-accent-green bg-accent-green/10 px-1 sm:px-1.5 py-0.5 rounded font-bold">+3.80%</span>
-      </div>
-      <div class="w-px h-3 sm:h-4 bg-slate-300 dark:bg-darkBorder"></div>
-      <div class="flex items-center gap-1.5 sm:gap-2">
-        <span class="font-black dark:text-white text-slate-800">XAU/USD</span>
-        <span class="font-mono text-accent-green">2,512.40</span>
-        <span class="text-[9px] sm:text-[10px] text-accent-green bg-accent-green/10 px-1 sm:px-1.5 py-0.5 rounded font-bold">+0.45%</span>
-      </div>
-    </div>
-    <div class="hidden md:flex items-center gap-2 text-[11px] text-slate-400 font-medium">
-      <span class="w-2 h-2 rounded-full bg-accent-green animate-pulse"></span> Sincronizado en tiempo real
-    </div>
-  </div>
-
-  <!-- ===================== TOP KPI CARDS (MOBILE SLIDER) ===================== -->
-  <div class="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 scrollbar-hide sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-4 sm:overflow-visible sm:pb-0">
-    <!-- P&L ACUMULADO -->
-    <div class="stat-card rounded-2xl p-3 sm:p-4 md:p-5 relative overflow-hidden min-w-[160px] sm:min-w-0 snap-start flex-shrink-0 sm:flex-shrink">
-      <div class="flex items-center justify-between">
-        <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">P&L Acumulado</span>
-        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-accent-green/15 text-accent-green flex items-center justify-center">
-          <span class="material-symbols-outlined text-[16px] sm:text-[18px]">payments</span>
-        </div>
-      </div>
-      <p class="text-lg sm:text-2xl md:text-3xl font-black mt-1.5 sm:mt-2 font-mono <%= pnl_class(@stats[:total_pnl]) %>">
-        <%= @stats[:total_pnl] >= 0 ? '+' : '' %>$<%= number_with_precision(@stats[:total_pnl], precision: 2, delimiter: ',') %>
-      </p>
-      <div class="flex items-center justify-between mt-1.5 sm:mt-2 text-[10px] sm:text-[11px]">
-        <span class="<%= @stats[:pnl_change_pct] >= 0 ? 'text-accent-green' : 'text-loss' %> font-bold flex items-center gap-0.5">
-          <span class="material-symbols-outlined text-[12px] sm:text-[14px]"><%= @stats[:pnl_change_pct] >= 0 ? 'arrow_upward' : 'arrow_downward' %></span>
-          <%= @stats[:pnl_change_pct] >= 0 ? '+' : '' %><%= @stats[:pnl_change_pct] %>%
-        </span>
-        <span class="text-slate-400"><%= @stats[:total_trades] %> trades</span>
-      </div>
-    </div>
-
-    <!-- WIN RATE -->
-    <div class="stat-card rounded-2xl p-3 sm:p-4 md:p-5 relative overflow-hidden min-w-[160px] sm:min-w-0 snap-start flex-shrink-0 sm:flex-shrink">
-      <div class="flex items-center justify-between">
-        <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Win Rate</span>
-        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-brand/15 text-brand flex items-center justify-center">
-          <span class="material-symbols-outlined text-[16px] sm:text-[18px]">check_circle</span>
-        </div>
-      </div>
-      <p class="text-lg sm:text-2xl md:text-3xl font-black mt-1.5 sm:mt-2 font-mono dark:text-white text-slate-900">
-        <%= @stats[:win_rate] %>%
-      </p>
-      <div class="flex items-center justify-between mt-1.5 sm:mt-2 text-[10px] sm:text-[11px]">
-        <span class="text-slate-400"><%= @stats[:winning_trades] %>W / <%= @stats[:losing_trades] %>L</span>
-        <span class="text-brand font-bold">Obj: 65%</span>
-      </div>
-    </div>
-
-    <!-- PROFIT FACTOR -->
-    <div class="stat-card rounded-2xl p-3 sm:p-4 md:p-5 relative overflow-hidden min-w-[160px] sm:min-w-0 snap-start flex-shrink-0 sm:flex-shrink">
-      <div class="flex items-center justify-between">
-        <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Profit Factor</span>
-        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-cyan-500/15 text-cyan-500 flex items-center justify-center">
-          <span class="material-symbols-outlined text-[16px] sm:text-[18px]">balance</span>
-        </div>
-      </div>
-      <p class="text-lg sm:text-2xl md:text-3xl font-black mt-1.5 sm:mt-2 font-mono text-cyan-400">
-        <%= @stats[:profit_factor] %>
-      </p>
-      <div class="flex items-center justify-between mt-1.5 sm:mt-2 text-[10px] sm:text-[11px]">
-        <span class="text-slate-400">Ganancia / Pérdida</span>
-        <span class="text-accent-green font-bold">Saludable</span>
-      </div>
-    </div>
-
-    <!-- PROMEDIO WIN / LOSS -->
-    <div class="stat-card rounded-2xl p-3 sm:p-4 md:p-5 relative overflow-hidden min-w-[160px] sm:min-w-0 snap-start flex-shrink-0 sm:flex-shrink">
-      <div class="flex items-center justify-between">
-        <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">R:R Prom.</span>
-        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-amber-500/15 text-amber-500 flex items-center justify-center">
-          <span class="material-symbols-outlined text-[16px] sm:text-[18px]">award_star</span>
-        </div>
-      </div>
-      <p class="text-lg sm:text-2xl md:text-3xl font-black mt-1.5 sm:mt-2 font-mono text-amber-400">
-        <%= @stats[:rr_ratio] %> R
-      </p>
-      <div class="flex items-center justify-between mt-1.5 sm:mt-2 text-[10px] sm:text-[11px]">
-        <span class="text-accent-green font-bold">+$<%= number_with_precision(@stats[:avg_win] || 0, precision: 0) %></span>
-        <span class="text-loss font-bold">-$<%= number_with_precision(@stats[:avg_loss] || 0, precision: 0) %></span>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===================== MAIN CHARTS SECTION (ECHARTS) ===================== -->
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-    <!-- EQUITY CURVE (ECHARTS 2 COLS) -->
-    <div class="lg:col-span-2 glass rounded-2xl p-3 sm:p-5 md:p-6 space-y-3 sm:space-y-4">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b dark:border-darkBorder border-lightBorder">
-        <div>
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-brand text-[18px] sm:text-[20px]">show_chart</span>
-            <h3 class="text-sm sm:text-base font-extrabold dark:text-white text-slate-900">Curva de Equity</h3>
+        <div class="grid grid-cols-2 gap-2 pt-3 border-t dark:border-darkBorder border-slate-200 text-center">
+          <div>
+            <p class="text-[9px] text-slate-400 uppercase font-bold">Máx Racha V</p>
+            <p class="text-sm font-black text-emerald-500 font-mono"><%= @stats[:max_win_streak] %></p>
           </div>
-          <p class="text-[10px] sm:text-xs text-slate-400 mt-0.5">Evolución de capital trade a trade</p>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="text-xs px-2.5 py-1 rounded-lg bg-accent-green/10 text-accent-green font-bold border border-accent-green/20">
-            Peak: +$<%= number_with_precision(@stats[:total_pnl], precision: 0) %>
-          </span>
-        </div>
-      </div>
-
-      <!-- ECHARTS CONTAINER -->
-      <div id="echarts-equity-container" class="w-full h-48 sm:h-72"></div>
-    </div>
-
-    <!-- WIN/LOSS DONUT + QUICK DIAGNOSIS (1 COL) -->
-    <div class="space-y-6 flex flex-col">
-
-      <!-- DONUT CHART (ECHARTS) -->
-      <div class="glass rounded-2xl p-5 flex-1 flex flex-col">
-        <div class="flex items-center justify-between pb-2 border-b dark:border-darkBorder border-lightBorder mb-3">
-          <h3 class="text-sm font-bold dark:text-white text-slate-800">Distribución W / L</h3>
-          <span class="text-[11px] text-slate-400"><%= @stats[:total_trades] %> Operaciones</span>
-        </div>
-        <div id="echarts-donut-container" class="w-full h-48 my-auto"></div>
-        <div class="grid grid-cols-2 gap-2 text-center text-xs pt-2 border-t dark:border-darkBorder border-lightBorder">
-          <div class="p-2 rounded-xl bg-accent-green/10">
-            <p class="text-[10px] text-slate-400">Ganadoras</p>
-            <p class="font-extrabold text-accent-green text-sm"><%= @stats[:winning_trades] %></p>
-          </div>
-          <div class="p-2 rounded-xl bg-loss/10">
-            <p class="text-[10px] text-slate-400">Perdedoras</p>
-            <p class="font-extrabold text-loss text-sm"><%= @stats[:losing_trades] %></p>
+          <div>
+            <p class="text-[9px] text-slate-400 uppercase font-bold">Máx Racha R</p>
+            <p class="text-sm font-black text-rose-500 font-mono"><%= @stats[:max_loss_streak] %></p>
           </div>
         </div>
       </div>
 
-      <!-- AI DIAGNOSIS BANNER -->
-      <div class="glass rounded-2xl p-5 border-l-4 border-brand">
-        <div class="flex items-center justify-between mb-2">
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-brand text-[20px]">smart_toy</span>
-            <span class="text-xs font-bold dark:text-white text-slate-900">AI Coach Diagnosis</span>
-          </div>
-          <span class="text-[10px] px-2 py-0.5 rounded bg-brand/10 text-brand font-bold">PRO</span>
+      <!-- Quick AI Diagnostic -->
+      <div class="glass rounded-2xl p-4 flex-1 flex flex-col justify-between bg-brand/5 border-brand/20">
+        <div class="flex items-center gap-1.5 text-brand">
+          <span class="material-symbols-outlined text-[16px]">smart_toy</span>
+          <span class="text-[10px] font-bold uppercase tracking-wider">Flash AI Coach</span>
         </div>
-        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
+        <p class="text-xs dark:text-slate-200 text-slate-700 font-medium my-2 italic">
           "<%= @ai_diagnosis %>"
         </p>
-        <%= link_to ai_coach_path, class: "w-full py-2 px-3 rounded-xl bg-brand/15 hover:bg-brand/25 text-brand dark:text-brand-light text-xs font-bold border border-brand/20 transition-all flex items-center justify-center gap-1.5" do %>
-          <span>Consultar Diagnóstico Completo</span>
-          <span class="material-symbols-outlined text-[15px]">arrow_forward</span>
+        <%= link_to ai_coach_path, class: "text-[10px] font-bold text-brand hover:underline self-end flex items-center gap-1" do %>
+          Consultar Coach <span class="material-symbols-outlined text-[12px]">chevron_right</span>
         <% end %>
       </div>
-
     </div>
   </div>
 
-  <!-- ===================== SECOND ROW: P&L BY DAY & RECENT TRADES ===================== -->
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-    <!-- DAILY P&L BAR CHART (ECHARTS 1 COL) -->
-    <div class="glass rounded-2xl p-5 space-y-4">
-      <div class="flex items-center justify-between pb-2 border-b dark:border-darkBorder border-lightBorder">
-        <div>
-          <h3 class="text-sm font-bold dark:text-white text-slate-800">P&L por Día de Semana</h3>
-          <p class="text-[11px] text-slate-400">Rendimiento por jornada laboral</p>
-        </div>
-      </div>
-      <div id="echarts-bar-day-container" class="w-full h-44 sm:h-64"></div>
-    </div>
-
-    <!-- RECENT TRADES TABLE (2 COLS) -->
-    <div class="lg:col-span-2 glass rounded-2xl p-5 space-y-4 flex flex-col justify-between">
-      <div class="flex items-center justify-between pb-2 border-b dark:border-darkBorder border-lightBorder">
-        <div class="flex items-center gap-2">
-          <span class="material-symbols-outlined text-brand text-[20px]">swap_horiz</span>
-          <h3 class="text-sm font-bold dark:text-white text-slate-800">Operaciones Recientes</h3>
-        </div>
-        <%= link_to trades_path, class: "text-xs font-bold text-brand hover:underline flex items-center gap-1" do %>
-          <span>Ver todas</span>
-          <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+  <!-- FILA 5: ANALYTICS POR HORA, DÍA Y TICKER -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+    <!-- Por Hora -->
+    <div class="glass rounded-2xl p-4 md:p-5">
+      <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2 mb-3">
+        <span class="material-symbols-outlined text-brand text-[16px]">schedule</span> Rendimiento por Hora
+      </h3>
+      <div class="space-y-2 max-h-[200px] overflow-y-auto pr-1">
+        <% @pnl_by_hour.each do |hour, data| %>
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-mono text-slate-400 text-[11px]"><%= hour %></span>
+            <div class="flex-1 mx-3 h-2 rounded-full bg-slate-200 dark:bg-darkBorder overflow-hidden">
+              <div class="h-full <%= data[:pnl] >= 0 ? 'bg-emerald-500' : 'bg-rose-500' %>" style="width: <%= [(data[:pnl].abs / 500.0) * 100, 100].min %>%"></div>
+            </div>
+            <span class="font-mono font-bold <%= data[:pnl] >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
+              <%= data[:pnl] >= 0 ? '+' : '' %>$<%= data[:pnl].round %>
+            </span>
+          </div>
         <% end %>
       </div>
-
-      <!-- TABLE CONTAINER -->
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-xs">
-          <thead>
-            <tr class="table-header text-slate-400 border-b dark:border-darkBorder border-lightBorder">
-              <th class="py-2.5 px-3 rounded-l-xl">Símbolo</th>
-              <th class="py-2.5 px-3">Dirección</th>
-              <th class="py-2.5 px-3">Entrada / Salida</th>
-              <th class="py-2.5 px-3">R-Multiple</th>
-              <th class="py-2.5 px-3 text-right rounded-r-xl">P&L Neto</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y dark:divide-darkBorder divide-lightBorder">
-            <% if @recent_trades.present? %>
-              <% @recent_trades.each do |t| %>
-                <tr class="table-row-hover transition-colors cursor-pointer" onclick="window.location.href='<%= trade_path(t) %>'">
-                  <td class="py-3 px-3 font-bold dark:text-white text-slate-800">
-                    <div class="flex items-center gap-2">
-                      <span class="w-2 h-2 rounded-full <%= t.pnl >= 0 ? 'bg-accent-green' : 'bg-loss' %>"></span>
-                      <span><%= t.symbol %></span>
-                    </div>
-                  </td>
-                  <td class="py-3 px-3">
-                    <span class="px-2 py-0.5 rounded text-[10px] font-extrabold <%= t.direction == 'LONG' ? 'badge-long' : 'badge-short' %>">
-                      <%= t.direction %>
-                    </span>
-                  </td>
-                  <td class="py-3 px-3 text-slate-400 font-mono">
-                    $<%= t.entry_price %> → $<%= t.exit_price || '—' %>
-                  </td>
-                  <td class="py-3 px-3 font-bold font-mono <%= t.r_multiple.to_f >= 0 ? 'text-accent-green' : 'text-loss' %>">
-                    <%= t.r_multiple ? "#{t.r_multiple}R" : '—' %>
-                  </td>
-                  <td class="py-3 px-3 text-right font-black font-mono <%= pnl_class(t.pnl) %>">
-                    <%= t.pnl >= 0 ? '+' : '' %>$<%= number_with_precision(t.pnl, precision: 2) %>
-                  </td>
-                </tr>
-              <% end %>
-            <% else %>
-              <tr>
-                <td colspan="5" class="py-8 text-center text-slate-400">
-                  No hay operaciones registradas todavía. ¡Haz clic en <strong>Nueva</strong> para comenzar tu diario!
-                </td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
-
     </div>
+
+    <!-- Por Ticker -->
+    <div class="glass rounded-2xl p-4 md:p-5">
+      <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2 mb-3">
+        <span class="material-symbols-outlined text-brand text-[16px]">candlestick_chart</span> Rendimiento por Ticker
+      </h3>
+      <div class="space-y-2 max-h-[200px] overflow-y-auto pr-1">
+        <% @pnl_by_ticker.first(5).each do |sym, data| %>
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold dark:text-white text-slate-800 text-[11px] font-mono"><%= sym %></span>
+            <div class="flex-1 mx-3 h-2 rounded-full bg-slate-200 dark:bg-darkBorder overflow-hidden">
+              <div class="h-full <%= data[:pnl] >= 0 ? 'bg-emerald-500' : 'bg-rose-500' %>" style="width: <%= [(data[:pnl].abs / 1000.0) * 100, 100].min %>%"></div>
+            </div>
+            <span class="font-mono font-bold <%= data[:pnl] >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
+              <%= data[:pnl] >= 0 ? '+' : '' %>$<%= data[:pnl].round %>
+            </span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Resumen de Estrategias -->
+    <div class="glass rounded-2xl p-4 md:p-5">
+      <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2 mb-3">
+        <span class="material-symbols-outlined text-brand text-[16px]">target</span> Estrategias Clave
+      </h3>
+      <div class="space-y-3">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-semibold dark:text-slate-300 text-slate-700">Breakout VWAP</span>
+          <span class="font-mono font-bold text-emerald-500">+$1,450.00</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-semibold dark:text-slate-300 text-slate-700">Reversión Smart Money</span>
+          <span class="font-mono font-bold text-emerald-500">+$820.00</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-semibold dark:text-slate-300 text-slate-700">Scalping 1M</span>
+          <span class="font-mono font-bold text-rose-500">-$360.00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILA 6: CALENDARIO ANUAL -->
+  <div class="glass rounded-2xl p-4 md:p-5 overflow-x-auto">
+    <div class="flex items-center justify-between mb-3 min-w-[650px]">
+      <h3 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
+        <span class="material-symbols-outlined text-brand text-[18px]">calendar_today</span> Calendario Anual de Rendimiento (<%= Time.current.year %>)
+      </h3>
+      <span class="text-[10px] font-mono text-slate-400">P&L Neto por Mes</span>
+    </div>
+    
+    <table class="w-full text-xs text-center min-w-[650px]">
+      <thead>
+        <tr class="text-slate-400 font-bold text-[10px] uppercase tracking-wider border-b dark:border-darkBorder border-slate-200">
+          <th class="py-2 text-left">Año</th>
+          <% %w[Ene Feb Mar Abr May Jun Jul Ago Sep Oct Nov Dic].each do |m| %>
+            <th class="py-2"><%= m %></th>
+          <% end %>
+          <th class="py-2 text-right">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="font-mono border-b dark:border-darkBorder/40 border-slate-100">
+          <td class="py-3 text-left font-bold dark:text-white"><%= Time.current.year %></td>
+          <% @annual_stats.each do |pnl| %>
+            <% if pnl == 0 %>
+              <td class="py-3 text-slate-500/40">—</td>
+            <% else %>
+              <td class="py-3 font-bold <%= pnl >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
+                <%= pnl >= 0 ? '+' : '' %>$<%= pnl.abs >= 1000 ? "#{(pnl/1000.0).round(1)}K" : pnl.round %>
+              </td>
+            <% end %>
+          <% end %>
+          <td class="py-3 text-right font-black <%= @annual_total >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
+            <%= @annual_total >= 0 ? '+' : '' %>$<%= @annual_total.abs >= 1000 ? "#{(@annual_total/1000.0).round(1)}K" : @annual_total.round %>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
 </div>
 
-<!-- ===================== ECHARTS INITIALIZATION SCRIPT ===================== -->
+<!-- INITIALIZATION OF ECHARTS -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
   const isDark = document.getElementById("html-root").classList.contains("dark");
   const textColor = isDark ? "#9DA3B4" : "#64748B";
   const borderColor = isDark ? "#23263A" : "#E3E6EF";
 
-  // 1. EQUITY CURVE (ECHARTS)
-  const equityContainer = document.getElementById("echarts-equity-container");
-  if (equityContainer) {
-    const equityChart = echarts.init(equityContainer);
-    const rawData = <%= @equity_data.to_json.html_safe %>;
-    const xAxisData = rawData.map(d => d.trade || d.date);
-    const seriesData = rawData.map(d => d.value);
-
-    const equityOption = {
-      tooltip: {
-        trigger: "axis",
-        backgroundColor: isDark ? "#151724" : "#FFFFFF",
-        borderColor: borderColor,
-        textStyle: { color: isDark ? "#FFFFFF" : "#0F0E1A", fontFamily: "Manrope" },
-        formatter: function(params) {
-          const item = params[0];
-          const color = item.value >= 0 ? '#009DFA' : '#F43F5E';
-          return `<strong>${item.name}</strong><br/>Equity Acumulada: <span style="color:${color};font-weight:bold">$${item.value}</span>`;
-        }
-      },
-      grid: { left: "3%", right: "3%", bottom: "3%", top: "8%", containLabel: true },
-      xAxis: {
-        type: "category",
-        data: xAxisData,
-        axisLine: { lineStyle: { color: borderColor } },
-        axisLabel: { color: textColor, fontFamily: "Manrope", fontSize: 11 }
-      },
-      yAxis: {
-        type: "value",
-        axisLine: { show: false },
-        splitLine: { lineStyle: { color: borderColor, type: "dashed" } },
-        axisLabel: { color: textColor, fontFamily: "Manrope", fontSize: 11, formatter: "${value}" }
-      },
+  // 1. Equity Curve
+  const eqCont = document.getElementById("echarts-equity-container");
+  if(eqCont) {
+    const eqChart = echarts.init(eqCont);
+    const data = <%= @equity_data.to_json.html_safe %>;
+    eqChart.setOption({
+      tooltip: { trigger: 'axis', backgroundColor: isDark ? '#151724' : '#FFF', borderColor },
+      grid: { left: '3%', right: '3%', bottom: '3%', top: '8%', containLabel: true },
+      xAxis: { type: 'category', data: data.map(d=>d.trade || d.date), axisLine:{lineStyle:{color:borderColor}}, axisLabel:{color:textColor, fontSize:10} },
+      yAxis: { type: 'value', splitLine:{lineStyle:{color:borderColor, type:'dashed'}}, axisLabel:{color:textColor, fontSize:10} },
       series: [{
-        name: "Equity",
-        type: "line",
-        smooth: true,
-        symbolSize: 8,
-        itemStyle: { color: "#009DFA" },
-        lineStyle: { width: 3, color: "#009DFA" },
-        areaStyle: {
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: "rgba(0, 157, 250, 0.4)" },
-            { offset: 1, color: "rgba(0, 157, 250, 0.0)" }
-          ])
-        },
-        data: seriesData
+        type: 'line', smooth: true, symbol: 'none',
+        areaStyle: { color: new echarts.graphic.LinearGradient(0,0,0,1, [{offset:0, color:'rgba(16,185,129,0.35)'},{offset:1, color:'rgba(16,185,129,0)'}]) },
+        lineStyle: { width: 2.5, color: '#10B981' },
+        itemStyle: { color: '#10B981' },
+        data: data.map(d=>d.value)
       }]
-    };
-    equityChart.setOption(equityOption);
-    window.addEventListener("resize", () => equityChart.resize());
+    });
+    window.addEventListener('resize', ()=>eqChart.resize());
   }
 
-  // 2. DONUT W/L (ECHARTS)
-  const donutContainer = document.getElementById("echarts-donut-container");
-  if (donutContainer) {
-    const donutChart = echarts.init(donutContainer);
-    const winCount = <%= @stats[:winning_trades] %>;
-    const lossCount = <%= @stats[:losing_trades] %>;
-
-    const donutOption = {
-      tooltip: {
-        trigger: "item",
-        backgroundColor: isDark ? "#151724" : "#FFFFFF",
-        borderColor: borderColor,
-        textStyle: { color: isDark ? "#FFFFFF" : "#0F0E1A", fontFamily: "Manrope" }
-      },
-      legend: { show: false },
+  // 2. Drawdown Chart
+  const ddCont = document.getElementById("echarts-drawdown-container");
+  if(ddCont) {
+    const ddChart = echarts.init(ddCont);
+    const data = <%= @equity_data.to_json.html_safe %>;
+    let peak = 0;
+    const ddData = data.map(d => {
+       if(d.value > peak) peak = d.value;
+       return { name: d.trade||d.date, value: d.value - peak };
+    });
+    ddChart.setOption({
+      tooltip: { trigger: 'axis', backgroundColor: isDark ? '#151724' : '#FFF', borderColor },
+      grid: { left: '3%', right: '3%', bottom: '3%', top: '8%', containLabel: true },
+      xAxis: { type: 'category', data: ddData.map(d=>d.name), axisLine:{lineStyle:{color:borderColor}}, axisLabel:{show:false} },
+      yAxis: { type: 'value', splitLine:{lineStyle:{color:borderColor, type:'dashed'}}, axisLabel:{color:textColor, fontSize:10} },
       series: [{
-        name: "Operaciones",
-        type: "pie",
-        radius: ["55%", "80%"],
-        avoidLabelOverlap: false,
-        itemStyle: { borderRadius: 8, borderColor: isDark ? "#151724" : "#FFFFFF", borderWidth: 2 },
-        label: { show: false },
+        type: 'line', smooth: true, symbol: 'none',
+        areaStyle: { color: new echarts.graphic.LinearGradient(0,0,0,1, [{offset:0, color:'rgba(244,63,94,0.35)'},{offset:1, color:'rgba(244,63,94,0)'}]) },
+        lineStyle: { width: 2, color: '#F43F5E' },
+        itemStyle: { color: '#F43F5E' },
+        data: ddData.map(d=>d.value)
+      }]
+    });
+    window.addEventListener('resize', ()=>ddChart.resize());
+  }
+
+  // 3. Radar Chart
+  const radarCont = document.getElementById("echarts-radar-container");
+  if(radarCont) {
+    const rChart = echarts.init(radarCont);
+    rChart.setOption({
+      radar: {
+        indicator: [ {name:'Win Rate', max:100}, {name:'Profit Factor', max:5}, {name:'R:R Ratio', max:5}, {name:'Gestión Riesgo', max:100}, {name:'Disciplina', max:100} ],
+        radius: '60%', center:['50%','50%'], splitArea:{show:false}, splitLine:{lineStyle:{color:borderColor}}, axisName:{color:textColor, fontSize:9}
+      },
+      series: [{
+        type: 'radar',
         data: [
-          { value: winCount, name: "Ganadoras", itemStyle: { color: "#10B981" } },
-          { value: lossCount, name: "Perdedoras", itemStyle: { color: "#F43F5E" } }
+          { value: [<%= @stats[:win_rate] %>, <%= [@stats[:profit_factor].to_f, 5].min %>, <%= [@stats[:rr_ratio].to_f, 5].min %>, 88, 92], itemStyle:{color:'#6C5CE7'}, areaStyle:{color:'rgba(108,92,231,0.35)'} }
         ]
       }]
-    };
-    donutChart.setOption(donutOption);
-    window.addEventListener("resize", () => donutChart.resize());
+    });
+    window.addEventListener('resize', ()=>rChart.resize());
   }
 
-  // 3. BAR CHART BY DAY OF WEEK (ECHARTS)
-  const barContainer = document.getElementById("echarts-bar-day-container");
-  if (barContainer) {
-    const barChart = echarts.init(barContainer);
+  // 4. Daily P&L Bar
+  const dayCont = document.getElementById("echarts-bar-day-container");
+  if(dayCont) {
+    const dayChart = echarts.init(dayCont);
     const dailyData = <%= @pnl_by_day.to_json.html_safe %>;
-    const xAxisData = Object.keys(dailyData);
-    const seriesData = Object.values(dailyData);
-
-    const barOption = {
-      tooltip: {
-        trigger: "axis",
-        axisPointer: { type: "shadow" },
-        backgroundColor: isDark ? "#151724" : "#FFFFFF",
-        borderColor: borderColor,
-        textStyle: { color: isDark ? "#FFFFFF" : "#0F0E1A", fontFamily: "Manrope" },
-        formatter: function(params) {
-          const item = params[0];
-          const val = item.value;
-          const color = val >= 0 ? '#10B981' : '#F43F5E';
-          return `<strong>${item.name}</strong><br/>P&L: <span style="color:${color};font-weight:bold">${val >= 0 ? '+' : ''}$${val}</span>`;
-        }
-      },
-      grid: { left: "3%", right: "3%", bottom: "3%", top: "8%", containLabel: true },
-      xAxis: {
-        type: "category",
-        data: xAxisData,
-        axisLine: { lineStyle: { color: borderColor } },
-        axisLabel: { color: textColor, fontFamily: "Manrope", fontSize: 11 }
-      },
-      yAxis: {
-        type: "value",
-        splitLine: { lineStyle: { color: borderColor, type: "dashed" } },
-        axisLabel: { color: textColor, fontFamily: "Manrope", fontSize: 11, formatter: "${value}" }
-      },
+    dayChart.setOption({
+      tooltip: { trigger: 'axis', axisPointer: {type: 'shadow'}, backgroundColor: isDark ? '#151724' : '#FFF' },
+      grid: { left: '3%', right: '3%', bottom: '3%', top: '8%', containLabel: true },
+      xAxis: { type: 'category', data: Object.keys(dailyData).map(d => d.slice(5)), axisLine:{lineStyle:{color:borderColor}}, axisLabel:{color:textColor, fontSize:9} },
+      yAxis: { type: 'value', splitLine:{lineStyle:{color:borderColor, type:'dashed'}}, axisLabel:{color:textColor, fontSize:9} },
       series: [{
-        name: "P&L",
-        type: "bar",
-        barWidth: "40%",
-        itemStyle: {
-          borderRadius: [6, 6, 0, 0],
-          color: function(params) {
-            return params.value >= 0 ? "#10B981" : "#F43F5E";
-          }
-        },
-        data: seriesData
+        type: 'bar', barWidth: '40%',
+        itemStyle: { borderRadius: [3,3,0,0], color: (p) => p.value>=0 ? '#10B981' : '#F43F5E' },
+        data: Object.values(dailyData)
       }]
-    };
-    barChart.setOption(barOption);
-    window.addEventListener("resize", () => barChart.resize());
+    });
+    window.addEventListener('resize', ()=>dayChart.resize());
+  }
+
+  // 5. Scatter Plot Durations
+  const scatterCont = document.getElementById("echarts-scatter-container");
+  if(scatterCont) {
+    const scChart = echarts.init(scatterCont);
+    const scData = <%= @trade_durations.to_json.html_safe %>;
+    const wins = scData.filter(d=>d.result=='win').map(d=>[d.duration, d.pnl]);
+    const loss = scData.filter(d=>d.result=='loss').map(d=>[d.duration, d.pnl]);
+    scChart.setOption({
+      tooltip: { trigger:'item', formatter: (p) => p.value[0]+' mins <br> P&L: $'+p.value[1], backgroundColor: isDark ? '#151724' : '#FFF' },
+      grid: { left: '3%', right: '3%', bottom: '3%', top: '8%', containLabel: true },
+      xAxis: { type: 'value', name: 'min', splitLine:{show:false}, axisLabel:{color:textColor, fontSize:9} },
+      yAxis: { type: 'value', splitLine:{lineStyle:{color:borderColor, type:'dashed'}}, axisLabel:{color:textColor, fontSize:9} },
+      series: [
+        { type: 'scatter', symbolSize: 7, itemStyle: {color:'#10B981'}, data: wins },
+        { type: 'scatter', symbolSize: 7, itemStyle: {color:'#F43F5E'}, data: loss }
+      ]
+    });
+    window.addEventListener('resize', ()=>scChart.resize());
+  }
+  
+  // 6. Mini Gauge WinRate
+  const miniGaugeEl = document.getElementById('mini-gauge-winrate');
+  if(miniGaugeEl) {
+    const gW = echarts.init(miniGaugeEl);
+    gW.setOption({ series:[{ type:'gauge', startAngle:90, endAngle:-270, pointer:{show:false}, progress:{show:true, overlap:false, roundCap:true, clip:false, itemStyle:{color:'#10B981'}}, axisLine:{lineStyle:{width:5, color:[[1, borderColor]]}}, splitLine:{show:false}, axisTick:{show:false}, axisLabel:{show:false}, detail:{show:false}, data:[{value: <%= @stats[:win_rate] %>}] }] });
   }
 });
 </script>
