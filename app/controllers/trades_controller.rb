@@ -21,6 +21,9 @@ class TradesController < ApplicationController
 
   def create
     @trade = current_user.trades.build(trade_params)
+    @trade.entry_at ||= Time.current
+    @trade.portfolio_mode ||= "real_account"
+
     if @trade.save
       Trading::AlertManager.new(current_user).evaluate_trade(@trade)
       redirect_to trades_path, notice: "Operación registrada exitosamente."
@@ -80,7 +83,7 @@ class TradesController < ApplicationController
 
   def trade_params
     params.require(:trade).permit(
-      :symbol, :market, :direction, :timeframe, :setup,
+      :symbol, :market, :direction, :timeframe, :setup, :portfolio_mode,
       :entry_at, :exit_at, :entry_price, :exit_price,
       :stop_loss, :take_profit, :position_size, :capital_used,
       :risk_amount, :commission, :pnl, :pnl_percent, :r_multiple,

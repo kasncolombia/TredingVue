@@ -9,8 +9,8 @@ class CalendarController < ApplicationController
     start_date = @current_month.beginning_of_month.beginning_of_week(:monday)
     end_date   = @current_month.end_of_month.end_of_week(:sunday)
 
-    # Si el usuario no tiene suficientes trades en el mes actual, creamos un par de datos realistas para demostración
-    ensure_sample_trades_for_month(@current_month) if current_user.trades.where(entry_at: @current_month.beginning_of_month..@current_month.end_of_month).count < 5
+    # Solo generar datos de muestra si el usuario NO tiene ninguna operación creada en la base de datos
+    ensure_sample_trades_for_month(@current_month) if current_user.trades.none?
 
     # Buscar operaciones del periodo visible en el calendario
     trades = current_user.trades.where(entry_at: start_date.beginning_of_day..end_date.end_of_day)

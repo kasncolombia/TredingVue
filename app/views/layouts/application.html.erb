@@ -252,13 +252,14 @@
       <!-- NAVIGATION -->
       <nav class="p-2.5 space-y-0.5 mt-1 flex-1">
         <% nav_items = [
-          { label: "Dashboard",    path: dashboard_path,             icon: "dashboard" },
-          { label: "Trades",       path: trades_path,                icon: "swap_horiz", count: current_user.trades.count },
-          { label: "Estrategia",   path: strategies_path,            icon: "target" },
-          { label: "Prop Firm",    path: pro_tools_path,             icon: "verified" },
-          { label: "Backtesting",  path: backtester_path,            icon: "history" },
-          { label: "AI Coach",     path: ai_coach_path,              icon: "smart_toy" },
-          { label: "Comunidad",    path: community_feed_index_path,  icon: "forum" },
+          { label: "Dashboard",       path: dashboard_path,             icon: "dashboard" },
+          { label: "Trades",          path: trades_path,                icon: "swap_horiz", count: current_user.trades.count },
+          { label: "Estrategia",      path: strategies_path,            icon: "target" },
+          { label: "Prop Firm (Caja)",path: pro_tools_path(tab: 'prop'),icon: "verified" },
+          { label: "Cuentas & Reglas",path: prop_firm_accounts_path,    icon: "account_tree" },
+          { label: "Backtesting",     path: backtester_path,            icon: "history" },
+          { label: "AI Coach",        path: ai_coach_path,              icon: "smart_toy" },
+          { label: "Comunidad",       path: community_feed_index_path,  icon: "forum" },
         ] %>
         <% if current_user.admin? %>
           <% nav_items << { label: "Panel Admin", path: admin_root_path, icon: "admin_panel_settings" } %>

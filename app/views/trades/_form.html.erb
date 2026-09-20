@@ -52,23 +52,52 @@
             </label>
             <div class="flex gap-2 text-xs font-bold w-full overflow-x-auto snap-x hide-scrollbar">
               <label class="flex-1 cursor-pointer min-w-[95px] snap-center">
-                <%= f.radio_button :portfolio_mode, "real_account", class: "sr-only peer pm-radio", checked: (trade.portfolio_mode == 'real_account' || trade.portfolio_mode.nil?) %>
+                <%= f.radio_button :portfolio_mode, "real_account", class: "sr-only peer pm-radio", checked: (trade.portfolio_mode == 'real_account' || trade.portfolio_mode.nil?), onchange: "togglePropFirmSelector()" %>
                 <div class="peer-checked:bg-emerald-500/15 peer-checked:border-emerald-500 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 input-field border py-2.5 rounded-xl text-center transition-all cursor-pointer flex flex-col md:flex-row items-center justify-center gap-1.5 shadow-sm">
                   <span class="material-symbols-outlined text-[18px]">account_balance_wallet</span> Real
                 </div>
               </label>
               <label class="flex-1 cursor-pointer min-w-[95px] snap-center">
-                <%= f.radio_button :portfolio_mode, "prop_firm", class: "sr-only peer pm-radio", checked: trade.portfolio_mode == 'prop_firm' %>
+                <%= f.radio_button :portfolio_mode, "prop_firm", class: "sr-only peer pm-radio", checked: trade.portfolio_mode == 'prop_firm', onchange: "togglePropFirmSelector()" %>
                 <div class="peer-checked:bg-brand/15 peer-checked:border-brand peer-checked:text-brand dark:peer-checked:text-brand-light input-field border py-2.5 rounded-xl text-center transition-all cursor-pointer flex flex-col md:flex-row items-center justify-center gap-1.5 shadow-sm">
                   <span class="material-symbols-outlined text-[18px]">verified</span> Fondeo
                 </div>
               </label>
               <label class="flex-1 cursor-pointer min-w-[95px] snap-center">
-                <%= f.radio_button :portfolio_mode, "backtest", class: "sr-only peer pm-radio", checked: trade.portfolio_mode == 'backtest' %>
+                <%= f.radio_button :portfolio_mode, "backtest", class: "sr-only peer pm-radio", checked: trade.portfolio_mode == 'backtest', onchange: "togglePropFirmSelector()" %>
                 <div class="peer-checked:bg-slate-200 dark:peer-checked:bg-slate-700 peer-checked:border-slate-400 dark:peer-checked:border-slate-500 peer-checked:text-slate-800 dark:peer-checked:text-white input-field border py-2.5 rounded-xl text-center transition-all cursor-pointer flex flex-col md:flex-row items-center justify-center gap-1.5 shadow-sm">
                   <span class="material-symbols-outlined text-[18px]">history</span> Backtest
                 </div>
               </label>
+            </div>
+
+            <!-- SELECTOR VISUAL DE COMPAÑÍAS DE FONDEO -->
+            <div id="prop-firm-company-container" class="mt-4 pt-4 border-t dark:border-darkBorder border-slate-200 hidden fade-in">
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center justify-between">
+                <span>Selecciona la Compañía / Empresa de Fondeo</span>
+                <span class="text-[10px] text-brand font-bold">Oficial Logos</span>
+              </label>
+              <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+                <% [
+                  { name: "Tradeify", logo: "compañias/Tradeify.png" },
+                  { name: "Apex Trader Funding", logo: "compañias/Apex Trader funding.png" },
+                  { name: "Topstep", logo: "compañias/Topstep.png" },
+                  { name: "MyFundedFutures", logo: "compañias/My funded futures.png" },
+                  { name: "Lucid Trading", logo: "compañias/Lucid trading.png" },
+                  { name: "Alpha Futures", logo: "compañias/Alpha futures.png" },
+                  { name: "Take Profit Trader", logo: "compañias/take profit trader.png" }
+                ].each do |firm| %>
+                  <button type="button" 
+                          onclick="selectTradePropFirm('<%= firm[:name] %>', this)"
+                          class="prop-firm-chip p-2 rounded-xl border dark:border-darkBorder border-slate-200 hover:border-brand dark:hover:border-brand flex flex-col items-center justify-center text-center gap-1.5 transition-all bg-slate-50 dark:bg-darkCard cursor-pointer">
+                    <div class="w-8 h-8 rounded-lg bg-white p-1 flex items-center justify-center border border-slate-200 shadow-xs">
+                      <%= image_tag firm[:logo], class: "max-h-full max-w-full object-contain", alt: firm[:name] %>
+                    </div>
+                    <span class="text-[9.5px] font-bold dark:text-slate-200 text-slate-700 line-clamp-1"><%= firm[:name] %></span>
+                  </button>
+                <% end %>
+              </div>
+              <%= f.hidden_field :setup, id: "selected_prop_firm_input" %>
             </div>
           </div>
 
@@ -597,4 +626,31 @@ window.selectSymbol = function(sym) {
     input.dispatchEvent(new Event('input', { bubbles: true }));
   }
 };
+
+window.togglePropFirmSelector = function() {
+  const container = document.getElementById('prop-firm-company-container');
+  const propRadio = document.querySelector('input[name="trade[portfolio_mode]"][value="prop_firm"]');
+  if (container && propRadio) {
+    if (propRadio.checked) {
+      container.classList.remove('hidden');
+    } else {
+      container.classList.add('hidden');
+    }
+  }
+};
+
+window.selectTradePropFirm = function(name, btn) {
+  const input = document.getElementById('selected_prop_firm_input');
+  if (input) input.value = name;
+  document.querySelectorAll('.prop-firm-chip').forEach(c => {
+    c.classList.remove('ring-2', 'ring-brand', 'border-brand', 'bg-brand/10');
+  });
+  if (btn) {
+    btn.classList.add('ring-2', 'ring-brand', 'border-brand', 'bg-brand/10');
+  }
+};
+
+document.addEventListener("DOMContentLoaded", function() {
+  togglePropFirmSelector();
+});
 </script>

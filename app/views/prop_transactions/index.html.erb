@@ -6,7 +6,7 @@
     <div>
       <h1 class="text-xl font-black dark:text-white text-slate-800 flex items-center gap-2">
         <span class="material-symbols-outlined text-brand text-[24px]">business_center</span>
-        Control de Fondeo
+        Control de Fondeo & Prop Firms
       </h1>
       <p class="text-xs dark:text-slate-400 text-slate-500 mt-1">
         Gestiona el flujo de caja de tus pruebas y cuentas financiadas. Trata a tus cuentas fondeadas como un negocio.
@@ -14,7 +14,34 @@
     </div>
   </div>
 
-  <!-- KPI CARDS SLIDER (MOBILE FRIENDLY) -->
+  <!-- COMPAÑÍAS DE FONDEO DESTACADAS (SELECCIONABLES) -->
+  <div>
+    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-1.5">
+      <span class="material-symbols-outlined text-brand text-[16px]">verified</span> Compañías de Fondeo Populares
+    </h3>
+    <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+      <% [
+        { name: "Tradeify", logo: "compañias/Tradeify.png" },
+        { name: "Apex Trader Funding", logo: "compañias/Apex Trader funding.png" },
+        { name: "Topstep", logo: "compañias/Topstep.png" },
+        { name: "MyFundedFutures", logo: "compañias/My funded futures.png" },
+        { name: "Lucid Trading", logo: "compañias/Lucid trading.png" },
+        { name: "Alpha Futures", logo: "compañias/Alpha futures.png" },
+        { name: "Take Profit Trader", logo: "compañias/take profit trader.png" }
+      ].each do |firm| %>
+        <button type="button" 
+                onclick="selectPropFirm('<%= firm[:name] %>')"
+                class="glass p-3 rounded-2xl border dark:border-darkBorder border-slate-200 hover:border-brand dark:hover:border-brand flex flex-col items-center justify-center text-center gap-2 group transition-all hover:-translate-y-0.5 hover:shadow-lg">
+          <div class="w-12 h-12 rounded-xl bg-white/80 dark:bg-black/40 p-1.5 flex items-center justify-center border dark:border-darkBorder border-slate-100 shadow-sm group-hover:scale-105 transition-transform">
+            <%= image_tag firm[:logo], class: "max-h-full max-w-full object-contain", alt: firm[:name] %>
+          </div>
+          <span class="text-[11px] font-extrabold dark:text-slate-200 text-slate-800 line-clamp-1 group-hover:text-brand"><%= firm[:name] %></span>
+        </button>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- KPI CARDS -->
   <div class="w-full overflow-x-auto snap-x hide-scrollbar pb-2 -mx-4 px-4 md:mx-0 md:px-0">
     <div class="flex md:grid md:grid-cols-4 gap-4 min-w-[max-content] md:min-w-0">
       
@@ -73,7 +100,7 @@
     <!-- TRANSACTION FORM -->
     <div class="glass rounded-2xl p-5 shadow-sm lg:col-span-1 h-fit">
       <h3 class="text-sm font-bold dark:text-white text-slate-800 mb-4 border-b dark:border-darkBorder border-lightBorder pb-3 flex items-center gap-2">
-        <span class="material-symbols-outlined text-[18px]">add_circle</span> Guardar Recibo
+        <span class="material-symbols-outlined text-[18px]">add_circle</span> Guardar Recibo / Transacción
       </h3>
       
       <%= form_with model: @new_transaction, url: prop_transactions_path, class: "space-y-4" do |f| %>
@@ -86,31 +113,34 @@
           <label class="cursor-pointer">
             <%= f.radio_button :transaction_type, "expense", class: "sr-only peer pm-radio", checked: true %>
             <div class="peer-checked:bg-rose-500/10 peer-checked:border-rose-500 peer-checked:text-rose-600 dark:peer-checked:text-rose-400 input-field border py-2 rounded-xl text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1 text-xs">
-              <span class="material-symbols-outlined text-[16px]">money_off</span> Gasto
+              <span class="material-symbols-outlined text-[16px]">money_off</span> Gasto Eval
             </div>
           </label>
           <label class="cursor-pointer">
             <%= f.radio_button :transaction_type, "payout", class: "sr-only peer pm-radio" %>
             <div class="peer-checked:bg-emerald-500/10 peer-checked:border-emerald-500 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 input-field border py-2 rounded-xl text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1 text-xs">
-              <span class="material-symbols-outlined text-[16px]">payments</span> Retiro
+              <span class="material-symbols-outlined text-[16px]">payments</span> Retiro / Payout
             </div>
           </label>
         </div>
 
         <div>
           <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Compañía (Prop Firm)</label>
-          <%= f.text_field :company_name, required: true, list: "prop-firms-list", placeholder: "Ej. Apex, TopStep, TradeDay", class: "input-field w-full px-3 py-2 rounded-xl text-sm focus:outline-none focus:border-brand" %>
+          <%= f.text_field :company_name, id: "prop-company-field", required: true, list: "prop-firms-list", placeholder: "Ej. Tradeify, Apex, TopStep", class: "input-field w-full px-3 py-2 rounded-xl text-sm focus:outline-none focus:border-brand" %>
           <datalist id="prop-firms-list">
+            <option value="Tradeify"></option>
             <option value="Apex Trader Funding"></option>
-            <option value="TopStep"></option>
-            <option value="TradeDay"></option>
+            <option value="Topstep"></option>
             <option value="MyFundedFutures"></option>
+            <option value="Lucid Trading"></option>
+            <option value="Alpha Futures"></option>
+            <option value="Take Profit Trader"></option>
           </datalist>
         </div>
 
         <div>
           <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Descripción</label>
-          <%= f.text_field :description, placeholder: "Ej. Compra de 50k, PA Payout 1", class: "input-field w-full px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-brand" %>
+          <%= f.text_field :description, placeholder: "Ej. Compra de cuenta 50k, PA Payout 1", class: "input-field w-full px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-brand" %>
         </div>
 
         <div>
@@ -119,7 +149,7 @@
         </div>
 
         <button type="submit" class="w-full py-2.5 rounded-xl bg-brand hover:bg-brand-hover text-white font-bold text-xs glow-brand transition-all flex items-center justify-center gap-1.5 shadow-md">
-          <span class="material-symbols-outlined text-[16px]">save</span> Registrar
+          <span class="material-symbols-outlined text-[16px]">save</span> Registrar Recibo
         </button>
       <% end %>
     </div>
@@ -127,10 +157,7 @@
     <!-- TRANSACTIONS LIST -->
     <div class="glass rounded-2xl shadow-sm lg:col-span-2 overflow-hidden flex flex-col h-full">
       <div class="p-4 border-b dark:border-darkBorder border-lightBorder flex items-center justify-between dark:bg-[#1A1D2D] bg-slate-50">
-        <h3 class="text-sm font-bold dark:text-white text-slate-800">Historial (Ledger)</h3>
-        <button class="px-3 py-1.5 text-[10px] font-bold dark:bg-darkCard bg-white border dark:border-darkBorder border-lightBorder rounded-lg flex items-center gap-1 opacity-50 cursor-not-allowed" title="Próximamente importar CSV">
-          <span class="material-symbols-outlined text-[14px]">upload_file</span> Importar CSV
-        </button>
+        <h3 class="text-sm font-bold dark:text-white text-slate-800">Historial de Operaciones (Ledger)</h3>
       </div>
 
       <div class="overflow-x-auto flex-1">
@@ -148,12 +175,30 @@
             <tbody class="divide-y dark:divide-[#1E2235] divide-slate-100">
               <% @transactions.each do |tx| %>
                 <tr class="table-row-hover dark:text-slate-300 text-slate-700 transition-colors">
-                  <td class="px-4 py-3"><%= tx.transaction_date.strftime("%d %b, %y") %></td>
-                  <td class="px-4 py-3 font-semibold"><%= tx.company_name %></td>
-                  <td class="px-4 py-3">
-                    <span class="block text-xs font-bold dark:text-slate-200 text-slate-800"><%= tx.description.presence || (tx.transaction_type == 'expense' ? 'Gasto Eval' : 'Payout') %></span>
+                  <td class="px-4 py-3 font-mono text-[11px]"><%= tx.transaction_date.strftime("%d %b, %Y") %></td>
+                  <td class="px-4 py-3 font-bold flex items-center gap-2">
+                    <% logo_path = case tx.company_name.to_s.downcase
+                      when /tradeify/ then "compañias/Tradeify.png"
+                      when /apex/ then "compañias/Apex Trader funding.png"
+                      when /topstep/ then "compañias/Topstep.png"
+                      when /myfunded/ then "compañias/My funded futures.png"
+                      when /lucid/ then "compañias/Lucid trading.png"
+                      when /alpha/ then "compañias/Alpha futures.png"
+                      when /take profit/ then "compañias/take profit trader.png"
+                      else nil
+                      end
+                    %>
+                    <% if logo_path %>
+                      <div class="w-6 h-6 rounded-md bg-white p-0.5 border flex items-center justify-center shadow-xs flex-shrink-0">
+                        <%= image_tag logo_path, class: "max-h-full max-w-full object-contain" %>
+                      </div>
+                    <% end %>
+                    <span><%= tx.company_name %></span>
                   </td>
-                  <td class="px-4 py-3 text-right font-mono font-black <%= tx.transaction_type == 'payout' ? 'text-emerald-500' : 'text-slate-500 dark:text-slate-400' %>">
+                  <td class="px-4 py-3">
+                    <span class="block text-xs font-bold dark:text-slate-200 text-slate-800"><%= tx.description.presence || (tx.transaction_type == 'expense' ? 'Gasto Evaluación' : 'Retiro / Payout') %></span>
+                  </td>
+                  <td class="px-4 py-3 text-right font-mono font-black <%= tx.transaction_type == 'payout' ? 'text-emerald-500' : 'text-slate-400' %>">
                     <%= tx.transaction_type == 'payout' ? '+' : '-' %>$<%= number_with_precision(tx.amount, precision: 2, delimiter: ',') %>
                   </td>
                   <td class="px-4 py-3 text-center">
@@ -181,3 +226,13 @@
   </div>
 
 </div>
+
+<script>
+  function selectPropFirm(name) {
+    const input = document.getElementById("prop-company-field");
+    if (input) {
+      input.value = name;
+      input.focus();
+    }
+  }
+</script>

@@ -18,6 +18,11 @@ class DashboardController < ApplicationController
 
     @equity_data   = Trading::CalculateDrawdown.new(all_trades).equity_curve
     @pnl_by_day    = Trading::CalculateDailyPnl.new(all_trades).call
+    
+    # Mapa exacto de P&L por fecha para el calendario del dashboard
+    @daily_pnl_map = all_trades.select { |t| t.entry_at.present? }
+                               .group_by { |t| t.entry_at.to_date }
+                               .transform_values { |ts| ts.sum(&:pnl).to_f }
 
     # Datos adicionales para el Nuevo Dashboard V2
     calculate_advanced_metrics(all_trades)

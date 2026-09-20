@@ -1,0 +1,325 @@
+<% content_for :page_title, "Nueva Cuenta de Fondeo" %>
+
+<div class="max-w-6xl mx-auto space-y-6 fade-in pb-12">
+  
+  <!-- BREADCRUMB -->
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-2 text-xs text-slate-400">
+      <%= link_to "Control de Fondeo", prop_ledger_index_path, class: "hover:text-brand transition-colors" %>
+      <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+      <span class="dark:text-white text-slate-800 font-bold">Nueva Cuenta & Reglas</span>
+    </div>
+  </div>
+
+  <div class="flex items-center justify-between border-b dark:border-darkBorder border-slate-200 pb-4">
+    <div>
+      <h1 class="text-xl md:text-2xl font-black dark:text-white text-slate-900 flex items-center gap-2">
+        <span class="material-symbols-outlined text-brand text-[26px]">verified</span>
+        Configuración de Cuenta & Reglas del Challenge
+      </h1>
+      <p class="text-xs text-slate-400 mt-1">Configura las reglas exactas de tu firma para auditar el cumplimiento en tu diario de trading.</p>
+    </div>
+  </div>
+
+  <%= form_with model: @account, url: prop_firm_accounts_path, class: "space-y-6" do |f| %>
+    
+    <!-- GRID DE 2 SECCIONES 50% / 50% -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- ================= SECCIÓN IZQUIERDA: CUENTA Y REGLAS (lg:col-span-6) ================= -->
+      <div class="lg:col-span-6 space-y-5">
+        <div class="glass rounded-2xl p-5 md:p-6 border-l-4 border-brand space-y-5">
+          
+          <div class="flex items-center justify-between pb-3 border-b dark:border-darkBorder border-slate-200">
+            <h2 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
+              <span class="material-symbols-outlined text-brand text-[18px]">account_tree</span>
+              1. Cuenta y Reglas
+            </h2>
+            <button type="button" onclick="toggleCustomRulesModal()" class="text-xs font-bold text-brand hover:underline flex items-center gap-1">
+              <span class="material-symbols-outlined text-[14px]">edit_note</span>
+              Editar reglas
+            </button>
+          </div>
+
+          <!-- Nombre de la cuenta -->
+          <div>
+            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">
+              Nombre de la cuenta <span class="text-rose-500">*</span>
+            </label>
+            <%= f.text_field :name, required: true, placeholder: "Ej. Topstep 50K Express #1", class: "input-field w-full px-3.5 py-2.5 rounded-xl text-sm font-bold focus:outline-none focus:border-brand" %>
+          </div>
+
+          <!-- REGLAS DEL CHALLENGE -->
+          <div class="space-y-4 pt-2">
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">
+              Reglas del Challenge <span class="text-rose-500">*</span>
+            </label>
+
+            <!-- 1 - FIRMA DE FONDEO (SELECTOR CON LOGOS) -->
+            <div>
+              <span class="block text-[11px] font-bold dark:text-slate-300 text-slate-700 mb-2">1 - FIRMA DE FONDEO</span>
+              
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <% [
+                  { name: "Topstep", logo: "compañias/Topstep.png" },
+                  { name: "Apex Trader Funding", logo: "compañias/Apex Trader funding.png" },
+                  { name: "MyFundedFutures", logo: "compañias/My funded futures.png" },
+                  { name: "Tradeify", logo: "compañias/Tradeify.png" },
+                  { name: "Lucid Trading", logo: "compañias/Lucid trading.png" },
+                  { name: "Alpha Futures", logo: "compañias/Alpha futures.png" },
+                  { name: "Take Profit Trader", logo: "compañias/take profit trader.png" }
+                ].each_with_index do |firm, idx| %>
+                  <button type="button" 
+                          onclick="selectFirmConfig('<%= firm[:name] %>', this)"
+                          class="firm-selector-btn p-2 rounded-xl border dark:border-darkBorder border-slate-200 hover:border-brand flex flex-col items-center justify-center text-center gap-1 transition-all bg-slate-50 dark:bg-darkCard cursor-pointer <%= idx == 0 ? 'ring-2 ring-brand border-brand bg-brand/10' : '' %>">
+                    <div class="w-8 h-8 rounded-lg bg-white p-1 flex items-center justify-center border border-slate-200 shadow-xs">
+                      <%= image_tag firm[:logo], class: "max-h-full max-w-full object-contain", alt: firm[:name] %>
+                    </div>
+                    <span class="text-[9px] font-bold dark:text-slate-200 text-slate-800 line-clamp-1"><%= firm[:name] %></span>
+                  </button>
+                <% end %>
+              </div>
+              <%= f.hidden_field :firm_name, id: "prop_firm_name_field", value: "Topstep" %>
+            </div>
+
+            <!-- 2 - PLAN DE LA FIRMA -->
+            <div class="space-y-3 pt-2">
+              <span class="block text-[11px] font-bold dark:text-slate-300 text-slate-700" id="firm-plan-label">2 - PLAN DE TOPSTEP</span>
+              
+              <!-- TIPO DE PLAN -->
+              <div>
+                <p class="text-[10px] font-semibold text-slate-400 mb-1.5">Tipo de Plan</p>
+                <div class="flex gap-2">
+                  <button type="button" onclick="setPlanType('Estándar', this)" class="plan-type-btn flex-1 py-2 px-3 rounded-xl border dark:border-darkBorder border-slate-200 text-xs font-bold dark:text-white text-slate-800 ring-2 ring-brand border-brand bg-brand/10 transition-all cursor-pointer">
+                    Estándar
+                  </button>
+                  <button type="button" onclick="setPlanType('Sin cuota de activación', this)" class="plan-type-btn flex-1 py-2 px-3 rounded-xl border dark:border-darkBorder border-slate-200 text-xs font-bold dark:text-white text-slate-800 hover:border-brand transition-all cursor-pointer">
+                    Sin cuota de activación
+                  </button>
+                </div>
+                <%= f.hidden_field :plan_name, id: "prop_plan_name_field", value: "Estándar" %>
+              </div>
+
+              <!-- TAMAÑO DE CUENTA -->
+              <div>
+                <p class="text-[10px] font-semibold text-slate-400 mb-1.5">Tamaño de Cuenta</p>
+                <div class="flex gap-2">
+                  <% %w[50K 100K 150K].each_with_index do |size, idx| %>
+                    <button type="button" onclick="setAccountSize('<%= size %>', this)" class="size-btn flex-1 py-2 px-3 rounded-xl border dark:border-darkBorder border-slate-200 text-xs font-mono font-bold dark:text-white text-slate-800 transition-all cursor-pointer <%= idx == 0 ? 'ring-2 ring-brand border-brand bg-brand/10' : '' %>">
+                      <%= size %>
+                    </button>
+                  <% end %>
+                </div>
+                <%= f.hidden_field :account_size, id: "prop_account_size_field", value: "50K" %>
+              </div>
+            </div>
+
+            <!-- 3 - PANEL INFORMATIVO DE REGLAS (EVALUACIÓN vs FONDEADA) -->
+            <div class="rounded-xl border dark:border-darkBorder border-slate-200 bg-slate-50 dark:bg-darkCard p-4 space-y-3">
+              <div class="flex items-center justify-between border-b dark:border-darkBorder border-slate-200 pb-2">
+                <span class="text-xs font-bold text-slate-700 dark:text-slate-200" id="rules-box-title">3 - REGLAS - TOPSTEP - ESTÁNDAR</span>
+                
+                <!-- TABS EVALUACIÓN / FONDEADA -->
+                <div class="flex p-0.5 bg-slate-200 dark:bg-darkBorder rounded-lg text-[10px] font-bold">
+                  <button type="button" onclick="switchRuleTab('eval', this)" class="rule-tab-btn px-2.5 py-1 rounded-md bg-white dark:bg-slate-700 text-brand shadow-xs">
+                    Evaluación
+                  </button>
+                  <button type="button" onclick="switchRuleTab('funded', this)" class="rule-tab-btn px-2.5 py-1 rounded-md text-slate-400 hover:text-slate-200">
+                    Fondeada
+                  </button>
+                </div>
+              </div>
+
+              <div class="space-y-2 text-xs font-mono">
+                <div class="flex justify-between items-center py-1 border-b dark:border-darkBorder/50 border-slate-200/50">
+                  <span class="text-slate-400 font-sans">Objetivo de profit:</span>
+                  <span class="font-bold text-emerald-500" id="rule-target">$3,000</span>
+                </div>
+                <div class="flex justify-between items-center py-1 border-b dark:border-darkBorder/50 border-slate-200/50">
+                  <span class="text-slate-400 font-sans">Drawdown máximo - EOD (al cierre):</span>
+                  <span class="font-bold text-rose-500" id="rule-max-dd">$2,000</span>
+                </div>
+                <div class="flex justify-between items-center py-1 border-b dark:border-darkBorder/50 border-slate-200/50">
+                  <span class="text-slate-400 font-sans">Pérdida diaria:</span>
+                  <span class="font-bold text-slate-400 font-sans" id="rule-daily-loss">No aplica</span>
+                </div>
+                <div class="flex justify-between items-center py-1 border-b dark:border-darkBorder/50 border-slate-200/50">
+                  <span class="text-slate-400 font-sans">Consistencia:</span>
+                  <span class="font-bold text-amber-400" id="rule-consistency">50%</span>
+                </div>
+                <div class="flex justify-between items-center py-1">
+                  <span class="text-slate-400 font-sans">Días mínimos de trading:</span>
+                  <span class="font-bold text-brand" id="rule-min-days">2 días</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ================= SECCIÓN DERECHA: DETALLES (lg:col-span-6) ================= -->
+      <div class="lg:col-span-6 space-y-5">
+        <div class="glass rounded-2xl p-5 md:p-6 border-l-4 border-emerald-500 space-y-5">
+          
+          <div class="pb-3 border-b dark:border-darkBorder border-slate-200">
+            <h2 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
+              <span class="material-symbols-outlined text-emerald-500 text-[18px]">tune</span>
+              2. Detalles
+            </h2>
+          </div>
+
+          <!-- ESTRATEGIAS -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700">Estrategias</label>
+              <%= link_to "+ Crear nueva estrategia", new_strategy_path, target: "_blank", class: "text-[11px] font-bold text-brand hover:underline" %>
+            </div>
+            
+            <select name="strategy_ids[]" multiple class="input-field w-full px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:border-brand h-24">
+              <option value="" disabled selected>Selecciona estrategias...</option>
+              <% @strategies.each do |strat| %>
+                <option value="<%= strat.id %>"><%= strat.name %></option>
+              <% end %>
+            </select>
+            <p class="text-[10px] text-slate-400 mt-1">Mantén presionado Ctrl / Cmd para seleccionar múltiples estrategias.</p>
+          </div>
+
+          <!-- CUOTA DE EVALUACIÓN -->
+          <div>
+            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">
+              Cuota de evaluación <span class="text-rose-500">*</span>
+            </label>
+            <div class="relative">
+              <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold font-mono text-slate-400">$</span>
+              <%= f.number_field :eval_fee, value: 49, min: 0, step: "any", required: true, class: "input-field w-full pl-8 pr-4 py-2.5 rounded-xl text-sm font-mono font-bold focus:outline-none focus:border-brand" %>
+            </div>
+          </div>
+
+          <!-- CUOTA DE ACTIVACIÓN -->
+          <div>
+            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">
+              Cuota de activación <span class="text-rose-500">*</span>
+            </label>
+            <div class="relative">
+              <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold font-mono text-slate-400">$</span>
+              <%= f.number_field :activation_fee, value: 149, min: 0, step: "any", required: true, class: "input-field w-full pl-8 pr-4 py-2.5 rounded-xl text-sm font-mono font-bold focus:outline-none focus:border-brand" %>
+            </div>
+          </div>
+
+          <!-- FASE DE LA CUENTA -->
+          <div>
+            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-2">
+              Fase de la cuenta <span class="text-rose-500">*</span>
+            </label>
+            <div class="grid grid-cols-3 sm:grid-cols-5 gap-2">
+              <% [
+                { id: "paso_1", label: "Paso 1" },
+                { id: "paso_2", label: "Paso 2" },
+                { id: "fondeada", label: "Fondeada" },
+                { id: "express", label: "Express" },
+                { id: "sim", label: "Sim" }
+              ].each_with_index do |phase, idx| %>
+                <button type="button" onclick="setAccountPhase('<%= phase[:id] %>', this)" class="phase-btn py-2 px-2 rounded-xl border dark:border-darkBorder border-slate-200 text-xs font-bold text-center dark:text-white text-slate-800 transition-all cursor-pointer <%= idx == 0 ? 'ring-2 ring-emerald-500 border-emerald-500 bg-emerald-500/10 text-emerald-500' : '' %>">
+                  <%= phase[:label] %>
+                </button>
+              <% end %>
+            </div>
+            <%= f.hidden_field :phase, id: "prop_phase_field", value: "paso_1" %>
+            <%= f.hidden_field :status, value: "active" %>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BOTONES DE ACCIÓN -->
+    <div class="flex items-center justify-end gap-3 pt-4 border-t dark:border-darkBorder border-slate-200">
+      <%= link_to "Cancelar", prop_ledger_index_path, class: "px-5 py-2.5 text-xs font-bold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white rounded-xl border dark:border-darkBorder border-slate-200 transition-all" %>
+      
+      <button type="submit" class="px-8 py-3 bg-brand hover:scale-[1.02] text-white font-extrabold text-xs rounded-xl shadow-lg glow-brand transition-all flex items-center gap-2 cursor-pointer">
+        <span class="material-symbols-outlined text-[18px]">save</span>
+        Guardar Cuenta de Fondeo
+      </button>
+    </div>
+
+  <% end %>
+
+</div>
+
+<!-- SCRIPT DE INTERACTIVIDAD DINÁMICA DE REGLAS -->
+<script>
+let currentFirm = "Topstep";
+let currentPlan = "Estándar";
+let currentSize = "50K";
+let currentTab  = "eval";
+
+const RULES_DATABASE = {
+  "50K":  { target: "$3,000", max_dd: "$2,000", daily: "No aplica", consistency: "50%", min_days: "2 días" },
+  "100K": { target: "$6,000", max_dd: "$3,000", daily: "No aplica", consistency: "50%", min_days: "2 días" },
+  "150K": { target: "$9,000", max_dd: "$4,500", daily: "No aplica", consistency: "50%", min_days: "2 días" }
+};
+
+window.selectFirmConfig = function(firmName, btn) {
+  currentFirm = firmName;
+  document.getElementById("prop_firm_name_field").value = firmName;
+  document.querySelectorAll(".firm-selector-btn").forEach(b => b.classList.remove("ring-2", "ring-brand", "border-brand", "bg-brand/10"));
+  btn.classList.add("ring-2", "ring-brand", "border-brand", "bg-brand/10");
+  document.getElementById("firm-plan-label").textContent = `2 - PLAN DE ${firmName.toUpperCase()}`;
+  updateRulesDisplay();
+};
+
+window.setPlanType = function(planType, btn) {
+  currentPlan = planType;
+  document.getElementById("prop_plan_name_field").value = planType;
+  document.querySelectorAll(".plan-type-btn").forEach(b => b.classList.remove("ring-2", "ring-brand", "border-brand", "bg-brand/10"));
+  btn.classList.add("ring-2", "ring-brand", "border-brand", "bg-brand/10");
+  updateRulesDisplay();
+};
+
+window.setAccountSize = function(size, btn) {
+  currentSize = size;
+  document.getElementById("prop_account_size_field").value = size;
+  document.querySelectorAll(".size-btn").forEach(b => b.classList.remove("ring-2", "ring-brand", "border-brand", "bg-brand/10"));
+  btn.classList.add("ring-2", "ring-brand", "border-brand", "bg-brand/10");
+  updateRulesDisplay();
+};
+
+window.setAccountPhase = function(phaseId, btn) {
+  document.getElementById("prop_phase_field").value = phaseId;
+  document.querySelectorAll(".phase-btn").forEach(b => b.classList.remove("ring-2", "ring-emerald-500", "border-emerald-500", "bg-emerald-500/10", "text-emerald-500"));
+  btn.classList.add("ring-2", "ring-emerald-500", "border-emerald-500", "bg-emerald-500/10", "text-emerald-500");
+};
+
+window.switchRuleTab = function(tabName, btn) {
+  currentTab = tabName;
+  document.querySelectorAll(".rule-tab-btn").forEach(b => {
+    b.classList.remove("bg-white", "dark:bg-slate-700", "text-brand", "shadow-xs");
+    b.classList.add("text-slate-400");
+  });
+  btn.classList.add("bg-white", "dark:bg-slate-700", "text-brand", "shadow-xs");
+  btn.classList.remove("text-slate-400");
+  updateRulesDisplay();
+};
+
+function updateRulesDisplay() {
+  document.getElementById("rules-box-title").textContent = `3 - REGLAS - ${currentFirm.toUpperCase()} - ${currentPlan.toUpperCase()}`;
+  const data = RULES_DATABASE[currentSize] || RULES_DATABASE["50K"];
+  
+  if (currentTab === "funded") {
+    document.getElementById("rule-target").textContent = "N/A (Retiros)";
+    document.getElementById("rule-max-dd").textContent = data.max_dd;
+    document.getElementById("rule-daily-loss").textContent = "$1,000 max";
+    document.getElementById("rule-consistency").textContent = "30%";
+    document.getElementById("rule-min-days").textContent = "Sin mínimo";
+  } else {
+    document.getElementById("rule-target").textContent = data.target;
+    document.getElementById("rule-max-dd").textContent = data.max_dd;
+    document.getElementById("rule-daily-loss").textContent = data.daily;
+    document.getElementById("rule-consistency").textContent = data.consistency;
+    document.getElementById("rule-min-days").textContent = data.min_days;
+  }
+}
+</script>

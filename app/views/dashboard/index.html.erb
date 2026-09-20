@@ -238,8 +238,8 @@
           start_d = today.beginning_of_month.beginning_of_week(:monday)
           end_d = today.end_of_month.end_of_week(:sunday)
           (start_d..end_d).each do |date|
-            pnl = @pnl_by_day[date.to_s]&.to_f || 0
-            has_trades = @pnl_by_day.key?(date.to_s)
+            has_trades = @daily_pnl_map.key?(date)
+            pnl = @daily_pnl_map[date] || 0
             is_current_m = date.month == today.month
             
             card_class = if !is_current_m
