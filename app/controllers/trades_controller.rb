@@ -83,7 +83,7 @@ class TradesController < ApplicationController
 
   def trade_params
     params.require(:trade).permit(
-      :symbol, :market, :direction, :timeframe, :setup, :portfolio_mode,
+      :symbol, :market, :direction, :timeframe, :setup, :portfolio_mode, :prop_firm_account_id,
       :entry_at, :exit_at, :entry_price, :exit_price,
       :stop_loss, :take_profit, :position_size, :capital_used,
       :risk_amount, :commission, :pnl, :pnl_percent, :r_multiple,

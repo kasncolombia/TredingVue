@@ -35,6 +35,19 @@ module Trading
                          
       return unless trade_attributes
 
+      # Detección de duplicados: Si ya existe una operación idéntica para el mismo usuario el mismo instante con mismo símbolo, dirección y PnL, la omitimos.
+      existing = @user.trades.find_by(
+        symbol: trade_attributes[:symbol],
+        entry_at: trade_attributes[:entry_at],
+        direction: trade_attributes[:direction],
+        pnl: trade_attributes[:pnl]
+      )
+
+      if existing
+        Rails.logger.info "Trade duplicado omitido: #{trade_attributes[:symbol]} en #{trade_attributes[:entry_at]}"
+        return
+      end
+
       trade = @user.trades.build(trade_attributes)
       
       # Si el resultado no venía forzado, lo asignamos automáticamente según el pnl

@@ -20,6 +20,7 @@ class User < ApplicationRecord
   has_many :notifications,    dependent: :destroy
   has_many :prop_transactions, dependent: :destroy
   has_many :prop_firm_accounts, dependent: :destroy
+  has_many :trading_accounts, dependent: :destroy
   has_many :backtest_sessions, dependent: :destroy
 
   has_many :enrollments,       dependent: :destroy

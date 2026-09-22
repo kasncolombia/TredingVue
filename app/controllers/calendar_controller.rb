@@ -39,6 +39,18 @@ class CalendarController < ApplicationController
     @red_days   = daily_pnls.values.count { |v| v < 0 }
 
     @calendar_days = (start_date..end_date).to_a
+    @weeks = @calendar_days.each_slice(7).to_a
+    
+    # Calcular totales por semana (8va columna Bento Grid)
+    @weekly_pnls = @weeks.map do |week_days|
+      week_trades = trades.select { |t| week_days.include?(t.entry_at.to_date) }
+      {
+        pnl: week_trades.sum(&:pnl),
+        count: week_trades.size,
+        wins: week_trades.count { |t| t.pnl.to_f > 0 },
+        losses: week_trades.count { |t| t.pnl.to_f < 0 }
+      }
+    end
   end
 
   private

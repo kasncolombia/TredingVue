@@ -322,4 +322,63 @@ function updateRulesDisplay() {
     document.getElementById("rule-min-days").textContent = data.min_days;
   }
 }
+
+window.toggleCustomRulesModal = function() {
+  const modal = document.getElementById("custom-rules-modal");
+  if (modal) modal.classList.toggle("hidden");
+};
 </script>
+
+<!-- MODAL PARA EDITAR REGLAS PERSONALIZADAS (OVERRIDES) -->
+<div id="custom-rules-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+  <div class="glass rounded-2xl p-6 w-full max-w-lg mx-4 space-y-4 shadow-2xl border dark:border-darkBorder border-slate-200">
+    <div class="flex items-center justify-between pb-3 border-b dark:border-darkBorder border-slate-200">
+      <h3 class="text-base font-black dark:text-white text-slate-800 flex items-center gap-2">
+        <span class="material-symbols-outlined text-brand">edit_note</span>
+        Personalizar Reglas del Challenge
+      </h3>
+      <button type="button" onclick="toggleCustomRulesModal()" class="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover transition-all">
+        <span class="material-symbols-outlined text-slate-400 text-[18px]">close</span>
+      </button>
+    </div>
+
+    <p class="text-xs text-slate-400">Si tu firma o contrato tiene reglas especiales (promociones, reglas personalizadas o add-ons), ajusta aquí las reglas exactas para que el sistema audite tu diario:</p>
+
+    <div class="grid grid-cols-2 gap-4 text-xs font-bold dark:text-slate-200 text-slate-700">
+      <div>
+        <label class="block mb-1">Profit Target Personalizado ($)</label>
+        <input type="number" name="prop_firm_account[custom_profit_target]" placeholder="Ej: 3000" class="input-field w-full px-3 py-2 rounded-xl text-xs font-mono focus:outline-none focus:border-brand">
+      </div>
+      <div>
+        <label class="block mb-1">Max Drawdown Personalizado ($)</label>
+        <input type="number" name="prop_firm_account[custom_max_drawdown]" placeholder="Ej: 2000" class="input-field w-full px-3 py-2 rounded-xl text-xs font-mono focus:outline-none focus:border-brand">
+      </div>
+      <div>
+        <label class="block mb-1">Tipo de Drawdown</label>
+        <select name="prop_firm_account[custom_drawdown_type]" class="input-field w-full px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-brand">
+          <option value="eod">End of Day (EOD)</option>
+          <option value="trailing">Trailing Intradía</option>
+          <option value="static">Estático</option>
+        </select>
+      </div>
+      <div>
+        <label class="block mb-1">Límite Pérdida Diaria ($)</label>
+        <input type="number" name="prop_firm_account[custom_daily_loss_limit]" placeholder="Ej: 1000 (Opcional)" class="input-field w-full px-3 py-2 rounded-xl text-xs font-mono focus:outline-none focus:border-brand">
+      </div>
+      <div>
+        <label class="block mb-1">Consistencia (%)</label>
+        <input type="number" name="prop_firm_account[custom_consistency_pct]" placeholder="Ej: 50" max="100" class="input-field w-full px-3 py-2 rounded-xl text-xs font-mono focus:outline-none focus:border-brand">
+      </div>
+      <div>
+        <label class="block mb-1">Días Mínimos Trading</label>
+        <input type="number" name="prop_firm_account[custom_min_trading_days]" placeholder="Ej: 5" min="0" class="input-field w-full px-3 py-2 rounded-xl text-xs font-mono focus:outline-none focus:border-brand">
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-2 pt-3 border-t dark:border-darkBorder border-slate-200">
+      <button type="button" onclick="toggleCustomRulesModal()" class="px-5 py-2 bg-brand text-white font-bold text-xs rounded-xl shadow-md glow-brand">
+        Aplicar Reglas Personalizadas
+      </button>
+    </div>
+  </div>
+</div>

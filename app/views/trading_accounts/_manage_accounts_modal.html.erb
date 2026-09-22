@@ -1,0 +1,137 @@
+<!-- MODAL DE ADMINISTRACIÓN GLOBAL DE CUENTAS (DISEÑO PROFESIONAL SOBRIO) -->
+<div id="manage-accounts-modal" class="fixed inset-0 bg-slate-950/75 backdrop-blur-md z-[100] flex items-center justify-center p-4 hidden">
+  <div class="dark:bg-[#11131F] bg-white border border-slate-200 dark:border-slate-800 rounded-2xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+    
+    <!-- HEADER DEL MODAL -->
+    <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800/80 flex items-center justify-between dark:bg-[#151828] bg-slate-50">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center font-bold border border-slate-200 dark:border-slate-700">
+          <span class="material-symbols-outlined text-[20px]">manage_accounts</span>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white tracking-tight">Administrador de Cuentas</h3>
+          <p class="text-[11px] text-slate-400">Resumen y alternancia de cuentas de trading y cajas de fondeo</p>
+        </div>
+      </div>
+
+      <button type="button" onclick="closeManageAccountsModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+        <span class="material-symbols-outlined text-[18px]">close</span>
+      </button>
+    </div>
+
+    <!-- CONTENIDO DEL MODAL (LISTA DE CUENTAS) -->
+    <div class="p-5 overflow-y-auto space-y-5 flex-1">
+
+      <!-- SECCIÓN 1: CUENTAS PERSONALES & BROKERS -->
+      <div class="space-y-2.5">
+        <div class="flex items-center justify-between pb-1">
+          <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[15px]">hub</span>
+            Cuentas Personales / Reales
+          </h4>
+          <span class="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+            <%= current_user.trading_accounts.count %> Conectadas
+          </span>
+        </div>
+
+        <% if current_user.trading_accounts.any? %>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <% current_user.trading_accounts.each do |acc| %>
+              <div class="p-3 rounded-xl border border-slate-200 dark:border-slate-800 dark:bg-[#16192B] bg-slate-50/70 flex items-center justify-between hover:border-slate-400 dark:hover:border-slate-600 transition-all">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <div class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-extrabold text-[11px] flex items-center justify-center flex-shrink-0 border border-slate-300 dark:border-slate-700">
+                    <%= (acc.broker&.name || acc.name).first(2).upcase %>
+                  </div>
+                  <div class="min-w-0">
+                    <h5 class="text-xs font-bold text-slate-900 dark:text-white truncate"><%= acc.name %></h5>
+                    <p class="text-[10px] text-slate-400 truncate"><%= acc.broker&.name || "Broker" %> • <%= acc.connection_method.upcase %></p>
+                  </div>
+                </div>
+
+                <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 border border-emerald-500/20 flex-shrink-0">
+                  Activa
+                </span>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="p-3.5 rounded-xl border border-dashed border-slate-300 dark:border-slate-800 text-center space-y-1">
+            <p class="text-xs text-slate-400">No hay cuentas personales vinculadas.</p>
+            <button type="button" onclick="closeManageAccountsModal(); openAddAccountWizard();" class="text-[11px] font-bold text-slate-700 dark:text-slate-200 hover:underline inline-flex items-center gap-1">
+              + Vincular Broker
+            </button>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- SECCIÓN 2: CUENTAS DE FONDEO (PROP FIRMS) -->
+      <div class="space-y-2.5 pt-3 border-t border-slate-200 dark:border-slate-800/80">
+        <div class="flex items-center justify-between pb-1">
+          <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[15px]">verified</span>
+            Cuentas de Fondeo (Prop Firms)
+          </h4>
+          <span class="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+            <%= current_user.prop_firm_accounts.count %> Registradas
+          </span>
+        </div>
+
+        <% if current_user.prop_firm_accounts.any? %>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <% current_user.prop_firm_accounts.each do |prop| %>
+              <div class="p-3 rounded-xl border border-slate-200 dark:border-slate-800 dark:bg-[#16192B] bg-slate-50/70 flex items-center justify-between hover:border-slate-400 dark:hover:border-slate-600 transition-all">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <div class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-extrabold text-[11px] flex items-center justify-center flex-shrink-0 border border-slate-300 dark:border-slate-700">
+                    PF
+                  </div>
+                  <div class="min-w-0">
+                    <h5 class="text-xs font-bold text-slate-900 dark:text-white truncate"><%= prop.name %></h5>
+                    <p class="text-[10px] text-slate-400 truncate"><%= prop.firm_name %> • <%= prop.plan_name %></p>
+                  </div>
+                </div>
+
+                <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 flex-shrink-0">
+                  <%= prop.status.capitalize %>
+                </span>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="p-3.5 rounded-xl border border-dashed border-slate-300 dark:border-slate-800 text-center space-y-1">
+            <p class="text-xs text-slate-400">No hay cuentas de fondeo registradas.</p>
+            <%= link_to "+ Registrar Cuenta Prop Firm", prop_firm_accounts_path, class: "text-[11px] font-bold text-slate-700 dark:text-slate-200 hover:underline inline-flex items-center gap-1" %>
+          </div>
+        <% end %>
+      </div>
+
+    </div>
+
+    <!-- FOOTER DEL MODAL CON ACCIONES SOBRIAS -->
+    <div class="px-6 py-3.5 border-t border-slate-200 dark:border-slate-800/80 dark:bg-[#151828] bg-slate-50 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-2 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+        <%= link_to trading_accounts_path, class: "hover:text-slate-900 dark:hover:text-white transition-colors" do %>
+          Ver Conexiones
+        <% end %>
+        <span>•</span>
+        <%= link_to prop_firm_accounts_path, class: "hover:text-slate-900 dark:hover:text-white transition-colors" do %>
+          Ver Reglas Prop
+        <% end %>
+      </div>
+
+      <button type="button" onclick="closeManageAccountsModal(); openAddAccountWizard();" class="w-full sm:w-auto px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm">
+        <span class="material-symbols-outlined text-[15px]">add_link</span>
+        <span>+ Vincular Nueva Cuenta</span>
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function openManageAccountsModal() {
+    document.getElementById('manage-accounts-modal').classList.remove('hidden');
+  }
+  function closeManageAccountsModal() {
+    document.getElementById('manage-accounts-modal').classList.add('hidden');
+  }
+</script>

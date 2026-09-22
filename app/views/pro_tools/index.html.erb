@@ -12,12 +12,25 @@
     </p>
   </div>
 
-  <div class="flex p-1 bg-slate-200/50 dark:bg-darkBorder/50 rounded-xl w-max border border-slate-300/50 dark:border-darkBorder">
-    <%= link_to pro_tools_path(tab: 'backtest'), class: "py-2 px-4 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 #{@active_tab == 'backtest' ? 'bg-white dark:bg-slate-700 text-brand shadow-sm' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'}" do %>
-      <span class="material-symbols-outlined text-[16px]">sports_esports</span> Simulador
-    <% end %>
-    <%= link_to pro_tools_path(tab: 'prop'), class: "py-2 px-4 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 #{@active_tab == 'prop' ? 'bg-white dark:bg-slate-700 text-emerald-500 shadow-sm' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'}" do %>
-      <span class="material-symbols-outlined text-[16px]">business_center</span> Tracker Contable
+  <div class="flex items-center gap-3">
+    <div class="flex p-1 bg-slate-200/50 dark:bg-darkBorder/50 rounded-xl w-max border border-slate-300/50 dark:border-darkBorder">
+      <%= link_to pro_tools_path(tab: 'backtest'), class: "py-2 px-4 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 #{@active_tab == 'backtest' ? 'bg-white dark:bg-slate-700 text-brand shadow-sm' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'}" do %>
+        <span class="material-symbols-outlined text-[16px]">sports_esports</span> Simulador
+      <% end %>
+      <%= link_to pro_tools_path(tab: 'prop'), class: "py-2 px-4 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 #{@active_tab == 'prop' ? 'bg-white dark:bg-slate-700 text-emerald-500 shadow-sm' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'}" do %>
+        <span class="material-symbols-outlined text-[16px]">business_center</span> Tracker Contable
+      <% end %>
+      <%= link_to prop_firm_accounts_path, class: "py-2 px-4 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white" do %>
+        <span class="material-symbols-outlined text-[16px]">account_tree</span> Cuentas & Reglas
+      <% end %>
+      <%= link_to trading_accounts_path, class: "py-2 px-4 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white" do %>
+        <span class="material-symbols-outlined text-[16px]">hub</span> Conexión Brokers
+      <% end %>
+    </div>
+    
+    <%= link_to new_prop_firm_account_path, class: "py-2 px-3.5 bg-brand hover:bg-brand-hover text-white font-bold text-xs rounded-xl shadow-sm transition-all flex items-center gap-1" do %>
+      <span class="material-symbols-outlined text-[16px]">add</span>
+      <span class="hidden sm:inline">Nueva Cuenta</span>
     <% end %>
   </div>
 </div>

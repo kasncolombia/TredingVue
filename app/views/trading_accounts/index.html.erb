@@ -1,0 +1,98 @@
+<% content_for :title, "Mis Cuentas & Conexiones — CoachTrading PRO" %>
+
+<div class="p-4 md:p-6 space-y-6 max-w-7xl mx-auto">
+  
+  <!-- HEADER CON BOTÓN TRADEZELLA ADD ACCOUNT -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 dark:border-darkBorder pb-4">
+    <div>
+      <h1 class="text-xl md:text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2.5">
+        <span class="material-symbols-outlined text-brand text-[28px]">hub</span>
+        Mis Cuentas & Conexiones
+      </h1>
+      <p class="text-xs text-slate-400 mt-1">Administra tus integraciones de brokers, sincronización API e historial de carga por plataforma.</p>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <button onclick="openAddAccountWizard()" class="px-4 py-2.5 rounded-xl bg-brand hover:bg-brand-hover text-white text-xs font-black shadow-lg shadow-brand/25 transition-all flex items-center gap-2 group cursor-pointer">
+        <span class="material-symbols-outlined text-[18px] group-hover:rotate-90 transition-transform">add_link</span>
+        <span>Add Account +</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- LISTADO DE CUENTAS CONECTADAS -->
+  <% if @trading_accounts.any? %>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <% @trading_accounts.each do |acc| %>
+        <div class="glass rounded-3xl p-5 border border-slate-200/80 dark:border-darkBorder shadow-xs hover:shadow-md transition-all flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2.5">
+                <% logo_path = acc.broker&.logo_filename.present? ? image_path(acc.broker.logo_filename) : nil %>
+                <% if logo_path %>
+                  <img src="<%= logo_path %>" alt="<%= acc.broker.name %>" class="h-7 w-auto object-contain">
+                <% else %>
+                  <div class="w-8 h-8 rounded-xl bg-brand/10 text-brand font-black text-xs flex items-center justify-center">
+                    <%= (acc.broker&.name || acc.name).first(2).upcase %>
+                  </div>
+                <% end %>
+                <div>
+                  <h3 class="text-sm font-extrabold text-slate-900 dark:text-white"><%= acc.name %></h3>
+                  <p class="text-[10px] text-slate-400 font-medium"><%= acc.broker&.name || "Plataforma genérica" %></p>
+                </div>
+              </div>
+              <span class="text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider <%= acc.connection_method == 'autosync' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : (acc.connection_method == 'file_upload' ? 'bg-indigo-500/10 text-indigo-500 border border-indigo-500/20' : 'bg-slate-500/10 text-slate-500 border border-slate-500/20') %>">
+                <%= acc.connection_method %>
+              </span>
+            </div>
+
+            <!-- Información Adicional -->
+            <div class="space-y-1.5 text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <% if acc.prop_firm_account %>
+                <div class="flex items-center justify-between text-[11px]">
+                  <span>Vinc. Fondeo:</span>
+                  <span class="font-bold text-slate-800 dark:text-slate-200"><%= acc.prop_firm_account.name %></span>
+                </div>
+              <% end %>
+              <div class="flex items-center justify-between text-[11px]">
+                <span>Trades Registrados:</span>
+                <span class="font-mono font-bold text-brand"><%= acc.trades.count %></span>
+              </div>
+              <div class="flex items-center justify-between text-[11px]">
+                <span>Zona Horaria:</span>
+                <span class="font-mono text-slate-600 dark:text-slate-300"><%= acc.time_zone %></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Acciones de Tarjeta -->
+          <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+            <%= link_to trades_path(account_id: acc.id), class: "text-xs font-bold text-brand hover:underline flex items-center gap-1" do %>
+              Ver Operaciones <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+            <% end %>
+            <%= button_to trading_account_path(acc), method: :delete, data: { turbo_confirm: "¿Seguro que deseas eliminar esta conexión?" }, class: "text-slate-400 hover:text-rose-500 transition-colors p-1" do %>
+              <span class="material-symbols-outlined text-[16px]">delete</span>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <!-- ESTADO VACÍO -->
+    <div class="glass rounded-3xl p-10 text-center max-w-lg mx-auto space-y-4 border border-slate-200/80 dark:border-darkBorder">
+      <div class="w-14 h-14 rounded-2xl bg-brand/10 text-brand flex items-center justify-center mx-auto">
+        <span class="material-symbols-outlined text-[32px]">hub</span>
+      </div>
+      <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Aún no has conectado ninguna cuenta</h3>
+      <p class="text-xs text-slate-400 leading-relaxed">Conecta tu broker, firma de fondeo o plataforma para sincronizar operaciones vía API, importar historial CSV o registrar ejecuciones.</p>
+      <button onclick="openAddAccountWizard()" class="px-5 py-2.5 rounded-xl bg-brand hover:bg-brand-hover text-white text-xs font-black shadow-lg transition-all inline-flex items-center gap-2 cursor-pointer">
+        <span class="material-symbols-outlined text-[18px]">add_link</span>
+        <span>Conectar Mi Primera Cuenta</span>
+      </button>
+    </div>
+  <% end %>
+
+</div>
+
+<!-- Renderizar Modal Wizard -->
+<%= render "wizard_modal" %>

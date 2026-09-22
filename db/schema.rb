@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_19_183000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_22_180500) do
   create_table "ai_analyses", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "discipline_score"
@@ -59,6 +59,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_19_183000) do
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["user_id"], name: "index_backtest_sessions_on_user_id"
+  end
+
+  create_table "brokers", force: :cascade do |t|
+    t.text "autosync_instructions"
+    t.string "category", default: "broker"
+    t.datetime "created_at", null: false
+    t.text "csv_instructions"
+    t.string "logo_filename"
+    t.string "name", null: false
+    t.boolean "supports_autosync", default: false
+    t.boolean "supports_file_upload", default: true
+    t.boolean "supports_manual", default: true
+    t.datetime "updated_at", null: false
   end
 
   create_table "chat_rooms", force: :cascade do |t|
@@ -284,14 +297,35 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_19_183000) do
     t.string "tags"
     t.decimal "take_profit", precision: 20, scale: 8
     t.string "timeframe"
+    t.integer "trading_account_id"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["prop_firm_account_id"], name: "index_trades_on_prop_firm_account_id"
     t.index ["strategy_id"], name: "index_trades_on_strategy_id"
+    t.index ["trading_account_id"], name: "index_trades_on_trading_account_id"
     t.index ["user_id", "entry_at"], name: "index_trades_on_user_id_and_entry_at"
     t.index ["user_id", "result"], name: "index_trades_on_user_id_and_result"
     t.index ["user_id", "symbol"], name: "index_trades_on_user_id_and_symbol"
     t.index ["user_id"], name: "index_trades_on_user_id"
+  end
+
+  create_table "trading_accounts", force: :cascade do |t|
+    t.string "account_type", default: "real"
+    t.string "api_key"
+    t.string "api_secret"
+    t.integer "broker_id"
+    t.string "connection_method", default: "manual", null: false
+    t.datetime "created_at", null: false
+    t.string "date_format", default: "YYYY-MM-DD"
+    t.datetime "last_synced_at"
+    t.string "name", null: false
+    t.integer "prop_firm_account_id"
+    t.string "time_zone", default: "UTC"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["broker_id"], name: "index_trading_accounts_on_broker_id"
+    t.index ["prop_firm_account_id"], name: "index_trading_accounts_on_prop_firm_account_id"
+    t.index ["user_id"], name: "index_trading_accounts_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -348,5 +382,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_19_183000) do
   add_foreign_key "trade_shares", "users"
   add_foreign_key "trades", "prop_firm_accounts"
   add_foreign_key "trades", "strategies"
+  add_foreign_key "trades", "trading_accounts"
   add_foreign_key "trades", "users"
+  add_foreign_key "trading_accounts", "brokers"
+  add_foreign_key "trading_accounts", "prop_firm_accounts"
+  add_foreign_key "trading_accounts", "users"
 end

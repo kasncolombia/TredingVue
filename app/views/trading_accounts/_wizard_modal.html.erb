@@ -1,0 +1,313 @@
+<!-- MODAL WIZARD TRADEZELLA: ADD ACCOUNT & CONNECT BROKER -->
+<div id="add-account-modal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+  <!-- Backdrop -->
+  <div class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm transition-opacity" onclick="closeAddAccountWizard()"></div>
+
+  <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+    <div class="relative transform overflow-hidden rounded-3xl bg-white dark:bg-darkCard text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-2xl border border-slate-200 dark:border-darkBorder">
+      
+      <!-- HEADER DEL MODAL -->
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-darkBorder bg-slate-50/50 dark:bg-slate-900/40">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-2xl bg-brand/10 text-brand flex items-center justify-center font-bold">
+            <span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
+          </div>
+          <div>
+            <h3 class="text-base font-extrabold text-slate-900 dark:text-white" id="wizard-title">Vincular Nueva Cuenta</h3>
+            <p class="text-xs text-slate-400 font-medium" id="wizard-subtitle">Paso 1: Selecciona tu Broker o Plataforma</p>
+          </div>
+        </div>
+        <button onclick="closeAddAccountWizard()" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <!-- PROGRESO DEL WIZARD (STEPS) -->
+      <div class="px-6 pt-4 pb-2 border-b border-slate-100 dark:border-slate-800">
+        <div class="flex items-center justify-between text-xs font-bold text-slate-400 mb-2">
+          <span id="step-label-1" class="text-brand">1. Seleccionar Broker</span>
+          <span id="step-label-2" class="text-slate-400">2. Método de Conexión</span>
+          <span id="step-label-3" class="text-slate-400">3. Configurar Datos</span>
+        </div>
+        <div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+          <div id="wizard-progress-bar" class="bg-brand h-full w-1/3 transition-all duration-300"></div>
+        </div>
+      </div>
+
+      <!-- CONTENIDO DEL WIZARD (PASOS) -->
+      <div class="p-6">
+        
+        <!-- PASO 1: BÚSQUEDA Y SELECCIÓN DE BROKER / PLATAFORMA -->
+        <div id="wizard-step-1" class="space-y-4">
+          <!-- Buscador -->
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3.5 top-3 text-slate-400 text-[18px]">search</span>
+            <input type="text" id="broker-search-input" onkeyup="filterBrokersList()" placeholder="Buscar broker o plataforma (ej: MatchTrader, IBKR, Topstep)..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-sm focus:outline-none focus:border-brand font-medium">
+          </div>
+
+          <!-- Grid de Brokers Fijo de 4 Plataformas -->
+          <div id="brokers-grid" class="grid grid-cols-2 sm:grid-cols-2 gap-4 max-h-80 overflow-y-auto pr-1">
+            <% 
+              ibkr = Broker.find_by("LOWER(name) LIKE ?", "%interactive%") || Broker.first
+              ninja = Broker.find_by("LOWER(name) LIKE ?", "%ninja%") || Broker.second
+              topstep = Broker.find_by("LOWER(name) LIKE ?", "%topstep%") || Broker.third
+              tradovate = Broker.find_by("LOWER(name) LIKE ?", "%tradovate%") || Broker.fourth
+            %>
+            
+            <!-- 1. Interactive Brokers -->
+            <button type="button" onclick="selectBroker(<%= ibkr&.id || 1 %>, 'Interactive Brokers', '<%= image_path('brokers/Interactive Brokers.png') %>', true, true, true, '1. Accede a IBKR Account Management.\n2. Ve a Settings -> API -> Configure Token.\n3. Copia tu Token para sincronizar.')" class="broker-card p-4 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-brand dark:hover:border-brand bg-slate-50 dark:bg-slate-900/60 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all flex flex-col items-center justify-center text-center gap-3 group cursor-pointer shadow-sm">
+              <img src="<%= image_path('brokers/Interactive Brokers.png') %>" alt="Interactive Brokers" class="h-12 w-auto object-contain group-hover:scale-105 transition-transform">
+              <div>
+                <span class="text-xs font-black text-slate-800 dark:text-slate-200 group-hover:text-brand block">Interactive Brokers</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 font-bold uppercase tracking-wider mt-1 inline-block">AutoSync + CSV</span>
+              </div>
+            </button>
+
+            <!-- 2. NinjaTrader -->
+            <button type="button" onclick="selectBroker(<%= ninja&.id || 2 %>, 'NinjaTrader', '<%= image_path('brokers/Ninja Trader.png') %>', false, true, true, '')" class="broker-card p-4 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-brand dark:hover:border-brand bg-slate-50 dark:bg-slate-900/60 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all flex flex-col items-center justify-center text-center gap-3 group cursor-pointer shadow-sm">
+              <img src="<%= image_path('brokers/Ninja Trader.png') %>" alt="NinjaTrader" class="h-12 w-auto object-contain group-hover:scale-105 transition-transform">
+              <div>
+                <span class="text-xs font-black text-slate-800 dark:text-slate-200 group-hover:text-brand block">NinjaTrader</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-500 font-bold uppercase tracking-wider mt-1 inline-block">Upload File CSV</span>
+              </div>
+            </button>
+
+            <!-- 3. Topstep -->
+            <button type="button" onclick="selectBroker(<%= topstep&.id || 3 %>, 'Topstep', '<%= image_path('brokers/Topstep.png') %>', true, true, true, '1. Accede a tu Dashboard de Topstep.\n2. Copia tus credenciales de conexión o API Token.\n3. Pégalos en el formulario.')" class="broker-card p-4 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-brand dark:hover:border-brand bg-slate-50 dark:bg-slate-900/60 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all flex flex-col items-center justify-center text-center gap-3 group cursor-pointer shadow-sm">
+              <img src="<%= image_path('brokers/Topstep.png') %>" alt="Topstep" class="h-12 w-auto object-contain group-hover:scale-105 transition-transform">
+              <div>
+                <span class="text-xs font-black text-slate-800 dark:text-slate-200 group-hover:text-brand block">Topstep</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 font-bold uppercase tracking-wider mt-1 inline-block">Prop Firm / AutoSync</span>
+              </div>
+            </button>
+
+            <!-- 4. Tradovate -->
+            <button type="button" onclick="selectBroker(<%= tradovate&.id || 4 %>, 'Tradovate', '<%= image_path('brokers/Tradovate.png') %>', true, true, true, '1. Inicia sesión en Tradovate.\n2. Ve a API Access -> Generate New API Key.\n3. Copia API Key y API Secret.')" class="broker-card p-4 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-brand dark:hover:border-brand bg-slate-50 dark:bg-slate-900/60 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all flex flex-col items-center justify-center text-center gap-3 group cursor-pointer shadow-sm">
+              <img src="<%= image_path('brokers/Tradovate.png') %>" alt="Tradovate" class="h-12 w-auto object-contain group-hover:scale-105 transition-transform">
+              <div>
+                <span class="text-xs font-black text-slate-800 dark:text-slate-200 group-hover:text-brand block">Tradovate</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 font-bold uppercase tracking-wider mt-1 inline-block">AutoSync + CSV</span>
+              </div>
+            </button>
+
+          </div>
+        </div>
+
+        <!-- PASO 2: SELECCIÓN DEL MÉTODO DE CONEXIÓN -->
+        <div id="wizard-step-2" class="hidden space-y-4">
+          <div class="flex items-center gap-3 p-3 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <div id="selected-broker-logo-container" class="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center p-1 border">
+              <!-- Rendered via JS -->
+            </div>
+            <div>
+              <p class="text-xs text-slate-400 font-medium">Plataforma seleccionada</p>
+              <h4 id="selected-broker-name" class="text-sm font-extrabold text-slate-900 dark:text-white">—</h4>
+            </div>
+            <button onclick="goToStep(1)" class="ml-auto text-xs text-brand font-bold hover:underline">Cambiar</button>
+          </div>
+
+          <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Elige el método de integración:</p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <!-- AutoSync -->
+            <button id="method-btn-autosync" onclick="selectConnectionMethod('autosync')" class="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-brand bg-slate-50 dark:bg-slate-900 text-left transition-all flex flex-col justify-between group cursor-pointer">
+              <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center mb-3">
+                <span class="material-symbols-outlined text-[18px]">sync</span>
+              </div>
+              <div>
+                <h5 class="text-xs font-extrabold text-slate-900 dark:text-white group-hover:text-brand">AutoSync (API)</h5>
+                <p class="text-[10px] text-slate-400 mt-1">Conexión directa automática con credenciales/tokens de la API.</p>
+              </div>
+            </button>
+
+            <!-- Upload File -->
+            <button id="method-btn-file_upload" onclick="selectConnectionMethod('file_upload')" class="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-brand bg-slate-50 dark:bg-slate-900 text-left transition-all flex flex-col justify-between group cursor-pointer">
+              <div class="w-8 h-8 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center mb-3">
+                <span class="material-symbols-outlined text-[18px]">upload_file</span>
+              </div>
+              <div>
+                <h5 class="text-xs font-extrabold text-slate-900 dark:text-white group-hover:text-brand">Upload File</h5>
+                <p class="text-[10px] text-slate-400 mt-1">Carga manual de historial de trades en formato CSV o Excel.</p>
+              </div>
+            </button>
+
+            <!-- Add Manually -->
+            <button id="method-btn-manual" onclick="selectConnectionMethod('manual')" class="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-brand bg-slate-50 dark:bg-slate-900 text-left transition-all flex flex-col justify-between group cursor-pointer">
+              <div class="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center mb-3">
+                <span class="material-symbols-outlined text-[18px]">edit_note</span>
+              </div>
+              <div>
+                <h5 class="text-xs font-extrabold text-slate-900 dark:text-white group-hover:text-brand">Add Manually</h5>
+                <p class="text-[10px] text-slate-400 mt-1">Registra operaciones manualmente una por una en tu diario.</p>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- PASO 3: FORMULARIO FINAL DE CONFIGURACIÓN DE CUENTA -->
+        <div id="wizard-step-3" class="hidden space-y-4">
+          <%= form_with model: TradingAccount.new, url: trading_accounts_path, id: "trading-account-form", local: true, class: "space-y-4" do |f| %>
+            <%= f.hidden_field :broker_id, id: "form-broker-id" %>
+            <%= f.hidden_field :connection_method, id: "form-connection-method" %>
+
+            <!-- Nombre de Cuenta -->
+            <div>
+              <label class="block text-xs font-extrabold text-slate-700 dark:text-slate-300 mb-1">Nombre / Alias de la Cuenta *</label>
+              <%= f.text_field :name, placeholder: "ej. Interactive Brokers Real #1", required: true, class: "w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-xs font-semibold" %>
+            </div>
+
+            <!-- Vincular a Prop Firm Account (Opcional) -->
+            <div>
+              <label class="block text-xs font-extrabold text-slate-700 dark:text-slate-300 mb-1">Vincular a Cuenta de Fondeo (Opcional)</label>
+              <%= f.collection_select :prop_firm_account_id, @prop_firm_accounts || [], :id, ->(acc) { "#{acc.name} — #{acc.firm_name} (#{acc.status.capitalize})" }, { include_blank: "Ninguna (Cuenta Personal / Real)" }, class: "w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-xs font-semibold" %>
+            </div>
+
+            <!-- OPCIONES ESPECÍFICAS SEGÚN MÉTODO -->
+            <div id="method-options-autosync" class="hidden p-3.5 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50 space-y-3">
+              <h5 class="text-xs font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[16px]">api</span> Credenciales API AutoSync
+              </h5>
+              <p id="autosync-instructions-text" class="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed"></p>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-600 dark:text-slate-400 mb-1">API Key</label>
+                  <%= f.text_field :api_key, placeholder: "Clave de API", class: "w-full px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-mono" %>
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-600 dark:text-slate-400 mb-1">API Secret</label>
+                  <%= f.password_field :api_secret, placeholder: "Secreto de API", class: "w-full px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-mono" %>
+                </div>
+              </div>
+            </div>
+
+            <div id="method-options-file_upload" class="hidden p-3.5 rounded-2xl bg-indigo-50/50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800/50 space-y-3">
+              <h5 class="text-xs font-bold text-indigo-800 dark:text-indigo-300 flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[16px]">tune</span> Configuración de Archivo
+              </h5>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-600 dark:text-slate-400 mb-1">Zona Horaria de Operaciones</label>
+                  <%= f.select :time_zone, TradingAccount::TIME_ZONES, { selected: "UTC" }, class: "w-full px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-semibold" %>
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-600 dark:text-slate-400 mb-1">Formato de Fecha en CSV</label>
+                  <%= f.select :date_format, TradingAccount::DATE_FORMATS, { selected: "YYYY-MM-DD" }, class: "w-full px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-semibold" %>
+                </div>
+              </div>
+            </div>
+
+            <!-- BOTÓN GUARDAR -->
+            <div class="pt-3 flex items-center justify-between border-t border-slate-200 dark:border-slate-800">
+              <button type="button" onclick="goToStep(2)" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors">Volver</button>
+              <%= f.submit "Conectar Cuenta", class: "px-5 py-2.5 rounded-xl bg-brand hover:bg-brand-hover text-white text-xs font-extrabold shadow-md cursor-pointer transition-all" %>
+            </div>
+          <% end %>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- JAVASCRIPT DEL WIZARD -->
+<script>
+  let currentWizardStep = 1;
+  let selectedBroker = null;
+  let selectedConnectionMethod = null;
+
+  function openAddAccountWizard() {
+    document.getElementById('add-account-modal').classList.remove('hidden');
+    goToStep(1);
+  }
+
+  function closeAddAccountWizard() {
+    document.getElementById('add-account-modal').classList.add('hidden');
+  }
+
+  function goToStep(step) {
+    currentWizardStep = step;
+    
+    // Hide all steps
+    document.getElementById('wizard-step-1').classList.add('hidden');
+    document.getElementById('wizard-step-2').classList.add('hidden');
+    document.getElementById('wizard-step-3').classList.add('hidden');
+    
+    // Show current step
+    document.getElementById(`wizard-step-${step}`).classList.remove('hidden');
+
+    // Update Progress & Headers
+    const progressBar = document.getElementById('wizard-progress-bar');
+    const title = document.getElementById('wizard-title');
+    const subtitle = document.getElementById('wizard-subtitle');
+
+    if (step === 1) {
+      progressBar.style.width = '33%';
+      title.innerText = "Vincular Nueva Cuenta";
+      subtitle.innerText = "Paso 1: Selecciona tu Broker o Plataforma";
+      document.getElementById('step-label-1').className = "text-brand font-extrabold";
+      document.getElementById('step-label-2').className = "text-slate-400";
+      document.getElementById('step-label-3').className = "text-slate-400";
+    } else if (step === 2) {
+      progressBar.style.width = '66%';
+      title.innerText = `Conectar ${selectedBroker.name}`;
+      subtitle.innerText = "Paso 2: Elige el método de integración";
+      document.getElementById('step-label-1').className = "text-slate-400";
+      document.getElementById('step-label-2').className = "text-brand font-extrabold";
+      document.getElementById('step-label-3').className = "text-slate-400";
+    } else if (step === 3) {
+      progressBar.style.width = '100%';
+      title.innerText = `Configurar ${selectedBroker.name}`;
+      subtitle.innerText = "Paso 3: Completa los parámetros de la cuenta";
+      document.getElementById('step-label-1').className = "text-slate-400";
+      document.getElementById('step-label-2').className = "text-slate-400";
+      document.getElementById('step-label-3').className = "text-brand font-extrabold";
+    }
+  }
+
+  function selectBroker(id, name, logoUrl, supportsAutosync, supportsFileUpload, supportsManual, instructions) {
+    selectedBroker = { id, name, logoUrl, supportsAutosync, supportsFileUpload, supportsManual, instructions };
+    
+    // Update Step 2 UI
+    const container = document.getElementById('selected-broker-logo-container');
+    if (logoUrl) {
+      container.innerHTML = `<img src="${logoUrl}" class="h-6 w-auto object-contain">`;
+    } else {
+      container.innerHTML = `<span class="text-xs font-bold text-slate-700 dark:text-slate-300">${name.substring(0, 2).toUpperCase()}</span>`;
+    }
+    document.getElementById('selected-broker-name').innerText = name;
+
+    // Toggle method buttons availability
+    document.getElementById('method-btn-autosync').classList.toggle('opacity-40', !supportsAutosync);
+    document.getElementById('method-btn-file_upload').classList.toggle('opacity-40', !supportsFileUpload);
+    document.getElementById('method-btn-manual').classList.toggle('opacity-40', !supportsManual);
+
+    goToStep(2);
+  }
+
+  function selectConnectionMethod(method) {
+    selectedConnectionMethod = method;
+    document.getElementById('form-broker-id').value = selectedBroker.id;
+    document.getElementById('form-connection-method').value = method;
+
+    // Toggle Form Options
+    document.getElementById('method-options-autosync').classList.toggle('hidden', method !== 'autosync');
+    document.getElementById('method-options-file_upload').classList.toggle('hidden', method !== 'file_upload');
+
+    if (method === 'autosync') {
+      document.getElementById('autosync-instructions-text').innerText = selectedBroker.instructions || "Ingresa tus claves API para iniciar la sincronización en tiempo real.";
+    }
+
+    goToStep(3);
+  }
+
+  function filterBrokersList() {
+    const query = document.getElementById('broker-search-input').value.toLowerCase();
+    const cards = document.querySelectorAll('.broker-card');
+    cards.forEach(card => {
+      const text = card.innerText.toLowerCase();
+      card.style.display = text.includes(query) ? 'flex' : 'none';
+    });
+  }
+</script>

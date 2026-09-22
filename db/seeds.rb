@@ -323,4 +323,37 @@ end
 
 puts "  ✔ #{ReviewRequest.count} solicitudes de revisión creadas"
 
-puts "✅ Datos de Community sembrados con éxito!"
+# --- BROKERS & PLATFORMS ---
+puts ""
+puts "Sembrando catálogo de Brokers y Plataformas..."
+
+brokers_list = [
+  { name: "Topstep", logo_filename: "brokers/Topstep.png", category: "prop_firm", supports_autosync: true, supports_file_upload: true, supports_manual: true },
+  { name: "Apex Trader Funding", logo_filename: "compañias/Apex Trader funding.png", category: "prop_firm", supports_autosync: true, supports_file_upload: true, supports_manual: true },
+  { name: "My Funded Futures", logo_filename: "compañias/My funded futures.png", category: "prop_firm", supports_autosync: true, supports_file_upload: true, supports_manual: true },
+  { name: "Alpha Futures", logo_filename: "compañias/Alpha futures.png", category: "prop_firm", supports_autosync: false, supports_file_upload: true, supports_manual: true },
+  { name: "Lucid Trading", logo_filename: "compañias/Lucid trading.png", category: "prop_firm", supports_autosync: false, supports_file_upload: true, supports_manual: true },
+  { name: "Tradeify", logo_filename: "compañias/Tradeify.png", category: "prop_firm", supports_autosync: false, supports_file_upload: true, supports_manual: true },
+  { name: "Take Profit Trader", logo_filename: "compañias/take profit trader.png", category: "prop_firm", supports_autosync: true, supports_file_upload: true, supports_manual: true },
+  { name: "Interactive Brokers", logo_filename: "brokers/Interactive Brokers.png", category: "broker", supports_autosync: true, supports_file_upload: true, supports_manual: true },
+  { name: "Tradovate", logo_filename: "brokers/Tradovate.png", category: "platform", supports_autosync: true, supports_file_upload: true, supports_manual: true },
+  { name: "NinjaTrader", logo_filename: "brokers/Ninja Trader.png", category: "platform", supports_autosync: false, supports_file_upload: true, supports_manual: true },
+  { name: "MatchTrader", logo_filename: nil, category: "platform", supports_autosync: true, supports_file_upload: true, supports_manual: true },
+  { name: "MetaTrader 4/5 (MT4/MT5)", logo_filename: nil, category: "platform", supports_autosync: false, supports_file_upload: true, supports_manual: true },
+  { name: "Binance / Crypto Exchange", logo_filename: nil, category: "crypto_exchange", supports_autosync: true, supports_file_upload: true, supports_manual: true }
+]
+
+brokers_list.each do |battrs|
+  b = Broker.find_or_initialize_by(name: battrs[:name])
+  b.logo_filename = battrs[:logo_filename]
+  b.category = battrs[:category]
+  b.supports_autosync = battrs[:supports_autosync]
+  b.supports_file_upload = battrs[:supports_file_upload]
+  b.supports_manual = battrs[:supports_manual]
+  b.autosync_instructions = "1. Accede al panel API de tu broker #{battrs[:name]}.\n2. Genera una clave API (Read-Only).\n3. Pega la clave y el secreto en este formulario para sincronizar automáticamente tus trades."
+  b.save!
+end
+
+puts "  ✔ #{Broker.count} brokers/plataformas registradas"
+
+puts "✅ Datos de Community y Brokers sembrados con éxito!"

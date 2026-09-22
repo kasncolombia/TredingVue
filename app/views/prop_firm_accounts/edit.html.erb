@@ -1,0 +1,141 @@
+<% content_for :page_title, "Editar Cuenta: #{@account.name}" %>
+
+<div class="max-w-6xl mx-auto space-y-6 fade-in pb-12">
+  
+  <!-- BREADCRUMB -->
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-2 text-xs text-slate-400">
+      <%= link_to "Control de Fondeo", prop_ledger_index_path, class: "hover:text-brand transition-colors" %>
+      <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+      <%= link_to @account.name, prop_firm_account_path(@account), class: "hover:text-brand transition-colors font-bold" %>
+      <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+      <span class="dark:text-white text-slate-800 font-bold">Editar Ajustes</span>
+    </div>
+  </div>
+
+  <div class="flex items-center justify-between border-b dark:border-darkBorder border-slate-200 pb-4">
+    <div>
+      <h1 class="text-xl md:text-2xl font-black dark:text-white text-slate-900 flex items-center gap-2">
+        <span class="material-symbols-outlined text-brand text-[26px]">edit_square</span>
+        Ajustes Avanzados: <%= @account.name %>
+      </h1>
+      <p class="text-xs text-slate-400 mt-1">Modifica parámetros personalizados (límites, profit target, etc.) si tu firma tiene reglas no estándar.</p>
+    </div>
+  </div>
+
+  <%= form_with model: @account, url: prop_firm_account_path(@account), method: :patch, class: "space-y-6" do |f| %>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+      <!-- ================= SECCIÓN IZQUIERDA: GENERAL ================= -->
+      <div class="glass rounded-2xl p-5 md:p-6 border-l-4 border-slate-400 space-y-5">
+        
+        <div class="pb-3 border-b dark:border-darkBorder border-slate-200">
+          <h2 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
+            <span class="material-symbols-outlined text-slate-400 text-[18px]">info</span>
+            Identificación y Base
+          </h2>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Nombre de la cuenta <span class="text-rose-500">*</span></label>
+          <%= f.text_field :name, required: true, class: "input-field w-full px-3.5 py-2.5 rounded-xl text-sm font-bold focus:outline-none focus:border-brand" %>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Firma</label>
+            <%= f.text_field :firm_name, readonly: true, class: "input-field w-full px-3.5 py-2.5 rounded-xl text-sm font-bold bg-slate-100 dark:bg-darkHover cursor-not-allowed text-slate-500" %>
+          </div>
+          <div>
+            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Tamaño</label>
+            <%= f.text_field :account_size, readonly: true, class: "input-field w-full px-3.5 py-2.5 rounded-xl text-sm font-mono font-bold bg-slate-100 dark:bg-darkHover cursor-not-allowed text-slate-500" %>
+          </div>
+        </div>
+
+        <!-- ESTRATEGIAS -->
+        <div class="pt-2">
+          <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Estrategias asignadas</label>
+          <select name="strategy_ids[]" multiple class="input-field w-full px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:border-brand h-24">
+            <option value="" disabled selected>Selecciona estrategias...</option>
+            <% @strategies.each do |strat| %>
+              <option value="<%= strat.id %>" <%= 'selected' if @account.strategy_ids.include?(strat.id) %>><%= strat.name %></option>
+            <% end %>
+          </select>
+          <p class="text-[10px] text-slate-400 mt-1">Presiona Ctrl/Cmd para seleccionar varias.</p>
+        </div>
+
+      </div>
+
+      <!-- ================= SECCIÓN DERECHA: REGLAS CUSTOM ================= -->
+      <div class="glass rounded-2xl p-5 md:p-6 border-l-4 border-brand space-y-5">
+        
+        <div class="pb-3 border-b dark:border-darkBorder border-slate-200">
+          <h2 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
+            <span class="material-symbols-outlined text-brand text-[18px]">rule</span>
+            Reglas Personalizadas (Overrides)
+          </h2>
+          <p class="text-[10px] text-slate-400 mt-0.5">Deja los campos en blanco para usar las reglas por defecto (ej: Topstep 50k).</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <!-- PROFIT TARGET -->
+          <div>
+            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Profit Target ($)</label>
+            <%= f.number_field :custom_profit_target, placeholder: @account.active_profit_target, step: "any", class: "input-field w-full px-3 py-2.5 rounded-xl text-sm font-mono focus:outline-none focus:border-brand" %>
+          </div>
+
+          <!-- MAX DRAWDOWN -->
+          <div>
+            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Max Drawdown ($)</label>
+            <%= f.number_field :custom_max_drawdown, placeholder: @account.active_max_drawdown, step: "any", class: "input-field w-full px-3 py-2.5 rounded-xl text-sm font-mono focus:outline-none focus:border-brand" %>
+          </div>
+
+          <!-- TIPO DE DRAWDOWN -->
+          <div>
+            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Tipo drawdown</label>
+            <%= f.select :custom_drawdown_type, [["End of Day (EOD)", "eod"], ["Trailing Intradía", "trailing"], ["Static", "static"]], { include_blank: "Por defecto (#{@account.active_drawdown_type&.upcase})" }, class: "input-field w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-brand" %>
+          </div>
+
+          <!-- DAILY LOSS LIMIT -->
+          <div>
+            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Límite Diario ($)</label>
+            <%= f.number_field :custom_daily_loss_limit, placeholder: @account.active_daily_loss_limit || "No aplica", step: "any", class: "input-field w-full px-3 py-2.5 rounded-xl text-sm font-mono focus:outline-none focus:border-brand" %>
+          </div>
+
+          <!-- CONSISTENCIA % -->
+          <div>
+            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Regla Consistencia (%)</label>
+            <%= f.number_field :custom_consistency_pct, placeholder: @account.active_consistency_pct, step: "any", max: 100, class: "input-field w-full px-3 py-2.5 rounded-xl text-sm font-mono focus:outline-none focus:border-brand" %>
+          </div>
+
+          <!-- DIAS MINIMOS -->
+          <div>
+            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Días Mínimos Trading</label>
+            <%= f.number_field :custom_min_trading_days, placeholder: @account.active_min_trading_days, step: "1", min: 0, class: "input-field w-full px-3 py-2.5 rounded-xl text-sm font-mono focus:outline-none focus:border-brand" %>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- BOTONES DE ACCIÓN -->
+    <div class="flex items-center justify-between pt-4 border-t dark:border-darkBorder border-slate-200">
+      <%= link_to prop_firm_account_path(@account), data: { turbo_method: :delete, turbo_confirm: "¡Cuidado! Esto borrará la cuenta. ¿Estás seguro?" }, class: "px-4 py-2 text-xs font-bold text-rose-500 hover:bg-rose-500/10 rounded-xl transition-all flex items-center gap-1" do %>
+        <span class="material-symbols-outlined text-[16px]">delete</span> Eliminar Cuenta
+      <% end %>
+
+      <div class="flex items-center gap-3">
+        <%= link_to "Cancelar", prop_firm_account_path(@account), class: "px-5 py-2.5 text-xs font-bold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white rounded-xl border dark:border-darkBorder border-slate-200 transition-all" %>
+        
+        <button type="submit" class="px-8 py-3 bg-brand hover:scale-[1.02] text-white font-extrabold text-xs rounded-xl shadow-lg glow-brand transition-all flex items-center gap-2 cursor-pointer">
+          <span class="material-symbols-outlined text-[18px]">save</span>
+          Guardar Cambios
+        </button>
+      </div>
+    </div>
+
+  <% end %>
+
+</div>

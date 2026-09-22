@@ -139,10 +139,10 @@
     html:not(.dark) .table-row-hover:hover { background: rgba(108,92,231,.08); }
     html:not(.dark) .table-row-hover:hover td { color: #0F0E1A; }
     html:not(.dark) .dropdown-bg  { background: #FFFFFF; border: 1px solid #E2E6F0; box-shadow: 0 4px 24px rgba(108,92,231,.1); }
-    html:not(.dark) .nav-item     { color: #64748B; }
-    html:not(.dark) .nav-item:hover { background: rgba(108,92,231,.06); color: #6C5CE7; }
-    html:not(.dark) .nav-active   { background: #6C5CE7; color: #fff !important; }
-    html:not(.dark) .nav-active .material-symbols-outlined { color: #fff; }
+    html:not(.dark) .nav-item     { color: #64748B; border-left: 4px solid transparent; }
+    html:not(.dark) .nav-item:hover { background: #F1F5F9; color: #0F172A; }
+    html:not(.dark) .nav-active   { background: #F1F5F9 !important; color: #0F172A !important; font-weight: 600; border-left: 4px solid #4F46E5 !important; border-radius: 0 12px 12px 0 !important; }
+    html:not(.dark) .nav-active .material-symbols-outlined { color: #4F46E5 !important; }
 
     /* Light content canvas */
     html:not(.dark) .content-canvas { background: #EEF0F8; }
@@ -151,8 +151,11 @@
     /* ──────────────────────────────────────────
        COLLAPSED SIDEBAR DESKTOP STYLES
     ────────────────────────────────────────── */
+    #sidebar-container {
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
     #sidebar-container.collapsed {
-      width: 4.5rem !important;
+      width: 4.25rem !important;
     }
     #sidebar-container.collapsed .sidebar-text-hide {
       display: none !important;
@@ -165,8 +168,19 @@
       margin: 0;
       font-size: 22px;
     }
-    #sidebar-container.collapsed #sidebar-logo-icon {
-      margin: 0 auto;
+    #sidebar-container.collapsed #sidebar-logo-icon img {
+      width: 28px;
+      height: auto;
+    }
+    #sidebar-container.collapsed .action-btn-collapsed {
+      padding: 8px 0;
+      justify-content: center;
+    }
+    #sidebar-container.collapsed .footer-utilities {
+      flex-direction: column !important;
+      align-items: center !important;
+      gap: 4px !important;
+      padding-top: 6px !important;
     }
 
     /* ──────────────────────────────────────────
@@ -231,14 +245,61 @@
   <!-- MOBILE BACKDROP -->
   <div id="mobile-sidebar-backdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 hidden md:hidden transition-opacity"></div>
 
-  <!-- ===================== SIDEBAR ===================== -->
-  <aside id="sidebar-container" class="w-64 sidebar-bg flex flex-col justify-between flex-shrink-0 transition-all duration-300 transform -translate-x-full md:translate-x-0 fixed md:static inset-y-0 left-0 z-40">
-    <div class="overflow-y-auto overflow-x-hidden flex flex-col h-full">
+  <!-- ===================== DUAL SIDEBAR CONTAINER ===================== -->
+  <aside id="sidebar-container" class="flex flex-shrink-0 transition-all duration-300 transform -translate-x-full md:translate-x-0 fixed md:static inset-y-0 left-0 z-40">
+    
+    <!-- BARRA 1: PRIMARY RAIL (ESTRECHA ~64px / SIEMPRE VISIBLE) -->
+    <div class="w-16 bg-slate-900 dark:bg-slate-950 border-r border-slate-800 text-slate-400 flex flex-col justify-between items-center py-3 flex-shrink-0 z-20 shadow-md">
+      
+      <!-- ARRIBA: BOTÓN HAMBURGUESA QUE ABRE Y CIERRA EL PANEL SECUNDARIO -->
+      <div class="flex flex-col items-center w-full">
+        <button onclick="toggleDesktopSidebar()" class="p-2 rounded-xl bg-slate-800/80 hover:bg-brand hover:text-white text-slate-300 transition-all shadow-sm cursor-pointer" title="Abrir / Cerrar Menú Principal">
+          <span id="desktop-sidebar-icon" class="material-symbols-outlined text-[20px]">menu_open</span>
+        </button>
+      </div>
 
-      <!-- LOGO -->
+      <!-- CENTRO: ACCESOS RÁPIDOS (PROP FIRMS & BACKTESTING) -->
+      <div class="flex flex-col items-center gap-3 my-auto w-full px-1">
+        <%= link_to pro_tools_path(tab: 'prop'), class: "w-full py-2.5 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-brand transition-all flex flex-col items-center justify-center gap-0.5 group", title: "Prop Firm (Caja)" do %>
+          <span class="material-symbols-outlined text-[22px] group-hover:scale-110 transition-transform text-amber-400">verified</span>
+          <span class="text-[9px] font-extrabold tracking-tighter">PROP</span>
+        <% end %>
+
+        <%= link_to backtester_path, class: "w-full py-2.5 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-indigo-400 transition-all flex flex-col items-center justify-center gap-0.5 group", title: "Backtesting" do %>
+          <span class="material-symbols-outlined text-[22px] group-hover:scale-110 transition-transform text-indigo-400">history</span>
+          <span class="text-[9px] font-extrabold tracking-tighter">BACK</span>
+        <% end %>
+
+        <%= link_to trading_accounts_path, class: "w-full py-2.5 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-emerald-400 transition-all flex flex-col items-center justify-center gap-0.5 group", title: "Brokers & Cuentas" do %>
+          <span class="material-symbols-outlined text-[22px] group-hover:scale-110 transition-transform text-emerald-400">hub</span>
+          <span class="text-[9px] font-extrabold tracking-tighter">BROKER</span>
+        <% end %>
+      </div>
+
+      <!-- ABAJO: UTILIDADES (AJUSTES, AYUDA, CERRAR SESIÓN) -->
+      <div class="flex flex-col items-center gap-2 pt-3 border-t border-slate-800/80 w-full px-1">
+        <%= link_to profile_path, class: "p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-all flex items-center justify-center", title: "Ajustes del Perfil" do %>
+          <span class="material-symbols-outlined text-[18px]">settings</span>
+        <% end %>
+
+        <a href="#" onclick="alert('Centro de Ayuda y Tutoriales de CoachTrading PRO')" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-all flex items-center justify-center" title="Ayuda e Información">
+          <span class="material-symbols-outlined text-[18px]">help</span>
+        </a>
+
+        <%= link_to destroy_user_session_path, data: { turbo_method: :delete }, class: "p-2 rounded-xl text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition-all flex items-center justify-center", title: "Cerrar Sesión" do %>
+          <span class="material-symbols-outlined text-[18px]">logout</span>
+        <% end %>
+      </div>
+
+    </div>
+
+    <!-- BARRA 2: SECONDARY PANEL (DESPLEGABLE ~220px) -->
+    <div id="secondary-sidebar-panel" class="w-56 sidebar-bg border-r dark:border-darkBorder border-lightBorder flex flex-col justify-between overflow-y-auto overflow-x-hidden transition-all duration-300 flex-shrink-0">
+      
+      <!-- LOGO BARRA 2 -->
       <div class="h-14 flex items-center justify-between px-4 border-b dark:border-darkBorder border-lightBorder flex-shrink-0">
         <div class="flex items-center gap-3 w-full">
-          <%= link_to dashboard_path, id: "sidebar-logo-icon", class: "flex items-center justify-start flex-shrink-0 transition-transform hover:scale-105 ml-1" do %>
+          <%= link_to dashboard_path, class: "flex items-center justify-start flex-shrink-0 transition-transform hover:scale-105 ml-1" do %>
             <%= image_tag "tradetres_logo.png", class: "h-9 md:h-10 w-auto object-contain drop-shadow-md" %>
           <% end %>
         </div>
@@ -249,15 +310,21 @@
         </button>
       </div>
 
-      <!-- NAVIGATION -->
-      <nav class="p-2.5 space-y-0.5 mt-1 flex-1">
+      <!-- BOTÓN DE ACCIÓN PRINCIPAL: ADD TRADE + -->
+      <div class="px-3 pt-3 pb-1">
+        <%= link_to new_trade_path, class: "w-full py-2.5 px-3.5 rounded-xl bg-gradient-to-r from-brand via-purple-600 to-indigo-600 hover:from-brand-hover hover:to-indigo-700 text-white font-black text-xs shadow-lg glow-brand transition-all flex items-center justify-center gap-2 border border-white/20 group hover:scale-[1.02] active:scale-[0.98]", title: "Registrar Nueva Operación" do %>
+          <span class="material-symbols-outlined text-[18px] group-hover:rotate-90 transition-transform duration-300">add_circle</span>
+          <span class="tracking-wide font-extrabold uppercase text-[11px]">Add Trade +</span>
+        <% end %>
+      </div>
+
+      <!-- ARBOL DE NAVEGACIÓN COMPLETO -->
+      <nav class="p-2.5 space-y-0.5 flex-1">
         <% nav_items = [
           { label: "Dashboard",       path: dashboard_path,             icon: "dashboard" },
           { label: "Trades",          path: trades_path,                icon: "swap_horiz", count: current_user.trades.count },
           { label: "Estrategia",      path: strategies_path,            icon: "target" },
-          { label: "Prop Firm (Caja)",path: pro_tools_path(tab: 'prop'),icon: "verified" },
           { label: "Cuentas & Reglas",path: prop_firm_accounts_path,    icon: "account_tree" },
-          { label: "Backtesting",     path: backtester_path,            icon: "history" },
           { label: "AI Coach",        path: ai_coach_path,              icon: "smart_toy" },
           { label: "Comunidad",       path: community_feed_index_path,  icon: "forum" },
         ] %>
@@ -268,38 +335,29 @@
           <% active = current_page?(item[:path]) %>
           <a href="<%= item[:path] %>" class="nav-item <%= active ? 'nav-active' : '' %>" title="<%= item[:label] %>">
             <span class="material-symbols-outlined flex-shrink-0" style="font-size:18px"><%= item[:icon] %></span>
-            <span class="flex-1 sidebar-text-hide truncate"><%= item[:label] %></span>
+            <span class="flex-1 truncate"><%= item[:label] %></span>
             <% if item[:count] %>
-              <span class="sidebar-text-hide text-[10px] px-1.5 py-0.5 rounded-full font-bold <%= active ? 'bg-white/20 text-white' : 'bg-brand/15 text-brand dark:text-brand-light' %>"><%= item[:count] %></span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold <%= active ? 'bg-white/20 text-white' : 'bg-brand/15 text-brand dark:text-brand-light' %>"><%= item[:count] %></span>
             <% end %>
           </a>
         <% end %>
       </nav>
 
-      <!-- USER SECTION -->
+      <!-- PERFIL DE USUARIO EN BARRA SECUNDARIA -->
       <div class="p-2.5 border-t dark:border-darkBorder border-lightBorder flex-shrink-0">
         <div class="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-darkHover cursor-pointer transition-all" onclick="window.location.href='<%= profile_path %>'" title="<%= current_user.name || current_user.email %>">
           <div class="w-8 h-8 rounded-full bg-gradient-to-br from-brand to-violet-600 flex items-center justify-center font-bold text-white text-xs flex-shrink-0">
             <%= current_user.name&.first&.upcase || current_user.email.first.upcase %>
           </div>
-          <div class="overflow-hidden flex-1 sidebar-text-hide">
+          <div class="overflow-hidden flex-1">
             <p class="text-xs font-semibold truncate dark:text-white text-slate-800"><%= current_user.name || current_user.email %></p>
-            <% if current_user.admin? %>
-              <p class="text-[10px] font-bold text-amber-500 flex items-center gap-0.5">
-                <span class="material-symbols-outlined text-[12px]">verified</span>
-                Administrador
-              </p>
-            <% else %>
-              <p class="text-[10px] font-medium text-brand dark:text-brand-light">Pro Trader</p>
-            <% end %>
+            <p class="text-[10px] font-medium text-brand dark:text-brand-light">Pro Trader</p>
           </div>
-          <%= link_to destroy_user_session_path, data: { turbo_method: :delete }, class: "p-1.5 dark:text-slate-400 text-slate-400 hover:text-loss rounded-lg transition-all cursor-pointer ml-auto sidebar-text-hide", title: "Cerrar Sesión" do %>
-            <span class="material-symbols-outlined text-[18px]">logout</span>
-          <% end %>
         </div>
       </div>
 
     </div>
+
   </aside>
 
   <!-- ===================== MAIN ===================== -->
@@ -318,12 +376,7 @@
           <%= image_tag "tradetres_logo.png", class: "h-7 xs:h-8 sm:h-9 w-auto object-contain" %>
         <% end %>
 
-        <!-- DESKTOP TOGGLE SIDEBAR BUTTON -->
-        <button onclick="toggleDesktopSidebar()" class="hidden md:flex items-center justify-center p-1.5 rounded-xl dark:text-slate-400 text-slate-500 hover:bg-brand/10 dark:hover:bg-darkHover transition-all cursor-pointer border border-transparent hover:border-brand/20 flex-shrink-0" title="Colapsar/Expandir Menú Sidebar">
-          <span id="desktop-sidebar-icon" class="material-symbols-outlined text-[20px]">menu_open</span>
-        </button>
-
-        <h1 class="text-sm md:text-base font-bold dark:text-white text-slate-800 truncate border-l pl-3 ml-1 dark:border-[#23263A] border-slate-200 hidden xs:block">
+        <h1 class="text-sm md:text-base font-bold dark:text-white text-slate-800 truncate border-l md:border-l-0 pl-3 md:pl-0 ml-1 dark:border-[#23263A] border-slate-200 hidden xs:block">
           <%= content_for?(:page_title) ? yield(:page_title) : "Dashboard" %>
         </h1>
         <% if content_for?(:badge) %><div class="hidden sm:block"><%= yield(:badge) %></div><% end %>
@@ -365,28 +418,22 @@
           </div>
         </div>
 
+        <!-- BOTÓN ADMINISTRAR CUENTAS (TOP RIGHT HEADER SOBRIO) -->
+        <button type="button" onclick="openManageAccountsModal()" class="px-2.5 md:px-3 py-1.5 text-xs font-bold bg-slate-100 dark:bg-slate-800/90 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl transition-all flex items-center gap-1.5 border border-slate-300/60 dark:border-slate-700/80 shadow-xs cursor-pointer" title="Administrar Cuentas (Personales & Prop Firms)">
+          <span class="material-symbols-outlined text-[16px] text-slate-500 dark:text-slate-400">manage_accounts</span>
+          <span class="hidden lg:inline">Administrar Cuentas</span>
+        </button>
+
         <!-- THEME TOGGLE -->
         <button id="theme-toggle" onclick="toggleTheme()" class="relative w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-xl dark:text-slate-400 text-slate-500 hover:bg-brand/10 border border-transparent hover:border-brand/20 dark:hover:border-darkBorder transition-all duration-200" title="Cambiar tema">
           <span class="toggle-sun material-symbols-outlined text-[18px] text-amber-500">light_mode</span>
           <span class="toggle-moon material-symbols-outlined text-[18px] text-brand-light">dark_mode</span>
         </button>
 
-        <!-- PERFIL -->
-        <%= link_to profile_path, class: "px-2 md:px-3 py-1.5 text-xs font-semibold dark:text-slate-300 text-slate-600 hover:text-brand dark:hover:text-brand-light rounded-xl hover:bg-brand/10 border border-transparent hover:border-brand/20 dark:hover:border-darkBorder transition-all flex items-center gap-1.5" do %>
-          <span class="material-symbols-outlined text-[16px]">person</span>
-          <span class="hidden sm:inline">Perfil</span>
-        <% end %>
-
         <!-- NUEVA OPERACIÓN -->
-        <%= link_to new_trade_path, class: "px-3 py-1.5 text-xs font-bold bg-brand hover:bg-brand-hover text-white rounded-xl glow-brand transition-all flex items-center gap-1.5 animate-float" do %>
-          <span class="material-symbols-outlined text-[16px]">add</span>
-          <span class="hidden xs:inline">Nueva</span>
-        <% end %>
-
-        <!-- CERRAR SESIÓN -->
-        <%= link_to destroy_user_session_path, class: "p-1.5 text-slate-400 hover:text-loss rounded-lg hover:bg-loss/10 transition-all cursor-pointer flex items-center gap-1 text-xs font-semibold", title: "Cerrar Sesión" do %>
-          <span class="material-symbols-outlined text-[18px]">logout</span>
-          <span class="hidden md:inline">Salir</span>
+        <%= link_to new_trade_path, class: "px-3.5 py-1.5 text-xs font-black bg-brand hover:bg-brand-hover text-white rounded-xl glow-brand transition-all flex items-center gap-1.5 shadow-md hover:scale-105" do %>
+          <span class="material-symbols-outlined text-[16px]">add_circle</span>
+          <span>Add Trade +</span>
         <% end %>
       </div>
     </header>
@@ -478,6 +525,11 @@
   </div>
   <% end %>
 
+  <!-- Render Modales Globales de Cuentas -->
+  <% if user_signed_in? %>
+    <%= render "trading_accounts/wizard_modal" %>
+    <%= render "trading_accounts/manage_accounts_modal" %>
+  <% end %>
 </body>
 <script>
   // ── THEME MANAGER ──
@@ -501,23 +553,23 @@
     }
   }
 
-  // ── DESKTOP SIDEBAR TOGGLE & INITIALIZATION ──
+  // ── DUAL SIDEBAR TOGGLE & INITIALIZATION ──
   (function() {
     const isCollapsed = localStorage.getItem('tj-sidebar-collapsed') === 'true';
     if (isCollapsed) {
-      const sidebar = document.getElementById('sidebar-container');
+      const panel = document.getElementById('secondary-sidebar-panel');
       const icon = document.getElementById('desktop-sidebar-icon');
-      if (sidebar) sidebar.classList.add('collapsed');
+      if (panel) panel.classList.add('hidden');
       if (icon) icon.textContent = 'menu';
     }
   })();
 
   function toggleDesktopSidebar() {
-    const sidebar = document.getElementById('sidebar-container');
+    const panel = document.getElementById('secondary-sidebar-panel');
     const icon = document.getElementById('desktop-sidebar-icon');
-    if (!sidebar) return;
-    sidebar.classList.toggle('collapsed');
-    const nowCollapsed = sidebar.classList.contains('collapsed');
+    if (!panel) return;
+    panel.classList.toggle('hidden');
+    const nowCollapsed = panel.classList.contains('hidden');
     localStorage.setItem('tj-sidebar-collapsed', nowCollapsed ? 'true' : 'false');
     if (icon) {
       icon.textContent = nowCollapsed ? 'menu' : 'menu_open';

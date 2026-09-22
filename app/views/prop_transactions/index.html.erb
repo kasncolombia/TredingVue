@@ -96,6 +96,71 @@
     </div>
   </div>
 
+  <!-- PESTAÑA RESUMEN CONTABLE POR FIRMA (ROI REAL POR EMPRESA) -->
+  <div class="glass rounded-2xl p-5 space-y-4 shadow-sm border border-slate-200 dark:border-darkBorder">
+    <div class="flex items-center justify-between border-b dark:border-darkBorder border-slate-200 pb-3">
+      <div>
+        <h3 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
+          <span class="material-symbols-outlined text-brand text-[18px]">table_chart</span>
+          Resumen Contable Agrupado por Firma (ROI Real)
+        </h3>
+        <p class="text-[11px] text-slate-400">Balance global entre lo invertido en retos/reseteos/activaciones vs lo retirado en Payouts.</p>
+      </div>
+    </div>
+
+    <% 
+      firms_summary = current_user.prop_transactions.group_by(&:company_name).map do |firm, txs|
+        exp = txs.select { |t| t.transaction_type == "expense" }.sum(&:amount)
+        pay = txs.select { |t| t.transaction_type == "payout" }.sum(&:amount)
+        net = pay - exp
+        roi = exp.positive? ? ((net / exp) * 100).round(1) : 0.0
+        accs = current_user.prop_firm_accounts.where(firm_name: firm)
+        trades_count = current_user.trades.where(prop_firm_account_id: accs.pluck(:id)).count
+        { firm: firm, expenses: exp, payouts: pay, net: net, roi: roi, accounts_count: accs.count, trades_count: trades_count }
+      end
+    %>
+
+    <% if firms_summary.any? %>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs whitespace-nowrap">
+          <thead class="uppercase dark:text-slate-400 text-slate-500 border-b dark:border-darkBorder border-lightBorder table-header text-[10px] font-extrabold tracking-wider">
+            <tr>
+              <th class="px-4 py-3">Firma de Fondeo</th>
+              <th class="px-4 py-3 text-center">Cuentas</th>
+              <th class="px-4 py-3 text-center">Trades</th>
+              <th class="px-4 py-3 text-right">Invertido (Gastos)</th>
+              <th class="px-4 py-3 text-right">Retirado (Payouts)</th>
+              <th class="px-4 py-3 text-right">Profit Neto</th>
+              <th class="px-4 py-3 text-right">ROI Real</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y dark:divide-[#1E2235] divide-slate-100">
+            <% firms_summary.each do |item| %>
+              <tr class="table-row-hover dark:text-slate-300 text-slate-700 transition-colors">
+                <td class="px-4 py-3 font-bold flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[16px] text-brand">verified</span>
+                  <%= item[:firm] %>
+                </td>
+                <td class="px-4 py-3 text-center font-mono font-bold"><%= item[:accounts_count] %></td>
+                <td class="px-4 py-3 text-center font-mono text-slate-400"><%= item[:trades_count] %></td>
+                <td class="px-4 py-3 text-right font-mono text-rose-500 font-bold">-$<%= number_with_precision(item[:expenses], precision: 2, delimiter: ',') %></td>
+                <td class="px-4 py-3 text-right font-mono text-emerald-500 font-bold">+$<%= number_with_precision(item[:payouts], precision: 2, delimiter: ',') %></td>
+                <td class="px-4 py-3 text-right font-mono font-black <%= item[:net] >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
+                  <%= item[:net] >= 0 ? '+' : '' %>$<%= number_with_precision(item[:net], precision: 2, delimiter: ',') %>
+                </td>
+                <td class="px-4 py-3 text-right font-mono font-black <%= item[:roi] >= 0 ? 'text-brand dark:text-brand-light' : 'text-rose-500' %>">
+                  <%= item[:roi] %>%
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <p class="text-xs text-slate-400 py-4 text-center">Registra recibos o transacciones para ver la tabla comparativa de ROI por empresa.</p>
+    <% end %>
+  </div>
+
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <!-- TRANSACTION FORM -->
     <div class="glass rounded-2xl p-5 shadow-sm lg:col-span-1 h-fit">

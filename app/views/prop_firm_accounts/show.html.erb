@@ -1,0 +1,427 @@
+<% content_for :page_title, @account.name %>
+
+<div class="space-y-6 fade-in pb-12">
+
+  <!-- BREADCRUMB -->
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-2 text-xs text-slate-400">
+      <%= link_to "Cuentas de Fondeo", prop_firm_accounts_path, class: "hover:text-brand transition-colors" %>
+      <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+      <span class="dark:text-white text-slate-800 font-bold"><%= @account.name %></span>
+    </div>
+    <div class="flex items-center gap-2">
+      <%= link_to edit_prop_firm_account_path(@account), class: "px-3 py-1.5 text-xs font-bold text-slate-400 hover:text-brand border dark:border-darkBorder border-slate-200 rounded-xl transition-all flex items-center gap-1" do %>
+        <span class="material-symbols-outlined text-[14px]">edit</span> Editar
+      <% end %>
+    </div>
+  </div>
+
+  <!-- HEADER CON ESTADO -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b dark:border-darkBorder border-slate-200 pb-4">
+    <div class="flex items-center gap-3">
+      <% logo_file = case @account.firm_name.to_s.downcase
+        when /topstep/ then "compañias/Topstep.png"
+        when /apex/ then "compañias/Apex Trader funding.png"
+        when /myfunded/ then "compañias/My funded futures.png"
+        when /tradeify/ then "compañias/Tradeify.png"
+        when /lucid/ then "compañias/Lucid trading.png"
+        when /alpha/ then "compañias/Alpha futures.png"
+        when /take profit/ then "compañias/take profit trader.png"
+        else nil
+        end
+      %>
+      <% if logo_file %>
+        <div class="w-12 h-12 rounded-xl bg-white p-1.5 border flex items-center justify-center shadow-sm flex-shrink-0">
+          <%= image_tag logo_file, class: "max-h-full max-w-full object-contain" %>
+        </div>
+      <% end %>
+      <div>
+        <h1 class="text-xl font-black dark:text-white text-slate-900 flex items-center gap-2">
+          <%= @account.name %>
+          <% status_colors = { "activa" => "bg-emerald-500/15 text-emerald-500 border-emerald-500/20", "quemada" => "bg-rose-500/15 text-rose-500 border-rose-500/20", "fondeada" => "bg-brand/15 text-brand border-brand/20", "reseteada" => "bg-amber-500/15 text-amber-500 border-amber-500/20" } %>
+          <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border <%= status_colors[@account.status] || status_colors['activa'] %>">
+            <%= @account.status %>
+          </span>
+        </h1>
+        <p class="text-xs text-slate-400 font-bold"><%= @account.firm_name %> • <%= @account.plan_name %> • <%= @account.account_size %> • Fase: <%= @account.phase.gsub('_',' ').capitalize %></p>
+      </div>
+    </div>
+
+    <!-- BOTONES DE ACCIÓN DE ESTADO -->
+    <% if @account.status == "activa" %>
+      <div class="flex items-center gap-2 flex-wrap">
+        <button onclick="document.getElementById('modal-burn').classList.remove('hidden')" class="px-3 py-1.5 text-xs font-bold text-rose-500 border border-rose-500/30 hover:bg-rose-500/10 rounded-xl transition-all flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px]">local_fire_department</span> Quemada
+        </button>
+        <button onclick="document.getElementById('modal-reset').classList.remove('hidden')" class="px-3 py-1.5 text-xs font-bold text-amber-500 border border-amber-500/30 hover:bg-amber-500/10 rounded-xl transition-all flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px]">restart_alt</span> Resetear
+        </button>
+        <button onclick="document.getElementById('modal-funded').classList.remove('hidden')" class="px-3 py-1.5 text-xs font-bold text-brand border border-brand/30 hover:bg-brand/10 rounded-xl transition-all flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px]">rocket_launch</span> Fondeada
+        </button>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- KPI CARDS -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <!-- BALANCE -->
+    <div class="stat-card rounded-2xl p-4 space-y-1">
+      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Balance Actual</p>
+      <p class="text-xl font-black font-mono <%= @account.pnl_total >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">$<%= number_with_precision(@account.current_balance, precision: 2, delimiter: ',') %></p>
+      <p class="text-[10px] text-slate-500">Inicio: $<%= number_with_precision(@account.initial_balance, precision: 0, delimiter: ',') %></p>
+    </div>
+
+    <!-- MARGEN AL PISO -->
+    <div class="stat-card rounded-2xl p-4 space-y-1">
+      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Margen al Piso</p>
+      <% dd_color = case @account.drawdown_status; when :danger then "text-rose-500"; when :warning then "text-amber-500"; else "text-emerald-500"; end %>
+      <p class="text-xl font-black font-mono <%= dd_color %>">$<%= number_with_precision(@account.margin_to_floor, precision: 2, delimiter: ',') %></p>
+      <p class="text-[10px] text-slate-500">DD consumido: <%= @account.drawdown_consumed_pct %>%</p>
+    </div>
+
+    <!-- WIN RATE -->
+    <div class="stat-card rounded-2xl p-4 space-y-1">
+      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Win Rate</p>
+      <p class="text-xl font-black font-mono dark:text-white text-slate-800"><%= @stats[:win_rate] %>%</p>
+      <p class="text-[10px] text-slate-500"><%= @stats[:total_trades] %> trades • PF: <%= @stats[:profit_factor] %></p>
+    </div>
+
+    <!-- P&L HOY -->
+    <div class="stat-card rounded-2xl p-4 space-y-1">
+      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">P&L Hoy</p>
+      <p class="text-xl font-black font-mono <%= @daily_pnl_today >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
+        <%= @daily_pnl_today >= 0 ? '+' : '' %>$<%= number_with_precision(@daily_pnl_today, precision: 2, delimiter: ',') %>
+      </p>
+      <% if @account.daily_loss_breached? %>
+        <p class="text-[10px] text-rose-500 font-bold flex items-center gap-1">
+          <span class="material-symbols-outlined text-[12px]">warning</span> ¡Límite diario superado!
+        </p>
+      <% else %>
+        <p class="text-[10px] text-slate-500">Límite: $<%= @account.active_daily_loss_limit || 'N/A' %></p>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- SEMÁFORO DE ALERTA DRAWDOWN -->
+  <% if @account.drawdown_status == :danger %>
+    <div class="px-4 py-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-500 text-sm flex items-center gap-2 font-bold">
+      <span class="material-symbols-outlined text-[18px]">warning</span>
+      ¡ALERTA CRÍTICA! Has consumido el <%= @account.drawdown_consumed_pct %>% del drawdown máximo. Considera pausar operaciones.
+    </div>
+  <% elsif @account.drawdown_status == :warning %>
+    <div class="px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-500 text-sm flex items-center gap-2 font-bold">
+      <span class="material-symbols-outlined text-[18px]">info</span>
+      Precaución: Drawdown al <%= @account.drawdown_consumed_pct %>%. Gestiona tu riesgo con disciplina.
+    </div>
+  <% end %>
+
+  <% if @account.status == "quemada" && @account.burn_reason.present? %>
+    <div class="px-4 py-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm flex items-center gap-2">
+      <span class="material-symbols-outlined text-[18px]">local_fire_department</span>
+      <span>Cuenta quemada — Motivo: <strong><%= @account.burn_reason %></strong></span>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- ═══ GRÁFICO BALANCE VS DRAWDOWN ═══ -->
+    <div class="lg:col-span-8 glass rounded-2xl p-5 space-y-4">
+      <h2 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
+        <span class="material-symbols-outlined text-brand text-[18px]">show_chart</span>
+        Curva de Balance vs Piso de Drawdown
+      </h2>
+      <div id="equity-chart" style="width:100%; height:300px;"></div>
+    </div>
+
+    <!-- ═══ PATH TO FUNDING ═══ -->
+    <div class="lg:col-span-4 glass rounded-2xl p-5 space-y-4">
+      <h2 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
+        <span class="material-symbols-outlined text-emerald-500 text-[18px]">flag</span>
+        Path to Funding
+      </h2>
+
+      <div class="space-y-4">
+        <!-- Profit Target -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-xs">
+            <span class="text-slate-400">Profit Target</span>
+            <span class="font-mono font-bold <%= @path[:profit_pct] >= 100 ? 'text-emerald-500' : 'dark:text-white text-slate-800' %>"><%= @path[:profit_pct] %>%</span>
+          </div>
+          <div class="w-full h-2 rounded-full bg-slate-200 dark:bg-darkBorder overflow-hidden">
+            <div class="h-full rounded-full transition-all duration-500 <%= @path[:profit_pct] >= 100 ? 'bg-emerald-500' : 'bg-brand' %>" style="width: <%= [@path[:profit_pct], 100].min %>%"></div>
+          </div>
+          <p class="text-[10px] text-slate-500">$<%= number_with_precision(@account.pnl_total, precision: 2, delimiter: ',') %> / $<%= number_with_precision(@account.active_profit_target || 0, precision: 0, delimiter: ',') %></p>
+        </div>
+
+        <!-- Días Mínimos -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-xs">
+            <span class="text-slate-400">Días Mínimos</span>
+            <span class="font-mono font-bold <%= @path[:min_days_pct] >= 100 ? 'text-emerald-500' : 'dark:text-white text-slate-800' %>"><%= @path[:min_days_pct] %>%</span>
+          </div>
+          <div class="w-full h-2 rounded-full bg-slate-200 dark:bg-darkBorder overflow-hidden">
+            <div class="h-full rounded-full transition-all duration-500 <%= @path[:min_days_pct] >= 100 ? 'bg-emerald-500' : 'bg-cyan-500' %>" style="width: <%= [@path[:min_days_pct], 100].min %>%"></div>
+          </div>
+          <p class="text-[10px] text-slate-500"><%= @account.days_traded %> / <%= @account.active_min_trading_days %> días</p>
+        </div>
+
+        <!-- Drawdown Consumido -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-xs">
+            <span class="text-slate-400">Drawdown Consumido</span>
+            <% dd_bar_color = case @account.drawdown_status; when :danger then "text-rose-500"; when :warning then "text-amber-500"; else "text-emerald-500"; end %>
+            <span class="font-mono font-bold <%= dd_bar_color %>"><%= @path[:drawdown_consumed_pct] %>%</span>
+          </div>
+          <div class="w-full h-2 rounded-full bg-slate-200 dark:bg-darkBorder overflow-hidden">
+            <% dd_bg = case @account.drawdown_status; when :danger then "bg-rose-500"; when :warning then "bg-amber-500"; else "bg-emerald-500"; end %>
+            <div class="h-full rounded-full transition-all duration-500 <%= dd_bg %>" style="width: <%= [@path[:drawdown_consumed_pct], 100].min %>%"></div>
+          </div>
+          <p class="text-[10px] text-slate-500">Max DD: $<%= number_with_precision(@account.active_max_drawdown || 0, precision: 0, delimiter: ',') %></p>
+        </div>
+
+        <!-- Consistencia -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-xs">
+            <span class="text-slate-400">Consistencia</span>
+            <span class="font-mono font-bold <%= @path[:consistency][:pass] ? 'text-emerald-500' : 'text-rose-500' %>">
+              <%= @path[:consistency][:pass] ? '✅ Cumple' : '⚠️ Falla' %>
+            </span>
+          </div>
+          <p class="text-[10px] text-slate-500">Mejor día: <%= @path[:consistency][:best_day_pct] %>% del P&L (límite: <%= @path[:consistency][:limit_pct] || 50 %>%)</p>
+        </div>
+      </div>
+
+      <!-- REGLAS ACTIVAS -->
+      <div class="border-t dark:border-darkBorder border-slate-200 pt-3 mt-3 space-y-2 text-xs">
+        <h3 class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Reglas Activas</h3>
+        <div class="flex justify-between"><span class="text-slate-400">Profit Target</span><span class="font-mono font-bold text-emerald-500">$<%= @account.active_profit_target || 'N/A' %></span></div>
+        <div class="flex justify-between"><span class="text-slate-400">Max Drawdown</span><span class="font-mono font-bold text-rose-500">$<%= @account.active_max_drawdown || 'N/A' %></span></div>
+        <div class="flex justify-between"><span class="text-slate-400">Tipo DD</span><span class="font-mono font-bold dark:text-white text-slate-800"><%= (@account.active_drawdown_type || 'eod').upcase %></span></div>
+        <div class="flex justify-between"><span class="text-slate-400">Pérdida Diaria</span><span class="font-mono font-bold text-amber-500">$<%= @account.active_daily_loss_limit || 'N/A' %></span></div>
+        <div class="flex justify-between"><span class="text-slate-400">Consistencia</span><span class="font-mono font-bold dark:text-white text-slate-800"><%= @account.active_consistency_pct || 50 %>%</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ TABLA DE TRADES ═══ -->
+  <div class="glass rounded-2xl overflow-hidden">
+    <div class="p-4 border-b dark:border-darkBorder border-slate-200 flex items-center justify-between dark:bg-[#1A1D2D] bg-slate-50">
+      <h3 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
+        <span class="material-symbols-outlined text-[16px] text-brand">swap_horiz</span>
+        Trades Asociados (<%= @account.trades.count %>)
+      </h3>
+    </div>
+    <div class="overflow-x-auto">
+      <% if @trades.any? %>
+        <table class="w-full text-left text-xs whitespace-nowrap">
+          <thead class="uppercase dark:text-slate-400 text-slate-500 border-b dark:border-darkBorder border-lightBorder table-header text-[10px] font-extrabold tracking-wider">
+            <tr>
+              <th class="px-4 py-3">Fecha</th>
+              <th class="px-4 py-3">Símbolo</th>
+              <th class="px-4 py-3">Dirección</th>
+              <th class="px-4 py-3">Estrategia</th>
+              <th class="px-4 py-3 text-right">P&L</th>
+              <th class="px-4 py-3 text-right">Balance Acum.</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y dark:divide-[#1E2235] divide-slate-100">
+            <% cumulative = @account.initial_balance %>
+            <% @account.trades.order(:entry_at).each do |trade| %>
+              <% cumulative += trade.pnl.to_f %>
+              <tr class="table-row-hover dark:text-slate-300 text-slate-700 transition-colors">
+                <td class="px-4 py-3 font-mono text-[11px]"><%= trade.entry_at&.strftime("%d %b %Y %H:%M") || "—" %></td>
+                <td class="px-4 py-3 font-bold"><%= trade.symbol %></td>
+                <td class="px-4 py-3">
+                  <span class="px-2 py-0.5 rounded-full text-[9px] font-black <%= trade.direction == 'LONG' ? 'badge-long' : 'badge-short' %>">
+                    <%= trade.direction %>
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-slate-400"><%= trade.strategy&.name || "—" %></td>
+                <td class="px-4 py-3 text-right font-mono font-bold <%= trade.pnl.to_f >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
+                  <%= trade.pnl.to_f >= 0 ? '+' : '' %>$<%= number_with_precision(trade.pnl, precision: 2, delimiter: ',') %>
+                </td>
+                <td class="px-4 py-3 text-right font-mono text-[11px] dark:text-slate-400 text-slate-500">
+                  $<%= number_with_precision(cumulative, precision: 2, delimiter: ',') %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <div class="p-12 text-center">
+          <div class="w-14 h-14 rounded-full bg-brand/10 text-brand flex items-center justify-center mx-auto mb-3">
+            <span class="material-symbols-outlined text-[28px]">swap_horiz</span>
+          </div>
+          <h4 class="text-sm font-bold dark:text-white text-slate-800">Sin operaciones</h4>
+          <p class="text-xs text-slate-400 mt-1">Aún no hay trades asociados a esta cuenta de fondeo.</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- MODALES DE TRANSICIÓN DE ESTADO                     -->
+<!-- ═══════════════════════════════════════════════════ -->
+
+<!-- MODAL: MARCAR COMO QUEMADA -->
+<div id="modal-burn" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+  <div class="glass rounded-2xl p-6 w-full max-w-md mx-4 space-y-4 shadow-2xl border dark:border-darkBorder border-slate-200">
+    <div class="flex items-center justify-between">
+      <h3 class="text-base font-black dark:text-white text-slate-800 flex items-center gap-2">
+        <span class="material-symbols-outlined text-rose-500">local_fire_department</span>
+        Marcar como Quemada
+      </h3>
+      <button onclick="document.getElementById('modal-burn').classList.add('hidden')" class="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover transition-all">
+        <span class="material-symbols-outlined text-slate-400 text-[18px]">close</span>
+      </button>
+    </div>
+    <p class="text-xs text-slate-400">Selecciona el motivo por el cuál se perdió esta cuenta. Esta información será usada para las analíticas de quema.</p>
+    <%= form_tag mark_burned_prop_firm_account_path(@account), method: :patch, class: "space-y-4" do %>
+      <div>
+        <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Motivo de la quema <span class="text-rose-500">*</span></label>
+        <select name="burn_reason" required class="input-field w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-brand">
+          <% PropFirmAccount::BURN_REASONS.each do |reason| %>
+            <option value="<%= reason %>"><%= reason %></option>
+          <% end %>
+        </select>
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" onclick="document.getElementById('modal-burn').classList.add('hidden')" class="px-4 py-2 text-xs font-bold text-slate-400 border dark:border-darkBorder border-slate-200 rounded-xl">Cancelar</button>
+        <button type="submit" class="px-5 py-2 bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px]">local_fire_department</span> Confirmar Quema
+        </button>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<!-- MODAL: RESETEAR CUENTA -->
+<div id="modal-reset" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+  <div class="glass rounded-2xl p-6 w-full max-w-md mx-4 space-y-4 shadow-2xl border dark:border-darkBorder border-slate-200">
+    <div class="flex items-center justify-between">
+      <h3 class="text-base font-black dark:text-white text-slate-800 flex items-center gap-2">
+        <span class="material-symbols-outlined text-amber-500">restart_alt</span>
+        Resetear Cuenta
+      </h3>
+      <button onclick="document.getElementById('modal-reset').classList.add('hidden')" class="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover transition-all">
+        <span class="material-symbols-outlined text-slate-400 text-[18px]">close</span>
+      </button>
+    </div>
+    <p class="text-xs text-slate-400">La cuenta volverá a estado <strong>Evaluación</strong>. El costo del reset se registrará automáticamente como gasto.</p>
+    <%= form_tag reset_account_prop_firm_account_path(@account), method: :patch, class: "space-y-4" do %>
+      <div>
+        <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Costo del Reset ($)</label>
+        <div class="relative">
+          <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold font-mono text-slate-400">$</span>
+          <input type="number" name="reset_cost" value="0" min="0" step="any" class="input-field w-full pl-8 pr-4 py-2.5 rounded-xl text-sm font-mono font-bold focus:outline-none focus:border-brand">
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" onclick="document.getElementById('modal-reset').classList.add('hidden')" class="px-4 py-2 text-xs font-bold text-slate-400 border dark:border-darkBorder border-slate-200 rounded-xl">Cancelar</button>
+        <button type="submit" class="px-5 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px]">restart_alt</span> Confirmar Reset
+        </button>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<!-- MODAL: MOVER A FONDEADA -->
+<div id="modal-funded" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+  <div class="glass rounded-2xl p-6 w-full max-w-md mx-4 space-y-4 shadow-2xl border dark:border-darkBorder border-slate-200">
+    <div class="flex items-center justify-between">
+      <h3 class="text-base font-black dark:text-white text-slate-800 flex items-center gap-2">
+        <span class="material-symbols-outlined text-brand">rocket_launch</span>
+        ¡Mover a Fondeada!
+      </h3>
+      <button onclick="document.getElementById('modal-funded').classList.add('hidden')" class="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover transition-all">
+        <span class="material-symbols-outlined text-slate-400 text-[18px]">close</span>
+      </button>
+    </div>
+    <p class="text-xs text-slate-400">La cuenta pasará a fase <strong>Fondeada</strong>. Si aplica cuota de activación, se registrará como gasto automáticamente.</p>
+    <%= form_tag move_to_funded_prop_firm_account_path(@account), method: :patch, class: "space-y-4" do %>
+      <div>
+        <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Cuota de Activación ($) <span class="text-slate-400 font-normal">(si aplica)</span></label>
+        <div class="relative">
+          <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold font-mono text-slate-400">$</span>
+          <input type="number" name="activation_cost" value="<%= @account.activation_fee || 0 %>" min="0" step="any" class="input-field w-full pl-8 pr-4 py-2.5 rounded-xl text-sm font-mono font-bold focus:outline-none focus:border-brand">
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" onclick="document.getElementById('modal-funded').classList.add('hidden')" class="px-4 py-2 text-xs font-bold text-slate-400 border dark:border-darkBorder border-slate-200 rounded-xl">Cancelar</button>
+        <button type="submit" class="px-5 py-2 bg-brand hover:bg-brand-hover text-white font-bold text-xs rounded-xl shadow-md glow-brand transition-all flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px]">rocket_launch</span> ¡Confirmar Fondeo!
+        </button>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<!-- ═══ GRÁFICO ECHARTS ═══ -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const chartDom = document.getElementById('equity-chart');
+  if (!chartDom) return;
+  const chart = echarts.init(chartDom);
+
+  const equityData = <%= raw @equity_data.to_json %>;
+  const initialBalance = <%= @account.initial_balance %>;
+  const drawdownFloor = <%= @account.drawdown_floor %>;
+
+  const dates = equityData.map(d => d.date);
+  const balances = equityData.map(d => initialBalance + d.value);
+  const floorLine = equityData.map(() => drawdownFloor);
+
+  const isDark = document.documentElement.classList.contains('dark');
+
+  const option = {
+    backgroundColor: 'transparent',
+    tooltip: {
+      trigger: 'axis',
+      backgroundColor: isDark ? '#141729' : '#FFFFFF',
+      borderColor: isDark ? '#23263A' : '#E2E6F0',
+      textStyle: { color: isDark ? '#E5E0ED' : '#0F0E1A', fontFamily: 'Manrope', fontSize: 11 },
+      formatter: function(params) {
+        let bal = params[0] ? `$${params[0].value.toLocaleString('en-US', {minimumFractionDigits:2})}` : '';
+        let fl  = params[1] ? `$${params[1].value.toLocaleString('en-US', {minimumFractionDigits:2})}` : '';
+        return `<strong>${params[0].axisValue}</strong><br/>Balance: <strong style="color:#10B981">${bal}</strong><br/>Piso DD: <strong style="color:#F43F5E">${fl}</strong>`;
+      }
+    },
+    grid: { left: '3%', right: '3%', top: '8%', bottom: '12%', containLabel: true },
+    xAxis: {
+      type: 'category', data: dates, boundaryGap: false,
+      axisLine: { lineStyle: { color: isDark ? '#23263A' : '#E2E6F0' } },
+      axisLabel: { color: isDark ? '#8286A8' : '#64748B', fontSize: 10 }
+    },
+    yAxis: {
+      type: 'value',
+      axisLine: { show: false },
+      splitLine: { lineStyle: { color: isDark ? '#1E2235' : '#F0F0F5', type: 'dashed' } },
+      axisLabel: { color: isDark ? '#8286A8' : '#64748B', fontSize: 10, formatter: '${value}' }
+    },
+    series: [
+      {
+        name: 'Balance', type: 'line', data: balances, smooth: true,
+        lineStyle: { width: 2.5, color: '#6C5CE7' },
+        areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [
+          { offset: 0, color: 'rgba(108,92,231,0.25)' },
+          { offset: 1, color: 'rgba(108,92,231,0.02)' }
+        ]}},
+        itemStyle: { color: '#6C5CE7' }, symbol: 'circle', symbolSize: 5
+      },
+      {
+        name: 'Piso Drawdown', type: 'line', data: floorLine,
+        lineStyle: { width: 1.5, color: '#F43F5E', type: 'dashed' },
+        itemStyle: { color: '#F43F5E' }, symbol: 'none'
+      }
+    ]
+  };
+
+  chart.setOption(option);
+  window.addEventListener('resize', () => chart.resize());
+});
+</script>

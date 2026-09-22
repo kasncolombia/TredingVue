@@ -2,7 +2,7 @@
 <% content_for :page_title, @trade.new_record? ? "Nueva Operación" : "Editar #{@trade.symbol}" %>
 
 <div class="fade-in pb-10">
-  <!-- BREADCRUMB Y TOGGLE DE MODO -->
+  <!-- BREADCRUMB Y BOTONERA SUPERIOR DERECHA -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
     <div class="flex items-center gap-2 text-xs text-slate-400">
       <%= link_to "Operaciones", trades_path, class: "hover:text-brand transition-colors" %>
@@ -10,15 +10,23 @@
       <span class="text-slate-600 dark:text-slate-300 font-bold"><%= trade.new_record? ? "Nueva Operación" : "Editar #{trade.symbol}" %></span>
     </div>
 
-    <!-- UI: TABS MODO PRINCIPIANTE / EXPERTO -->
-    <div class="flex p-1 bg-slate-200/50 dark:bg-darkBorder/50 rounded-xl max-w-[280px] w-full border border-slate-300/50 dark:border-darkBorder relative">
-      <div id="mode-slider" class="absolute top-1 left-1 bottom-1 w-[calc(50%-4px)] bg-white dark:bg-slate-700 rounded-lg shadow-sm transition-transform duration-300 ease-out z-0"></div>
-      
-      <button type="button" id="btn-beginner" onclick="setMode('beginner')" class="relative z-10 flex-1 py-1.5 text-xs font-bold rounded-lg text-brand transition-colors flex items-center justify-center gap-1.5 focus:outline-none">
-        <span class="material-symbols-outlined text-[16px]">school</span> Principiante
-      </button>
-      <button type="button" id="btn-expert" onclick="setMode('expert')" class="relative z-10 flex-1 py-1.5 text-xs font-bold rounded-lg text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors flex items-center justify-center gap-1.5 focus:outline-none">
-        <span class="material-symbols-outlined text-[16px]">psychology_alt</span> PRO / Experto
+    <div class="flex items-center gap-3">
+      <!-- UI: TABS MODO PRINCIPIANTE / EXPERTO -->
+      <div class="flex p-1 bg-slate-200/50 dark:bg-darkBorder/50 rounded-xl w-56 border border-slate-300/50 dark:border-darkBorder relative">
+        <div id="mode-slider" class="absolute top-1 left-1 bottom-1 w-[calc(50%-4px)] bg-white dark:bg-slate-700 rounded-lg shadow-sm transition-transform duration-300 ease-out z-0"></div>
+        
+        <button type="button" id="btn-beginner" onclick="setMode('beginner')" class="relative z-10 flex-1 py-1.5 text-xs font-bold rounded-lg text-brand transition-colors flex items-center justify-center gap-1.5 focus:outline-none">
+          <span class="material-symbols-outlined text-[16px]">school</span> Principiante
+        </button>
+        <button type="button" id="btn-expert" onclick="setMode('expert')" class="relative z-10 flex-1 py-1.5 text-xs font-bold rounded-lg text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors flex items-center justify-center gap-1.5 focus:outline-none">
+          <span class="material-symbols-outlined text-[16px]">psychology_alt</span> PRO / Experto
+        </button>
+      </div>
+
+      <!-- BOTÓN ADD ACCOUNT + (ABRE WIZARD DE BROKERS) -->
+      <button type="button" onclick="openAddAccountWizard()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-brand to-indigo-600 hover:from-brand-hover hover:to-indigo-700 text-white text-xs font-extrabold shadow-md transition-all flex items-center gap-1.5 cursor-pointer border border-white/20 hover:scale-105 active:scale-95" title="Vincular Nueva Cuenta / Broker TradeZella">
+        <span class="material-symbols-outlined text-[16px]">add_link</span>
+        <span>Add Account +</span>
       </button>
     </div>
   </div>
@@ -72,10 +80,15 @@
             </div>
 
             <!-- SELECTOR VISUAL DE COMPAÑÍAS DE FONDEO -->
-            <div id="prop-firm-company-container" class="mt-4 pt-4 border-t dark:border-darkBorder border-slate-200 hidden fade-in">
+            <div id="prop-firm-company-container" class="mt-4 pt-4 border-t dark:border-darkBorder border-slate-200 hidden fade-in space-y-3">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Vincular a Cuenta de Fondeo Específica</label>
+                <%= f.collection_select :prop_firm_account_id, current_user.prop_firm_accounts.order(created_at: :desc), :id, ->(acc) { "#{acc.name} (#{acc.firm_name} - #{acc.account_size})" }, { prompt: "Seleccionar cuenta activa..." }, class: "input-field w-full px-3 py-2 rounded-xl text-xs font-bold focus:outline-none focus:border-brand" %>
+              </div>
+
               <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center justify-between">
-                <span>Selecciona la Compañía / Empresa de Fondeo</span>
-                <span class="text-[10px] text-brand font-bold">Oficial Logos</span>
+                <span>O selecciona la Compañía / Empresa de Fondeo</span>
+                <span class="text-[10px] text-brand font-bold">Logos Oficiales</span>
               </label>
               <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
                 <% [

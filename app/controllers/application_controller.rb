@@ -2,6 +2,14 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user!
   before_action :ensure_onboarding_completed, unless: :devise_controller?
   before_action :configure_permitted_parameters, if: :devise_controller?
+  before_action :set_wizard_data, if: :user_signed_in?
+
+  private
+
+  def set_wizard_data
+    @brokers = Broker.order(:name)
+    @prop_firm_accounts = current_user.prop_firm_accounts.order(created_at: :desc) if current_user
+  end
 
   protected
 

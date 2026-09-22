@@ -34,8 +34,22 @@ Rails.application.routes.draw do
   get  "pro-tools",           to: "pro_tools#index",    as: :pro_tools
   resources :backtest_sessions, path: "pro-tools/sesiones", only: [:create, :show, :destroy]
   resources :prop_transactions,  path: "pro-tools/prop-firms", only: [:index, :create, :destroy], as: :prop_ledger
-  resources :prop_firm_accounts
-  # Legacy aliases (keep working links)
+  resources :prop_firm_accounts do
+    collection do
+      get :templates_json
+    end
+    member do
+      patch :mark_burned
+      patch :reset_account
+      patch :move_to_funded
+    end
+  end
+  resources :trading_accounts do
+    collection do
+      get :wizard
+      get :brokers_json
+    end
+  end
   get  "prop_firms",          to: redirect("/pro-tools"), as: :prop_transactions
   get  "backtester",          to: redirect("/pro-tools"), as: :backtester
 

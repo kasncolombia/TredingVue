@@ -71,82 +71,126 @@
     </div>
   </div>
 
-  <!-- CALENDAR HEATMAP GRID -->
-  <div class="glass rounded-3xl p-5 md:p-7 overflow-hidden border dark:border-darkBorder border-lightBorder">
+  <!-- CALENDAR BENTO GRID DE 8 COLUMNAS -->
+  <div class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 md:p-6 shadow-sm">
     
-    <!-- HEADER DIAS SEMANA -->
-    <div class="grid grid-cols-7 gap-2 mb-4 text-center text-xs font-black text-slate-400 uppercase tracking-widest">
-      <div>Lun</div>
-      <div>Mar</div>
-      <div>Mié</div>
-      <div>Jue</div>
-      <div>Vie</div>
-      <div class="text-brand">Sáb</div>
-      <div class="text-brand">Dom</div>
+    <!-- HEADER DIAS SEMANA (7 DÍAS + 8VA COLUMNA TOTALES SEMANALES) -->
+    <div class="grid grid-cols-8 gap-2.5 mb-4 text-center text-xs font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+      <div class="py-2 rounded-xl bg-white dark:bg-slate-800/80 shadow-xs border border-slate-200/60 dark:border-slate-700/50">Lun</div>
+      <div class="py-2 rounded-xl bg-white dark:bg-slate-800/80 shadow-xs border border-slate-200/60 dark:border-slate-700/50">Mar</div>
+      <div class="py-2 rounded-xl bg-white dark:bg-slate-800/80 shadow-xs border border-slate-200/60 dark:border-slate-700/50">Mié</div>
+      <div class="py-2 rounded-xl bg-white dark:bg-slate-800/80 shadow-xs border border-slate-200/60 dark:border-slate-700/50">Jue</div>
+      <div class="py-2 rounded-xl bg-white dark:bg-slate-800/80 shadow-xs border border-slate-200/60 dark:border-slate-700/50">Vie</div>
+      <div class="py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/50">Sáb</div>
+      <div class="py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/50">Dom</div>
+      <div class="py-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/50 font-black">Totales</div>
     </div>
 
-    <!-- GRID DE DIAS -->
-    <div class="grid grid-cols-7 gap-1 sm:gap-2 md:gap-3">
-      <% @calendar_days.each do |date| %>
-        <% 
-          is_current_month = date.month == @current_month.month
-          day_trades = @trades_by_date[date] || []
-          daily_pnl  = day_trades.sum(&:pnl)
-          has_trades  = day_trades.any?
-          is_today    = date == Date.current
+    <!-- FILAS DE SEMANAS (7 DÍAS + 1 TOTAL SEMANAL) -->
+    <div class="space-y-3">
+      <% @weeks.each_with_index do |week_days, idx| %>
+        <% week_summary = @weekly_pnls[idx] || { pnl: 0, count: 0 } %>
+        
+        <div class="grid grid-cols-8 gap-2.5">
+          <!-- 7 DÍAS DE LA SEMANA -->
+          <% week_days.each do |date| %>
+            <% 
+              is_current_month = date.month == @current_month.month
+              day_trades = @trades_by_date[date] || []
+              daily_pnl  = day_trades.sum(&:pnl)
+              has_trades  = day_trades.any?
+              is_today    = date == Date.current
 
-          card_bg_class = if !is_current_month
-            "opacity-30 dark:bg-darkCard/30 bg-slate-100/50 text-slate-400 border-transparent"
-          elsif has_trades
-            if daily_pnl > 0
-              "bg-emerald-500/10 border-emerald-500/30 text-emerald-500 hover:border-emerald-500 shadow-md shadow-emerald-500/5"
-            elsif daily_pnl < 0
-              "bg-rose-500/10 border-rose-500/30 text-rose-500 hover:border-rose-500 shadow-md shadow-rose-500/5"
-            else
-              "dark:bg-darkCard bg-slate-100 border-darkBorder text-slate-400"
-            end
-          else
-            "dark:bg-darkCard/50 bg-white border-slate-200 dark:border-darkBorder/60 text-slate-400 hover:border-brand/30"
-          end
-        %>
+              # PALETA PASTEL SUAVE SEGÚN RESULTADO (LIGHT MODE OPTIMIZED)
+              card_bg_class = if !is_current_month
+                "bg-slate-100/40 dark:bg-slate-900/30 text-slate-300 dark:text-slate-600 border-slate-200/30 dark:border-slate-800/30 shadow-none opacity-50"
+              elsif has_trades
+                if daily_pnl > 0
+                  # Verde Menta Pastel
+                  "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800/60 text-emerald-900 dark:text-emerald-200 shadow-sm hover:border-emerald-400 hover:shadow-md"
+                elsif daily_pnl < 0
+                  # Rosa Pastel Suave
+                  "bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800/60 text-rose-900 dark:text-rose-200 shadow-sm hover:border-rose-400 hover:shadow-md"
+                else
+                  # Azul Lavanda / Neutro
+                  "bg-indigo-50/70 dark:bg-indigo-950/30 border-indigo-200/80 dark:border-indigo-800/50 text-indigo-900 dark:text-indigo-200 shadow-sm hover:border-indigo-300"
+                end
+              else
+                # Inactivo / Sin trades
+                "bg-white dark:bg-slate-800/60 border-slate-200/80 dark:border-slate-700/60 text-slate-700 dark:text-slate-300 hover:border-brand/40 shadow-xs"
+              end
+            %>
 
-        <div class="min-h-[55px] sm:min-h-[75px] md:min-h-[115px] p-1.5 sm:p-2 md:p-3.5 rounded-lg sm:rounded-xl md:rounded-2xl border transition-all duration-300 relative group flex flex-col justify-between cursor-pointer hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/20 hover:border-brand/50 hover:z-10 <%= card_bg_class %> <%= is_today ? 'ring-2 ring-brand' : '' %>"
-             data-date="<%= date.to_s %>"
-             data-trades="<%= day_trades.to_json(include: :strategy) %>"
-             onclick="showDayDetails(this)">
-          
-          <div class="flex flex-col md:flex-row lg:items-center justify-between gap-1 leading-none">
-            <span class="text-xs md:text-sm font-black <%= is_today ? 'text-brand' : '' %>">
-              <%= date.day %>
-            </span>
-            <% if is_today %>
-              <span class="hidden lg:inline-block text-[9px] px-2 py-0.5 rounded-full bg-brand text-white font-extrabold uppercase">Hoy</span>
-              <span class="lg:hidden w-1.5 h-1.5 bg-brand rounded-full mb-1"></span>
-            <% end %>
-            <% if has_trades %>
-              <span class="text-[9px] md:text-[10px] font-extrabold px-1.5 md:px-2 py-0.5 rounded-full dark:bg-slate-900 bg-slate-800 text-white font-mono shadow-sm self-start md:self-auto">
-                <%= day_trades.size %> <span class="hidden md:inline"><%= day_trades.size == 1 ? 'trade' : 'trades' %></span>
-              </span>
-            <% end %>
-          </div>
-
-          <% if has_trades %>
-            <div class="mt-2 md:mt-auto">
-              <p class="text-[11px] md:text-sm font-black font-mono <%= daily_pnl >= 0 ? 'text-emerald-500' : 'text-rose-500' %> truncate">
-                <%= daily_pnl >= 0 ? '+' : '' %>$<%= number_with_precision(daily_pnl, precision: 2) %>
-              </p>
-              <div class="hidden lg:flex flex-wrap gap-1 mt-1.5">
-                <% day_trades.map(&:symbol).uniq.first(2).each do |sym| %>
-                  <span class="text-[9px] px-1.5 py-0.5 rounded-md bg-black/20 text-slate-300 font-mono font-bold truncate max-w-[65px]"><%= sym %></span>
+            <div class="min-h-[120px] p-3 rounded-2xl border transition-all duration-200 relative group flex flex-col justify-between cursor-pointer hover:-translate-y-0.5 <%= card_bg_class %> <%= is_today ? 'ring-2 ring-brand ring-offset-2 dark:ring-offset-slate-900 font-bold' : '' %>"
+                 data-date="<%= date.to_s %>"
+                 data-trades="<%= day_trades.to_json(include: :strategy) %>"
+                 onclick="showDayDetails(this)">
+              
+              <!-- NÚMERO DEL DÍA EN ESQUINA SUPERIOR IZQUIERDA -->
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold <%= is_today ? 'text-brand font-black' : 'text-slate-500 dark:text-slate-400' %>">
+                  <%= date.day %>
+                </span>
+                
+                <% if is_today %>
+                  <span class="text-[9px] px-1.5 py-0.5 rounded-md bg-brand text-white font-extrabold uppercase">Hoy</span>
+                <% elsif has_trades %>
+                  <span class="material-symbols-outlined text-[14px] opacity-40 group-hover:opacity-100 transition-opacity">sticky_note_2</span>
                 <% end %>
               </div>
+
+              <!-- MONTO MONETARIO AL CENTRO EN TIPOGRAFÍA TECH/FINANCIERA BOLD -->
+              <div class="my-auto py-1">
+                <% if has_trades %>
+                  <p class="text-sm md:text-base font-black font-mono tracking-tight <%= daily_pnl > 0 ? 'text-emerald-600 dark:text-emerald-400' : (daily_pnl < 0 ? 'text-rose-600 dark:text-rose-400' : 'text-indigo-600 dark:text-indigo-300') %> truncate">
+                    <%= daily_pnl >= 0 ? '+' : '' %>$<%= number_with_precision(daily_pnl, precision: 2, delimiter: ',') %>
+                  </p>
+                <% else %>
+                  <span class="text-xs font-mono text-slate-300 dark:text-slate-600 font-medium">—</span>
+                <% end %>
+              </div>
+
+              <!-- ETIQUETA SECUNDARIA PEQUEÑA CON CONTEO DE TRADES Y SYMBOLS -->
+              <div class="flex items-center justify-between text-[10px] font-semibold text-slate-500 dark:text-slate-400 border-t border-slate-200/50 dark:border-slate-700/40 pt-1.5 mt-1">
+                <% if has_trades %>
+                  <span class="font-bold text-slate-600 dark:text-slate-300">
+                    <%= day_trades.size %> <%= day_trades.size == 1 ? 'trade' : 'trades' %>
+                  </span>
+                  <div class="flex gap-1">
+                    <% day_trades.map(&:symbol).uniq.first(1).each do |sym| %>
+                      <span class="text-[9px] px-1 py-0.5 rounded bg-slate-200/60 dark:bg-slate-700/60 font-mono font-bold text-slate-700 dark:text-slate-200 truncate max-w-[55px]"><%= sym %></span>
+                    <% end %>
+                  </div>
+                <% else %>
+                  <span class="text-[10px] text-slate-400 dark:text-slate-500 italic">Descanso</span>
+                <% end %>
+              </div>
+
             </div>
-          <% else %>
-            <span class="text-[10px] text-slate-500/40 hidden lg:block mt-auto font-mono">— Sin Trades</span>
           <% end %>
+
+          <!-- 8VA COLUMNA: TOTALES SEMANALES -->
+          <div class="min-h-[120px] p-3 rounded-2xl border border-indigo-200/80 dark:border-indigo-800/60 bg-indigo-50/50 dark:bg-indigo-950/40 text-indigo-950 dark:text-indigo-100 flex flex-col justify-between shadow-xs">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-extrabold uppercase tracking-wider text-indigo-500 dark:text-indigo-400">Semana <%= idx + 1 %></span>
+              <span class="material-symbols-outlined text-indigo-400 text-[14px]">analytics</span>
+            </div>
+
+            <div class="my-auto py-1">
+              <p class="text-sm md:text-base font-black font-mono tracking-tight <%= week_summary[:pnl] >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400' %>">
+                <%= week_summary[:pnl] >= 0 ? '+' : '' %>$<%= number_with_precision(week_summary[:pnl], precision: 2, delimiter: ',') %>
+              </p>
+            </div>
+
+            <div class="flex items-center justify-between text-[10px] font-extrabold text-indigo-600 dark:text-indigo-300 border-t border-indigo-200/60 dark:border-indigo-800/50 pt-1.5">
+              <span><%= week_summary[:count] %> trades</span>
+              <span class="font-mono text-[9.5px]"><%= week_summary[:wins] %>V / <%= week_summary[:losses] %>R</span>
+            </div>
+          </div>
         </div>
       <% end %>
     </div>
+
   </div>
 
 </div>

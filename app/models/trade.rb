@@ -2,6 +2,7 @@ class Trade < ApplicationRecord
   belongs_to :user
   belongs_to :strategy, optional: true
   belongs_to :prop_firm_account, optional: true
+  belongs_to :trading_account, optional: true
   has_many :ai_analyses,  dependent: :destroy
   has_one  :ai_analysis,  -> { order(created_at: :desc) }, dependent: :destroy
 

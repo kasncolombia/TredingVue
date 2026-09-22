@@ -63,6 +63,13 @@
           </div>
 
           <div class="flex items-center justify-end gap-2 pt-2 border-t dark:border-darkBorder border-slate-200">
+            <%= link_to prop_firm_account_path(acc), class: "p-1.5 rounded-lg text-brand hover:bg-brand/10 transition-colors flex items-center gap-1 text-xs font-bold" do %>
+              <span class="material-symbols-outlined text-[16px]">visibility</span>
+              <span>Ver Detalle</span>
+            <% end %>
+            <%= link_to edit_prop_firm_account_path(acc), class: "p-1.5 rounded-lg text-slate-400 hover:text-brand hover:bg-brand/10 transition-colors" do %>
+              <span class="material-symbols-outlined text-[16px]">edit</span>
+            <% end %>
             <%= button_to prop_firm_account_path(acc), method: :delete, data: { turbo_confirm: "¿Borrar esta cuenta?" }, class: "p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition-colors" do %>
               <span class="material-symbols-outlined text-[16px]">delete</span>
             <% end %>
