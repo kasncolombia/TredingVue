@@ -25,7 +25,7 @@
         <div id="step-node-1" class="w-10 h-10 rounded-full bg-brand text-white font-extrabold text-sm flex items-center justify-center shadow-md ring-4 ring-brand/20 transition-all">
           1
         </div>
-        <span id="step-label-1" class="text-[11px] font-bold text-brand transition-colors">Tipo de Incorporación</span>
+        <span id="step-label-1" class="text-[11px] font-bold text-brand transition-colors">Tipo de cuenta</span>
       </button>
 
       <!-- PASO 2 -->
@@ -33,7 +33,7 @@
         <div id="step-node-2" class="w-10 h-10 rounded-full bg-slate-200 dark:bg-darkBorder text-slate-500 font-extrabold text-sm flex items-center justify-center transition-all">
           2
         </div>
-        <span id="step-label-2" class="text-[11px] font-bold text-slate-400 transition-colors" id="step-2-title-label">Firma & Reglas</span>
+        <span id="step-label-2" class="text-[11px] font-bold text-slate-400 transition-colors">Firma & Reglas</span>
       </button>
 
       <!-- PASO 3 -->
@@ -50,12 +50,12 @@
   <%= form_with model: @account, url: prop_firm_accounts_path, id: "onboarding-wizard-form", multipart: true, class: "space-y-6" do |f| %>
     
     <!-- CONTENEDOR DESLIZABLE DE PASOS -->
-    <div id="wizard-steps-container" class="relative overflow-hidden min-h-[480px]">
+    <div id="wizard-steps-container" data-current-step="1" class="relative min-h-[480px] space-y-6">
       
       <!-- ================================================================= -->
       <!-- PASO 1: SELECCIÓN DEL TIPO DE CUENTA DE FONDEO -->
       <!-- ================================================================= -->
-      <div id="wizard-step-1" class="wizard-step-panel space-y-6 transition-all duration-300 ease-out transform translate-x-0 opacity-100">
+      <div id="wizard-step-1" class="wizard-step-panel space-y-6">
         
         <div class="glass rounded-3xl p-6 md:p-8 border border-brand/20 bg-gradient-to-r from-brand/10 via-slate-900/40 to-emerald-500/10 shadow-xl space-y-4">
           <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand/20 text-brand text-xs font-bold uppercase tracking-wider border border-brand/30">
@@ -63,10 +63,10 @@
           </div>
           <div>
             <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-              Gestiona tus cuentas como un negocio 💼
+              Configura tu cuenta de fondeo 💼
             </h1>
             <p class="text-xs md:text-sm text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
-              Audita tu portafolio con precisión institucional. Selecciona el modo de incorporación para tu nueva cuenta de fondeo:
+              Selecciona el tipo de cuenta para registrar tu evaluación o cuenta financiada:
             </p>
           </div>
         </div>
@@ -131,11 +131,9 @@
             </div>
           </div>
 
-        </div>
-
-        <!-- BOTÓN DE SIGUIENTE DEL PASO 1 -->
+            <!-- BOTÓN DE SIGUIENTE DEL PASO 1 -->
         <div class="flex justify-end pt-4 border-t dark:border-darkBorder border-slate-200">
-          <button type="button" onclick="nextStep()" class="px-8 py-3 bg-brand hover:scale-[1.02] text-white font-extrabold text-xs rounded-xl shadow-lg glow-brand transition-all flex items-center gap-2 cursor-pointer">
+          <button type="button" onclick="goToStep(2)" class="px-8 py-3 bg-brand hover:scale-[1.02] text-white font-extrabold text-xs rounded-xl shadow-lg glow-brand transition-all flex items-center gap-2 cursor-pointer">
             Continuar al Paso 2
             <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
           </button>
@@ -146,10 +144,10 @@
       <!-- ================================================================= -->
       <!-- PASO 2: SELECCIÓN DE FIRMA, BALANCES Y REGLAS (SE ADAPTA DINÁMICAMENTE) -->
       <!-- ================================================================= -->
-      <div id="wizard-step-2" class="wizard-step-panel space-y-6" style="display: none;">
-        
+      <div id="wizard-step-2" data-mode="preset" class="wizard-step-panel space-y-6 hidden">
+
         <!-- SUB-PANEL 2A: PROP FIRM CATÁLOGO PRESETS -->
-        <div id="mode-panel-preset" class="glass rounded-2xl p-5 md:p-6 border-l-4 border-brand space-y-5">
+        <div id="mode-panel-preset" class="mode-sub-panel glass rounded-2xl p-5 md:p-6 border-l-4 border-brand space-y-5">
           <div class="flex items-center justify-between pb-3 border-b dark:border-darkBorder border-slate-200">
             <div>
               <h3 class="text-base font-black dark:text-white text-slate-800 flex items-center gap-2">
@@ -277,7 +275,7 @@
         </div>
 
         <!-- SUB-PANEL 2B: REGISTRO MANUAL DE CUENTA Y REGLAS -->
-        <div id="mode-panel-manual" class="hidden glass rounded-2xl p-5 md:p-6 border-l-4 border-amber-500 space-y-5">
+        <div id="mode-panel-manual" class="mode-sub-panel glass rounded-2xl p-5 md:p-6 border-l-4 border-amber-500 space-y-5 hidden">
           <div class="pb-3 border-b dark:border-darkBorder border-slate-200">
             <h3 class="text-base font-black dark:text-white text-slate-800 flex items-center gap-2">
               <span class="material-symbols-outlined text-amber-500 text-[20px]">edit_square</span>
@@ -289,12 +287,12 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Nombre de la Firma / Empresa *</label>
-              <input type="text" id="manual-firm-input" onchange="document.getElementById('prop_firm_name_field').value = this.value" placeholder="Ej: Custom Funding Firm, FTMO, FundedNext..." class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-bold focus:outline-none focus:border-brand">
+              <input type="text" id="manual-firm-input" oninput="document.getElementById('prop_firm_name_field').value = this.value" placeholder="Ej: Custom Funding Firm, FTMO, FundedNext..." class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-bold focus:outline-none focus:border-brand">
             </div>
 
             <div>
               <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Balance Inicial ($ USD) *</label>
-              <input type="text" id="manual-size-input" onchange="document.getElementById('prop_account_size_field').value = this.value" placeholder="Ej: 50K, 100000" class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-brand">
+              <input type="text" id="manual-size-input" oninput="document.getElementById('prop_account_size_field').value = this.value" placeholder="Ej: 50K, 100000" class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-brand">
             </div>
           </div>
 
@@ -326,18 +324,18 @@
         </div>
 
         <!-- SUB-PANEL 2C: ADJUNTAR ARCHIVO CSV -->
-        <div id="mode-panel-csv" class="hidden glass rounded-2xl p-5 md:p-6 border-l-4 border-emerald-500 space-y-5">
+        <div id="mode-panel-csv" class="mode-sub-panel glass rounded-2xl p-5 md:p-6 border-l-4 border-emerald-500 space-y-5 hidden">
           <div class="pb-3 border-b dark:border-darkBorder border-slate-200">
             <h3 class="text-base font-black dark:text-white text-slate-800 flex items-center gap-2">
               <span class="material-symbols-outlined text-emerald-500 text-[20px]">upload_file</span>
-              2. Adjuntar Extracto de Ejecuciones CSV
+              2. Adjuntar Extracto de Ejecuciones CSV (Opcional)
             </h3>
-            <p class="text-xs text-slate-400 mt-0.5">Sube el archivo CSV exportado desde Tradovate, NinjaTrader o tu broker de fondeo.</p>
+            <p class="text-xs text-slate-400 mt-0.5">Sube opcionalmente el archivo CSV exportado si deseas importar tus ejecuciones. No es obligatorio para crear la cuenta.</p>
           </div>
 
           <div class="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-8 text-center hover:border-emerald-500 transition-colors bg-slate-50/50 dark:bg-slate-900/40 space-y-2">
             <span class="material-symbols-outlined text-[42px] text-emerald-500">cloud_upload</span>
-            <p class="text-xs font-extrabold text-slate-800 dark:text-slate-200">Selecciona el archivo CSV de la cuenta</p>
+            <p class="text-xs font-extrabold text-slate-800 dark:text-slate-200">Selecciona el archivo CSV de la cuenta (Opcional)</p>
             <p class="text-[10px] text-slate-400 max-w-sm mx-auto">El sistema extraerá automáticamente las operaciones para auditar las reglas de la cuenta de fondeo.</p>
             <div class="pt-2">
               <input type="file" name="csv_file" accept=".csv" class="inline-block text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-600 file:text-white hover:file:bg-emerald-700 cursor-pointer" />
@@ -347,7 +345,7 @@
 
         <!-- NAVEGACIÓN PASO 2 -->
         <div class="flex items-center justify-between pt-4 border-t dark:border-darkBorder border-slate-200">
-          <button type="button" onclick="prevStep()" class="px-5 py-2.5 text-xs font-bold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white rounded-xl border dark:border-darkBorder border-slate-200 transition-all flex items-center gap-1.5 cursor-pointer">
+          <button type="button" onclick="goToStep(1)" class="px-5 py-2.5 text-xs font-bold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white rounded-xl border dark:border-darkBorder border-slate-200 transition-all flex items-center gap-1.5 cursor-pointer">
             <span class="material-symbols-outlined text-[18px]">arrow_back</span>
             Paso Anterior
           </button>
@@ -363,7 +361,7 @@
       <!-- ================================================================= -->
       <!-- PASO 3: DETALLES OPERATIVOS & CONFIRMACIÓN -->
       <!-- ================================================================= -->
-      <div id="wizard-step-3" class="wizard-step-panel space-y-6" style="display: none;">
+      <div id="wizard-step-3" class="wizard-step-panel space-y-6 hidden">
         
         <div class="glass rounded-2xl p-5 md:p-6 border-l-4 border-emerald-500 space-y-5">
           <div class="pb-3 border-b dark:border-darkBorder border-slate-200">
@@ -630,95 +628,120 @@ const RULES_DATABASE = {
 };
 
 window.selectPropAccountMode = function(mode, cardEl) {
-  selectedPropMode = mode;
+  selectedPropMode = mode || "preset";
+  const step2 = document.getElementById("wizard-step-2");
+  if (step2) {
+    step2.setAttribute("data-mode", selectedPropMode);
+  }
+
   document.querySelectorAll(".account-mode-card").forEach(c => {
     c.classList.remove("active", "border-brand", "ring-4", "ring-brand/10");
     c.classList.add("border-slate-200", "dark:border-darkBorder");
   });
-  cardEl.classList.add("active", "border-brand", "ring-4", "ring-brand/10");
-  cardEl.classList.remove("border-slate-200", "dark:border-darkBorder");
-
-  // Mostrar subpanel correspondiente en Paso 2
-  document.getElementById("mode-panel-preset").classList.toggle("hidden", mode !== "preset");
-  document.getElementById("mode-panel-manual").classList.toggle("hidden", mode !== "manual");
-  document.getElementById("mode-panel-csv").classList.toggle("hidden", mode !== "csv");
+  if (cardEl && cardEl.classList) {
+    cardEl.classList.add("active", "border-brand", "ring-4", "ring-brand/10");
+    cardEl.classList.remove("border-slate-200", "dark:border-darkBorder");
+  }
 
   // Actualizar etiqueta del Paso 2
-  const label2 = document.getElementById("step-2-title-label");
-  if (mode === "preset") label2.textContent = "Firma & Reglas";
-  else if (mode === "manual") label2.textContent = "Reglas Manuales";
-  else if (mode === "csv") label2.textContent = "Adjuntar CSV";
+  const label2 = document.getElementById("step-label-2");
+  if (label2) {
+    if (mode === "preset") label2.textContent = "Firma & Reglas";
+    else if (mode === "manual") label2.textContent = "Reglas Manuales";
+    else if (mode === "csv") label2.textContent = "Adjuntar CSV";
+  }
 
-  // Avanza suavemente al Paso 2
-  setTimeout(() => { goToStep(2); }, 250);
+  // Avanza al Paso 2
+  goToStep(2);
 };
 
 window.goToStep = function(stepNum) {
-  if (stepNum < 1 || stepNum > 3) return;
+  stepNum = parseInt(stepNum) || 1;
+  if (stepNum < 1) stepNum = 1;
+  if (stepNum > 3) stepNum = 3;
+
+  if (stepNum === 3 && selectedPropMode === "manual") {
+    const manualFirm = document.getElementById("manual-firm-input")?.value?.trim();
+    const manualSize = document.getElementById("manual-size-input")?.value?.trim();
+    const fField = document.getElementById("prop_firm_name_field");
+    const sField = document.getElementById("prop_account_size_field");
+
+    if (fField && manualFirm) fField.value = manualFirm;
+    if (sField && manualSize) sField.value = manualSize;
+  }
+
   currentStep = stepNum;
 
-  // 1. Actualizar barra de progreso del Stepper
-  const progressBar = document.getElementById("stepper-progress-bar");
-  if (progressBar) {
-    const pct = ((stepNum - 1) / 2) * 100;
-    progressBar.style.width = pct + "%";
+  // 1. Mostrar/Ocultar paneles principales usando classList toggle
+  const step1 = document.getElementById("wizard-step-1");
+  const step2 = document.getElementById("wizard-step-2");
+  const step3 = document.getElementById("wizard-step-3");
+
+  if (step1) {
+    step1.removeAttribute("style");
+    if (stepNum === 1) step1.classList.remove("hidden");
+    else step1.classList.add("hidden");
+  }
+  if (step2) {
+    step2.removeAttribute("style");
+    if (stepNum === 2) step2.classList.remove("hidden");
+    else step2.classList.add("hidden");
+  }
+  if (step3) {
+    step3.removeAttribute("style");
+    if (stepNum === 3) step3.classList.remove("hidden");
+    else step3.classList.add("hidden");
   }
 
-  // 2. Actualizar nodos del Stepper
-  for (let i = 1; i <= 3; i++) {
-    const node = document.getElementById("step-node-" + i);
-    const label = document.getElementById("step-label-" + i);
-    if (!node) continue;
-
-    if (i <= stepNum) {
-      node.classList.remove("bg-slate-200", "dark:bg-darkBorder", "text-slate-500");
-      node.classList.add("bg-brand", "text-white", "ring-4", "ring-brand/20");
-      label.classList.remove("text-slate-400");
-      label.classList.add("text-brand");
-    } else {
-      node.classList.remove("bg-brand", "text-white", "ring-4", "ring-brand/20");
-      node.classList.add("bg-slate-200", "dark:bg-darkBorder", "text-slate-500");
-      label.classList.remove("text-brand");
-      label.classList.add("text-slate-400");
-    }
-  }
-
-  // 3. Mostrar u ocultar paneles de forma instantánea y garantizada
-  for (let i = 1; i <= 3; i++) {
-    const panel = document.getElementById("wizard-step-" + i);
-    if (!panel) continue;
-
-    if (i === stepNum) {
-      panel.style.display = "block";
-      panel.classList.remove("hidden");
-    } else {
-      panel.style.display = "none";
-      panel.classList.add("hidden");
-    }
-  }
-
-  // 4. Si estamos en el Paso 2, asegurar visibilidad del subpanel seleccionado
+  // 2. Mostrar/Ocultar subpaneles del Paso 2
   if (stepNum === 2) {
     const pPreset = document.getElementById("mode-panel-preset");
     const pManual = document.getElementById("mode-panel-manual");
     const pCsv    = document.getElementById("mode-panel-csv");
 
     if (pPreset) {
-      const show = (selectedPropMode === "preset");
-      pPreset.style.display = show ? "block" : "none";
-      pPreset.classList.toggle("hidden", !show);
+      pPreset.removeAttribute("style");
+      if (selectedPropMode === "preset") pPreset.classList.remove("hidden");
+      else pPreset.classList.add("hidden");
     }
     if (pManual) {
-      const show = (selectedPropMode === "manual");
-      pManual.style.display = show ? "block" : "none";
-      pManual.classList.toggle("hidden", !show);
+      pManual.removeAttribute("style");
+      if (selectedPropMode === "manual") pManual.classList.remove("hidden");
+      else pManual.classList.add("hidden");
     }
     if (pCsv) {
-      const show = (selectedPropMode === "csv");
-      pCsv.style.display = show ? "block" : "none";
-      pCsv.classList.toggle("hidden", !show);
+      pCsv.removeAttribute("style");
+      if (selectedPropMode === "csv") pCsv.classList.remove("hidden");
+      else pCsv.classList.add("hidden");
     }
   }
+
+  // 3. Actualizar barra de progreso del Stepper
+  const progressBar = document.getElementById("stepper-progress-bar");
+  if (progressBar) {
+    const pct = ((stepNum - 1) / 2) * 100;
+    progressBar.style.width = pct + "%";
+  }
+
+  // 4. Actualizar nodos del Stepper
+  for (let i = 1; i <= 3; i++) {
+    const node = document.getElementById("step-node-" + i);
+    const label = document.getElementById("step-label-" + i);
+    if (!node) continue;
+
+    if (i <= stepNum) {
+      node.className = "w-10 h-10 rounded-full bg-brand text-white font-extrabold text-sm flex items-center justify-center shadow-md ring-4 ring-brand/20 transition-all";
+      if (label) label.className = "text-[11px] font-bold text-brand transition-colors";
+    } else {
+      node.className = "w-10 h-10 rounded-full bg-slate-200 dark:bg-darkBorder text-slate-500 font-extrabold text-sm flex items-center justify-center transition-all";
+      if (label) label.className = "text-[11px] font-bold text-slate-400 transition-colors";
+    }
+  }
+
+  try {
+    const targetEl = document.getElementById("onboarding-wizard-form") || document.body;
+    targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch(e) {}
 };
 
 window.nextStep = function() {
@@ -731,39 +754,45 @@ window.prevStep = function() {
 
 window.selectFirmConfig = function(firmName, btn) {
   currentFirm = firmName;
-  document.getElementById("prop_firm_name_field").value = firmName;
+  const fField = document.getElementById("prop_firm_name_field");
+  if (fField) fField.value = firmName;
   document.querySelectorAll(".firm-selector-btn").forEach(b => b.classList.remove("ring-2", "ring-brand", "border-brand", "bg-brand/10"));
-  btn.classList.add("ring-2", "ring-brand", "border-brand", "bg-brand/10");
-  document.getElementById("firm-plan-label").textContent = `2 - CONFIGURACIÓN DE PLAN DE ${firmName.toUpperCase()}`;
+  if (btn && btn.classList) btn.classList.add("ring-2", "ring-brand", "border-brand", "bg-brand/10");
+  const fPlanLabel = document.getElementById("firm-plan-label");
+  if (fPlanLabel) fPlanLabel.textContent = `2 - CONFIGURACIÓN DE PLAN DE ${firmName.toUpperCase()}`;
   updateRulesDisplay();
 };
 
 window.setPlanType = function(planType, btn) {
   currentPlan = planType;
-  document.getElementById("prop_plan_name_field").value = planType;
+  const pField = document.getElementById("prop_plan_name_field");
+  if (pField) pField.value = planType;
   document.querySelectorAll(".plan-type-btn").forEach(b => b.classList.remove("ring-2", "ring-brand", "border-brand", "bg-brand/10"));
-  btn.classList.add("ring-2", "ring-brand", "border-brand", "bg-brand/10");
+  if (btn && btn.classList) btn.classList.add("ring-2", "ring-brand", "border-brand", "bg-brand/10");
   updateRulesDisplay();
 };
 
 window.setAccountSize = function(size, btn) {
   currentSize = size;
-  document.getElementById("prop_account_size_field").value = size;
+  const sField = document.getElementById("prop_account_size_field");
+  if (sField) sField.value = size;
   document.querySelectorAll(".size-btn").forEach(b => b.classList.remove("ring-2", "ring-brand", "border-brand", "bg-brand/10"));
-  btn.classList.add("ring-2", "ring-brand", "border-brand", "bg-brand/10");
+  if (btn && btn.classList) btn.classList.add("ring-2", "ring-brand", "border-brand", "bg-brand/10");
   updateRulesDisplay();
 };
 
 window.setAccountPhase = function(phaseId, btn) {
-  document.getElementById("prop_phase_field").value = phaseId;
+  const pField = document.getElementById("prop_phase_field");
+  if (pField) pField.value = phaseId;
   document.querySelectorAll(".phase-btn").forEach(b => b.classList.remove("ring-2", "ring-emerald-500", "border-emerald-500", "bg-emerald-500/10", "text-emerald-500"));
-  btn.classList.add("ring-2", "ring-emerald-500", "border-emerald-500", "bg-emerald-500/10", "text-emerald-500");
+  if (btn && btn.classList) btn.classList.add("ring-2", "ring-emerald-500", "border-emerald-500", "bg-emerald-500/10", "text-emerald-500");
 };
 
 window.setAccountStatus = function(statusId, btn) {
-  document.getElementById("prop_status_field").value = statusId;
+  const sField = document.getElementById("prop_status_field");
+  if (sField) sField.value = statusId;
   document.querySelectorAll(".status-btn").forEach(b => b.classList.remove("ring-2", "ring-emerald-500", "border-emerald-500", "bg-emerald-500/10", "text-emerald-500"));
-  btn.classList.add("ring-2", "ring-emerald-500", "border-emerald-500", "bg-emerald-500/10", "text-emerald-500");
+  if (btn && btn.classList) btn.classList.add("ring-2", "ring-emerald-500", "border-emerald-500", "bg-emerald-500/10", "text-emerald-500");
 };
 
 window.switchRuleTab = function(tabName, btn) {
@@ -772,25 +801,33 @@ window.switchRuleTab = function(tabName, btn) {
     b.classList.remove("bg-white", "dark:bg-slate-700", "text-brand", "shadow-xs");
     b.classList.add("text-slate-400");
   });
-  btn.classList.add("bg-white", "dark:bg-slate-700", "text-brand", "shadow-xs");
-  btn.classList.remove("text-slate-400");
+  if (btn && btn.classList) {
+    btn.classList.add("bg-white", "dark:bg-slate-700", "text-brand", "shadow-xs");
+    btn.classList.remove("text-slate-400");
+  }
   updateRulesDisplay();
 };
 
 function updateRulesDisplay() {
-  document.getElementById("rules-box-title").textContent = `3 - REGLAS: ${currentFirm.toUpperCase()} (${currentSize})`;
+  const titleEl = document.getElementById("rules-box-title");
+  if (titleEl) titleEl.textContent = `3 - REGLAS: ${currentFirm.toUpperCase()} (${currentSize})`;
   const data = RULES_DATABASE[currentSize] || RULES_DATABASE["50K"];
   
+  const elTarget = document.getElementById("rule-target");
+  const elMaxDD = document.getElementById("rule-max-dd");
+  const elDailyLoss = document.getElementById("rule-daily-loss");
+  const elConsistency = document.getElementById("rule-consistency");
+
   if (currentTab === "funded") {
-    document.getElementById("rule-target").textContent = "N/A (Retiros / Payouts)";
-    document.getElementById("rule-max-dd").textContent = data.max_dd;
-    document.getElementById("rule-daily-loss").textContent = data.daily;
-    document.getElementById("rule-consistency").textContent = "30% (Regla Retiro)";
+    if (elTarget) elTarget.textContent = "N/A (Retiros / Payouts)";
+    if (elMaxDD) elMaxDD.textContent = data.max_dd;
+    if (elDailyLoss) elDailyLoss.textContent = data.daily;
+    if (elConsistency) elConsistency.textContent = "30% (Regla Retiro)";
   } else {
-    document.getElementById("rule-target").textContent = data.target;
-    document.getElementById("rule-max-dd").textContent = data.max_dd;
-    document.getElementById("rule-daily-loss").textContent = data.daily;
-    document.getElementById("rule-consistency").textContent = data.consistency;
+    if (elTarget) elTarget.textContent = data.target;
+    if (elMaxDD) elMaxDD.textContent = data.max_dd;
+    if (elDailyLoss) elDailyLoss.textContent = data.daily;
+    if (elConsistency) elConsistency.textContent = data.consistency;
   }
 }
 
@@ -804,15 +841,22 @@ window.switchModalTab = function(tabName, btn) {
     b.classList.remove("bg-white", "dark:bg-slate-700", "text-brand", "shadow-xs");
     b.classList.add("text-slate-400");
   });
-  btn.classList.add("bg-white", "dark:bg-slate-700", "text-brand", "shadow-xs");
-  btn.classList.remove("text-slate-400");
+  if (btn && btn.classList) {
+    btn.classList.add("bg-white", "dark:bg-slate-700", "text-brand", "shadow-xs");
+    btn.classList.remove("text-slate-400");
+  }
 
+  const evalSec = document.getElementById("modal-sec-eval");
+  const fundedSec = document.getElementById("modal-sec-funded");
   if (tabName === "funded") {
-    document.getElementById("modal-sec-eval").classList.add("hidden");
-    document.getElementById("modal-sec-funded").classList.remove("hidden");
+    if (evalSec) evalSec.classList.add("hidden");
+    if (fundedSec) fundedSec.classList.remove("hidden");
   } else {
-    document.getElementById("modal-sec-eval").classList.remove("hidden");
-    document.getElementById("modal-sec-funded").classList.add("hidden");
+    if (evalSec) evalSec.classList.remove("hidden");
+    if (fundedSec) fundedSec.classList.add("hidden");
   }
 };
+
+document.addEventListener("DOMContentLoaded", function() { goToStep(1); });
+document.addEventListener("turbo:load", function() { goToStep(1); });
 </script>

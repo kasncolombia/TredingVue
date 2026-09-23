@@ -109,9 +109,9 @@
     </div>
 
     <% 
-      firms_summary = current_user.prop_transactions.group_by(&:company_name).map do |firm, txs|
-        exp = txs.select { |t| t.transaction_type == "expense" }.sum(&:amount)
-        pay = txs.select { |t| t.transaction_type == "payout" }.sum(&:amount)
+      firms_summary = current_user.prop_transactions.group_by { |t| t.company_name.presence || "Sin Firma" }.map do |firm, txs|
+        exp = txs.select { |t| t.transaction_type == "expense" }.sum { |t| t.amount.to_f }
+        pay = txs.select { |t| t.transaction_type == "payout" }.sum { |t| t.amount.to_f }
         net = pay - exp
         roi = exp.positive? ? ((net / exp) * 100).round(1) : 0.0
         accs = current_user.prop_firm_accounts.where(firm_name: firm)

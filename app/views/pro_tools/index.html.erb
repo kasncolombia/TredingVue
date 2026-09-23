@@ -1,37 +1,45 @@
 <% content_for :page_title, "Herramientas Pro: Simulador & Fondeo" %>
 
-<!-- HEADER / TABS NAV -->
-<div class="mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4 fade-in">
-  <div>
-    <h1 class="text-xl md:text-2xl font-black dark:text-white text-slate-800 flex items-center gap-2">
-      <span class="material-symbols-outlined text-brand text-[28px]">labs</span>
-      Pro Tools Hub
-    </h1>
-    <p class="text-xs md:text-sm dark:text-slate-400 text-slate-500 mt-1 max-w-xl">
-      Configura tus sesiones de simulación, practica bajo reglas de Profit/Loss y gestiona la caja contable de tus cuentas fondeadas reales.
-    </p>
+<div class="mb-6 space-y-4 fade-in">
+  <!-- HEADER CON TÍTULO A LA IZQUIERDA Y CTA "+ NUEVA CUENTA DE FONDEO" EN LA ESQUINA SUPERIOR DERECHA -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b dark:border-darkBorder border-slate-200 pb-4">
+    <div>
+      <h1 class="text-xl md:text-2xl font-black dark:text-white text-slate-800 flex items-center gap-2">
+        <span class="material-symbols-outlined text-brand text-[28px]">account_tree</span>
+        Prop Firms & Herramientas
+      </h1>
+      <p class="text-xs md:text-sm dark:text-slate-400 text-slate-500 mt-1 max-w-xl">
+        Centro integral para gestionar tus cuentas de fondeo, simulador y rendimiento.
+      </p>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <%= link_to new_prop_firm_account_path, class: "px-5 py-2.5 bg-brand hover:scale-[1.02] text-white font-extrabold text-xs rounded-xl shadow-lg glow-brand transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap" do %>
+        <span class="material-symbols-outlined text-[18px]">add_circle</span>
+        <span>+ Nueva Cuenta de Fondeo</span>
+      <% end %>
+    </div>
   </div>
 
-  <div class="flex items-center gap-3">
-    <div class="flex p-1 bg-slate-200/50 dark:bg-darkBorder/50 rounded-xl w-max border border-slate-300/50 dark:border-darkBorder">
+  <!-- NAVEGACIÓN INTERNA (PESTAÑAS ALINEADAS A LA IZQUIERDA) -->
+  <div class="flex items-center gap-2 overflow-x-auto pb-1">
+    <div class="flex p-1 bg-slate-200/50 dark:bg-darkBorder/50 rounded-xl border border-slate-300/50 dark:border-darkBorder">
+      <%= link_to pro_tools_path(tab: 'prop'), class: "py-2 px-4 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 #{@active_tab == 'prop' ? 'bg-white dark:bg-slate-700 text-brand shadow-sm' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'}" do %>
+        <span class="material-symbols-outlined text-[16px]">account_tree</span> Mis Cuentas
+      <% end %>
+
       <%= link_to pro_tools_path(tab: 'backtest'), class: "py-2 px-4 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 #{@active_tab == 'backtest' ? 'bg-white dark:bg-slate-700 text-brand shadow-sm' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'}" do %>
         <span class="material-symbols-outlined text-[16px]">sports_esports</span> Simulador
       <% end %>
-      <%= link_to pro_tools_path(tab: 'prop'), class: "py-2 px-4 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 #{@active_tab == 'prop' ? 'bg-white dark:bg-slate-700 text-emerald-500 shadow-sm' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'}" do %>
-        <span class="material-symbols-outlined text-[16px]">business_center</span> Tracker Contable
+
+      <%= link_to prop_transactions_path, class: "py-2 px-4 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 text-slate-500 hover:text-emerald-500 dark:text-slate-400 dark:hover:text-emerald-400" do %>
+        <span class="material-symbols-outlined text-[16px]">account_balance_wallet</span> Finanzas
       <% end %>
-      <%= link_to prop_firm_accounts_path, class: "py-2 px-4 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white" do %>
-        <span class="material-symbols-outlined text-[16px]">account_tree</span> Cuentas & Reglas
-      <% end %>
+      
       <%= link_to trading_accounts_path, class: "py-2 px-4 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white" do %>
-        <span class="material-symbols-outlined text-[16px]">hub</span> Conexión Brokers
+        <span class="material-symbols-outlined text-[16px]">hub</span> Brokers
       <% end %>
     </div>
-    
-    <%= link_to new_prop_firm_account_path, class: "py-2 px-3.5 bg-brand hover:bg-brand-hover text-white font-bold text-xs rounded-xl shadow-sm transition-all flex items-center gap-1" do %>
-      <span class="material-symbols-outlined text-[16px]">add</span>
-      <span class="hidden sm:inline">Nueva Cuenta</span>
-    <% end %>
   </div>
 </div>
 
@@ -212,166 +220,10 @@
       });
     </script>
   
-  <% else %>
-
-    <!-- ========================== TAB 2: PROP FIRM ACCOUNTING LEDGER ========================== -->
+  <% elsif @active_tab == 'prop' %>
     
-    <!-- KPI CARDS SLIDER (MOBILE FRIENDLY) -->
-    <div class="w-full overflow-x-auto snap-x hide-scrollbar pb-6 -mx-4 px-4 md:mx-0 md:px-0 mt-2">
-      <div class="flex md:grid md:grid-cols-4 gap-4 min-w-[max-content] md:min-w-0">
-        <!-- GASTOS -->
-        <div class="w-[220px] md:w-auto snap-center stat-card rounded-2xl p-4 md:p-5 flex flex-col justify-between group">
-          <div class="flex items-start justify-between mb-3">
-            <p class="text-[10px] sm:text-xs font-bold dark:text-slate-400 text-slate-500 uppercase tracking-widest">Inversión / Gastos</p>
-            <div class="w-8 h-8 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center">
-              <span class="material-symbols-outlined text-[16px]">receipt_long</span>
-            </div>
-          </div>
-          <p class="text-2xl sm:text-3xl font-black dark:text-white text-slate-800 font-mono">$<%= number_with_precision(@total_expenses, precision: 2, delimiter: ',') %></p>
-        </div>
-        <!-- PAYOUTS -->
-        <div class="w-[220px] md:w-auto snap-center stat-card rounded-2xl p-4 md:p-5 flex flex-col justify-between group">
-          <div class="flex items-start justify-between mb-3">
-            <p class="text-[10px] sm:text-xs font-bold dark:text-slate-400 text-slate-500 uppercase tracking-widest">Retiros (Payouts)</p>
-            <div class="w-8 h-8 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
-              <span class="material-symbols-outlined text-[16px]">account_balance</span>
-            </div>
-          </div>
-          <p class="text-2xl sm:text-3xl font-black text-emerald-500 font-mono">$<%= number_with_precision(@total_payouts, precision: 2, delimiter: ',') %></p>
-        </div>
-        <!-- BALANCE NETO -->
-        <div class="w-[220px] md:w-auto snap-center stat-card rounded-2xl p-4 md:p-5 flex flex-col justify-between group">
-          <div class="flex items-start justify-between mb-3">
-            <p class="text-[10px] sm:text-xs font-bold dark:text-slate-400 text-slate-500 uppercase tracking-widest">Profit Neto</p>
-            <div class="w-8 h-8 rounded-full <%= @net_profit >= 0 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500' %> flex items-center justify-center">
-              <span class="material-symbols-outlined text-[16px]">savings</span>
-            </div>
-          </div>
-          <p class="text-2xl sm:text-3xl font-black <%= @net_profit >= 0 ? 'text-emerald-500' : 'text-rose-500' %> font-mono">
-            <%= @net_profit >= 0 ? '+' : '' %>$<%= number_with_precision(@net_profit, precision: 2, delimiter: ',') %>
-          </p>
-        </div>
-        <!-- ROI -->
-        <div class="w-[220px] md:w-auto snap-center stat-card border-none bg-gradient-to-br from-emerald-500/10 to-transparent dark:from-emerald-500/20 dark:to-transparent rounded-2xl p-4 md:p-5 flex flex-col justify-between relative overflow-hidden">
-          <div class="absolute -right-4 -top-4 text-emerald-500 opacity-10">
-            <span class="material-symbols-outlined text-[80px]">trending_up</span>
-          </div>
-          <div class="flex items-start justify-between mb-3 relative z-10">
-            <p class="text-[10px] sm:text-xs font-bold text-emerald-500 uppercase tracking-widest">Business ROI</p>
-          </div>
-          <p class="text-2xl sm:text-3xl font-black text-emerald-500 font-mono relative z-10">
-            <%= @roi %>%
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      
-      <!-- TRANSACTION FORM -->
-      <div class="glass rounded-2xl p-5 shadow-sm lg:col-span-1 h-fit">
-        <h3 class="text-sm font-bold dark:text-white text-slate-800 mb-4 border-b dark:border-darkBorder border-lightBorder pb-3 flex items-center gap-2">
-          <span class="material-symbols-outlined text-[18px]">add_circle</span> Guardar Recibo (Real)
-        </h3>
-        
-        <%= form_with model: @new_transaction, url: prop_ledger_index_path, class: "space-y-4" do |f| %>
-          <div>
-            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Monto ($ USD)</label>
-            <%= f.number_field :amount, step: "any", min: 0.01, required: true, placeholder: "150.00", class: "input-field w-full px-3 py-2 rounded-xl text-sm font-mono focus:border-brand" %>
-          </div>
-
-          <div class="grid grid-cols-2 gap-3">
-            <label class="cursor-pointer">
-              <%= f.radio_button :transaction_type, "expense", class: "sr-only peer pm-radio", checked: true %>
-              <div class="peer-checked:bg-rose-500/10 peer-checked:border-rose-500 peer-checked:text-rose-600 dark:peer-checked:text-rose-400 input-field border py-2 rounded-xl text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1 text-xs">
-                <span class="material-symbols-outlined text-[16px]">money_off</span> Gasto
-              </div>
-            </label>
-            <label class="cursor-pointer">
-              <%= f.radio_button :transaction_type, "payout", class: "sr-only peer pm-radio" %>
-              <div class="peer-checked:bg-emerald-500/10 peer-checked:border-emerald-500 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 input-field border py-2 rounded-xl text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1 text-xs">
-                <span class="material-symbols-outlined text-[16px]">payments</span> Retiro
-              </div>
-            </label>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Firma de Fondeo</label>
-            <%= f.text_field :company_name, required: true, list: "prop-firms-list", placeholder: "Ej. Apex, Topstep...", class: "input-field w-full px-3 py-2 rounded-xl text-sm focus:border-brand" %>
-            <datalist id="prop-firms-list">
-              <% BacktestSession::PROP_FIRMS.each do |firm| %>
-                <option value="<%= firm[:name] %>"></option>
-              <% end %>
-            </datalist>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Concepto</label>
-            <%= f.text_field :description, placeholder: "Ej. Compra de 50k Eval", class: "input-field w-full px-3 py-2 rounded-xl text-xs focus:border-brand" %>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Fecha</label>
-            <%= f.date_field :transaction_date, required: true, value: Date.today, class: "input-field w-full px-3 py-2 rounded-xl text-sm focus:border-brand" %>
-          </div>
-
-          <button type="submit" class="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs transition-all flex items-center justify-center gap-1.5 shadow-md">
-            <span class="material-symbols-outlined text-[16px]">save</span> Registrar Contabilidad
-          </button>
-        <% end %>
-      </div>
-
-      <!-- TRANSACTIONS LIST -->
-      <div class="glass rounded-2xl shadow-sm lg:col-span-2 overflow-hidden flex flex-col h-full border-t-4 border-emerald-500">
-        <div class="p-4 border-b dark:border-darkBorder border-lightBorder flex items-center justify-between dark:bg-[#1A1D2D] bg-slate-50">
-          <h3 class="text-sm font-bold dark:text-white text-slate-800">Libro Mayor (Ledger)</h3>
-        </div>
-
-        <div class="overflow-x-auto flex-1">
-          <% if @transactions.any? %>
-            <table class="w-full text-left text-xs whitespace-nowrap">
-              <thead class="uppercase dark:text-slate-400 text-slate-500 border-b dark:border-darkBorder border-lightBorder table-header text-[10px] font-extrabold tracking-wider">
-                <tr>
-                  <th class="px-4 py-3">Fecha</th>
-                  <th class="px-4 py-3">Firma</th>
-                  <th class="px-4 py-3">Concepto</th>
-                  <th class="px-4 py-3 text-right">Monto</th>
-                  <th class="px-4 py-3 text-center"></th>
-                </tr>
-              </thead>
-              <tbody class="divide-y dark:divide-[#1E2235] divide-slate-100">
-                <% @transactions.each do |tx| %>
-                  <tr class="table-row-hover dark:text-slate-300 text-slate-700 transition-colors">
-                    <td class="px-4 py-3"><%= tx.transaction_date.strftime("%d %b, %y") %></td>
-                    <td class="px-4 py-3 font-semibold"><%= tx.company_name %></td>
-                    <td class="px-4 py-3">
-                      <span class="block text-xs font-bold dark:text-slate-200 text-slate-800"><%= tx.description.presence || (tx.transaction_type == 'expense' ? 'Gasto' : 'Payout') %></span>
-                    </td>
-                    <td class="px-4 py-3 text-right font-mono font-black <%= tx.transaction_type == 'payout' ? 'text-emerald-500' : 'text-slate-500 dark:text-slate-400' %>">
-                      <%= tx.transaction_type == 'payout' ? '+' : '-' %>$<%= number_with_precision(tx.amount, precision: 2, delimiter: ',') %>
-                    </td>
-                    <td class="px-4 py-3 text-center">
-                      <%= button_to prop_ledger_path(tx), method: :delete, data: { turbo_confirm: "¿Borrar?" }, class: "p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition-colors inline-block" do %>
-                        <span class="material-symbols-outlined text-[16px] block">delete</span>
-                      <% end %>
-                    </td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          <% else %>
-            <div class="flex flex-col items-center justify-center p-12 text-center h-full">
-              <div class="w-16 h-16 rounded-full bg-slate-100 dark:bg-darkCard flex items-center justify-center text-emerald-500 mb-4">
-                <span class="material-symbols-outlined text-[28px]">account_balance</span>
-              </div>
-              <h4 class="text-sm font-bold dark:text-white text-slate-800">Ningún movimiento</h4>
-              <p class="text-xs text-slate-500 mt-1 max-w-[250px]">Lleva la contabilidad estricta de cuánto dinero gastas en retos y reseteos vs retiros ganados.</p>
-            </div>
-          <% end %>
-        </div>
-      </div>
-      
-    </div>
+    <!-- ========================== TAB 2: PROP FIRMS DASHBOARD ========================== -->
+    <%= render "prop_firm_accounts/hub" %>
 
   <% end %>
 

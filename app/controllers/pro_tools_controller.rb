@@ -10,7 +10,8 @@ class ProToolsController < ApplicationController
     @strategies   = current_user.strategies
     @prop_firms   = BacktestSession::PROP_FIRMS
 
-    # --- PROP FIRM TAB DATA ---
+    # --- PROP FIRM TAB DATA (CUENTAS & REGLAS) ---
+    @accounts          = current_user.prop_firm_accounts
     @prop_sessions     = current_user.backtest_sessions.where(session_type: "prop_firm").recent
     @new_prop_session  = current_user.backtest_sessions.new(session_type: "prop_firm")
     @transactions      = current_user.prop_transactions.order(transaction_date: :desc)
