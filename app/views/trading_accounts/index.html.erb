@@ -96,3 +96,14 @@
 
 <!-- Renderizar Modal Wizard -->
 <%= render "wizard_modal" %>
+
+<% if params[:open_wizard].present? || @open_wizard %>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      openAddAccountWizard();
+    });
+    if (document.readyState === "complete" || document.readyState === "interactive") {
+      setTimeout(function() { openAddAccountWizard(); }, 100);
+    }
+  </script>
+<% end %>

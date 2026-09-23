@@ -165,12 +165,12 @@ class PropFirmAccount < ApplicationRecord
 
   # ── ACCIONES DE ESTADO ──
   def mark_as_burned!(reason)
-    update!(status: "quemada", custom_drawdown_type: "#{custom_drawdown_type}|burn:#{reason}")
+    update!(status: "quemada", burn_reason: reason)
   end
 
   def reset_account!(reset_cost = 0)
     transaction do
-      update!(status: "activa")
+      update!(status: "activa", burn_reason: nil)
       if reset_cost.to_f > 0
         user.prop_transactions.create!(
           company_name: firm_name,
@@ -198,7 +198,13 @@ class PropFirmAccount < ApplicationRecord
     end
   end
 
-  def burn_reason
+  def burn_reason_name
+    read_attribute(:burn_reason).presence || burn_reason_fallback
+  end
+
+  private
+
+  def burn_reason_fallback
     return nil unless status == "quemada"
     type_data = custom_drawdown_type.to_s
     match = type_data.match(/burn:(.+)/)

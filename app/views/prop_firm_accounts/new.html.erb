@@ -1,68 +1,182 @@
-<% content_for :page_title, "Nueva Cuenta de Fondeo" %>
+<% content_for :page_title, "Onboarding de Cuentas de Fondeo" %>
 
-<div class="max-w-6xl mx-auto space-y-6 fade-in pb-12">
+<div class="max-w-4xl mx-auto space-y-6 fade-in pb-12">
   
   <!-- BREADCRUMB -->
   <div class="flex items-center justify-between">
     <div class="flex items-center gap-2 text-xs text-slate-400">
       <%= link_to "Control de Fondeo", prop_ledger_index_path, class: "hover:text-brand transition-colors" %>
       <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-      <span class="dark:text-white text-slate-800 font-bold">Nueva Cuenta & Reglas</span>
+      <span class="dark:text-white text-slate-800 font-bold">Onboarding & Registro de Cuenta de Fondeo</span>
     </div>
   </div>
 
-  <div class="flex items-center justify-between border-b dark:border-darkBorder border-slate-200 pb-4">
-    <div>
-      <h1 class="text-xl md:text-2xl font-black dark:text-white text-slate-900 flex items-center gap-2">
-        <span class="material-symbols-outlined text-brand text-[26px]">verified</span>
-        Configuración de Cuenta & Reglas del Challenge
-      </h1>
-      <p class="text-xs text-slate-400 mt-1">Configura las reglas exactas de tu firma para auditar el cumplimiento en tu diario de trading.</p>
+  <!-- STEPPER PROGRESS BAR (INDICADOR DE PASOS FLUIDO) -->
+  <div class="glass rounded-2xl p-4 border border-slate-200 dark:border-darkBorder shadow-sm">
+    <div class="flex items-center justify-between max-w-2xl mx-auto relative">
+      
+      <!-- LÍNEA DE CONEXIÓN DE PASOS -->
+      <div class="absolute top-1/2 left-8 right-8 h-1 bg-slate-200 dark:bg-darkBorder -translate-y-1/2 -z-0">
+        <div id="stepper-progress-bar" class="h-full bg-brand transition-all duration-500 ease-out" style="width: 0%;"></div>
+      </div>
+
+      <!-- PASO 1 -->
+      <button type="button" onclick="goToStep(1)" class="stepper-node flex flex-col items-center gap-1.5 relative z-10 group cursor-pointer">
+        <div id="step-node-1" class="w-10 h-10 rounded-full bg-brand text-white font-extrabold text-sm flex items-center justify-center shadow-md ring-4 ring-brand/20 transition-all">
+          1
+        </div>
+        <span id="step-label-1" class="text-[11px] font-bold text-brand transition-colors">Tipo de Incorporación</span>
+      </button>
+
+      <!-- PASO 2 -->
+      <button type="button" onclick="goToStep(2)" class="stepper-node flex flex-col items-center gap-1.5 relative z-10 group cursor-pointer">
+        <div id="step-node-2" class="w-10 h-10 rounded-full bg-slate-200 dark:bg-darkBorder text-slate-500 font-extrabold text-sm flex items-center justify-center transition-all">
+          2
+        </div>
+        <span id="step-label-2" class="text-[11px] font-bold text-slate-400 transition-colors" id="step-2-title-label">Firma & Reglas</span>
+      </button>
+
+      <!-- PASO 3 -->
+      <button type="button" onclick="goToStep(3)" class="stepper-node flex flex-col items-center gap-1.5 relative z-10 group cursor-pointer">
+        <div id="step-node-3" class="w-10 h-10 rounded-full bg-slate-200 dark:bg-darkBorder text-slate-500 font-extrabold text-sm flex items-center justify-center transition-all">
+          3
+        </div>
+        <span id="step-label-3" class="text-[11px] font-bold text-slate-400 transition-colors">Detalles & Guardar</span>
+      </button>
+
     </div>
   </div>
 
-  <%= form_with model: @account, url: prop_firm_accounts_path, class: "space-y-6" do |f| %>
+  <%= form_with model: @account, url: prop_firm_accounts_path, id: "onboarding-wizard-form", multipart: true, class: "space-y-6" do |f| %>
     
-    <!-- GRID DE 2 SECCIONES 50% / 50% -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <!-- CONTENEDOR DESLIZABLE DE PASOS -->
+    <div id="wizard-steps-container" class="relative overflow-hidden min-h-[480px]">
+      
+      <!-- ================================================================= -->
+      <!-- PASO 1: SELECCIÓN DEL TIPO DE CUENTA DE FONDEO -->
+      <!-- ================================================================= -->
+      <div id="wizard-step-1" class="wizard-step-panel space-y-6 transition-all duration-300 ease-out transform translate-x-0 opacity-100">
+        
+        <div class="glass rounded-3xl p-6 md:p-8 border border-brand/20 bg-gradient-to-r from-brand/10 via-slate-900/40 to-emerald-500/10 shadow-xl space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand/20 text-brand text-xs font-bold uppercase tracking-wider border border-brand/30">
+            <span class="material-symbols-outlined text-[14px]">domain</span> Onboarding de Cuentas de Fondeo
+          </div>
+          <div>
+            <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+              Gestiona tus cuentas como un negocio 💼
+            </h1>
+            <p class="text-xs md:text-sm text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+              Audita tu portafolio con precisión institucional. Selecciona el modo de incorporación para tu nueva cuenta de fondeo:
+            </p>
+          </div>
+        </div>
 
-      <!-- ================= SECCIÓN IZQUIERDA: CUENTA Y REGLAS (lg:col-span-6) ================= -->
-      <div class="lg:col-span-6 space-y-5">
-        <div class="glass rounded-2xl p-5 md:p-6 border-l-4 border-brand space-y-5">
+        <!-- TRES OPCIONES DE INCORPORACIÓN DENTRO DE PROP FIRMS -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
           
+          <!-- OPCIÓN A: PRO FIRM PRESET (DEFAULT) -->
+          <div onclick="selectPropAccountMode('preset', this)" 
+               class="account-mode-card active p-6 rounded-3xl bg-white dark:bg-darkCard border-2 border-brand shadow-lg ring-4 ring-brand/10 flex flex-col justify-between space-y-4 cursor-pointer hover:scale-[1.02] transition-all group">
+            <div class="flex items-center justify-between">
+              <div class="w-12 h-12 rounded-2xl bg-brand/10 text-brand border border-brand/20 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[26px]">verified</span>
+              </div>
+              <span class="type-badge text-[10px] font-black uppercase px-2.5 py-1 rounded-full bg-brand text-white">Recomendado</span>
+            </div>
+            <div>
+              <h3 class="text-base font-extrabold text-slate-900 dark:text-white group-hover:text-brand transition-colors">Firma Catálogo</h3>
+              <p class="text-xs text-slate-500 mt-1">Selecciona firmas conocidas (Topstep, Apex, Funding Pips, etc.) con reglas precargadas.</p>
+            </div>
+            <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-brand">
+              <span>Elegir Firma y Reglas</span>
+              <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+            </div>
+          </div>
+
+          <!-- OPCIÓN B: CUENTA MANUAL (REGLAS PERSONALIZADAS) -->
+          <div onclick="selectPropAccountMode('manual', this)" 
+               class="account-mode-card p-6 rounded-3xl bg-white dark:bg-darkCard border-2 border-slate-200 dark:border-darkBorder hover:border-brand/40 shadow-sm flex flex-col justify-between space-y-4 cursor-pointer hover:scale-[1.02] transition-all group">
+            <div class="flex items-center justify-between">
+              <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 group-hover:text-brand border border-slate-200 dark:border-darkBorder flex items-center justify-center transition-colors">
+                <span class="material-symbols-outlined text-[26px]">edit_square</span>
+              </div>
+              <span class="type-badge text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400">Personalizada</span>
+            </div>
+            <div>
+              <h3 class="text-base font-extrabold text-slate-900 dark:text-white group-hover:text-brand transition-colors">Cuenta Manual</h3>
+              <p class="text-xs text-slate-500 mt-1">Configura firma propia, balance inicial y reglas de fondeo a medida.</p>
+            </div>
+            <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-slate-400 group-hover:text-brand transition-colors">
+              <span>Definir Reglas a Mano</span>
+              <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+            </div>
+          </div>
+
+          <!-- OPCIÓN C: IMPORTAR HISTORIAL CSV -->
+          <div onclick="selectPropAccountMode('csv', this)" 
+               class="account-mode-card p-6 rounded-3xl bg-white dark:bg-darkCard border-2 border-slate-200 dark:border-darkBorder hover:border-emerald-500/40 shadow-sm flex flex-col justify-between space-y-4 cursor-pointer hover:scale-[1.02] transition-all group">
+            <div class="flex items-center justify-between">
+              <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[26px]">upload_file</span>
+              </div>
+              <span class="type-badge text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400">Masivo</span>
+            </div>
+            <div>
+              <h3 class="text-base font-extrabold text-slate-900 dark:text-white group-hover:text-emerald-500 transition-colors">Importar CSV</h3>
+              <p class="text-xs text-slate-500 mt-1">Vincular cuenta de fondeo adjuntando archivo CSV de ejecuciones.</p>
+            </div>
+            <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-slate-400 group-hover:text-emerald-500 transition-colors">
+              <span>Cargar Extracto CSV</span>
+              <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- BOTÓN DE SIGUIENTE DEL PASO 1 -->
+        <div class="flex justify-end pt-4 border-t dark:border-darkBorder border-slate-200">
+          <button type="button" onclick="nextStep()" class="px-8 py-3 bg-brand hover:scale-[1.02] text-white font-extrabold text-xs rounded-xl shadow-lg glow-brand transition-all flex items-center gap-2 cursor-pointer">
+            Continuar al Paso 2
+            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- PASO 2: SELECCIÓN DE FIRMA, BALANCES Y REGLAS (SE ADAPTA DINÁMICAMENTE) -->
+      <!-- ================================================================= -->
+      <div id="wizard-step-2" class="wizard-step-panel space-y-6" style="display: none;">
+        
+        <!-- SUB-PANEL 2A: PROP FIRM CATÁLOGO PRESETS -->
+        <div id="mode-panel-preset" class="glass rounded-2xl p-5 md:p-6 border-l-4 border-brand space-y-5">
           <div class="flex items-center justify-between pb-3 border-b dark:border-darkBorder border-slate-200">
-            <h2 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
-              <span class="material-symbols-outlined text-brand text-[18px]">account_tree</span>
-              1. Cuenta y Reglas
-            </h2>
+            <div>
+              <h3 class="text-base font-black dark:text-white text-slate-800 flex items-center gap-2">
+                <span class="material-symbols-outlined text-brand text-[20px]">account_tree</span>
+                2. Empresa, Plan & Reglas del Challenge
+              </h3>
+              <p class="text-xs text-slate-400 mt-0.5">Elige la firma de fondeo y el tamaño de cuenta para precargar las reglas de auditoría.</p>
+            </div>
             <button type="button" onclick="toggleCustomRulesModal()" class="text-xs font-bold text-brand hover:underline flex items-center gap-1">
               <span class="material-symbols-outlined text-[14px]">edit_note</span>
               Editar reglas
             </button>
           </div>
 
-          <!-- Nombre de la cuenta -->
-          <div>
-            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">
-              Nombre de la cuenta <span class="text-rose-500">*</span>
-            </label>
-            <%= f.text_field :name, required: true, placeholder: "Ej. Topstep 50K Express #1", class: "input-field w-full px-3.5 py-2.5 rounded-xl text-sm font-bold focus:outline-none focus:border-brand" %>
-          </div>
-
           <!-- REGLAS DEL CHALLENGE -->
-          <div class="space-y-4 pt-2">
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">
-              Reglas del Challenge <span class="text-rose-500">*</span>
-            </label>
-
+          <div class="space-y-4">
+            
             <!-- 1 - FIRMA DE FONDEO (SELECTOR CON LOGOS) -->
             <div>
-              <span class="block text-[11px] font-bold dark:text-slate-300 text-slate-700 mb-2">1 - FIRMA DE FONDEO</span>
-              
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                Firma de Fondeo <span class="text-rose-500">*</span>
+              </label>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                 <% [
                   { name: "Topstep", logo: "compañias/Topstep.png" },
                   { name: "Apex Trader Funding", logo: "compañias/Apex Trader funding.png" },
+                  { name: "Funding Pips", logo: "compañias/My funded futures.png" },
                   { name: "MyFundedFutures", logo: "compañias/My funded futures.png" },
                   { name: "Tradeify", logo: "compañias/Tradeify.png" },
                   { name: "Lucid Trading", logo: "compañias/Lucid trading.png" },
@@ -71,41 +185,47 @@
                 ].each_with_index do |firm, idx| %>
                   <button type="button" 
                           onclick="selectFirmConfig('<%= firm[:name] %>', this)"
-                          class="firm-selector-btn p-2 rounded-xl border dark:border-darkBorder border-slate-200 hover:border-brand flex flex-col items-center justify-center text-center gap-1 transition-all bg-slate-50 dark:bg-darkCard cursor-pointer <%= idx == 0 ? 'ring-2 ring-brand border-brand bg-brand/10' : '' %>">
-                    <div class="w-8 h-8 rounded-lg bg-white p-1 flex items-center justify-center border border-slate-200 shadow-xs">
-                      <%= image_tag firm[:logo], class: "max-h-full max-w-full object-contain", alt: firm[:name] %>
+                          class="firm-selector-btn p-2.5 rounded-2xl border dark:border-darkBorder border-slate-200 hover:border-brand flex flex-col items-center justify-center text-center gap-1.5 transition-all bg-slate-50 dark:bg-darkCard cursor-pointer <%= idx == 0 ? 'ring-2 ring-brand border-brand bg-brand/10' : '' %>">
+                    <div class="w-9 h-9 rounded-xl bg-white p-1 flex items-center justify-center border border-slate-200 shadow-xs font-black text-xs text-brand">
+                      <% logo_src = (image_path(firm[:logo]) rescue nil) %>
+                      <% if logo_src %>
+                        <img src="<%= logo_src %>" class="max-h-full max-w-full object-contain" alt="<%= firm[:name] %>" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                        <span style="display:none;"><%= firm[:name].first(2).upcase %></span>
+                      <% else %>
+                        <span><%= firm[:name].first(2).upcase %></span>
+                      <% end %>
                     </div>
-                    <span class="text-[9px] font-bold dark:text-slate-200 text-slate-800 line-clamp-1"><%= firm[:name] %></span>
+                    <span class="text-[10px] font-bold dark:text-slate-200 text-slate-800 line-clamp-1"><%= firm[:name] %></span>
                   </button>
                 <% end %>
               </div>
               <%= f.hidden_field :firm_name, id: "prop_firm_name_field", value: "Topstep" %>
             </div>
 
-            <!-- 2 - PLAN DE LA FIRMA -->
+            <!-- 2 - PLAN DE LA FIRMA & TAMAÑO -->
             <div class="space-y-3 pt-2">
-              <span class="block text-[11px] font-bold dark:text-slate-300 text-slate-700" id="firm-plan-label">2 - PLAN DE TOPSTEP</span>
+              <span class="block text-[11px] font-bold dark:text-slate-300 text-slate-700" id="firm-plan-label">2 - CONFIGURACIÓN DE PLAN DE TOPSTEP</span>
               
               <!-- TIPO DE PLAN -->
               <div>
                 <p class="text-[10px] font-semibold text-slate-400 mb-1.5">Tipo de Plan</p>
                 <div class="flex gap-2">
-                  <button type="button" onclick="setPlanType('Estándar', this)" class="plan-type-btn flex-1 py-2 px-3 rounded-xl border dark:border-darkBorder border-slate-200 text-xs font-bold dark:text-white text-slate-800 ring-2 ring-brand border-brand bg-brand/10 transition-all cursor-pointer">
+                  <button type="button" onclick="setPlanType('Estándar', this)" class="plan-type-btn flex-1 py-2.5 px-3 rounded-xl border dark:border-darkBorder border-slate-200 text-xs font-bold dark:text-white text-slate-800 ring-2 ring-brand border-brand bg-brand/10 transition-all cursor-pointer">
                     Estándar
                   </button>
-                  <button type="button" onclick="setPlanType('Sin cuota de activación', this)" class="plan-type-btn flex-1 py-2 px-3 rounded-xl border dark:border-darkBorder border-slate-200 text-xs font-bold dark:text-white text-slate-800 hover:border-brand transition-all cursor-pointer">
+                  <button type="button" onclick="setPlanType('Sin cuota de activación', this)" class="plan-type-btn flex-1 py-2.5 px-3 rounded-xl border dark:border-darkBorder border-slate-200 text-xs font-bold dark:text-white text-slate-800 hover:border-brand transition-all cursor-pointer">
                     Sin cuota de activación
                   </button>
                 </div>
                 <%= f.hidden_field :plan_name, id: "prop_plan_name_field", value: "Estándar" %>
               </div>
 
-              <!-- TAMAÑO DE CUENTA -->
+              <!-- TAMAÑO DE CUENTA (BALANCE) -->
               <div>
-                <p class="text-[10px] font-semibold text-slate-400 mb-1.5">Tamaño de Cuenta</p>
-                <div class="flex gap-2">
-                  <% %w[50K 100K 150K].each_with_index do |size, idx| %>
-                    <button type="button" onclick="setAccountSize('<%= size %>', this)" class="size-btn flex-1 py-2 px-3 rounded-xl border dark:border-darkBorder border-slate-200 text-xs font-mono font-bold dark:text-white text-slate-800 transition-all cursor-pointer <%= idx == 0 ? 'ring-2 ring-brand border-brand bg-brand/10' : '' %>">
+                <p class="text-[10px] font-semibold text-slate-400 mb-1.5">Balance / Tamaño de Cuenta</p>
+                <div class="grid grid-cols-4 sm:grid-cols-7 gap-1.5">
+                  <% %w[10K 25K 50K 100K 150K 200K 250K].each do |size| %>
+                    <button type="button" onclick="setAccountSize('<%= size %>', this)" class="size-btn py-2 px-2 rounded-xl border dark:border-darkBorder border-slate-200 text-xs font-mono font-bold text-center dark:text-white text-slate-800 transition-all cursor-pointer <%= size == '50K' ? 'ring-2 ring-brand border-brand bg-brand/10' : '' %>">
                       <%= size %>
                     </button>
                   <% end %>
@@ -114,15 +234,18 @@
               </div>
             </div>
 
-            <!-- 3 - PANEL INFORMATIVO DE REGLAS (EVALUACIÓN vs FONDEADA) -->
-            <div class="rounded-xl border dark:border-darkBorder border-slate-200 bg-slate-50 dark:bg-darkCard p-4 space-y-3">
+            <!-- 3 - PANEL INFORMATIVO DE REGLAS POR FASE -->
+            <div class="rounded-2xl border dark:border-darkBorder border-slate-200 bg-slate-50 dark:bg-darkCard p-4 space-y-3">
               <div class="flex items-center justify-between border-b dark:border-darkBorder border-slate-200 pb-2">
-                <span class="text-xs font-bold text-slate-700 dark:text-slate-200" id="rules-box-title">3 - REGLAS - TOPSTEP - ESTÁNDAR</span>
+                <span class="text-xs font-bold text-slate-700 dark:text-slate-200" id="rules-box-title">3 - REGLAS: TOPSTEP (50K)</span>
                 
-                <!-- TABS EVALUACIÓN / FONDEADA -->
+                <!-- TABS DE FASE DE REGLAS -->
                 <div class="flex p-0.5 bg-slate-200 dark:bg-darkBorder rounded-lg text-[10px] font-bold">
-                  <button type="button" onclick="switchRuleTab('eval', this)" class="rule-tab-btn px-2.5 py-1 rounded-md bg-white dark:bg-slate-700 text-brand shadow-xs">
-                    Evaluación
+                  <button type="button" onclick="switchRuleTab('step1', this)" class="rule-tab-btn px-2.5 py-1 rounded-md bg-white dark:bg-slate-700 text-brand shadow-xs">
+                    Paso 1
+                  </button>
+                  <button type="button" onclick="switchRuleTab('step2', this)" class="rule-tab-btn px-2.5 py-1 rounded-md text-slate-400 hover:text-slate-200">
+                    Paso 2
                   </button>
                   <button type="button" onclick="switchRuleTab('funded', this)" class="rule-tab-btn px-2.5 py-1 rounded-md text-slate-400 hover:text-slate-200">
                     Fondeada
@@ -130,136 +253,480 @@
                 </div>
               </div>
 
-              <div class="space-y-2 text-xs font-mono">
-                <div class="flex justify-between items-center py-1 border-b dark:border-darkBorder/50 border-slate-200/50">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
+                <div class="flex justify-between items-center py-1.5 border-b dark:border-darkBorder/50 border-slate-200/50">
                   <span class="text-slate-400 font-sans">Objetivo de profit:</span>
                   <span class="font-bold text-emerald-500" id="rule-target">$3,000</span>
                 </div>
-                <div class="flex justify-between items-center py-1 border-b dark:border-darkBorder/50 border-slate-200/50">
-                  <span class="text-slate-400 font-sans">Drawdown máximo - EOD (al cierre):</span>
-                  <span class="font-bold text-rose-500" id="rule-max-dd">$2,000</span>
+                <div class="flex justify-between items-center py-1.5 border-b dark:border-darkBorder/50 border-slate-200/50">
+                  <span class="text-slate-400 font-sans">Max Drawdown (Tipo):</span>
+                  <span class="font-bold text-rose-500" id="rule-max-dd">$2,000 (EOD al cierre)</span>
                 </div>
-                <div class="flex justify-between items-center py-1 border-b dark:border-darkBorder/50 border-slate-200/50">
-                  <span class="text-slate-400 font-sans">Pérdida diaria:</span>
-                  <span class="font-bold text-slate-400 font-sans" id="rule-daily-loss">No aplica</span>
+                <div class="flex justify-between items-center py-1.5 border-b dark:border-darkBorder/50 border-slate-200/50">
+                  <span class="text-slate-400 font-sans">Pérdida diaria máx:</span>
+                  <span class="font-bold text-slate-400 font-sans" id="rule-daily-loss">No aplica / $1,000</span>
                 </div>
-                <div class="flex justify-between items-center py-1 border-b dark:border-darkBorder/50 border-slate-200/50">
-                  <span class="text-slate-400 font-sans">Consistencia:</span>
-                  <span class="font-bold text-amber-400" id="rule-consistency">50%</span>
-                </div>
-                <div class="flex justify-between items-center py-1">
-                  <span class="text-slate-400 font-sans">Días mínimos de trading:</span>
-                  <span class="font-bold text-brand" id="rule-min-days">2 días</span>
+                <div class="flex justify-between items-center py-1.5 border-b dark:border-darkBorder/50 border-slate-200/50">
+                  <span class="text-slate-400 font-sans">Consistencia (% mejor día):</span>
+                  <span class="font-bold text-amber-400" id="rule-consistency">50% máx</span>
                 </div>
               </div>
             </div>
 
           </div>
-
         </div>
+
+        <!-- SUB-PANEL 2B: REGISTRO MANUAL DE CUENTA Y REGLAS -->
+        <div id="mode-panel-manual" class="hidden glass rounded-2xl p-5 md:p-6 border-l-4 border-amber-500 space-y-5">
+          <div class="pb-3 border-b dark:border-darkBorder border-slate-200">
+            <h3 class="text-base font-black dark:text-white text-slate-800 flex items-center gap-2">
+              <span class="material-symbols-outlined text-amber-500 text-[20px]">edit_square</span>
+              2. Configuración Manual de Firma & Balance
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5">Ingresa los datos de tu empresa de fondeo personalizada y define sus parámetros de auditoría.</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Nombre de la Firma / Empresa *</label>
+              <input type="text" id="manual-firm-input" onchange="document.getElementById('prop_firm_name_field').value = this.value" placeholder="Ej: Custom Funding Firm, FTMO, FundedNext..." class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-bold focus:outline-none focus:border-brand">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Balance Inicial ($ USD) *</label>
+              <input type="text" id="manual-size-input" onchange="document.getElementById('prop_account_size_field').value = this.value" placeholder="Ej: 50K, 100000" class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-brand">
+            </div>
+          </div>
+
+          <!-- REGLAS DE AUDITORÍA PERSONALIZADAS EN PASO 2 -->
+          <div class="p-4 rounded-2xl border dark:border-darkBorder border-slate-200 bg-slate-50 dark:bg-darkCard space-y-3">
+            <h4 class="text-xs font-extrabold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-brand text-[16px]">tune</span> Parámetros de Auditoría Manual
+            </h4>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-400 mb-1">Profit Target ($)</label>
+                <input type="number" name="prop_firm_account[custom_profit_target]" placeholder="3000" class="input-field w-full px-3 py-2 rounded-xl text-xs font-mono">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-400 mb-1">Max Drawdown ($)</label>
+                <input type="number" name="prop_firm_account[custom_max_drawdown]" placeholder="2000" class="input-field w-full px-3 py-2 rounded-xl text-xs font-mono">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-400 mb-1">Tipo de Drawdown</label>
+                <select name="prop_firm_account[custom_drawdown_type]" class="input-field w-full px-3 py-2 rounded-xl text-xs">
+                  <option value="eod">End of Day (EOD)</option>
+                  <option value="trailing">Intradía / Trailing</option>
+                  <option value="static">Estático</option>
+                  <option value="floor">Piso del Drawdown</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUB-PANEL 2C: ADJUNTAR ARCHIVO CSV -->
+        <div id="mode-panel-csv" class="hidden glass rounded-2xl p-5 md:p-6 border-l-4 border-emerald-500 space-y-5">
+          <div class="pb-3 border-b dark:border-darkBorder border-slate-200">
+            <h3 class="text-base font-black dark:text-white text-slate-800 flex items-center gap-2">
+              <span class="material-symbols-outlined text-emerald-500 text-[20px]">upload_file</span>
+              2. Adjuntar Extracto de Ejecuciones CSV
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5">Sube el archivo CSV exportado desde Tradovate, NinjaTrader o tu broker de fondeo.</p>
+          </div>
+
+          <div class="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-8 text-center hover:border-emerald-500 transition-colors bg-slate-50/50 dark:bg-slate-900/40 space-y-2">
+            <span class="material-symbols-outlined text-[42px] text-emerald-500">cloud_upload</span>
+            <p class="text-xs font-extrabold text-slate-800 dark:text-slate-200">Selecciona el archivo CSV de la cuenta</p>
+            <p class="text-[10px] text-slate-400 max-w-sm mx-auto">El sistema extraerá automáticamente las operaciones para auditar las reglas de la cuenta de fondeo.</p>
+            <div class="pt-2">
+              <input type="file" name="csv_file" accept=".csv" class="inline-block text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-600 file:text-white hover:file:bg-emerald-700 cursor-pointer" />
+            </div>
+          </div>
+        </div>
+
+        <!-- NAVEGACIÓN PASO 2 -->
+        <div class="flex items-center justify-between pt-4 border-t dark:border-darkBorder border-slate-200">
+          <button type="button" onclick="prevStep()" class="px-5 py-2.5 text-xs font-bold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white rounded-xl border dark:border-darkBorder border-slate-200 transition-all flex items-center gap-1.5 cursor-pointer">
+            <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+            Paso Anterior
+          </button>
+
+          <button type="button" onclick="nextStep()" class="px-8 py-3 bg-brand hover:scale-[1.02] text-white font-extrabold text-xs rounded-xl shadow-lg glow-brand transition-all flex items-center gap-2 cursor-pointer">
+            Continuar al Paso 3
+            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+          </button>
+        </div>
+
       </div>
 
-      <!-- ================= SECCIÓN DERECHA: DETALLES (lg:col-span-6) ================= -->
-      <div class="lg:col-span-6 space-y-5">
+      <!-- ================================================================= -->
+      <!-- PASO 3: DETALLES OPERATIVOS & CONFIRMACIÓN -->
+      <!-- ================================================================= -->
+      <div id="wizard-step-3" class="wizard-step-panel space-y-6" style="display: none;">
+        
         <div class="glass rounded-2xl p-5 md:p-6 border-l-4 border-emerald-500 space-y-5">
-          
           <div class="pb-3 border-b dark:border-darkBorder border-slate-200">
-            <h2 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
-              <span class="material-symbols-outlined text-emerald-500 text-[18px]">tune</span>
-              2. Detalles
-            </h2>
+            <h3 class="text-base font-black dark:text-white text-slate-800 flex items-center gap-2">
+              <span class="material-symbols-outlined text-emerald-500 text-[20px]">tune</span>
+              3. Detalles Operativos & Registro Final
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5">Asigna un nombre a la cuenta de fondeo, configura su fase actual, estado y fechas clave.</p>
           </div>
 
-          <!-- ESTRATEGIAS -->
-          <div>
-            <div class="flex items-center justify-between mb-1.5">
-              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700">Estrategias</label>
-              <%= link_to "+ Crear nueva estrategia", new_strategy_path, target: "_blank", class: "text-[11px] font-bold text-brand hover:underline" %>
-            </div>
-            
-            <select name="strategy_ids[]" multiple class="input-field w-full px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:border-brand h-24">
-              <option value="" disabled selected>Selecciona estrategias...</option>
-              <% @strategies.each do |strat| %>
-                <option value="<%= strat.id %>"><%= strat.name %></option>
-              <% end %>
-            </select>
-            <p class="text-[10px] text-slate-400 mt-1">Mantén presionado Ctrl / Cmd para seleccionar múltiples estrategias.</p>
-          </div>
-
-          <!-- CUOTA DE EVALUACIÓN -->
+          <!-- NOMBRE DE LA CUENTA DE FONDEO -->
           <div>
             <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">
-              Cuota de evaluación <span class="text-rose-500">*</span>
+              Nombre de la cuenta de fondeo <span class="text-rose-500">*</span>
             </label>
-            <div class="relative">
-              <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold font-mono text-slate-400">$</span>
-              <%= f.number_field :eval_fee, value: 49, min: 0, step: "any", required: true, class: "input-field w-full pl-8 pr-4 py-2.5 rounded-xl text-sm font-mono font-bold focus:outline-none focus:border-brand" %>
-            </div>
-          </div>
-
-          <!-- CUOTA DE ACTIVACIÓN -->
-          <div>
-            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">
-              Cuota de activación <span class="text-rose-500">*</span>
-            </label>
-            <div class="relative">
-              <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold font-mono text-slate-400">$</span>
-              <%= f.number_field :activation_fee, value: 149, min: 0, step: "any", required: true, class: "input-field w-full pl-8 pr-4 py-2.5 rounded-xl text-sm font-mono font-bold focus:outline-none focus:border-brand" %>
-            </div>
+            <%= f.text_field :name, required: true, placeholder: "Ej. Topstep 50K Express #1", class: "input-field w-full px-3.5 py-2.5 rounded-xl text-sm font-bold focus:outline-none focus:border-brand" %>
           </div>
 
           <!-- FASE DE LA CUENTA -->
           <div>
             <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-2">
-              Fase de la cuenta <span class="text-rose-500">*</span>
+              Fase Actual de la Cuenta <span class="text-rose-500">*</span>
             </label>
-            <div class="grid grid-cols-3 sm:grid-cols-5 gap-2">
+            <div class="grid grid-cols-3 sm:grid-cols-5 gap-1.5">
               <% [
-                { id: "paso_1", label: "Paso 1" },
-                { id: "paso_2", label: "Paso 2" },
-                { id: "fondeada", label: "Fondeada" },
+                { id: "paso_1", label: "Paso 1 (Eval)" },
+                { id: "paso_2", label: "Paso 2 (Eval)" },
+                { id: "fondeada", label: "Fondeada / Live" },
                 { id: "express", label: "Express" },
-                { id: "sim", label: "Sim" }
+                { id: "sim", label: "Simulación" }
               ].each_with_index do |phase, idx| %>
-                <button type="button" onclick="setAccountPhase('<%= phase[:id] %>', this)" class="phase-btn py-2 px-2 rounded-xl border dark:border-darkBorder border-slate-200 text-xs font-bold text-center dark:text-white text-slate-800 transition-all cursor-pointer <%= idx == 0 ? 'ring-2 ring-emerald-500 border-emerald-500 bg-emerald-500/10 text-emerald-500' : '' %>">
+                <button type="button" onclick="setAccountPhase('<%= phase[:id] %>', this)" class="phase-btn py-2.5 px-1.5 rounded-xl border dark:border-darkBorder border-slate-200 text-xs font-bold text-center dark:text-white text-slate-800 transition-all cursor-pointer <%= idx == 0 ? 'ring-2 ring-emerald-500 border-emerald-500 bg-emerald-500/10 text-emerald-500' : '' %>">
                   <%= phase[:label] %>
                 </button>
               <% end %>
             </div>
             <%= f.hidden_field :phase, id: "prop_phase_field", value: "paso_1" %>
-            <%= f.hidden_field :status, value: "active" %>
+          </div>
+
+          <!-- ESTADO DE LA CUENTA -->
+          <div>
+            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-2">
+              Estado de la Cuenta <span class="text-rose-500">*</span>
+            </label>
+            <div class="grid grid-cols-3 sm:grid-cols-5 gap-1.5">
+              <% [
+                { id: "activa", label: "Activa" },
+                { id: "fondeada", label: "Fondeada" },
+                { id: "quemada", label: "Quemada" },
+                { id: "reseteada", label: "Reseteada" },
+                { id: "pausada", label: "Pausada" }
+              ].each_with_index do |st, idx| %>
+                <button type="button" onclick="setAccountStatus('<%= st[:id] %>', this)" class="status-btn py-2.5 px-1.5 rounded-xl border dark:border-darkBorder border-slate-200 text-xs font-bold text-center dark:text-white text-slate-800 transition-all cursor-pointer <%= idx == 0 ? 'ring-2 ring-emerald-500 border-emerald-500 bg-emerald-500/10 text-emerald-500' : '' %>">
+                  <%= st[:label] %>
+                </button>
+              <% end %>
+            </div>
+            <%= f.hidden_field :status, id: "prop_status_field", value: "activa" %>
+          </div>
+
+          <!-- MOTIVO DE QUEMA -->
+          <div id="burn-reason-container" class="space-y-1.5 transition-all">
+            <label class="block text-xs font-bold text-rose-500 flex items-center gap-1">
+              <span class="material-symbols-outlined text-[14px]">warning</span> Motivo de Quema / Breach Reason
+            </label>
+            <%= f.select :burn_reason, [
+              "Pérdida diaria superada",
+              "Drawdown máximo superado",
+              "Días límite / Inactividad",
+              "Operar en noticias restringidas",
+              "Falta de gestión de riesgo / Overtrading",
+              "Error técnico / Plataforma",
+              "Otro"
+            ], { include_blank: "-- Seleccionar si aplica --" }, class: "input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-bold focus:outline-none focus:border-rose-500" %>
+          </div>
+
+          <!-- FECHAS CLAVE -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+            <div>
+              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">
+                Fecha de inicio del Challenge
+              </label>
+              <%= f.date_field :start_date, value: Date.today, class: "input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-brand" %>
+            </div>
+            <div>
+              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">
+                Fecha de cuota / renovación
+              </label>
+              <%= f.date_field :billing_date, value: 30.days.from_now.to_date, class: "input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-brand" %>
+            </div>
+          </div>
+
+          <!-- CUOTAS -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">
+                Cuota de evaluación ($)
+              </label>
+              <div class="relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold font-mono text-slate-400">$</span>
+                <%= f.number_field :eval_fee, value: 49, min: 0, step: "any", class: "input-field w-full pl-8 pr-3 py-2.5 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-brand" %>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">
+                Cuota de activación ($)
+              </label>
+              <div class="relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold font-mono text-slate-400">$</span>
+                <%= f.number_field :activation_fee, value: 149, min: 0, step: "any", class: "input-field w-full pl-8 pr-3 py-2.5 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-brand" %>
+              </div>
+            </div>
+          </div>
+
+          <!-- ESTRATEGIAS VINCULADAS -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700">Estrategias Asignadas</label>
+              <%= link_to "+ Crear estrategia", new_strategy_path, target: "_blank", class: "text-[11px] font-bold text-brand hover:underline" %>
+            </div>
+            
+            <select name="strategy_ids[]" multiple class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand h-20">
+              <option value="" disabled selected>Selecciona estrategias...</option>
+              <% @strategies.each do |strat| %>
+                <option value="<%= strat.id %>"><%= strat.name %></option>
+              <% end %>
+            </select>
           </div>
 
         </div>
+
+        <!-- NAVEGACIÓN PASO 3 -->
+        <div class="flex items-center justify-between pt-4 border-t dark:border-darkBorder border-slate-200">
+          <button type="button" onclick="prevStep()" class="px-5 py-2.5 text-xs font-bold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white rounded-xl border dark:border-darkBorder border-slate-200 transition-all flex items-center gap-1.5 cursor-pointer">
+            <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+            Paso Anterior
+          </button>
+
+          <button type="submit" class="px-9 py-3.5 bg-brand hover:scale-[1.02] text-white font-extrabold text-xs rounded-xl shadow-lg glow-brand transition-all flex items-center gap-2 cursor-pointer">
+            <span class="material-symbols-outlined text-[18px]">save</span>
+            🚀 Guardar Cuenta & Finalizar
+          </button>
+        </div>
+
       </div>
 
-    </div>
-
-    <!-- BOTONES DE ACCIÓN -->
-    <div class="flex items-center justify-end gap-3 pt-4 border-t dark:border-darkBorder border-slate-200">
-      <%= link_to "Cancelar", prop_ledger_index_path, class: "px-5 py-2.5 text-xs font-bold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white rounded-xl border dark:border-darkBorder border-slate-200 transition-all" %>
-      
-      <button type="submit" class="px-8 py-3 bg-brand hover:scale-[1.02] text-white font-extrabold text-xs rounded-xl shadow-lg glow-brand transition-all flex items-center gap-2 cursor-pointer">
-        <span class="material-symbols-outlined text-[18px]">save</span>
-        Guardar Cuenta de Fondeo
-      </button>
     </div>
 
   <% end %>
 
 </div>
 
-<!-- SCRIPT DE INTERACTIVIDAD DINÁMICA DE REGLAS -->
+<!-- MODAL COMPLETO PARA EDITAR REGLAS Y OVERRIDES -->
+<div id="custom-rules-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
+  <div class="glass rounded-2xl p-6 w-full max-w-2xl mx-auto space-y-5 shadow-2xl border dark:border-darkBorder border-slate-200 my-8">
+    
+    <div class="flex items-center justify-between pb-3 border-b dark:border-darkBorder border-slate-200">
+      <div>
+        <h3 class="text-base font-black dark:text-white text-slate-800 flex items-center gap-2">
+          <span class="material-symbols-outlined text-brand">edit_note</span>
+          Edición de Reglas & Parámetros Personalizados
+        </h3>
+        <p class="text-xs text-slate-400 mt-0.5">Configura drawdown estático/EOD, pérdida diaria, días mínimos y consistencia.</p>
+      </div>
+      <button type="button" onclick="toggleCustomRulesModal()" class="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover transition-all">
+        <span class="material-symbols-outlined text-slate-400 text-[20px]">close</span>
+      </button>
+    </div>
+
+    <!-- TABS DE EDICIÓN DE REGLAS -->
+    <div class="flex p-1 bg-slate-100 dark:bg-darkCard rounded-xl gap-1 border border-slate-200 dark:border-darkBorder text-xs font-bold">
+      <button type="button" onclick="switchModalTab('eval', this)" class="modal-tab-btn flex-1 py-2 rounded-lg bg-white dark:bg-slate-700 text-brand shadow-xs text-center">
+        Fase de Evaluación (Paso 1 & 2)
+      </button>
+      <button type="button" onclick="switchModalTab('funded', this)" class="modal-tab-btn flex-1 py-2 rounded-lg text-slate-400 hover:text-slate-200 text-center">
+        Fase Fondeada (Live / Real)
+      </button>
+    </div>
+
+    <!-- SECCIÓN EVALUACIÓN -->
+    <div id="modal-sec-eval" class="space-y-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-bold dark:text-slate-200 text-slate-700">
+        <div>
+          <label class="block mb-1">Profit Target Personalizado ($)</label>
+          <input type="number" name="prop_firm_account[custom_profit_target]" placeholder="Ej: 3000" class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono focus:outline-none focus:border-brand">
+        </div>
+        <div>
+          <label class="block mb-1">Max Drawdown Personalizado ($)</label>
+          <input type="number" name="prop_firm_account[custom_max_drawdown]" placeholder="Ej: 2000" class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono focus:outline-none focus:border-brand">
+        </div>
+        <div>
+          <label class="block mb-1">Tipo de Max Drawdown</label>
+          <select name="prop_firm_account[custom_drawdown_type]" class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand">
+            <option value="eod">End of Day (EOD - Al cierre diario)</option>
+            <option value="trailing">Intradía / Trailing (En tiempo real al tick)</option>
+            <option value="static">Estático (Fijo respecto al balance inicial)</option>
+            <option value="floor">Piso del Drawdown (Trailing estancado al balance inicial)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block mb-1">Límite Pérdida Diaria ($)</label>
+          <input type="number" name="prop_firm_account[custom_daily_loss_limit]" placeholder="Ej: 1000 (Opcional)" class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono focus:outline-none focus:border-brand">
+        </div>
+        <div>
+          <label class="block mb-1">Consistencia (% mejor día)</label>
+          <input type="number" name="prop_firm_account[custom_consistency_pct]" placeholder="Ej: 50" max="100" class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono focus:outline-none focus:border-brand">
+        </div>
+        <div>
+          <label class="block mb-1">Días Mínimos de Trading</label>
+          <input type="number" name="prop_firm_account[custom_min_trading_days]" placeholder="Ej: 2" min="0" class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono focus:outline-none focus:border-brand">
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN FONDEADA -->
+    <div id="modal-sec-funded" class="hidden space-y-4">
+      <div class="p-3.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs text-blue-400 space-y-1">
+        <p class="font-bold flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">info</span> Reglas de la Cuenta Fondeada / Live</p>
+        <p class="text-[11px] text-slate-300">Monitoreo de límites de pérdida diaria, piso de drawdown estático/EOD y requisitos de consistencia para payouts.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-bold dark:text-slate-200 text-slate-700">
+        <div>
+          <label class="block mb-1">Pérdida Diaria en Fondeada ($)</label>
+          <input type="number" placeholder="Ej: 1000" class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono focus:outline-none focus:border-brand">
+        </div>
+        <div>
+          <label class="block mb-1">Profit Split / % Trader</label>
+          <input type="number" placeholder="Ej: 90" max="100" class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono focus:outline-none focus:border-brand">
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-end gap-3 pt-4 border-t dark:border-darkBorder border-slate-200">
+      <button type="button" onclick="toggleCustomRulesModal()" class="px-5 py-2.5 text-xs font-bold text-slate-400 hover:text-white rounded-xl">
+        Cancelar
+      </button>
+      <button type="button" onclick="toggleCustomRulesModal()" class="px-6 py-2.5 bg-brand hover:scale-[1.02] text-white font-extrabold text-xs rounded-xl shadow-lg glow-brand transition-all">
+        Aplicar Reglas Personalizadas
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- SCRIPT DE LÓGICA MULTI-STEP SLIDE DE PROP FIRMS -->
 <script>
+let currentStep = 1;
+let selectedPropMode = "preset";
+
 let currentFirm = "Topstep";
 let currentPlan = "Estándar";
 let currentSize = "50K";
-let currentTab  = "eval";
+let currentTab  = "step1";
 
 const RULES_DATABASE = {
-  "50K":  { target: "$3,000", max_dd: "$2,000", daily: "No aplica", consistency: "50%", min_days: "2 días" },
-  "100K": { target: "$6,000", max_dd: "$3,000", daily: "No aplica", consistency: "50%", min_days: "2 días" },
-  "150K": { target: "$9,000", max_dd: "$4,500", daily: "No aplica", consistency: "50%", min_days: "2 días" }
+  "10K":  { target: "$600",   max_dd: "$1,000 (EOD)", daily: "$500", consistency: "50%", min_days: "2 días" },
+  "25K":  { target: "$1,500", max_dd: "$1,500 (EOD)", daily: "$1,000", consistency: "50%", min_days: "2 días" },
+  "50K":  { target: "$3,000", max_dd: "$2,000 (EOD)", daily: "$1,000", consistency: "50%", min_days: "2 días" },
+  "100K": { target: "$6,000", max_dd: "$3,000 (EOD)", daily: "$2,000", consistency: "50%", min_days: "2 días" },
+  "150K": { target: "$9,000", max_dd: "$4,500 (EOD)", daily: "$3,000", consistency: "50%", min_days: "2 días" },
+  "200K": { target: "$12,000", max_dd: "$5,000 (EOD)", daily: "$4,000", consistency: "50%", min_days: "2 días" },
+  "250K": { target: "$15,000", max_dd: "$6,000 (EOD)", daily: "$5,000", consistency: "50%", min_days: "2 días" }
+};
+
+window.selectPropAccountMode = function(mode, cardEl) {
+  selectedPropMode = mode;
+  document.querySelectorAll(".account-mode-card").forEach(c => {
+    c.classList.remove("active", "border-brand", "ring-4", "ring-brand/10");
+    c.classList.add("border-slate-200", "dark:border-darkBorder");
+  });
+  cardEl.classList.add("active", "border-brand", "ring-4", "ring-brand/10");
+  cardEl.classList.remove("border-slate-200", "dark:border-darkBorder");
+
+  // Mostrar subpanel correspondiente en Paso 2
+  document.getElementById("mode-panel-preset").classList.toggle("hidden", mode !== "preset");
+  document.getElementById("mode-panel-manual").classList.toggle("hidden", mode !== "manual");
+  document.getElementById("mode-panel-csv").classList.toggle("hidden", mode !== "csv");
+
+  // Actualizar etiqueta del Paso 2
+  const label2 = document.getElementById("step-2-title-label");
+  if (mode === "preset") label2.textContent = "Firma & Reglas";
+  else if (mode === "manual") label2.textContent = "Reglas Manuales";
+  else if (mode === "csv") label2.textContent = "Adjuntar CSV";
+
+  // Avanza suavemente al Paso 2
+  setTimeout(() => { goToStep(2); }, 250);
+};
+
+window.goToStep = function(stepNum) {
+  if (stepNum < 1 || stepNum > 3) return;
+  currentStep = stepNum;
+
+  // 1. Actualizar barra de progreso del Stepper
+  const progressBar = document.getElementById("stepper-progress-bar");
+  if (progressBar) {
+    const pct = ((stepNum - 1) / 2) * 100;
+    progressBar.style.width = pct + "%";
+  }
+
+  // 2. Actualizar nodos del Stepper
+  for (let i = 1; i <= 3; i++) {
+    const node = document.getElementById("step-node-" + i);
+    const label = document.getElementById("step-label-" + i);
+    if (!node) continue;
+
+    if (i <= stepNum) {
+      node.classList.remove("bg-slate-200", "dark:bg-darkBorder", "text-slate-500");
+      node.classList.add("bg-brand", "text-white", "ring-4", "ring-brand/20");
+      label.classList.remove("text-slate-400");
+      label.classList.add("text-brand");
+    } else {
+      node.classList.remove("bg-brand", "text-white", "ring-4", "ring-brand/20");
+      node.classList.add("bg-slate-200", "dark:bg-darkBorder", "text-slate-500");
+      label.classList.remove("text-brand");
+      label.classList.add("text-slate-400");
+    }
+  }
+
+  // 3. Mostrar u ocultar paneles de forma instantánea y garantizada
+  for (let i = 1; i <= 3; i++) {
+    const panel = document.getElementById("wizard-step-" + i);
+    if (!panel) continue;
+
+    if (i === stepNum) {
+      panel.style.display = "block";
+      panel.classList.remove("hidden");
+    } else {
+      panel.style.display = "none";
+      panel.classList.add("hidden");
+    }
+  }
+
+  // 4. Si estamos en el Paso 2, asegurar visibilidad del subpanel seleccionado
+  if (stepNum === 2) {
+    const pPreset = document.getElementById("mode-panel-preset");
+    const pManual = document.getElementById("mode-panel-manual");
+    const pCsv    = document.getElementById("mode-panel-csv");
+
+    if (pPreset) {
+      const show = (selectedPropMode === "preset");
+      pPreset.style.display = show ? "block" : "none";
+      pPreset.classList.toggle("hidden", !show);
+    }
+    if (pManual) {
+      const show = (selectedPropMode === "manual");
+      pManual.style.display = show ? "block" : "none";
+      pManual.classList.toggle("hidden", !show);
+    }
+    if (pCsv) {
+      const show = (selectedPropMode === "csv");
+      pCsv.style.display = show ? "block" : "none";
+      pCsv.classList.toggle("hidden", !show);
+    }
+  }
+};
+
+window.nextStep = function() {
+  goToStep(currentStep + 1);
+};
+
+window.prevStep = function() {
+  goToStep(currentStep - 1);
 };
 
 window.selectFirmConfig = function(firmName, btn) {
@@ -267,7 +734,7 @@ window.selectFirmConfig = function(firmName, btn) {
   document.getElementById("prop_firm_name_field").value = firmName;
   document.querySelectorAll(".firm-selector-btn").forEach(b => b.classList.remove("ring-2", "ring-brand", "border-brand", "bg-brand/10"));
   btn.classList.add("ring-2", "ring-brand", "border-brand", "bg-brand/10");
-  document.getElementById("firm-plan-label").textContent = `2 - PLAN DE ${firmName.toUpperCase()}`;
+  document.getElementById("firm-plan-label").textContent = `2 - CONFIGURACIÓN DE PLAN DE ${firmName.toUpperCase()}`;
   updateRulesDisplay();
 };
 
@@ -293,6 +760,12 @@ window.setAccountPhase = function(phaseId, btn) {
   btn.classList.add("ring-2", "ring-emerald-500", "border-emerald-500", "bg-emerald-500/10", "text-emerald-500");
 };
 
+window.setAccountStatus = function(statusId, btn) {
+  document.getElementById("prop_status_field").value = statusId;
+  document.querySelectorAll(".status-btn").forEach(b => b.classList.remove("ring-2", "ring-emerald-500", "border-emerald-500", "bg-emerald-500/10", "text-emerald-500"));
+  btn.classList.add("ring-2", "ring-emerald-500", "border-emerald-500", "bg-emerald-500/10", "text-emerald-500");
+};
+
 window.switchRuleTab = function(tabName, btn) {
   currentTab = tabName;
   document.querySelectorAll(".rule-tab-btn").forEach(b => {
@@ -305,21 +778,19 @@ window.switchRuleTab = function(tabName, btn) {
 };
 
 function updateRulesDisplay() {
-  document.getElementById("rules-box-title").textContent = `3 - REGLAS - ${currentFirm.toUpperCase()} - ${currentPlan.toUpperCase()}`;
+  document.getElementById("rules-box-title").textContent = `3 - REGLAS: ${currentFirm.toUpperCase()} (${currentSize})`;
   const data = RULES_DATABASE[currentSize] || RULES_DATABASE["50K"];
   
   if (currentTab === "funded") {
-    document.getElementById("rule-target").textContent = "N/A (Retiros)";
+    document.getElementById("rule-target").textContent = "N/A (Retiros / Payouts)";
     document.getElementById("rule-max-dd").textContent = data.max_dd;
-    document.getElementById("rule-daily-loss").textContent = "$1,000 max";
-    document.getElementById("rule-consistency").textContent = "30%";
-    document.getElementById("rule-min-days").textContent = "Sin mínimo";
+    document.getElementById("rule-daily-loss").textContent = data.daily;
+    document.getElementById("rule-consistency").textContent = "30% (Regla Retiro)";
   } else {
     document.getElementById("rule-target").textContent = data.target;
     document.getElementById("rule-max-dd").textContent = data.max_dd;
     document.getElementById("rule-daily-loss").textContent = data.daily;
     document.getElementById("rule-consistency").textContent = data.consistency;
-    document.getElementById("rule-min-days").textContent = data.min_days;
   }
 }
 
@@ -327,58 +798,21 @@ window.toggleCustomRulesModal = function() {
   const modal = document.getElementById("custom-rules-modal");
   if (modal) modal.classList.toggle("hidden");
 };
+
+window.switchModalTab = function(tabName, btn) {
+  document.querySelectorAll(".modal-tab-btn").forEach(b => {
+    b.classList.remove("bg-white", "dark:bg-slate-700", "text-brand", "shadow-xs");
+    b.classList.add("text-slate-400");
+  });
+  btn.classList.add("bg-white", "dark:bg-slate-700", "text-brand", "shadow-xs");
+  btn.classList.remove("text-slate-400");
+
+  if (tabName === "funded") {
+    document.getElementById("modal-sec-eval").classList.add("hidden");
+    document.getElementById("modal-sec-funded").classList.remove("hidden");
+  } else {
+    document.getElementById("modal-sec-eval").classList.remove("hidden");
+    document.getElementById("modal-sec-funded").classList.add("hidden");
+  }
+};
 </script>
-
-<!-- MODAL PARA EDITAR REGLAS PERSONALIZADAS (OVERRIDES) -->
-<div id="custom-rules-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm">
-  <div class="glass rounded-2xl p-6 w-full max-w-lg mx-4 space-y-4 shadow-2xl border dark:border-darkBorder border-slate-200">
-    <div class="flex items-center justify-between pb-3 border-b dark:border-darkBorder border-slate-200">
-      <h3 class="text-base font-black dark:text-white text-slate-800 flex items-center gap-2">
-        <span class="material-symbols-outlined text-brand">edit_note</span>
-        Personalizar Reglas del Challenge
-      </h3>
-      <button type="button" onclick="toggleCustomRulesModal()" class="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover transition-all">
-        <span class="material-symbols-outlined text-slate-400 text-[18px]">close</span>
-      </button>
-    </div>
-
-    <p class="text-xs text-slate-400">Si tu firma o contrato tiene reglas especiales (promociones, reglas personalizadas o add-ons), ajusta aquí las reglas exactas para que el sistema audite tu diario:</p>
-
-    <div class="grid grid-cols-2 gap-4 text-xs font-bold dark:text-slate-200 text-slate-700">
-      <div>
-        <label class="block mb-1">Profit Target Personalizado ($)</label>
-        <input type="number" name="prop_firm_account[custom_profit_target]" placeholder="Ej: 3000" class="input-field w-full px-3 py-2 rounded-xl text-xs font-mono focus:outline-none focus:border-brand">
-      </div>
-      <div>
-        <label class="block mb-1">Max Drawdown Personalizado ($)</label>
-        <input type="number" name="prop_firm_account[custom_max_drawdown]" placeholder="Ej: 2000" class="input-field w-full px-3 py-2 rounded-xl text-xs font-mono focus:outline-none focus:border-brand">
-      </div>
-      <div>
-        <label class="block mb-1">Tipo de Drawdown</label>
-        <select name="prop_firm_account[custom_drawdown_type]" class="input-field w-full px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-brand">
-          <option value="eod">End of Day (EOD)</option>
-          <option value="trailing">Trailing Intradía</option>
-          <option value="static">Estático</option>
-        </select>
-      </div>
-      <div>
-        <label class="block mb-1">Límite Pérdida Diaria ($)</label>
-        <input type="number" name="prop_firm_account[custom_daily_loss_limit]" placeholder="Ej: 1000 (Opcional)" class="input-field w-full px-3 py-2 rounded-xl text-xs font-mono focus:outline-none focus:border-brand">
-      </div>
-      <div>
-        <label class="block mb-1">Consistencia (%)</label>
-        <input type="number" name="prop_firm_account[custom_consistency_pct]" placeholder="Ej: 50" max="100" class="input-field w-full px-3 py-2 rounded-xl text-xs font-mono focus:outline-none focus:border-brand">
-      </div>
-      <div>
-        <label class="block mb-1">Días Mínimos Trading</label>
-        <input type="number" name="prop_firm_account[custom_min_trading_days]" placeholder="Ej: 5" min="0" class="input-field w-full px-3 py-2 rounded-xl text-xs font-mono focus:outline-none focus:border-brand">
-      </div>
-    </div>
-
-    <div class="flex justify-end gap-2 pt-3 border-t dark:border-darkBorder border-slate-200">
-      <button type="button" onclick="toggleCustomRulesModal()" class="px-5 py-2 bg-brand text-white font-bold text-xs rounded-xl shadow-md glow-brand">
-        Aplicar Reglas Personalizadas
-      </button>
-    </div>
-  </div>
-</div>

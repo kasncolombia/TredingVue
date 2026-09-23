@@ -5,6 +5,15 @@ class TradingAccountsController < ApplicationController
   def index
     @trading_accounts = current_user.trading_accounts.includes(:broker, :prop_firm_account).order(created_at: :desc)
     @brokers = Broker.order(:name)
+    @prop_firm_accounts = current_user.prop_firm_accounts.where(status: "activa")
+  end
+
+  def new
+    @trading_accounts = current_user.trading_accounts.includes(:broker, :prop_firm_account).order(created_at: :desc)
+    @brokers = Broker.order(:name)
+    @prop_firm_accounts = current_user.prop_firm_accounts.where(status: "activa")
+    @open_wizard = true
+    render :index
   end
 
   def wizard

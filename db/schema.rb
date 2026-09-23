@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_23_135100) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_23_153000) do
   create_table "ai_analyses", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "discipline_score"
@@ -143,6 +143,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_23_135100) do
   create_table "prop_firm_accounts", force: :cascade do |t|
     t.string "account_size", null: false
     t.decimal "activation_fee", precision: 10, scale: 2, default: "0.0"
+    t.date "billing_date"
+    t.string "burn_reason"
     t.datetime "created_at", null: false
     t.decimal "custom_consistency_pct", precision: 5, scale: 2
     t.decimal "custom_daily_loss_limit", precision: 12, scale: 2

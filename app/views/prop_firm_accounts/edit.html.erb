@@ -19,7 +19,7 @@
         <span class="material-symbols-outlined text-brand text-[26px]">edit_square</span>
         Ajustes Avanzados: <%= @account.name %>
       </h1>
-      <p class="text-xs text-slate-400 mt-1">Modifica parámetros personalizados (límites, profit target, etc.) si tu firma tiene reglas no estándar.</p>
+      <p class="text-xs text-slate-400 mt-1">Modifica parámetros personalizados (límites, profit target, estado, fechas) si tu firma tiene reglas no estándar.</p>
     </div>
   </div>
 
@@ -33,7 +33,7 @@
         <div class="pb-3 border-b dark:border-darkBorder border-slate-200">
           <h2 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
             <span class="material-symbols-outlined text-slate-400 text-[18px]">info</span>
-            Identificación y Base
+            Identificación y Estado de la Cuenta
           </h2>
         </div>
 
@@ -50,6 +50,42 @@
           <div>
             <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Tamaño</label>
             <%= f.text_field :account_size, readonly: true, class: "input-field w-full px-3.5 py-2.5 rounded-xl text-sm font-mono font-bold bg-slate-100 dark:bg-darkHover cursor-not-allowed text-slate-500" %>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Fase Actual</label>
+            <%= f.select :phase, [["Paso 1 (Eval)", "paso_1"], ["Paso 2 (Eval)", "paso_2"], ["Fondeada / Live", "fondeada"], ["Express", "express"], ["Simulación", "sim"]], {}, class: "input-field w-full px-3 py-2.5 rounded-xl text-xs font-bold focus:outline-none focus:border-brand" %>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Estado</label>
+            <%= f.select :status, [["Activa", "activa"], ["Fondeada", "fondeada"], ["Quemada", "quemada"], ["Reseteada", "reseteada"], ["Pausada", "pausada"]], {}, class: "input-field w-full px-3 py-2.5 rounded-xl text-xs font-bold focus:outline-none focus:border-brand" %>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-rose-500 mb-1.5">Motivo de Quema / Breach Reason</label>
+          <%= f.select :burn_reason, [
+            "Pérdida diaria superada",
+            "Drawdown máximo superado",
+            "Días límite / Inactividad",
+            "Operar en noticias restringidas",
+            "Falta de gestión de riesgo / Overtrading",
+            "Error técnico / Plataforma",
+            "Otro"
+          ], { include_blank: "-- Ninguno / No aplica --" }, class: "input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-bold focus:outline-none focus:border-rose-500" %>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Fecha de Inicio</label>
+            <%= f.date_field :start_date, class: "input-field w-full px-3 py-2.5 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-brand" %>
+          </div>
+          <div>
+            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Fecha de Cuota / Renovación</label>
+            <%= f.date_field :billing_date, class: "input-field w-full px-3 py-2.5 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-brand" %>
           </div>
         </div>
 
@@ -94,7 +130,7 @@
           <!-- TIPO DE DRAWDOWN -->
           <div>
             <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Tipo drawdown</label>
-            <%= f.select :custom_drawdown_type, [["End of Day (EOD)", "eod"], ["Trailing Intradía", "trailing"], ["Static", "static"]], { include_blank: "Por defecto (#{@account.active_drawdown_type&.upcase})" }, class: "input-field w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-brand" %>
+            <%= f.select :custom_drawdown_type, [["End of Day (EOD)", "eod"], ["Trailing Intradía", "trailing"], ["Static", "static"], ["Piso Drawdown Floor", "floor"]], { include_blank: "Por defecto (#{@account.active_drawdown_type&.upcase})" }, class: "input-field w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-brand" %>
           </div>
 
           <!-- DAILY LOSS LIMIT -->

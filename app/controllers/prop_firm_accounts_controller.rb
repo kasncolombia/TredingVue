@@ -120,7 +120,7 @@ class PropFirmAccountsController < ApplicationController
   def account_params
     params.require(:prop_firm_account).permit(
       :name, :firm_name, :plan_name, :account_size, :phase, :status,
-      :eval_fee, :activation_fee, :start_date, :prop_firm_rule_template_id,
+      :eval_fee, :activation_fee, :start_date, :billing_date, :burn_reason, :prop_firm_rule_template_id,
       :custom_profit_target, :custom_max_drawdown, :custom_drawdown_type,
       :custom_daily_loss_limit, :custom_consistency_pct, :custom_min_trading_days
     )
