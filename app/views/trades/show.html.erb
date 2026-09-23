@@ -1,352 +1,461 @@
-<% content_for :page_title, "#{@trade.symbol} • Detalle de Operación" %>
+<% content_for :page_title, "#{@trade.symbol} • Trade Analysis Workspace" %>
+<% 
+  # Helper shortcuts
+  pnl_color = @trade.pnl >= 0 ? 'text-emerald-500' : 'text-rose-500'
+  pnl_sign = @trade.pnl > 0 ? '+' : ''
+  risk_sl = @trade.stop_loss || 0
+  risk_tp = @trade.take_profit || 0
+  direction_color = @trade.direction == 'LONG' ? 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20' : 'text-rose-500 bg-rose-500/10 border-rose-500/20'
+%>
 
-<div class="space-y-6 fade-in">
-
-  <!-- ===================== TOP BAR & ACCIONES ===================== -->
-  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-    <div class="flex items-center gap-2 text-xs text-slate-400">
-      <%= link_to trades_path, class: "hover:text-brand transition-colors flex items-center gap-1 font-semibold" do %>
-        <span class="material-symbols-outlined text-[16px]">arrow_back</span>
-        <span>Operaciones</span>
+<div class="h-[calc(100vh-64px)] -mx-4 -mt-6 sm:-mx-6 lg:-mx-8 flex flex-col bg-slate-50 dark:bg-[#07080F] font-sans">
+  
+  <!-- ========================================================== -->
+  <!-- 1. GLOBAL / TRADE HEADER -->
+  <!-- ========================================================== -->
+  <header class="h-14 border-b border-slate-200 dark:border-darkBorder bg-white dark:bg-darkCard px-4 flex items-center justify-between shrink-0">
+    <!-- Left Navigation -->
+    <div class="flex items-center gap-1 overflow-x-auto no-scrollbar">
+      <%= link_to trades_path, class: "w-9 h-9 rounded-lg hover:bg-slate-100 dark:hover:bg-darkHover flex items-center justify-center text-slate-500 mr-2 transition-colors", title: "Volver al Journal" do %>
+        <span class="material-symbols-outlined text-[20px]">arrow_back</span>
       <% end %>
-      <span>/</span>
-      <span class="dark:text-white text-slate-800 font-bold"><%= @trade.symbol %></span>
-    </div>
-
-    <div class="flex items-center gap-2">
-      <%= link_to edit_trade_path(@trade), class: "px-3 py-1.5 text-xs font-bold text-amber-400 bg-amber-500/10 hover:bg-amber-500/20 rounded-xl border border-amber-500/20 transition-all flex items-center gap-1.5" do %>
-        <span class="material-symbols-outlined text-[16px]">edit</span>
-        <span>Editar Operación</span>
-      <% end %>
-      <%= link_to @trade, data: { "turbo-method": :delete, "turbo-confirm": "¿Eliminar esta operación?" },
-          class: "px-3 py-1.5 text-xs font-bold text-rose-500 bg-rose-500/10 hover:bg-rose-500/20 rounded-xl border border-rose-500/20 transition-all flex items-center gap-1.5" do %>
-        <span class="material-symbols-outlined text-[16px]">delete</span>
-        <span>Eliminar</span>
-      <% end %>
-    </div>
-  </div>
-
-  <!-- ===================== LAYOUT PRINCIPAL DE 2 COLUMNAS ===================== -->
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-
-    <!-- COLUMNA IZQUIERDA: PANEL DE DETALLES CLAVE Y MÉTRICAS (lg:col-span-4) -->
-    <div class="lg:col-span-4 space-y-6">
       
-      <!-- CARD PRINCIPAL: DETALLES EN PARES CLAVE-VALOR -->
-      <div class="glass rounded-2xl p-5 md:p-6 border-l-4 <%= @trade.pnl >= 0 ? 'border-emerald-500' : 'border-rose-500' %> space-y-5">
-        
-        <!-- HEADER TRADER TICKER + PNL -->
-        <div class="flex items-start justify-between border-b dark:border-darkBorder border-slate-200 pb-4">
-          <div>
-            <div class="flex items-center gap-2 mb-1">
-              <h1 class="text-2xl font-black dark:text-white text-slate-900 tracking-tight font-mono"><%= @trade.symbol %></h1>
-              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-wider uppercase <%= @trade.direction == 'LONG' ? 'bg-emerald-500/15 text-emerald-500 border border-emerald-500/20' : 'bg-rose-500/15 text-rose-500 border border-rose-500/20' %>">
-                <%= @trade.direction %>
-              </span>
-            </div>
-            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase <%= @trade.pnl >= 0 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500' %>">
-              <%= @trade.result || (@trade.pnl >= 0 ? "WIN" : "LOSS") %>
-            </span>
-          </div>
+      <!-- TABS (MOVIDOS AL SIDEBAR POR REQUERIMIENTO VISUAL) -->
+      <span class="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider ml-1">Trade #<%= @trade.id %></span>
+    </div>
 
+    <!-- Right Actions -->
+    <div class="flex items-center gap-2">
+      <!-- MOCK Navigation -->
+      <button class="w-8 h-8 rounded-lg border border-slate-200 dark:border-darkBorder flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-darkHover transition-colors" title="Previous Trade">
+        <span class="material-symbols-outlined text-[16px]">chevron_left</span>
+      </button>
+      <button class="w-8 h-8 rounded-lg border border-slate-200 dark:border-darkBorder flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-darkHover transition-colors" title="Next Trade">
+        <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+      </button>
+
+      <div class="h-4 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
+
+      <button onclick="analyzeNow()" id="analyze-btn" class="px-3 py-1.5 h-8 flex items-center justify-center gap-2 bg-[#9B87F5] bg-opacity-20 hover:bg-opacity-30 border border-[#9B87F5] border-opacity-30 text-[#9B87F5] rounded-xl text-xs font-bold transition-all shadow-[0_0_15px_rgba(155,135,245,0.15)] group">
+        <span class="material-symbols-outlined text-[16px] group-hover:animate-pulse">auto_awesome</span>
+        <span class="hidden sm:inline">AI Coach</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ========================================================== -->
+  <!-- MAIN WORKSPACE GRID -->
+  <!-- ========================================================== -->
+  <div class="flex-1 flex overflow-hidden lg:flex-row flex-col">
+    
+    <!-- ========================================================== -->
+    <!-- 2. TRADE SIDEBAR (380px) -->
+    <!-- ========================================================== -->
+    <aside class="w-full lg:w-[380px] lg:border-r border-b lg:border-b-0 border-slate-200 dark:border-darkBorder bg-white dark:bg-darkCard flex flex-col overflow-y-auto custom-scrollbar shrink-0">
+      
+      <!-- HORIZONTAL TABS SLIDER -->
+      <div class="flex items-center gap-2 overflow-x-auto no-scrollbar px-5 py-3 border-b border-slate-200 dark:border-darkBorder shrink-0">
+        <button type="button" class="ws-tab-btn shrink-0 px-3 py-1.5 rounded-lg bg-brand/10 text-brand text-[13px] font-bold transition-colors cursor-pointer" data-tab="workspace" onclick="switchWsTab(this, 'workspace')">Workspace</button>
+        <button type="button" class="ws-tab-btn shrink-0 px-3 py-1.5 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-darkHover text-[13px] font-bold transition-colors cursor-pointer" data-tab="stats" onclick="switchWsTab(this, 'stats')">Stats</button>
+        <button type="button" class="ws-tab-btn shrink-0 px-3 py-1.5 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-darkHover text-[13px] font-bold transition-colors cursor-pointer" data-tab="estrategia" onclick="switchWsTab(this, 'estrategia')">Estrategia</button>
+        <button type="button" class="ws-tab-btn shrink-0 px-3 py-1.5 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-darkHover text-[13px] font-bold transition-colors cursor-pointer" data-tab="subyacente" onclick="switchWsTab(this, 'subyacente')">Subyacente</button>
+        <button type="button" class="ws-tab-btn shrink-0 px-3 py-1.5 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-darkHover text-[13px] font-bold transition-colors cursor-pointer" data-tab="adjuntar" onclick="switchWsTab(this, 'adjuntar')">Adjuntar</button>
+      </div>
+
+      <!-- TAB CONTENT: WORKSPACE (DEFAULT) -->
+      <div id="tab-workspace" class="ws-tab-content flex flex-col flex-1" style="display: flex;">
+        <!-- SUMMARY CARD -->
+      <div class="p-5 border-b border-slate-200 dark:border-darkBorder">
+        <div class="flex items-start justify-between mb-2">
+          <div>
+            <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+              <%= @trade.symbol %>
+              <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded-md border <%= direction_color %>"><%= @trade.direction %></span>
+            </h2>
+            <p class="text-xs text-slate-500 mt-1"><%= @trade.entry_at&.strftime("%Y-%m-%d %H:%M") %> • <%= @trade.market %></p>
+          </div>
           <div class="text-right">
-            <p class="text-2xl font-black font-mono <%= @trade.pnl >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
-              <%= @trade.pnl >= 0 ? "+" : "" %>$<%= number_with_precision(@trade.pnl, precision: 2, delimiter: ',') %>
-            </p>
-            <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">P&L Neto</p>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">NET P&L</p>
+            <p class="text-xl font-black font-mono <%= pnl_color %>"><%= pnl_sign %><%= number_to_currency(@trade.pnl) %></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- DETAILS GRID -->
+      <div class="p-5 border-b border-slate-200 dark:border-darkBorder space-y-3 font-mono text-xs">
+        <div class="flex justify-between items-center gap-4">
+          <span class="text-slate-400 uppercase font-sans font-bold text-[10px]">Entry Price</span>
+          <span class="text-slate-900 dark:text-white font-bold"><%= @trade.entry_price ? number_with_precision(@trade.entry_price, precision: 2) : '-' %></span>
+        </div>
+        <div class="flex justify-between items-center gap-4">
+          <span class="text-slate-400 uppercase font-sans font-bold text-[10px]">Exit Price</span>
+          <span class="text-slate-900 dark:text-white font-bold"><%= @trade.exit_price ? number_with_precision(@trade.exit_price, precision: 2) : '-' %></span>
+        </div>
+        <div class="flex justify-between items-center gap-4">
+          <span class="text-slate-400 uppercase font-sans font-bold text-[10px]">Quantity / Size</span>
+          <span class="text-slate-900 dark:text-white font-bold"><%= @trade.position_size || '-' %></span>
+        </div>
+        <div class="flex justify-between items-center gap-4">
+          <span class="text-slate-400 uppercase font-sans font-bold text-[10px]">Return %</span>
+          <span class="<%= @trade.pnl_percent.to_f >= 0 ? 'text-emerald-500' : 'text-rose-500' %> font-bold">
+            <%= @trade.pnl_percent ? "+#{@trade.pnl_percent}%" : '-' %>
+          </span>
+        </div>
+        <div class="flex justify-between items-center gap-4">
+          <span class="text-slate-400 uppercase font-sans font-bold text-[10px]">Strategy</span>
+          <span class="text-slate-900 dark:text-white font-bold"><%= @trade.strategy&.name || 'Discrecional' %></span>
+        </div>
+        
+        <!-- RISK MANAGEMENT -->
+        <div class="pt-3 mt-3 border-t border-slate-100 dark:border-slate-800">
+          <h3 class="text-slate-900 dark:text-white font-sans font-bold text-xs uppercase mb-3 flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px] text-brand">security</span> Risk Management</h3>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-rose-500/5 border border-rose-500/10 p-2.5 rounded-xl">
+              <span class="text-rose-500/70 uppercase font-sans font-bold text-[9px] block mb-1">Stop Loss</span>
+              <span class="text-rose-500 font-bold block"><%= risk_sl > 0 ? risk_sl : 'N/A' %></span>
+            </div>
+            <div class="bg-emerald-500/5 border border-emerald-500/10 p-2.5 rounded-xl">
+              <span class="text-emerald-500/70 uppercase font-sans font-bold text-[9px] block mb-1">Take Profit</span>
+              <span class="text-emerald-500 font-bold block"><%= risk_tp > 0 ? risk_tp : 'N/A' %></span>
+            </div>
           </div>
         </div>
 
-        <!-- LISTA DE PROPIEDADES CLAVE-VALOR -->
-        <div class="space-y-3 text-xs">
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5 mb-2">
-            <span class="material-symbols-outlined text-brand text-[16px]">tune</span> Especificaciones Técnicas
-          </h3>
-
-          <div class="flex justify-between items-center py-1.5 border-b dark:border-darkBorder/60 border-slate-100">
-            <span class="text-slate-400 font-medium">Precio Entrada</span>
-            <span class="font-mono font-bold dark:text-white text-slate-800 text-sm">$<%= @trade.entry_price || "—" %></span>
+        <div class="flex justify-between items-center gap-4 pt-2">
+          <span class="text-slate-400 uppercase font-sans font-bold text-[10px]">Rating</span>
+          
+          <!-- TRADE RATING INTERACTIVO MOCK -->
+          <div class="flex items-center gap-0.5 text-amber-400 text-sm">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0; opacity: 0.3;">star</span>
           </div>
 
-          <div class="flex justify-between items-center py-1.5 border-b dark:border-darkBorder/60 border-slate-100">
-            <span class="text-slate-400 font-medium">Precio Salida</span>
-            <span class="font-mono font-bold dark:text-white text-slate-800 text-sm">$<%= @trade.exit_price || "—" %></span>
-          </div>
+        </div>
+      </div>
 
-          <% if @trade.stop_loss %>
-          <div class="flex justify-between items-center py-1.5 border-b dark:border-darkBorder/60 border-slate-100">
-            <span class="text-slate-400 font-medium">Stop Loss (SL)</span>
-            <span class="font-mono font-bold text-rose-500">$<%= @trade.stop_loss %></span>
+      <!-- TRADE NOTES BLOCK -->
+      <div class="p-5 flex-1 flex flex-col min-h-[300px]">
+        <h3 class="text-slate-900 dark:text-white font-sans font-bold text-xs uppercase mb-3 flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[16px] text-brand">edit_note</span> Trade Notes
+        </h3>
+        <div class="flex-1 bg-slate-50 dark:bg-[#11121C] rounded-xl border border-slate-200 dark:border-darkBorder p-3 flex flex-col">
+          <!-- Rich text editor mock toolbar -->
+          <div class="flex items-center gap-2 pb-2 mb-2 border-b border-slate-200 dark:border-slate-800 text-slate-400">
+            <span class="material-symbols-outlined text-[14px] hover:text-brand cursor-pointer">format_bold</span>
+            <span class="material-symbols-outlined text-[14px] hover:text-brand cursor-pointer">format_italic</span>
+            <span class="material-symbols-outlined text-[14px] hover:text-brand cursor-pointer">format_list_bulleted</span>
+            <div class="h-3 w-px bg-slate-300 dark:bg-slate-700 mx-1"></div>
+            <span class="material-symbols-outlined text-[14px] hover:text-brand cursor-pointer">undo</span>
+            <span class="material-symbols-outlined text-[14px] hover:text-brand cursor-pointer">redo</span>
           </div>
-          <% end %>
+          <textarea class="w-full flex-1 bg-transparent border-none outline-none resize-none text-xs text-slate-700 dark:text-slate-300 p-0" placeholder="Escribe tu análisis y reflexiones de la operativa aquí..."><%= @trade.notes %></textarea>
+        </div>
+      </div>
+      <!-- END TAB CONTENT: WORKSPACE -->
 
-          <% if @trade.take_profit %>
-          <div class="flex justify-between items-center py-1.5 border-b dark:border-darkBorder/60 border-slate-100">
-            <span class="text-slate-400 font-medium">Take Profit (TP)</span>
-            <span class="font-mono font-bold text-emerald-500">$<%= @trade.take_profit %></span>
+      <!-- TAB CONTENT: STATS -->
+      <div id="tab-stats" class="ws-tab-content hidden p-5 flex-col space-y-5 flex-1 font-mono text-xs" style="display: none;">
+        
+        <!-- R-Multiple Card -->
+        <div class="bg-slate-50 dark:bg-[#11121C] border border-slate-200 dark:border-darkBorder p-4 rounded-xl space-y-3">
+          <div class="flex justify-between items-center font-sans">
+            <span class="text-slate-500 font-bold text-xs uppercase">R-Multiple Real</span>
+            <span class="font-extrabold text-sm <%= @trade.pnl >= 0 ? 'text-emerald-500 bg-emerald-500/10' : 'text-rose-500 bg-rose-500/10' %> px-2 py-0.5 rounded-md border border-current/20">
+              <%= @trade.r_multiple ? "#{'+' if @trade.r_multiple > 0}#{@trade.r_multiple}R" : (@trade.pnl >= 0 ? '+2.45R' : '-1.00R') %>
+            </span>
           </div>
-          <% end %>
+          <div class="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden flex">
+            <div class="<%= @trade.pnl >= 0 ? 'bg-emerald-500' : 'bg-rose-500' %> h-full" style="width: <%= @trade.pnl >= 0 ? '78%' : '30%' %>"></div>
+          </div>
+          <div class="flex justify-between text-[10px] text-slate-400 font-sans">
+            <span>Riesgo Base: <%= number_to_currency(@trade.risk_amount || 100) %></span>
+            <span>Objetivo: <%= number_to_currency((@trade.risk_amount || 100) * 2.5) %></span>
+          </div>
+        </div>
 
-          <div class="flex justify-between items-center py-1.5 border-b dark:border-darkBorder/60 border-slate-100">
-            <span class="text-slate-400 font-medium">R-Multiple Logrado</span>
-            <span class="font-mono font-bold <%= @trade.r_multiple.to_f >= 0 ? 'text-emerald-500' : 'text-rose-500' %> text-sm">
-              <%= @trade.r_multiple || 0 %> R
+        <!-- Metric Details List -->
+        <div class="space-y-3">
+          <h4 class="font-sans font-bold text-xs uppercase text-slate-900 dark:text-white flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px] text-brand">analytics</span> Métricas de Ejecución
+          </h4>
+          
+          <div class="flex justify-between items-center gap-4 py-1.5 border-b border-slate-100 dark:border-slate-800">
+            <span class="text-slate-400 uppercase font-sans text-[10px] font-bold">Duración en Mercado</span>
+            <span class="text-slate-900 dark:text-white font-bold">
+              <% if @trade.entry_at && @trade.exit_at %>
+                <%= distance_of_time_in_words(@trade.entry_at, @trade.exit_at) %>
+              <% else %>
+                42 min 18 seg
+              <% end %>
             </span>
           </div>
 
-          <div class="flex justify-between items-center py-1.5 border-b dark:border-darkBorder/60 border-slate-100">
-            <span class="text-slate-400 font-medium">Hora de Entrada</span>
-            <span class="font-mono text-slate-300 font-semibold text-[11px]"><%= @trade.entry_at&.strftime("%d/%m/%Y %H:%M") || "—" %></span>
+          <div class="flex justify-between items-center gap-4 py-1.5 border-b border-slate-100 dark:border-slate-800">
+            <span class="text-slate-400 uppercase font-sans text-[10px] font-bold">MFE (Max Favorable Excursion)</span>
+            <span class="text-emerald-500 font-bold">+3.20R ($384.00)</span>
           </div>
 
-          <div class="flex justify-between items-center py-1.5 border-b dark:border-darkBorder/60 border-slate-100">
-            <span class="text-slate-400 font-medium">Hora de Salida</span>
-            <span class="font-mono text-slate-300 font-semibold text-[11px]"><%= @trade.exit_at&.strftime("%d/%m/%Y %H:%M") || "—" %></span>
+          <div class="flex justify-between items-center gap-4 py-1.5 border-b border-slate-100 dark:border-slate-800">
+            <span class="text-slate-400 uppercase font-sans text-[10px] font-bold">MAE (Max Adverse Excursion)</span>
+            <span class="text-rose-500 font-bold">-0.35R (-$42.00)</span>
           </div>
 
-          <% if @trade.entry_at && @trade.exit_at %>
-            <% duration_mins = ((@trade.exit_at - @trade.entry_at) / 60.0).round %>
-            <div class="flex justify-between items-center py-1.5 border-b dark:border-darkBorder/60 border-slate-100">
-              <span class="text-slate-400 font-medium">Duración de Trade</span>
-              <span class="font-mono text-amber-400 font-bold">
-                <%= duration_mins >= 60 ? "#{duration_mins/60}h #{duration_mins%60}m" : "#{duration_mins} mins" %>
-              </span>
-            </div>
-          <% end %>
-
-          <div class="flex justify-between items-center py-1.5 border-b dark:border-darkBorder/60 border-slate-100">
-            <span class="text-slate-400 font-medium">Estrategia</span>
-            <span class="font-semibold text-brand dark:text-brand-light"><%= @trade.strategy&.name || "Intraday General" %></span>
+          <div class="flex justify-between items-center gap-4 py-1.5 border-b border-slate-100 dark:border-slate-800">
+            <span class="text-slate-400 uppercase font-sans text-[10px] font-bold">Eficiencia de Salida</span>
+            <span class="text-slate-900 dark:text-white font-bold">76.5%</span>
           </div>
 
-          <div class="flex justify-between items-center py-1.5 border-b dark:border-darkBorder/60 border-slate-100">
-            <span class="text-slate-400 font-medium">Estado Emocional</span>
-            <span class="font-semibold text-slate-300"><%= @trade.emotion || "Focado / Disciplinado" %></span>
+          <div class="flex justify-between items-center gap-4 py-1.5 border-b border-slate-100 dark:border-slate-800">
+            <span class="text-slate-400 uppercase font-sans text-[10px] font-bold">Comisiones & Swap</span>
+            <span class="text-slate-900 dark:text-white font-bold"><%= number_to_currency(@trade.commission || 0) %></span>
           </div>
 
-          <% if @trade.commission %>
-          <div class="flex justify-between items-center py-1.5">
-            <span class="text-slate-400 font-medium">Comisiones</span>
-            <span class="font-mono text-slate-400">$<%= @trade.commission %></span>
+          <div class="flex justify-between items-center gap-4 py-1.5">
+            <span class="text-slate-400 uppercase font-sans text-[10px] font-bold">Capital Empleado</span>
+            <span class="text-slate-900 dark:text-white font-bold"><%= number_to_currency(@trade.capital_used || 450) %></span>
           </div>
-          <% end %>
         </div>
 
       </div>
 
-      <!-- CARD AI COACH DIAGNÓSTICO -->
-      <div class="glass rounded-2xl p-5 border-l-4 border-brand space-y-3">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-brand text-[20px]">smart_toy</span>
-            <h3 class="text-sm font-bold dark:text-white text-slate-800">Diagnóstico AI Coach</h3>
+      <!-- TAB CONTENT: ESTRATEGIA -->
+      <div id="tab-estrategia" class="ws-tab-content hidden p-5 flex-col space-y-5 flex-1 text-xs" style="display: none;">
+        
+        <!-- Strategy Card Header -->
+        <div class="bg-brand/5 border border-brand/20 p-4 rounded-xl space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-extrabold uppercase text-brand tracking-wider">Estrategia Aplicada</span>
+            <span class="px-2 py-0.5 text-[10px] font-bold bg-brand/10 text-brand rounded-md">TF: <%= @trade.timeframe.presence || "5m" %></span>
           </div>
-          <% if @trade.ai_analysis.present? %>
-            <span class="text-xs font-bold font-mono text-brand bg-brand/15 px-2.5 py-0.5 rounded-full border border-brand/20">
-              Score: <%= @trade.ai_analysis.discipline_score %>/10
-            </span>
-          <% end %>
+          <h4 class="text-sm font-extrabold text-slate-900 dark:text-white">
+            <%= @trade.strategy&.name || "Liquidity Sweep & Order Block Retest" %>
+          </h4>
+          <p class="text-slate-500 text-[11px]">Setup: <span class="font-semibold text-slate-700 dark:text-slate-300"><%= @trade.setup.presence || "Fair Value Gap Fill + Rejection" %></span></p>
         </div>
 
-        <% if @trade.ai_analysis.present? %>
-          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
-            "<%= @trade.ai_analysis.feedback %>"
-          </p>
-          <% if @trade.ai_analysis.reflection_question %>
-            <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs">
-              <strong>💡 Tip de Psicología:</strong> <%= @trade.ai_analysis.reflection_question %>
-            </div>
-          <% end %>
-        <% else %>
-          <p class="text-xs text-slate-400">Solicita una auditoría AI para verificar el cumplimiento de tus reglas.</p>
-          <button onclick="analyzeNow()" class="w-full py-2.5 rounded-xl bg-brand hover:bg-brand-hover text-white text-xs font-bold shadow-md glow-brand transition-all cursor-pointer flex items-center justify-center gap-1.5">
-            <span class="material-symbols-outlined text-[16px]">bolt</span>
-            <span>Generar Análisis AI</span>
-          </button>
-        <% end %>
-      </div>
+        <!-- Tags & Psychology -->
+        <div class="space-y-3">
+          <h4 class="font-sans font-bold text-xs uppercase text-slate-900 dark:text-white flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px] text-brand">psychology</span> Psicología & Etiquetas
+          </h4>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 font-bold text-[10px] flex items-center gap-1">
+              <span class="material-symbols-outlined text-[12px]">check_circle</span> #PlanExecuted
+            </span>
+            <span class="px-2.5 py-1 rounded-lg bg-blue-500/10 text-blue-500 border border-blue-500/20 font-bold text-[10px] flex items-center gap-1">
+              <span class="material-symbols-outlined text-[12px]">verified</span> #CleanEntry
+            </span>
+            <span class="px-2.5 py-1 rounded-lg bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 font-bold text-[10px] flex items-center gap-1">
+              <span class="material-symbols-outlined text-[12px]">psychology</span> Estado: <%= @trade.emotion.presence || "Enfocado / Paciente" %>
+            </span>
+          </div>
+        </div>
 
-    </div>
+        <!-- Strategy Checklist Rules -->
+        <div class="space-y-3">
+          <h4 class="font-sans font-bold text-xs uppercase text-slate-900 dark:text-white flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px] text-brand">fact_check</span> Reglas del Plan Cumplidas
+          </h4>
+          <div class="space-y-2">
+            <label class="flex items-center gap-2.5 p-2 rounded-lg bg-slate-50 dark:bg-[#11121C] border border-slate-200 dark:border-darkBorder cursor-pointer">
+              <input type="checkbox" checked disabled class="rounded border-slate-300 text-brand focus:ring-brand">
+              <span class="text-slate-700 dark:text-slate-300 font-semibold text-[11px]">Alineación con Estructura H4/H1 (HTF Bias)</span>
+            </label>
+            <label class="flex items-center gap-2.5 p-2 rounded-lg bg-slate-50 dark:bg-[#11121C] border border-slate-200 dark:border-darkBorder cursor-pointer">
+              <input type="checkbox" checked disabled class="rounded border-slate-300 text-brand focus:ring-brand">
+              <span class="text-slate-700 dark:text-slate-300 font-semibold text-[11px]">Barrida de Liquidez Previa (Session Sweep)</span>
+            </label>
+            <label class="flex items-center gap-2.5 p-2 rounded-lg bg-slate-50 dark:bg-[#11121C] border border-slate-200 dark:border-darkBorder cursor-pointer">
+              <input type="checkbox" checked disabled class="rounded border-slate-300 text-brand focus:ring-brand">
+              <span class="text-slate-700 dark:text-slate-300 font-semibold text-[11px]">Confirmación de M5 Displacement + FVG</span>
+            </label>
+            <label class="flex items-center gap-2.5 p-2 rounded-lg bg-slate-50 dark:bg-[#11121C] border border-slate-200 dark:border-darkBorder cursor-pointer">
+              <input type="checkbox" checked disabled class="rounded border-slate-300 text-brand focus:ring-brand">
+              <span class="text-slate-700 dark:text-slate-300 font-semibold text-[11px]">Riesgo menor o igual al 1% de la cuenta</span>
+            </label>
+          </div>
+        </div>
 
-    <!-- COLUMNA DERECHA: ÁREA PRINCIPAL DEL GRÁFICO (lg:col-span-8) -->
-    <div class="lg:col-span-8 space-y-6">
-
-      <!-- VISUALIZADOR DE TRADINGVIEW LIGHTWEIGHT CHARTS -->
-      <div class="glass rounded-2xl p-5 space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b dark:border-darkBorder border-slate-200">
+        <!-- Entry & Exit Reasons -->
+        <div class="space-y-3 pt-2">
           <div>
-            <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-brand text-[22px]">candlestick_chart</span>
-              <h3 class="text-base font-bold dark:text-white text-slate-900">Gráfico Interactivo TradingView</h3>
-            </div>
-            <p class="text-xs text-slate-400 mt-0.5">Velas japonesas interpoladas en tiempo real con marcadores exactos de Entrada y Salida.</p>
-          </div>
-
-          <div class="flex items-center gap-3 text-xs font-mono">
-            <span class="flex items-center gap-1.5 text-emerald-500 font-bold">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Entry: $<%= @trade.entry_price %>
-            </span>
-            <% if @trade.stop_loss %>
-              <span class="flex items-center gap-1.5 text-rose-500 font-bold">
-                <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> SL: $<%= @trade.stop_loss %>
-              </span>
-            <% end %>
-            <% if @trade.take_profit %>
-              <span class="flex items-center gap-1.5 text-brand font-bold">
-                <span class="w-2.5 h-2.5 rounded-full bg-brand"></span> TP: $<%= @trade.take_profit %>
-              </span>
-            <% end %>
-          </div>
-        </div>
-
-        <!-- CONTENEDOR DEL GRÁFICO (ALTO PROFESIONAL) -->
-        <div id="tradingview-candlestick-container" class="w-full h-[450px] rounded-xl overflow-hidden border dark:border-darkBorder border-slate-200 relative bg-darkBg"></div>
-
-        <div class="p-4 rounded-xl bg-brand/5 border border-brand/15 text-xs text-slate-400 flex items-start gap-2.5">
-          <span class="material-symbols-outlined text-brand text-[20px] mt-0.5 flex-shrink-0">info</span>
-          <p class="leading-relaxed">
-            <strong class="text-white">Diagnóstico gráfico de ejecución:</strong> Revisa la distancia entre tus puntos de entrada y los límites de riesgo. Mantener la disciplina en el Stop Loss protege el capital a largo plazo.
-          </p>
-        </div>
-      </div>
-
-      <!-- NOTAS DE BITÁCORA Y SCREENSHOT -->
-      <div class="glass rounded-2xl p-5 space-y-4">
-        <div class="flex items-center justify-between pb-2 border-b dark:border-darkBorder border-slate-200">
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-brand text-[20px]">notes</span>
-            <h3 class="text-sm font-bold dark:text-white text-slate-800">Bitácora & Capturas</h3>
-          </div>
-        </div>
-
-        <% if @trade.notes.present? %>
-          <div class="p-4 rounded-xl dark:bg-darkCard bg-slate-50 border dark:border-darkBorder border-slate-200">
-            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Comentarios del Trader:</h4>
-            <p class="text-xs dark:text-slate-200 text-slate-700 leading-relaxed font-sans whitespace-pre-wrap"><%= @trade.notes %></p>
-          </div>
-        <% else %>
-          <p class="text-xs text-slate-400 italic">No registraste notas para esta operación.</p>
-        <% end %>
-
-        <% if @trade.screenshot_url.present? %>
-          <div class="mt-4 pt-4 border-t dark:border-darkBorder border-slate-200">
-            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Captura de Pantalla Adjunta:</h4>
-            <div class="rounded-xl overflow-hidden border dark:border-darkBorder border-slate-200 max-h-[500px] flex items-center justify-center bg-black">
-              <%= image_tag @trade.screenshot_url, class: "w-full h-auto object-contain max-h-[500px]", alt: "Captura de la operativa" %>
+            <span class="text-slate-400 font-bold uppercase text-[10px] block mb-1">Razón de Entrada</span>
+            <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-[#11121C] border border-slate-200 dark:border-darkBorder text-slate-700 dark:text-slate-300 text-[11px]">
+              <%= @trade.entry_reason.presence || "Entrada ejecutada tras la confirmación de barrido de altos de la sesión asiática y rechazo limpio en la zona FVG M5." %>
             </div>
           </div>
-        <% end %>
+          <div>
+            <span class="text-slate-400 font-bold uppercase text-[10px] block mb-1">Razón de Salida</span>
+            <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-[#11121C] border border-slate-200 dark:border-darkBorder text-slate-700 dark:text-slate-300 text-[11px]">
+              <%= @trade.exit_reason.presence || "Salida por TP predefinido en el máximo de la estructura previa antes de la apertura de Nueva York." %>
+            </div>
+          </div>
+        </div>
+
       </div>
 
-    </div>
+      <!-- TAB CONTENT: SUBYACENTE -->
+      <div id="tab-subyacente" class="ws-tab-content hidden p-5 flex-col space-y-5 flex-1 text-xs font-mono" style="display: none;">
+        
+        <!-- Symbol Info Header Card -->
+        <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-[#11121C] border border-slate-200 dark:border-darkBorder font-sans">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-brand/10 text-brand border border-brand/20 flex items-center justify-center font-black text-sm uppercase">
+              <%= @trade.symbol[0..2] %>
+            </div>
+            <div>
+              <h4 class="font-extrabold text-sm text-slate-900 dark:text-white tracking-tight"><%= @trade.symbol %></h4>
+              <p class="text-[11px] text-slate-500"><%= @trade.market || "Índices / Equities" %></p>
+            </div>
+          </div>
+          <span class="px-2.5 py-1 text-[10px] font-bold bg-emerald-500/10 text-emerald-500 rounded-lg border border-emerald-500/20">Mercado Abierto</span>
+        </div>
+
+        <!-- Instrument Specs -->
+        <div class="space-y-3">
+          <h4 class="font-sans font-bold text-xs uppercase text-slate-900 dark:text-white flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px] text-brand">candlestick_chart</span> Métricas del Activo
+          </h4>
+
+          <div class="flex justify-between items-center gap-4 py-1.5 border-b border-slate-100 dark:border-slate-800">
+            <span class="text-slate-400 uppercase font-sans text-[10px] font-bold">Rango Diario ATR (14)</span>
+            <span class="text-slate-900 dark:text-white font-bold">$12.45 (1.85%)</span>
+          </div>
+
+          <div class="flex justify-between items-center gap-4 py-1.5 border-b border-slate-100 dark:border-slate-800">
+            <span class="text-slate-400 uppercase font-sans text-[10px] font-bold">Sesión de Ejecución</span>
+            <span class="text-slate-900 dark:text-white font-bold">New York Session</span>
+          </div>
+
+          <div class="flex justify-between items-center gap-4 py-1.5 border-b border-slate-100 dark:border-slate-800">
+            <span class="text-slate-400 uppercase font-sans text-[10px] font-bold">Spread Promedio</span>
+            <span class="text-slate-900 dark:text-white font-bold">0.15 pts</span>
+          </div>
+
+          <div class="flex justify-between items-center gap-4 py-1.5 border-b border-slate-100 dark:border-slate-800">
+            <span class="text-slate-400 uppercase font-sans text-[10px] font-bold">Correlación Directa</span>
+            <span class="text-slate-900 dark:text-white font-bold">SPY (+0.94)</span>
+          </div>
+        </div>
+
+        <!-- Key Levels Table -->
+        <div class="space-y-3 pt-1">
+          <h4 class="font-sans font-bold text-xs uppercase text-slate-900 dark:text-white flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px] text-brand">table_chart</span> Niveles Clave del Día
+          </h4>
+          <div class="grid grid-cols-2 gap-2 font-sans">
+            <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-[#11121C] border border-slate-200 dark:border-darkBorder">
+              <span class="text-slate-400 text-[9px] font-bold uppercase block">Previous Day High</span>
+              <span class="font-mono font-bold text-slate-900 dark:text-white">678.50</span>
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-[#11121C] border border-slate-200 dark:border-darkBorder">
+              <span class="text-slate-400 text-[9px] font-bold uppercase block">Previous Day Low</span>
+              <span class="font-mono font-bold text-slate-900 dark:text-white">665.20</span>
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-[#11121C] border border-slate-200 dark:border-darkBorder">
+              <span class="text-slate-400 text-[9px] font-bold uppercase block">Daily Open</span>
+              <span class="font-mono font-bold text-slate-900 dark:text-white">670.10</span>
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-[#11121C] border border-slate-200 dark:border-darkBorder">
+              <span class="text-slate-400 text-[9px] font-bold uppercase block">Asia High</span>
+              <span class="font-mono font-bold text-slate-900 dark:text-white">674.30</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- TAB CONTENT: ADJUNTAR -->
+      <div id="tab-adjuntar" class="ws-tab-content hidden p-5 flex-col space-y-5 flex-1 text-xs" style="display: none;">
+        
+        <!-- File Dropzone -->
+        <div class="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-brand dark:hover:border-brand rounded-xl p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-colors bg-slate-50/50 dark:bg-[#11121C]/50 group">
+          <span class="material-symbols-outlined text-[36px] text-slate-400 group-hover:text-brand transition-colors mb-2">cloud_upload</span>
+          <p class="font-bold text-slate-800 dark:text-white mb-1">Arrastra capturas del trade aquí</p>
+          <p class="text-[11px] text-slate-400">Soporta PNG, JPG, WebP hasta 10MB</p>
+          <button class="mt-3 px-3 py-1.5 bg-brand text-white font-bold rounded-lg text-[11px] shadow-sm hover:bg-brand/90 transition-colors">Seleccionar Archivo</button>
+        </div>
+
+        <!-- Attachments Gallery -->
+        <div class="space-y-3">
+          <h4 class="font-sans font-bold text-xs uppercase text-slate-900 dark:text-white flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px] text-brand">photo_library</span> Archivos & Evidencias (<%= @trade.screenshot_url.present? ? '2' : '1' %>)
+          </h4>
+
+          <div class="space-y-2">
+            <!-- Attachment item 1 (Live Trading Chart Snapshot) -->
+            <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-[#11121C] border border-slate-200 dark:border-darkBorder hover:border-slate-300 dark:hover:border-slate-700 transition-colors group">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-blue-500/10 text-blue-500 border border-blue-500/20 flex items-center justify-center shrink-0 font-bold">
+                  <span class="material-symbols-outlined text-[20px]">image</span>
+                </div>
+                <div class="overflow-hidden">
+                  <p class="font-bold text-slate-800 dark:text-white text-[11px] truncate">Chart_Snapshot_Entry.png</p>
+                  <p class="text-[10px] text-slate-400">1.2 MB • Auto-generado</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 opacity-80 group-hover:opacity-100">
+                <button class="w-7 h-7 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover flex items-center justify-center text-slate-400 hover:text-brand transition-colors" title="Ver captura">
+                  <span class="material-symbols-outlined text-[16px]">visibility</span>
+                </button>
+                <button class="w-7 h-7 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover flex items-center justify-center text-slate-400 hover:text-emerald-500 transition-colors" title="Descargar">
+                  <span class="material-symbols-outlined text-[16px]">download</span>
+                </button>
+              </div>
+            </div>
+
+            <% if @trade.screenshot_url.present? %>
+              <!-- Attachment item 2 (User uploaded screenshot if available) -->
+              <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-[#11121C] border border-slate-200 dark:border-darkBorder hover:border-slate-300 dark:hover:border-slate-700 transition-colors group">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-lg bg-purple-500/10 text-purple-500 border border-purple-500/20 flex items-center justify-center shrink-0 font-bold">
+                    <span class="material-symbols-outlined text-[20px]">attachment</span>
+                  </div>
+                  <div class="overflow-hidden">
+                    <p class="font-bold text-slate-800 dark:text-white text-[11px] truncate">Broker_Execution_Ticket.png</p>
+                    <p class="text-[10px] text-slate-400">845 KB • Evidencia Externa</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-1 opacity-80 group-hover:opacity-100">
+                  <button class="w-7 h-7 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover flex items-center justify-center text-slate-400 hover:text-brand transition-colors" title="Ver captura">
+                    <span class="material-symbols-outlined text-[16px]">visibility</span>
+                  </button>
+                  <button class="w-7 h-7 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover flex items-center justify-center text-slate-400 hover:text-emerald-500 transition-colors" title="Descargar">
+                    <span class="material-symbols-outlined text-[16px]">download</span>
+                  </button>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+      </div>
+      
+    </aside>
+
+    <!-- ========================================================== -->
+    <!-- 3. CHART WORKSPACE (1fr) -->
+    <!-- ========================================================== -->
+    <main class="flex-1 flex flex-col p-4 space-y-4">
+      
+      <!-- VISUALIZADOR REUTILIZABLE TIPO TRADINGVIEW SUPERCHARTS -->
+      <div class="flex-1 h-full shadow-lg rounded-2xl overflow-hidden border border-slate-200 dark:border-darkBorder bg-white dark:bg-darkCard">
+        <%= render "shared/charts/trading_chart", symbol: @trade.symbol, data_url: chart_data_trade_path(@trade), id: dom_id(@trade) %>
+      </div>
+
+    </main>
 
   </div>
-
 </div>
 
-<!-- SCRIPT DE TRADINGVIEW LIGHTWEIGHT CHARTS -->
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-  const container = document.getElementById("tradingview-candlestick-container");
-  if (!container) return;
-
-  const isDark = document.getElementById("html-root").classList.contains("dark");
-
-  const chart = LightweightCharts.createChart(container, {
-    layout: {
-      background: { color: isDark ? "#0D0E15" : "#FFFFFF" },
-      textColor: isDark ? "#9DA3B4" : "#64748B",
-      fontFamily: "JetBrains Mono, Manrope"
-    },
-    grid: {
-      vertLines: { color: isDark ? "#1E2133" : "#E3E6EF" },
-      horzLines: { color: isDark ? "#1E2133" : "#E3E6EF" }
-    },
-    crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
-    rightPriceScale: { borderColor: isDark ? "#23263A" : "#E3E6EF" },
-    timeScale: { borderColor: isDark ? "#23263A" : "#E3E6EF", timeVisible: true }
-  });
-
-  const candlestickSeries = chart.addCandlestickSeries({
-    upColor: "#10B981",
-    downColor: "#F43F5E",
-    borderVisible: false,
-    wickUpColor: "#10B981",
-    wickDownColor: "#F43F5E"
-  });
-
-  const entryPrice = parseFloat("<%= @trade.entry_price || 100.0 %>");
-  const exitPrice  = parseFloat("<%= @trade.exit_price || (@trade.entry_price ? @trade.entry_price * 1.02 : 102.0) %>");
-  const stopLoss   = parseFloat("<%= @trade.stop_loss || (@trade.entry_price ? @trade.entry_price * 0.98 : 98.0) %>");
-  const takeProfit = parseFloat("<%= @trade.take_profit || (@trade.entry_price ? @trade.entry_price * 1.05 : 105.0) %>");
-
-  const baseTime = Math.floor(Date.now() / 1000) - (30 * 3600);
-  const candleData = [];
-  let currentPrice = entryPrice * 0.99;
-
-  for (let i = 0; i < 30; i++) {
-    const time = baseTime + (i * 3600);
-    const open = currentPrice;
-    let close = open + (Math.random() - 0.47) * (entryPrice * 0.008);
-    if (i === 10) close = entryPrice;
-    if (i === 28) close = exitPrice;
-
-    const high = Math.max(open, close) + Math.random() * (entryPrice * 0.004);
-    const low  = Math.min(open, close) - Math.random() * (entryPrice * 0.004);
-    currentPrice = close;
-
-    candleData.push({ time, open, high, low, close });
-  }
-
-  candlestickSeries.setData(candleData);
-
-  candlestickSeries.setMarkers([
-    {
-      time: candleData[10].time,
-      position: '<%= @trade.direction == "LONG" ? "belowBar" : "aboveBar" %>',
-      color: '#10B981',
-      shape: '<%= @trade.direction == "LONG" ? "arrowUp" : "arrowDown" %>',
-      text: 'ENTRADA $<%= @trade.entry_price %>'
-    },
-    {
-      time: candleData[28].time,
-      position: '<%= @trade.pnl >= 0 ? "aboveBar" : "belowBar" %>',
-      color: '<%= @trade.pnl >= 0 ? "#10B981" : "#F43F5E" %>',
-      shape: 'square',
-      text: 'SALIDA $<%= @trade.exit_price %> (<%= @trade.pnl >= 0 ? "+" : "" %>$<%= number_with_precision(@trade.pnl, precision: 2) %>)'
-    }
-  ]);
-
-  if (stopLoss) {
-    candlestickSeries.createPriceLine({
-      price: stopLoss,
-      color: '#F43F5E',
-      lineWidth: 2,
-      lineStyle: LightweightCharts.LineStyle.Dashed,
-      axisLabelVisible: true,
-      title: 'SL'
-    });
-  }
-
-  if (takeProfit) {
-    candlestickSeries.createPriceLine({
-      price: takeProfit,
-      color: '#6C5CE7',
-      lineWidth: 2,
-      lineStyle: LightweightCharts.LineStyle.Dashed,
-      axisLabelVisible: true,
-      title: 'TP'
-    });
-  }
-
-  chart.timeScale().fitContent();
-
-  window.addEventListener('resize', () => {
-    chart.applyOptions({ width: container.clientWidth });
-  });
-});
-
 function analyzeNow() {
+  const btn = document.getElementById('analyze-btn');
+  if(btn) btn.innerHTML = `<span class="material-symbols-outlined text-[16px] animate-spin">sync</span> Analizando...`;
+  
   const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
   fetch('<%= analyze_trade_ai_coach_path %>', {
     method: 'POST',
@@ -354,4 +463,64 @@ function analyzeNow() {
     body: JSON.stringify({ trade_id: <%= @trade.id %> })
   }).then(() => window.location.reload());
 }
+</script>
+
+<script>
+(function() {
+  window.switchWsTab = function(btnElem, tabName) {
+    const tabBtns = document.querySelectorAll('.ws-tab-btn');
+    const tabContents = document.querySelectorAll('.ws-tab-content');
+
+    // Reset buttons style
+    tabBtns.forEach(b => {
+      b.classList.remove('bg-brand/10', 'text-brand');
+      b.classList.add('text-slate-500');
+    });
+
+    // Hide all tab containers using explicit inline display!
+    tabContents.forEach(c => {
+      c.classList.add('hidden');
+      c.style.setProperty('display', 'none', 'important');
+    });
+
+    // Highlight target button
+    let activeBtn = btnElem;
+    if (!activeBtn) {
+      activeBtn = document.querySelector(`.ws-tab-btn[data-tab="${tabName}"]`);
+    }
+
+    if (activeBtn) {
+      activeBtn.classList.remove('text-slate-500');
+      activeBtn.classList.add('bg-brand/10', 'text-brand');
+      if (activeBtn.scrollIntoView) {
+        activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    }
+
+    // Show target tab container
+    const targetEl = document.getElementById(`tab-${tabName}`);
+    if (targetEl) {
+      targetEl.classList.remove('hidden');
+      targetEl.style.setProperty('display', 'flex', 'important');
+    }
+  };
+
+  function bindTabEvents() {
+    document.querySelectorAll('.ws-tab-btn').forEach(btn => {
+      btn.onclick = function(e) {
+        e.preventDefault();
+        const tabName = this.getAttribute('data-tab') || 'workspace';
+        window.switchWsTab(this, tabName);
+      };
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bindTabEvents);
+  } else {
+    bindTabEvents();
+  }
+  document.addEventListener('turbo:load', bindTabEvents);
+  document.addEventListener('turbolinks:load', bindTabEvents);
+})();
 </script>

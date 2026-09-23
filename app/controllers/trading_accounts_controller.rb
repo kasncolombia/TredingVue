@@ -33,18 +33,80 @@ class TradingAccountsController < ApplicationController
   end
 
   def create
-    @trading_account = current_user.trading_accounts.build(trading_account_params)
+    ActiveRecord::Base.transaction do
+      @trading_account = current_user.trading_accounts.build(trading_account_params)
+      @trading_account.save!
 
-    if @trading_account.save
-      respond_to do |format|
-        format.html { redirect_to trading_accounts_path, notice: "¡Cuenta conectada exitosamente!" }
-        format.json { render json: { status: "success", account: @trading_account }, status: :created }
+      created_trade = nil
+      csv_count = 0
+
+      # Si se ingresaron datos de trade manual en el paso 4
+      if params[:trade].present? && params[:trade][:symbol].present?
+        tp = trade_params
+        tp[:user_id] = current_user.id
+        tp[:trading_account_id] = @trading_account.id
+        tp[:portfolio_mode] = @trading_account.prop_firm_account_id.present? ? "prop_firm" : "real_account"
+        tp[:prop_firm_account_id] = @trading_account.prop_firm_account_id
+
+        # Normalizar dirección (BUY/LONG vs SELL/SHORT)
+        dir = tp[:direction].to_s.upcase
+        tp[:direction] = dir.in?(%w[BUY LONG]) ? "LONG" : "SHORT"
+
+        # Defaults para campos numéricos y fechas requeridas
+        tp[:symbol] = tp[:symbol].to_s.strip.upcase
+        tp[:entry_price] = tp[:entry_price].presence&.to_f || 0.0
+        tp[:exit_price] = tp[:exit_price].presence&.to_f || 0.0
+        tp[:position_size] = tp[:position_size].presence&.to_f || 1.0
+        tp[:pnl] = tp[:pnl].presence&.to_f || 0.0
+
+        if tp[:entry_at].present?
+          tp[:entry_at] = Time.zone.parse(tp[:entry_at].to_s) rescue Time.current
+        else
+          tp[:entry_at] = Time.current
+        end
+
+        if tp[:exit_at].present?
+          tp[:exit_at] = Time.zone.parse(tp[:exit_at].to_s) rescue Time.current
+        end
+
+        created_trade = current_user.trades.build(tp)
+        created_trade.save!
+
+        begin
+          Trading::AlertManager.new(current_user).evaluate_trade(created_trade)
+        rescue => e
+          Rails.logger.warn "AlertManager error: #{e.message}"
+        end
       end
-    else
-      respond_to do |format|
-        format.html { redirect_to wizard_trading_accounts_path, alert: @trading_account.errors.full_messages.join(", ") }
-        format.json { render json: { status: "error", errors: @trading_account.errors.full_messages }, status: :unprocessable_entity }
+
+      # Si se subió un archivo CSV en el paso 4
+      if params[:csv_file].present?
+        file = params[:csv_file]
+        csv_text = file.read.force_encoding("UTF-8")
+        csv_count = Trading::CsvImporter.new(current_user, csv_text).call rescue 0
       end
+
+      # REDIRECCIÓN INTELIGENTE SEGÚN RESULTADO:
+      if created_trade.present?
+        redirect_target = trade_path(created_trade)
+        notice_msg = "¡Cuenta '#{@trading_account.name}' vinculada y operación #{created_trade.symbol} (#{created_trade.direction}) guardada exitosamente en tu diario!"
+      elsif csv_count > 0
+        redirect_target = trades_path(account_id: @trading_account.id)
+        notice_msg = "¡Cuenta '#{@trading_account.name}' vinculada e importadas #{csv_count} operaciones desde CSV!"
+      else
+        redirect_target = trading_accounts_path
+        notice_msg = "¡Cuenta '#{@trading_account.name}' conectada exitosamente!"
+      end
+
+      respond_to do |format|
+        format.html { redirect_to redirect_target, notice: notice_msg }
+        format.json { render json: { status: "success", account: @trading_account, trade_id: created_trade&.id, csv_count: csv_count }, status: :created }
+      end
+    end
+  rescue ActiveRecord::RecordInvalid => e
+    respond_to do |format|
+      format.html { redirect_to trading_accounts_path, alert: "Error al registrar la cuenta/operación: #{e.message}" }
+      format.json { render json: { status: "error", errors: e.message }, status: :unprocessable_entity }
     end
   end
 
@@ -67,5 +129,12 @@ class TradingAccountsController < ApplicationController
     p[:broker_id] = nil if p[:broker_id].blank? || !Broker.exists?(p[:broker_id])
     p[:prop_firm_account_id] = nil if p[:prop_firm_account_id].blank? || !current_user.prop_firm_accounts.exists?(p[:prop_firm_account_id])
     p
+  end
+
+  def trade_params
+    params.require(:trade).permit(
+      :market, :symbol, :direction, :entry_at, :exit_at,
+      :entry_price, :exit_price, :position_size, :pnl, :notes
+    )
   end
 end

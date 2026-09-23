@@ -20,6 +20,9 @@ Rails.application.routes.draw do
   post "onboarding/completar", to: "onboarding#completar", as: :onboarding_completar
 
   resources :trades do
+    member do
+      get :chart_data
+    end
     collection do
       get  :import
       post :import_csv

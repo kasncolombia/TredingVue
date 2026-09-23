@@ -1,0 +1,520 @@
+<%
+  # COMPONENTE TRADING CHART PROFESIONAL
+  # Parámetros esperados:
+  # - id: (opcional) String único para los contenedores (default: "main")
+  # - symbol: String
+  # - data_url: URL desde donde el JS buscará el JSON con {candles, volume, markers, price_lines}
+
+  chart_id = local_assigns[:id] || "main"
+  container_id = "tc-container-#{chart_id}"
+%>
+
+<div id="tc-wrapper-<%= chart_id %>" class="tc-wrapper flex flex-col w-full bg-lightCard dark:bg-darkCard border border-lightBorder dark:border-darkBorder rounded-2xl overflow-hidden shadow-sm h-full min-h-[600px] relative transition-colors">
+  
+  <!-- ==================== TOP TOOLBAR ==================== -->
+  <div class="tc-toolbar flex items-center justify-between px-2 sm:px-4 py-2 border-b border-lightBorder dark:border-darkBorder bg-lightBg dark:bg-[#11121C]">
+    <div class="flex items-center gap-1 sm:gap-3 overflow-x-auto no-scrollbar tc-toolbar-left">
+      
+      <!-- Symbol Info -->
+      <div class="flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-slate-200/50 dark:hover:bg-darkHover cursor-pointer transition-colors" title="Change Symbol">
+        <div class="w-6 h-6 rounded-full bg-brand/10 text-brand border border-brand/20 flex items-center justify-center font-bold text-xs uppercase"><%= symbol[0] %></div>
+        <span class="font-extrabold text-sm text-slate-800 dark:text-white tracking-tight" id="tc-symbol-<%= chart_id %>"><%= symbol %></span>
+      </div>
+      
+      <div class="h-4 w-px bg-slate-200 dark:bg-slate-700 hidden sm:block shrink-0"></div>
+      
+      <!-- Timeframes Selector -->
+      <div class="flex items-center gap-0.5 text-xs font-bold text-slate-500 tc-timeframes">
+        <% ["1m", "5m", "15m", "1h", "4h", "1D"].each do |tf| %>
+          <button class="tc-tf-btn px-2 py-1 rounded-md hover:bg-slate-200 dark:hover:bg-darkHover transition-colors <%= tf == '1m' ? 'text-brand bg-brand/10' : '' %>" data-tf="<%= tf %>"><%= tf %></button>
+        <% end %>
+      </div>
+      
+      <div class="h-4 w-px bg-slate-200 dark:bg-slate-700 hidden sm:block shrink-0"></div>
+
+      <!-- Chart Types (Mock) -->
+      <div class="flex items-center gap-1 text-slate-500">
+        <button class="w-7 h-7 rounded-md hover:bg-slate-200 dark:hover:bg-darkHover flex items-center justify-center text-brand bg-brand/5 border border-brand/10 transition-colors" title="Candlesticks">
+          <span class="material-symbols-outlined text-[16px]">candlestick_chart</span>
+        </button>
+        <button class="w-7 h-7 rounded-md hover:bg-slate-200 dark:hover:bg-darkHover flex items-center justify-center transition-colors" title="Line Chart">
+          <span class="material-symbols-outlined text-[16px]">show_chart</span>
+        </button>
+      </div>
+
+      <div class="h-4 w-px bg-slate-200 dark:bg-slate-700 hidden lg:block shrink-0"></div>
+      
+      <!-- Compare / Indicators Modals Toggles (Mock) -->
+      <div class="hidden lg:flex items-center gap-2">
+        <button class="px-2.5 py-1.5 flex items-center gap-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-xs font-bold text-slate-600 dark:text-slate-300 transition-colors">
+          <span class="material-symbols-outlined text-[16px]">add</span> Compare
+        </button>
+        <button class="px-2.5 py-1.5 flex items-center gap-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-xs font-bold text-slate-600 dark:text-slate-300 transition-colors">
+          <span class="material-symbols-outlined text-[16px]">monitoring</span> Indicators
+        </button>
+      </div>
+
+    </div>
+    
+    <!-- Toolbar Right -->
+    <div class="flex items-center gap-1 sm:gap-2">
+      <!-- Loading Spinner (Hidden by default) -->
+      <div id="tc-loader-<%= chart_id %>" class="mr-2 hidden text-brand">
+        <span class="material-symbols-outlined animate-spin text-[18px]">sync</span>
+      </div>
+      
+      <!-- MOCKS -->
+      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover flex items-center justify-center text-slate-400 dark:text-slate-500 transition-colors hidden xl:flex" title="Undo">
+        <span class="material-symbols-outlined text-[18px]">undo</span>
+      </button>
+      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover flex items-center justify-center text-slate-400 dark:text-slate-500 transition-colors hidden xl:flex" title="Redo">
+        <span class="material-symbols-outlined text-[18px]">redo</span>
+      </button>
+
+      <div class="h-4 w-px bg-slate-200 dark:bg-slate-700 hidden lg:block shrink-0 mx-1"></div>
+      
+      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover flex items-center justify-center text-slate-400 dark:text-slate-400 transition-colors" title="Chart Properties">
+        <span class="material-symbols-outlined text-[18px]">settings</span>
+      </button>
+      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover flex items-center justify-center text-slate-400 dark:text-slate-400 transition-colors tc-screenshot-btn" title="Take a snapshot">
+        <span class="material-symbols-outlined text-[18px]">photo_camera</span>
+      </button>
+      
+      <!-- Templates Mock & Fullscreen & Replay -->
+      <button class="px-2.5 py-1.5 flex items-center gap-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-xs font-bold text-slate-600 dark:text-slate-300 transition-colors hidden md:flex" title="Templates">
+        <span class="material-symbols-outlined text-[16px]">grid_view</span>
+      </button>
+      <button class="px-2.5 py-1.5 flex items-center gap-1 text-blue-600 dark:text-blue-400 bg-blue-500/10 hover:bg-blue-500/20 rounded-lg text-xs font-bold transition-colors shadow-sm hidden md:flex border border-blue-500/20" title="Bar Replay / Backtesting">
+        <span class="material-symbols-outlined text-[16px]">fast_rewind</span> Replay
+      </button>
+      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover flex items-center justify-center text-slate-400 dark:text-slate-400 transition-colors tc-fullscreen-btn" title="Fullscreen">
+        <span class="material-symbols-outlined text-[20px]">fullscreen</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== BODY ==================== -->
+  <div class="relative flex-1 flex w-full h-full bg-white dark:bg-[#090A10]">
+    
+    <!-- MOCK DRAWING TOOLS SIDEBAR -->
+    <div class="hidden sm:flex flex-col w-12 border-r border-lightBorder dark:border-darkBorder bg-lightBg dark:bg-darkCardAlt items-center py-2 space-y-2 shrink-0">
+      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-slate-400 flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">near_me</span></button>
+      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-slate-400 flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">horizontal_rule</span></button>
+      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-slate-400 flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">ssid_chart</span></button>
+      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-slate-400 flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">brush</span></button>
+      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-slate-400 flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">title</span></button>
+      <div class="w-6 h-px bg-slate-200 dark:bg-slate-700 my-1"></div>
+      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-slate-400 flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">zoom_in</span></button>
+      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-slate-400 flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+    </div>
+
+    <!-- MAIN CHART AREA -->
+    <div class="relative flex-1 w-full h-full overflow-hidden" id="tc-root-<%= chart_id %>">
+      
+      <!-- LEYENDA OHLC (Estática) -->
+      <div class="absolute top-2 left-4 z-10 flex flex-col pointer-events-none">
+        
+        <!-- Valores OHLC -->
+        <div id="tc-legend-<%= chart_id %>" class="hidden sm:flex items-center gap-3 text-[11px] font-mono whitespace-nowrap px-1 py-0.5 rounded backdrop-blur-[2px]">
+          <span class="text-slate-500 dark:text-slate-400">O<span id="tc-val-o-<%= chart_id %>" class="text-slate-700 dark:text-slate-300 ml-1">---</span></span>
+          <span class="text-slate-500 dark:text-slate-400">H<span id="tc-val-h-<%= chart_id %>" class="text-slate-700 dark:text-slate-300 ml-1">---</span></span>
+          <span class="text-slate-500 dark:text-slate-400">L<span id="tc-val-l-<%= chart_id %>" class="text-slate-700 dark:text-slate-300 ml-1">---</span></span>
+          <span class="text-slate-500 dark:text-slate-400">C<span id="tc-val-c-<%= chart_id %>" class="text-slate-700 dark:text-slate-300 ml-1">---</span></span>
+        </div>
+
+        <!-- Toggle Indicadores -->
+        <div class="mt-2 pointer-events-auto flex flex-col items-start gap-1">
+          <!-- Active Indicators Mock -->
+          <div class="flex items-center gap-2 px-2 py-1 rounded bg-slate-100/50 dark:bg-[#1A1D2D]/60 hover:bg-slate-200 dark:hover:bg-darkHover cursor-pointer transition-colors">
+            <button class="tc-ind-toggle text-[10px] font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5" data-color="#6366f1" data-series="ema9">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> EMA (9, close) <span class="material-symbols-outlined text-[12px] ml-1">visibility</span>
+            </button>
+          </div>
+          <div class="flex items-center gap-2 px-2 py-1 rounded bg-slate-100/50 dark:bg-[#1A1D2D]/60 hover:bg-slate-200 dark:hover:bg-darkHover cursor-pointer transition-colors">
+            <button class="tc-ind-toggle text-[10px] font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1.5" data-color="#f59e0b" data-series="ema20">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> EMA (20, close) <span class="material-symbols-outlined text-[12px] ml-1">visibility</span>
+            </button>
+          </div>
+          <div class="flex items-center gap-2 px-2 py-1 rounded bg-slate-100/50 dark:bg-[#1A1D2D]/60 hover:bg-slate-200 dark:hover:bg-darkHover cursor-pointer transition-colors">
+            <button class="tc-ind-toggle text-[10px] font-bold text-emerald-600 dark:text-teal-400 flex items-center gap-1.5" data-color="#26a69a" data-series="volume">
+              <span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span> Volume <span class="material-symbols-outlined text-[12px] ml-1">visibility</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- TOOLTIP CRUZ FLOTANTE -->
+      <div id="tc-tooltip-<%= chart_id %>" class="absolute z-20 pointer-events-none hidden px-3 py-2.5 rounded-xl bg-slate-900/95 text-white shadow-xl border border-slate-700 text-xs backdrop-blur-md transform -translate-x-1/2 -translate-y-full mt-[-10px] transition-transform duration-75 ease-out w-[160px]"></div>
+      
+      <!-- Lightweight Charts Injection DIV -->
+      <div id="<%= container_id %>" class="absolute inset-0"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== JAVASCRIPT SCOPE ==================== -->
+<script>
+  // PATRÓN: Registramos la lógica por contenedor
+  // Esto permite inicializar múltiples instancias si es necesario
+  (function() {
+    const chartId = '<%= chart_id %>';
+    const container = document.getElementById('<%= container_id %>');
+    const wrapper = document.getElementById(`tc-wrapper-${chartId}`);
+    const dataUrl = '<%= data_url %>';
+    
+    if (!container || !wrapper) return;
+
+    class ProfessionalTradingChart {
+      constructor(containerElem, dataUrl) {
+        this.container = containerElem;
+        this.dataUrl = dataUrl;
+        this.chart = null;
+        this.series = {};
+        this.precision = 2;
+        this.theme = document.getElementById("html-root")?.classList.contains("dark") ? 'dark' : 'light';
+        
+        // Elementos UI
+        this.ui = {
+          loader: document.getElementById(`tc-loader-${chartId}`),
+          tooltip: document.getElementById(`tc-tooltip-${chartId}`),
+          legendOHLC: {
+            o: document.getElementById(`tc-val-o-${chartId}`),
+            h: document.getElementById(`tc-val-h-${chartId}`),
+            l: document.getElementById(`tc-val-l-${chartId}`),
+            c: document.getElementById(`tc-val-c-${chartId}`),
+          }
+        };
+
+        this.initConfig();
+        this.bindEvents();
+        this.loadData();
+      }
+
+      initConfig() {
+        const isDark = this.theme === 'dark';
+        
+        // Colores base estilo TradingView
+        const bg = isDark ? '#090A10' : '#FFFFFF';
+        const txt = isDark ? '#8286A8' : '#4A5568';
+        const grid = isDark ? '#161928' : '#F1F3F9';
+        const border = isDark ? '#1E2235' : '#E3E6EF';
+
+        this.chart = LightweightCharts.createChart(this.container, {
+          layout: {
+            background: { color: bg, type: 'solid' },
+            textColor: txt,
+            fontFamily: "JetBrains Mono, Manrope, sans-serif"
+          },
+          grid: {
+            vertLines: { color: grid },
+            horzLines: { color: grid }
+          },
+          crosshair: {
+            mode: LightweightCharts.CrosshairMode.Normal,
+            vertLine: {
+              color: isDark ? '#334155' : '#CBD5E1',
+              width: 1,
+              style: LightweightCharts.LineStyle.Dashed,
+              labelBackgroundColor: isDark ? '#1E293B' : '#475569',
+            },
+            horzLine: {
+              color: isDark ? '#334155' : '#CBD5E1',
+              width: 1,
+              style: LightweightCharts.LineStyle.Dashed,
+              labelBackgroundColor: isDark ? '#1E293B' : '#475569',
+            }
+          },
+          rightPriceScale: {
+            borderColor: border,
+            autoScale: true,
+            scaleMargins: {
+              top: 0.15,
+              bottom: 0.20
+            }
+          },
+          timeScale: {
+            borderColor: border,
+            timeVisible: true,
+            secondsVisible: false,
+            fixLeftEdge: false,
+            fixRightEdge: false,
+            barSpacing: 16,
+            rightOffset: 25
+          }
+        });
+
+        // ResizeObserver para reactividad fluida
+        this.resizeObserver = new ResizeObserver(entries => {
+          if (entries.length === 0 || entries[0].target !== this.container) return;
+          const newRect = entries[0].contentRect;
+          this.chart.applyOptions({ width: newRect.width, height: newRect.height });
+        });
+        this.resizeObserver.observe(this.container);
+
+        // Instanciar series principales
+        this.series.candles = this.chart.addCandlestickSeries({
+          upColor: "#089981",          
+          downColor: "#F23645",        
+          borderVisible: true,
+          borderColor: "#089981",
+          borderUpColor: "#089981",
+          borderDownColor: "#F23645",
+          wickUpColor: "#089981",
+          wickDownColor: "#F23645",
+          priceFormat: { type: 'price', precision: 2, minMove: 0.01 },
+        });
+
+        this.series.volume = this.chart.addHistogramSeries({
+          priceFormat: { type: 'volume' },
+          priceScaleId: '',            
+        });
+
+        // Limitar la Escala de Volumen (22% inferior) como se requiere
+        this.chart.priceScale('').applyOptions({
+          scaleMargins: {
+            top: 0.78,
+            bottom: 0,
+          },
+        });
+
+        this.series.ema9 = this.chart.addLineSeries({
+          color: '#6366f1',
+          lineWidth: 2,
+          crosshairMarkerVisible: false,
+          priceLineVisible: false,
+        });
+
+        this.series.ema20 = this.chart.addLineSeries({
+          color: '#f59e0b',
+          lineWidth: 2,
+          crosshairMarkerVisible: false,
+          priceLineVisible: false,
+        });
+      }
+
+      bindEvents() {
+        // Crosshair move for tooltip and legend
+        this.chart.subscribeCrosshairMove(param => this.handleCrosshair(param));
+
+        // Fullscreen toggle
+        const fsBtn = document.querySelector(`#tc-wrapper-${chartId} .tc-fullscreen-btn`);
+        if (fsBtn) {
+          fsBtn.addEventListener('click', () => {
+            const wrap = document.getElementById(`tc-wrapper-${chartId}`);
+            if (!document.fullscreenElement) {
+              if (wrap.requestFullscreen) wrap.requestFullscreen();
+            } else {
+              if (document.exitFullscreen) document.exitFullscreen();
+            }
+          });
+        }
+
+        // Screenshot Real Integration via Lightweight Charts takeScreenshot
+        const ssBtn = document.querySelector(`#tc-wrapper-${chartId} .tc-screenshot-btn`);
+        if (ssBtn) {
+          ssBtn.addEventListener('click', () => {
+            if(this.chart) {
+              const canvas = this.chart.takeScreenshot();
+              const url = canvas.toDataURL("image/png");
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `Trade_${chartId}_Analysis.png`;
+              a.click();
+            }
+          });
+        }
+
+        // Indicator Toggle Ticks
+        document.querySelectorAll(`#tc-wrapper-${chartId} .tc-ind-toggle`).forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const sName = btn.dataset.series;
+            if (this.series[sName]) {
+              const currentV = this.series[sName].options().visible;
+              const isVis = currentV === undefined ? true : currentV; // Default LW is visible
+              this.series[sName].applyOptions({ visible: !isVis });
+              btn.style.opacity = !isVis ? '1' : '0.5';
+              const icon = btn.querySelector('.material-symbols-outlined');
+              if(icon) icon.innerText = !isVis ? 'visibility' : 'visibility_off';
+            }
+          });
+        });
+
+        // Timeframe switch mock
+        document.querySelectorAll(`#tc-wrapper-${chartId} .tc-tf-btn`).forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            document.querySelectorAll(`#tc-wrapper-${chartId} .tc-tf-btn`).forEach(b => {
+               b.className = "tc-tf-btn px-2 py-1 rounded-md hover:bg-slate-200 dark:hover:bg-darkHover transition-colors";
+            });
+            btn.className = "tc-tf-btn px-2 py-1 rounded-md text-brand bg-brand/10 transition-colors";
+            // Aquí en un sistema real se llamaría `this.loadData(btn.dataset.tf)`
+            console.log("Switch Timeframe to", btn.dataset.tf);
+          });
+        });
+      }
+
+      async loadData() {
+        if(!this.dataUrl) return;
+        this.ui.loader.classList.remove('hidden');
+
+        try {
+          const response = await fetch(this.dataUrl);
+          if (!response.ok) throw new Error("Error HTTP");
+          
+          const data = await response.json();
+          this.populate(data);
+
+        } catch(e) {
+          console.error("Error loading chart data:", e);
+          this.container.innerHTML = `<div class="flex h-full items-center justify-center text-slate-500 font-bold">Falló la carga de datos del gráfico.</div>`;
+        } finally {
+          this.ui.loader.classList.add('hidden');
+        }
+      }
+
+      populate(data) {
+        if (!data.candles || data.candles.length === 0) return;
+
+        // Auto-detect precision from first close price
+        const cpStr = data.candles[0].close.toString();
+        const pLen = cpStr.includes('.') ? cpStr.split('.')[1].length : 2;
+        this.precision = Math.max(2, pLen);
+
+        this.series.candles.applyOptions({
+          priceFormat: {
+            type: 'price',
+            precision: this.precision,
+            minMove: 1 / Math.pow(10, this.precision),
+          },
+        });
+
+        // Fill Data
+        this.series.candles.setData(data.candles);
+        if (data.volume) {
+          const coloredVolume = data.volume.map((v, i) => {
+            const candle = data.candles.find(c => c.time === v.time) || data.candles[i];
+            const isUp = candle ? (candle.close >= candle.open) : true;
+            return {
+              time: v.time,
+              value: v.value,
+              color: isUp ? 'rgba(16, 185, 129, 0.25)' : 'rgba(244, 63, 94, 0.25)'
+            };
+          });
+          this.series.volume.setData(coloredVolume);
+        }
+
+        const ema9Data = this.calculateEMA(data.candles, 9);
+        const ema20Data = this.calculateEMA(data.candles, 20);
+        if(ema9Data.length > 0) this.series.ema9.setData(ema9Data);
+        if(ema20Data.length > 0) this.series.ema20.setData(ema20Data);
+
+        // Markers & Lines (ENTRY, SL, TP)
+        if (data.markers) this.series.candles.setMarkers(data.markers);
+        
+        if (data.price_lines) {
+          data.price_lines.forEach(pl => {
+            this.series.candles.createPriceLine({
+              price: pl.price,
+              color: pl.color || '#3B82F6',
+              lineWidth: pl.lineWidth || 2,
+              lineStyle: pl.lineStyle || LightweightCharts.LineStyle.Dashed,
+              axisLabelVisible: true,
+              title: pl.title || ''
+            });
+          });
+        }
+
+        // Auto-Zoom out to avoid massive candles if there is little data
+        if (data.candles.length > 50) {
+          this.chart.timeScale().fitContent();
+        } else {
+          // Centrar un poco dando más offset
+          this.chart.timeScale().scrollToPosition(0, false);
+          this.chart.timeScale().applyOptions({ rightOffset: Math.max(10, 50 - data.candles.length) });
+        }      }
+
+      handleCrosshair(param) {
+        if (
+          param.point === undefined ||
+          !param.time ||
+          param.point.x < 0 ||
+          param.point.x > this.container.clientWidth ||
+          param.point.y < 0 ||
+          param.point.y > this.container.clientHeight
+        ) {
+          this.ui.legendOHLC.o.innerText = '---';
+          this.ui.legendOHLC.h.innerText = '---';
+          this.ui.legendOHLC.l.innerText = '---';
+          this.ui.legendOHLC.c.innerText = '---';
+          this.ui.legendOHLC.c.className = "text-slate-700 dark:text-slate-300 ml-1";
+          this.ui.tooltip.style.display = 'none';
+          return;
+        }
+
+        const price = param.seriesData.get(this.series.candles);
+        if (price) {
+          // Legend
+          this.ui.legendOHLC.o.innerText = price.open.toFixed(this.precision);
+          this.ui.legendOHLC.h.innerText = price.high.toFixed(this.precision);
+          this.ui.legendOHLC.l.innerText = price.low.toFixed(this.precision);
+          this.ui.legendOHLC.c.innerText = price.close.toFixed(this.precision);
+          
+          let colorClass = price.close >= price.open ? 'text-emerald-500' : 'text-rose-500';
+          this.ui.legendOHLC.c.className = `ml-1 font-bold ${colorClass}`;
+          
+          // Tooltip
+          const dateStr = new Date(param.time * 1000).toLocaleString(undefined, {
+            month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+          });
+
+          let html = `
+            <div class="font-bold mb-1.5 border-b border-slate-700 pb-1.5 text-[11px] text-slate-300">${dateStr}</div>
+            <div class="grid grid-cols-2 gap-x-2 gap-y-1 font-mono text-[10px]">
+              <div><span class="text-slate-500">O:</span> <span class="font-bold">${price.open.toFixed(this.precision)}</span></div>
+              <div><span class="text-slate-500">H:</span> <span class="font-bold">${price.high.toFixed(this.precision)}</span></div>
+              <div><span class="text-slate-500">L:</span> <span class="font-bold">${price.low.toFixed(this.precision)}</span></div>
+              <div><span class="text-slate-500">C:</span> <span class="font-bold ${colorClass}">${price.close.toFixed(this.precision)}</span></div>
+            </div>
+          `;
+          
+          const volData = param.seriesData.get(this.series.volume);
+          if (volData) {
+            html += `<div class="mt-1.5 pt-1.5 border-t border-slate-700/80 font-mono text-[10px]"><span class="text-slate-500">Vol:</span> <span class="font-bold text-slate-200">${volData.value}</span></div>`;
+          }
+
+          this.ui.tooltip.innerHTML = html;
+          this.ui.tooltip.style.display = 'block';
+          
+          // Position Tooltip
+          const ttW = 160;
+          let left = param.point.x;
+          if (left > this.container.clientWidth - ttW) left = param.point.x - ttW; // avoid right overflow
+          this.ui.tooltip.style.left = left + 'px';
+          this.ui.tooltip.style.top = (param.point.y - 15) + 'px';
+        }
+      }
+
+      calculateEMA(data, period) {
+        if(!data || data.length < period) return [];
+        const k = 2 / (period + 1);
+        let emaResult = [];
+        let sum = 0;
+        for(let i=0; i<period; i++) sum += data[i].close;
+        let ema = sum / period;
+        emaResult.push({ time: data[period - 1].time, value: ema });
+        for(let i=period; i<data.length; i++){
+          ema = (data[i].close - ema) * k + ema;
+          emaResult.push({ time: data[i].time, value: ema });
+        }
+        return emaResult;
+      }
+    }
+
+    // Inicializar globalmente si el DOM ya cargó, o si está listo
+    window.addEventListener("DOMContentLoaded", () => {
+      new ProfessionalTradingChart(container, dataUrl);
+    });
+    // Fallback por si la vista se cargó por AJAX
+    setTimeout(() => { if(container.innerHTML === "") new ProfessionalTradingChart(container, dataUrl); }, 100);
+
+  })();
+</script>

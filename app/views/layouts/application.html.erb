@@ -321,12 +321,13 @@
       <!-- ARBOL DE NAVEGACIÓN COMPLETO -->
       <nav class="p-2.5 space-y-0.5 flex-1">
         <% nav_items = [
-          { label: "Dashboard",       path: dashboard_path,             icon: "dashboard" },
-          { label: "Trades",          path: trades_path,                icon: "swap_horiz", count: current_user.trades.count },
-          { label: "Estrategia",      path: strategies_path,            icon: "target" },
-          { label: "Cuentas & Reglas",path: prop_firm_accounts_path,    icon: "account_tree" },
-          { label: "AI Coach",        path: ai_coach_path,              icon: "smart_toy" },
-          { label: "Comunidad",       path: community_feed_index_path,  icon: "forum" },
+          { label: "Dashboard",        path: dashboard_path,             icon: "dashboard" },
+          { label: "Trades",           path: trades_path,                icon: "swap_horiz", count: current_user.trades.count },
+          { label: "Estrategia",       path: strategies_path,            icon: "target" },
+          { label: "Cuentas & Reglas", path: prop_firm_accounts_path,    icon: "account_tree" },
+          { label: "Brokers & Cuentas",path: trading_accounts_path,      icon: "hub", count: current_user.trading_accounts.count },
+          { label: "AI Coach",         path: ai_coach_path,              icon: "smart_toy" },
+          { label: "Comunidad",        path: community_feed_index_path,  icon: "forum" },
         ] %>
         <% if current_user.admin? %>
           <% nav_items << { label: "Panel Admin", path: admin_root_path, icon: "admin_panel_settings" } %>

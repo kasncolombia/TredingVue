@@ -1,17 +1,24 @@
 class TradesController < ApplicationController
-  before_action :set_trade, only: [:show, :edit, :update, :destroy]
+  before_action :set_trade, only: [:show, :edit, :update, :destroy, :chart_data]
 
   def index
     @trades = current_user.trades.recent
-    @trades = @trades.by_symbol(params[:symbol])               if params[:symbol].present?
-    @trades = @trades.where(direction: params[:direction])     if params[:direction].present?
-    @trades = @trades.where(result: params[:result])           if params[:result].present?
-    @trades = @trades.where(strategy_id: params[:strategy_id]) if params[:strategy_id].present?
+    @trades = @trades.by_symbol(params[:symbol])                         if params[:symbol].present?
+    @trades = @trades.where(direction: params[:direction])               if params[:direction].present?
+    @trades = @trades.where(result: params[:result])                     if params[:result].present?
+    @trades = @trades.where(strategy_id: params[:strategy_id])           if params[:strategy_id].present?
+    @trades = @trades.where(trading_account_id: params[:account_id])     if params[:account_id].present?
     @strategies = current_user.strategies
     @stats      = Trading::CalculateStatistics.new(@trades).call
   end
 
   def show
+  end
+
+  def chart_data
+    # Usamos un servicio para generar toda la metadata (Velas, Volumen, Líneas, Marcadores)
+    generator = Trading::ChartDataGenerator.new(@trade)
+    render json: generator.call
   end
 
   def new

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_22_180500) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_23_135100) do
   create_table "ai_analyses", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "discipline_score"
@@ -287,6 +287,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_22_180500) do
     t.decimal "position_size", precision: 20, scale: 8
     t.integer "prop_firm_account_id"
     t.decimal "r_multiple", precision: 8, scale: 2
+    t.integer "rating"
     t.string "result"
     t.decimal "risk_amount", precision: 15, scale: 2
     t.string "screenshot_url"
