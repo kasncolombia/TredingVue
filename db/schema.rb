@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_23_153000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_24_173424) do
   create_table "ai_analyses", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "discipline_score"
@@ -41,9 +41,40 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_23_153000) do
     t.index ["ai_conversation_id"], name: "index_ai_messages_on_ai_conversation_id"
   end
 
+  create_table "backtest_orders", force: :cascade do |t|
+    t.integer "backtest_session_id", null: false
+    t.datetime "created_at", null: false
+    t.string "direction"
+    t.string "idempotency_key"
+    t.string "order_type"
+    t.decimal "price", precision: 12, scale: 5
+    t.decimal "quantity", precision: 10, scale: 5
+    t.string "status", default: "pending"
+    t.decimal "stop_price", precision: 12, scale: 5
+    t.string "symbol"
+    t.datetime "updated_at", null: false
+    t.index ["backtest_session_id"], name: "index_backtest_orders_on_backtest_session_id"
+    t.index ["idempotency_key"], name: "index_backtest_orders_on_idempotency_key", unique: true
+  end
+
+  create_table "backtest_positions", force: :cascade do |t|
+    t.decimal "average_price", precision: 12, scale: 5
+    t.integer "backtest_session_id", null: false
+    t.datetime "created_at", null: false
+    t.string "direction"
+    t.decimal "quantity", precision: 10, scale: 5
+    t.string "symbol"
+    t.decimal "unrealized_pnl", precision: 12, scale: 2, default: "0.0"
+    t.datetime "updated_at", null: false
+    t.index ["backtest_session_id"], name: "index_backtest_positions_on_backtest_session_id"
+  end
+
   create_table "backtest_sessions", force: :cascade do |t|
     t.decimal "account_size", precision: 12, scale: 2, default: "100000.0"
     t.string "asset"
+    t.decimal "balance_actual", precision: 12, scale: 2, default: "100000.0"
+    t.decimal "balance_inicial", precision: 12, scale: 2, default: "100000.0"
+    t.json "config", default: {}
     t.datetime "created_at", null: false
     t.date "end_date"
     t.decimal "max_daily_loss_pct", precision: 5, scale: 2, default: "2.0"
@@ -52,13 +83,35 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_23_153000) do
     t.text "notes"
     t.decimal "profit_target_pct", precision: 5, scale: 2, default: "8.0"
     t.string "prop_company"
+    t.datetime "replay_cursor"
     t.string "session_type", default: "backtest", null: false
+    t.integer "speed", default: 1
     t.date "start_date"
+    t.string "state", default: "paused"
     t.string "status", default: "active"
     t.integer "strategy_id"
+    t.string "symbol"
+    t.string "timeframe", default: "M1"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
+    t.index ["state"], name: "index_backtest_sessions_on_state"
+    t.index ["symbol"], name: "index_backtest_sessions_on_symbol"
     t.index ["user_id"], name: "index_backtest_sessions_on_user_id"
+  end
+
+  create_table "backtest_trades", force: :cascade do |t|
+    t.integer "backtest_session_id", null: false
+    t.datetime "created_at", null: false
+    t.string "direction"
+    t.decimal "entry_price", precision: 12, scale: 5
+    t.decimal "exit_price", precision: 12, scale: 5
+    t.string "idempotency_key"
+    t.decimal "pnl", precision: 12, scale: 2, default: "0.0"
+    t.decimal "quantity", precision: 10, scale: 5
+    t.string "symbol"
+    t.datetime "updated_at", null: false
+    t.index ["backtest_session_id"], name: "index_backtest_trades_on_backtest_session_id"
+    t.index ["idempotency_key"], name: "index_backtest_trades_on_idempotency_key", unique: true
   end
 
   create_table "brokers", force: :cascade do |t|
@@ -107,6 +160,29 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_23_153000) do
     t.integer "user_id", null: false
     t.index ["classroom_id"], name: "index_enrollments_on_classroom_id"
     t.index ["user_id"], name: "index_enrollments_on_user_id"
+  end
+
+  create_table "historical_bar1ms", force: :cascade do |t|
+    t.decimal "close", precision: 10, scale: 5, null: false
+    t.datetime "created_at", null: false
+    t.decimal "high", precision: 10, scale: 5, null: false
+    t.decimal "low", precision: 10, scale: 5, null: false
+    t.decimal "open", precision: 10, scale: 5, null: false
+    t.string "symbol", null: false
+    t.datetime "timestamp_utc", null: false
+    t.datetime "updated_at", null: false
+    t.integer "volume", default: 0
+    t.index ["symbol", "timestamp_utc"], name: "index_historical_bar1ms_on_symbol_and_timestamp_utc", unique: true
+  end
+
+  create_table "instrument_specs", force: :cascade do |t|
+    t.decimal "commission", precision: 10, scale: 5, default: "2.05"
+    t.datetime "created_at", null: false
+    t.string "symbol", null: false
+    t.decimal "tick_size", precision: 10, scale: 5, default: "0.25"
+    t.decimal "tick_value", precision: 10, scale: 5, default: "5.0"
+    t.datetime "updated_at", null: false
+    t.index ["symbol"], name: "index_instrument_specs_on_symbol", unique: true
   end
 
   create_table "messages", force: :cascade do |t|
@@ -360,7 +436,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_23_153000) do
   add_foreign_key "ai_analyses", "users"
   add_foreign_key "ai_conversations", "users"
   add_foreign_key "ai_messages", "ai_conversations"
+  add_foreign_key "backtest_orders", "backtest_sessions"
+  add_foreign_key "backtest_positions", "backtest_sessions"
   add_foreign_key "backtest_sessions", "users"
+  add_foreign_key "backtest_trades", "backtest_sessions"
   add_foreign_key "classrooms", "users", column: "author_id"
   add_foreign_key "comments", "posts"
   add_foreign_key "comments", "users"

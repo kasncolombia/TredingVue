@@ -1,0 +1,69 @@
+<div class="p-6 md:p-10 max-w-7xl mx-auto min-h-screen">
+  
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
+    <div class="space-y-1">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-500 text-xs font-bold uppercase tracking-wider mb-2">
+        <span class="material-symbols-outlined text-[14px]">query_stats</span> Backtesting Engine
+      </div>
+      <h1 class="text-3xl font-black text-slate-800 dark:text-gray-100">Simulador de Mercado</h1>
+      <p class="text-slate-500 text-sm">Ejecuta pruebas retrospectivas en un entorno libre de trampas (Anti-Lookahead).</p>
+    </div>
+    
+    <%= link_to new_backtesting_session_path, class: "group flex items-center justify-center gap-2 bg-brand text-white px-6 py-3 rounded-2xl font-bold text-sm shadow-xl shadow-brand/20 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-brand/30 transition-all glow-brand" do %>
+      <span class="material-symbols-outlined text-[18px]">add_task</span>
+      <span>Nueva Sesión de Replay</span>
+    <% end %>
+  </div>
+
+  <% if @sessions.any? %>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% @sessions.each do |session| %>
+        <div class="glass border border-slate-200 dark:border-darkBorder rounded-3xl p-6 transition-all hover:border-brand/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 flex flex-col justify-between">
+          <div>
+            <div class="flex justify-between items-start mb-4">
+              <h3 class="font-black text-lg text-slate-800 dark:text-gray-100"><%= session.name %></h3>
+              <span class="px-3 py-1 rounded-full bg-slate-200 dark:bg-darkBorder text-slate-600 dark:text-slate-300 text-xs font-bold font-mono">
+                <%= session.symbol %>
+              </span>
+            </div>
+            
+            <div class="space-y-3 mb-6">
+              <div class="flex justify-between text-sm">
+                <span class="text-slate-500">Estado</span>
+                <span class="font-bold text-<%= session.state == 'playing' ? 'emerald' : 'amber' %>-500 uppercase text-xs tracking-wider">
+                  <%= session.state %>
+                </span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-slate-500">Balance</span>
+                <span class="font-mono font-bold text-slate-800 dark:text-gray-100">
+                  <%= number_to_currency(session.balance_actual) %>
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <%= link_to replay_backtesting_session_path(session), class: "w-full py-2.5 rounded-xl border border-slate-200 dark:border-darkBorder font-bold text-sm text-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-brand transition-colors flex items-center justify-center gap-2" do %>
+            <span class="material-symbols-outlined text-[18px]">play_circle</span>
+            Continuar Simulador
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="w-full flex flex-col items-center justify-center text-center py-20 px-4 glass border border-slate-200 dark:border-darkBorder rounded-3xl">
+      <div class="w-24 h-24 bg-brand/10 text-brand rounded-full flex items-center justify-center mb-6 shadow-xl shadow-brand/5 ring-4 ring-brand/5">
+        <span class="material-symbols-outlined text-4xl">history_toggle_off</span>
+      </div>
+      <h2 class="text-2xl font-black text-slate-800 dark:text-gray-100 mb-2">Sin Sesiones Activas</h2>
+      <p class="text-slate-500 max-w-md mx-auto mb-8">
+        Crea tu primera sesión de backtesting aislando tu estrategia en un entorno 100% puro.
+      </p>
+      <%= link_to new_backtesting_session_path, class: "bg-brand text-white px-8 py-3.5 rounded-2xl font-extrabold text-sm shadow-xl shadow-brand/20 hover:-translate-y-0.5 glow-brand transition-all flex items-center gap-2" do %>
+        <span>Crear Entorno de Simulación</span>
+        <span class="material-symbols-outlined">arrow_forward</span>
+      <% end %>
+    </div>
+  <% end %>
+
+</div>

@@ -1,0 +1,93 @@
+<% content_for :page_title, "Nueva Sesión de Backtesting" %>
+
+<div class="max-w-3xl mx-auto py-10 px-4 space-y-8 fade-in">
+  
+  <!-- HEADER -->
+  <div class="flex items-center gap-4">
+    <%= link_to backtesting_root_path, class: "p-2.5 rounded-2xl glass border border-slate-200 dark:border-darkBorder text-slate-500 hover:text-brand transition-colors" do %>
+      <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+    <% end %>
+    
+    <div>
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand/10 text-brand text-xs font-bold uppercase tracking-wider mb-1">
+        <span class="material-symbols-outlined text-[14px]">tune</span> Configuración de Simulación
+      </div>
+      <h1 class="text-2xl font-black text-slate-900 dark:text-white">Nueva Sesión de Replay</h1>
+    </div>
+  </div>
+
+  <!-- FORM CARD -->
+  <div class="glass border border-slate-200 dark:border-darkBorder rounded-3xl p-6 md:p-8 shadow-xl bg-white/70 dark:bg-slate-900/80">
+    <%= form_with(model: @session, url: backtesting_sessions_path, local: true, class: "space-y-6") do |f| %>
+      
+      <% if @session.errors.any? %>
+        <div class="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-500 text-sm space-y-1">
+          <p class="font-bold flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">error</span>
+            Ocurrieron errores al guardar la sesión:
+          </p>
+          <ul class="list-disc list-inside text-xs space-y-1 pl-6">
+            <% @session.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <!-- NOMBRE DE LA SESIÓN -->
+      <div class="space-y-2">
+        <%= f.label :name, "Nombre de la Sesión / Estrategia", class: "block text-xs font-bold text-slate-500 uppercase tracking-wider" %>
+        <%= f.text_field :name, placeholder: "Ej. Prueba Breakout NQ1 - Septiembre", class: "w-full bg-slate-50 dark:bg-darkBorder/40 border border-slate-200 dark:border-darkBorder rounded-2xl px-4 py-3 text-sm font-semibold text-slate-800 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand transition-all outline-none" %>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- SIMBOLO / ACTIVO -->
+        <div class="space-y-2">
+          <%= f.label :symbol, "Activo de Mercado (Ticker)", class: "block text-xs font-bold text-slate-500 uppercase tracking-wider" %>
+          <%= f.text_field :symbol, placeholder: "Ej. AAPL, NQ, ES...", required: true, class: "w-full bg-slate-50 dark:bg-darkBorder/40 border border-slate-200 dark:border-darkBorder rounded-2xl px-4 py-3 text-sm font-bold text-slate-800 dark:text-white uppercase focus:ring-2 focus:ring-brand focus:border-brand transition-all outline-none" %>
+        </div>
+
+        <!-- BALANCE INICIAL -->
+        <div class="space-y-2">
+          <%= f.label :balance_inicial, "Balance Inicial ($USD)", class: "block text-xs font-bold text-slate-500 uppercase tracking-wider" %>
+          <%= f.number_field :balance_inicial, value: @session.balance_inicial || 50000, step: 5000, class: "w-full bg-slate-50 dark:bg-darkBorder/40 border border-slate-200 dark:border-darkBorder rounded-2xl px-4 py-3 text-sm font-mono font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand transition-all outline-none" %>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- TIMEFRAME INICIAL -->
+        <div class="space-y-2">
+          <%= f.label :timeframe, "Temporalidad Inicial", class: "block text-xs font-bold text-slate-500 uppercase tracking-wider" %>
+          <%= f.select :timeframe, [
+            ["1 Minuto (M1)", "M1"],
+            ["5 Minutos (M5)", "M5"],
+            ["15 Minutos (M15)", "M15"],
+            ["1 Hora (H1)", "H1"]
+          ], { selected: "M1" }, class: "w-full bg-slate-50 dark:bg-darkBorder/40 border border-slate-200 dark:border-darkBorder rounded-2xl px-4 py-3 text-sm font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand transition-all outline-none cursor-pointer" %>
+        </div>
+
+        <!-- VELOCIDAD DE REPLAY -->
+        <div class="space-y-2">
+          <%= f.label :speed, "Velocidad de Reproducción", class: "block text-xs font-bold text-slate-500 uppercase tracking-wider" %>
+          <%= f.select :speed, [
+            ["Normal (1x - 1 seg/vela)", 1],
+            ["Rápida (5x)", 5],
+            ["Ultra (20x)", 20]
+          ], { selected: 1 }, class: "w-full bg-slate-50 dark:bg-darkBorder/40 border border-slate-200 dark:border-darkBorder rounded-2xl px-4 py-3 text-sm font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand transition-all outline-none cursor-pointer" %>
+        </div>
+      </div>
+
+      <!-- BOTONES -->
+      <div class="pt-4 flex items-center justify-end gap-3">
+        <%= link_to "Cancelar", backtesting_root_path, class: "px-6 py-3 rounded-2xl border border-slate-200 dark:border-darkBorder text-slate-500 font-bold text-sm hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" %>
+        
+        <%= f.button type: :submit, class: "bg-brand text-white px-8 py-3 rounded-2xl font-extrabold text-sm shadow-xl shadow-brand/20 hover:-translate-y-0.5 glow-brand transition-all flex items-center gap-2 cursor-pointer" do %>
+          <span class="material-symbols-outlined text-[18px]">play_circle</span>
+          <span>Crear e Iniciar Replay</span>
+        <% end %>
+      </div>
+
+    <% end %>
+  </div>
+
+</div>

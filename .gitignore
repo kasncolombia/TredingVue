@@ -6,13 +6,15 @@
 
 # Ignore bundler config.
 /.bundle
-
+/vendor/bundle/
+/vendor/cache/
 # Ignore all logfiles and tempfiles.
 /log/*
 /tmp/*
 !/log/.keep
 !/tmp/.keep
-
+/log/*
+!/log/.keep
 # Ignore pidfiles, but keep the directory.
 /tmp/pids/*
 !/tmp/pids/

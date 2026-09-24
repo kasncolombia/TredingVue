@@ -11,50 +11,37 @@
     </div>
   </div>
 
-  <!-- STEPPER PROGRESS BAR (INDICADOR DE PASOS FLUIDO) -->
+  <!-- STEPPER PROGRESS BAR -->
   <div class="glass rounded-2xl p-4 border border-slate-200 dark:border-darkBorder shadow-sm">
     <div class="flex items-center justify-between max-w-2xl mx-auto relative">
       
-      <!-- LÍNEA DE CONEXIÓN DE PASOS -->
       <div class="absolute top-1/2 left-8 right-8 h-1 bg-slate-200 dark:bg-darkBorder -translate-y-1/2 -z-0">
         <div id="stepper-progress-bar" class="h-full bg-brand transition-all duration-500 ease-out" style="width: 0%;"></div>
       </div>
 
-      <!-- PASO 1 -->
       <button type="button" onclick="goToStep(1)" class="stepper-node flex flex-col items-center gap-1.5 relative z-10 group cursor-pointer">
-        <div id="step-node-1" class="w-10 h-10 rounded-full bg-brand text-white font-extrabold text-sm flex items-center justify-center shadow-md ring-4 ring-brand/20 transition-all">
-          1
-        </div>
+        <div id="step-node-1" class="w-10 h-10 rounded-full bg-brand text-white font-extrabold text-sm flex items-center justify-center shadow-md ring-4 ring-brand/20 transition-all">1</div>
         <span id="step-label-1" class="text-[11px] font-bold text-brand transition-colors">Tipo de cuenta</span>
       </button>
 
-      <!-- PASO 2 -->
       <button type="button" onclick="goToStep(2)" class="stepper-node flex flex-col items-center gap-1.5 relative z-10 group cursor-pointer">
-        <div id="step-node-2" class="w-10 h-10 rounded-full bg-slate-200 dark:bg-darkBorder text-slate-500 font-extrabold text-sm flex items-center justify-center transition-all">
-          2
-        </div>
+        <div id="step-node-2" class="w-10 h-10 rounded-full bg-slate-200 dark:bg-darkBorder text-slate-500 font-extrabold text-sm flex items-center justify-center transition-all">2</div>
         <span id="step-label-2" class="text-[11px] font-bold text-slate-400 transition-colors">Firma & Reglas</span>
       </button>
 
-      <!-- PASO 3 -->
       <button type="button" onclick="goToStep(3)" class="stepper-node flex flex-col items-center gap-1.5 relative z-10 group cursor-pointer">
-        <div id="step-node-3" class="w-10 h-10 rounded-full bg-slate-200 dark:bg-darkBorder text-slate-500 font-extrabold text-sm flex items-center justify-center transition-all">
-          3
-        </div>
+        <div id="step-node-3" class="w-10 h-10 rounded-full bg-slate-200 dark:bg-darkBorder text-slate-500 font-extrabold text-sm flex items-center justify-center transition-all">3</div>
         <span id="step-label-3" class="text-[11px] font-bold text-slate-400 transition-colors">Detalles & Guardar</span>
       </button>
 
     </div>
   </div>
 
-  <%= form_with model: @account, url: prop_firm_accounts_path, id: "onboarding-wizard-form", multipart: true, class: "space-y-6" do |f| %>
+  <%= form_with model: @account, url: prop_firm_accounts_path, id: "onboarding-wizard-form", multipart: true, class: "space-y-6", data: { controller: "prop-wizard", "has-form-errors": @account.errors.any? } do |f| %>
     
-    <!-- CONTENEDOR DESLIZABLE DE PASOS -->
     <div id="wizard-steps-container" data-current-step="1" class="relative min-h-[480px] space-y-6">
       
-      <!-- ================================================================= -->
-      <!-- PASO 1: SELECCIÓN DEL TIPO DE CUENTA DE FONDEO -->
-      <!-- ================================================================= -->
+      <!-- ================= PASO 1 ================= -->
       <div id="wizard-step-1" class="wizard-step-panel space-y-6">
         
         <div class="glass rounded-3xl p-6 md:p-8 border border-brand/20 bg-gradient-to-r from-brand/10 via-slate-900/40 to-emerald-500/10 shadow-xl space-y-4">
@@ -71,10 +58,8 @@
           </div>
         </div>
 
-        <!-- TRES OPCIONES DE INCORPORACIÓN DENTRO DE PROP FIRMS -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
           
-          <!-- OPCIÓN A: PRO FIRM PRESET (DEFAULT) -->
           <div onclick="selectPropAccountMode('preset', this)" 
                class="account-mode-card active p-6 rounded-3xl bg-white dark:bg-darkCard border-2 border-brand shadow-lg ring-4 ring-brand/10 flex flex-col justify-between space-y-4 cursor-pointer hover:scale-[1.02] transition-all group">
             <div class="flex items-center justify-between">
@@ -93,7 +78,6 @@
             </div>
           </div>
 
-          <!-- OPCIÓN B: CUENTA MANUAL (REGLAS PERSONALIZADAS) -->
           <div onclick="selectPropAccountMode('manual', this)" 
                class="account-mode-card p-6 rounded-3xl bg-white dark:bg-darkCard border-2 border-slate-200 dark:border-darkBorder hover:border-brand/40 shadow-sm flex flex-col justify-between space-y-4 cursor-pointer hover:scale-[1.02] transition-all group">
             <div class="flex items-center justify-between">
@@ -112,7 +96,6 @@
             </div>
           </div>
 
-          <!-- OPCIÓN C: IMPORTAR HISTORIAL CSV -->
           <div onclick="selectPropAccountMode('csv', this)" 
                class="account-mode-card p-6 rounded-3xl bg-white dark:bg-darkCard border-2 border-slate-200 dark:border-darkBorder hover:border-emerald-500/40 shadow-sm flex flex-col justify-between space-y-4 cursor-pointer hover:scale-[1.02] transition-all group">
             <div class="flex items-center justify-between">
@@ -131,7 +114,8 @@
             </div>
           </div>
 
-            <!-- BOTÓN DE SIGUIENTE DEL PASO 1 -->
+        </div>
+
         <div class="flex justify-end pt-4 border-t dark:border-darkBorder border-slate-200">
           <button type="button" onclick="goToStep(2)" class="px-8 py-3 bg-brand hover:scale-[1.02] text-white font-extrabold text-xs rounded-xl shadow-lg glow-brand transition-all flex items-center gap-2 cursor-pointer">
             Continuar al Paso 2
@@ -141,12 +125,10 @@
 
       </div>
 
-      <!-- ================================================================= -->
-      <!-- PASO 2: SELECCIÓN DE FIRMA, BALANCES Y REGLAS (SE ADAPTA DINÁMICAMENTE) -->
-      <!-- ================================================================= -->
-      <div id="wizard-step-2" data-mode="preset" class="wizard-step-panel space-y-6 hidden">
+      <!-- ================= PASO 2 ================= -->
+      <div id="wizard-step-2" data-mode="preset" class="wizard-step-panel space-y-6" style="display: none;">
 
-        <!-- SUB-PANEL 2A: PROP FIRM CATÁLOGO PRESETS -->
+        <!-- SUB-PANEL 2A: PRESET -->
         <div id="mode-panel-preset" class="mode-sub-panel glass rounded-2xl p-5 md:p-6 border-l-4 border-brand space-y-5">
           <div class="flex items-center justify-between pb-3 border-b dark:border-darkBorder border-slate-200">
             <div>
@@ -162,10 +144,8 @@
             </button>
           </div>
 
-          <!-- REGLAS DEL CHALLENGE -->
           <div class="space-y-4">
             
-            <!-- 1 - FIRMA DE FONDEO (SELECTOR CON LOGOS) -->
             <div>
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
                 Firma de Fondeo <span class="text-rose-500">*</span>
@@ -191,6 +171,7 @@
                         <span style="display:none;"><%= firm[:name].first(2).upcase %></span>
                       <% else %>
                         <span><%= firm[:name].first(2).upcase %></span>
+                        </div>
                       <% end %>
                     </div>
                     <span class="text-[10px] font-bold dark:text-slate-200 text-slate-800 line-clamp-1"><%= firm[:name] %></span>
@@ -200,11 +181,9 @@
               <%= f.hidden_field :firm_name, id: "prop_firm_name_field", value: "Topstep" %>
             </div>
 
-            <!-- 2 - PLAN DE LA FIRMA & TAMAÑO -->
             <div class="space-y-3 pt-2">
               <span class="block text-[11px] font-bold dark:text-slate-300 text-slate-700" id="firm-plan-label">2 - CONFIGURACIÓN DE PLAN DE TOPSTEP</span>
               
-              <!-- TIPO DE PLAN -->
               <div>
                 <p class="text-[10px] font-semibold text-slate-400 mb-1.5">Tipo de Plan</p>
                 <div class="flex gap-2">
@@ -218,7 +197,6 @@
                 <%= f.hidden_field :plan_name, id: "prop_plan_name_field", value: "Estándar" %>
               </div>
 
-              <!-- TAMAÑO DE CUENTA (BALANCE) -->
               <div>
                 <p class="text-[10px] font-semibold text-slate-400 mb-1.5">Balance / Tamaño de Cuenta</p>
                 <div class="grid grid-cols-4 sm:grid-cols-7 gap-1.5">
@@ -232,12 +210,10 @@
               </div>
             </div>
 
-            <!-- 3 - PANEL INFORMATIVO DE REGLAS POR FASE -->
             <div class="rounded-2xl border dark:border-darkBorder border-slate-200 bg-slate-50 dark:bg-darkCard p-4 space-y-3">
               <div class="flex items-center justify-between border-b dark:border-darkBorder border-slate-200 pb-2">
                 <span class="text-xs font-bold text-slate-700 dark:text-slate-200" id="rules-box-title">3 - REGLAS: TOPSTEP (50K)</span>
                 
-                <!-- TABS DE FASE DE REGLAS -->
                 <div class="flex p-0.5 bg-slate-200 dark:bg-darkBorder rounded-lg text-[10px] font-bold">
                   <button type="button" onclick="switchRuleTab('step1', this)" class="rule-tab-btn px-2.5 py-1 rounded-md bg-white dark:bg-slate-700 text-brand shadow-xs">
                     Paso 1
@@ -274,8 +250,8 @@
           </div>
         </div>
 
-        <!-- SUB-PANEL 2B: REGISTRO MANUAL DE CUENTA Y REGLAS -->
-        <div id="mode-panel-manual" class="mode-sub-panel glass rounded-2xl p-5 md:p-6 border-l-4 border-amber-500 space-y-5 hidden">
+        <!-- SUB-PANEL 2B: MANUAL -->
+        <div id="mode-panel-manual" class="mode-sub-panel glass rounded-2xl p-5 md:p-6 border-l-4 border-amber-500 space-y-5" style="display: none;">
           <div class="pb-3 border-b dark:border-darkBorder border-slate-200">
             <h3 class="text-base font-black dark:text-white text-slate-800 flex items-center gap-2">
               <span class="material-symbols-outlined text-amber-500 text-[20px]">edit_square</span>
@@ -287,16 +263,15 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Nombre de la Firma / Empresa *</label>
-              <input type="text" id="manual-firm-input" oninput="document.getElementById('prop_firm_name_field').value = this.value" placeholder="Ej: Custom Funding Firm, FTMO, FundedNext..." class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-bold focus:outline-none focus:border-brand">
+              <input type="text" id="manual-firm-input" oninput="syncManualFirm(this.value)" placeholder="Ej: Custom Funding Firm, FTMO, FundedNext..." class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-bold focus:outline-none focus:border-brand">
             </div>
 
             <div>
               <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Balance Inicial ($ USD) *</label>
-              <input type="text" id="manual-size-input" oninput="document.getElementById('prop_account_size_field').value = this.value" placeholder="Ej: 50K, 100000" class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-brand">
+              <input type="text" id="manual-size-input" oninput="syncManualSize(this.value)" placeholder="Ej: 50K, 100000" class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-brand">
             </div>
           </div>
 
-          <!-- REGLAS DE AUDITORÍA PERSONALIZADAS EN PASO 2 -->
           <div class="p-4 rounded-2xl border dark:border-darkBorder border-slate-200 bg-slate-50 dark:bg-darkCard space-y-3">
             <h4 class="text-xs font-extrabold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
               <span class="material-symbols-outlined text-brand text-[16px]">tune</span> Parámetros de Auditoría Manual
@@ -323,8 +298,8 @@
           </div>
         </div>
 
-        <!-- SUB-PANEL 2C: ADJUNTAR ARCHIVO CSV -->
-        <div id="mode-panel-csv" class="mode-sub-panel glass rounded-2xl p-5 md:p-6 border-l-4 border-emerald-500 space-y-5 hidden">
+        <!-- SUB-PANEL 2C: CSV -->
+        <div id="mode-panel-csv" class="mode-sub-panel glass rounded-2xl p-5 md:p-6 border-l-4 border-emerald-500 space-y-5" style="display: none;">
           <div class="pb-3 border-b dark:border-darkBorder border-slate-200">
             <h3 class="text-base font-black dark:text-white text-slate-800 flex items-center gap-2">
               <span class="material-symbols-outlined text-emerald-500 text-[20px]">upload_file</span>
@@ -358,10 +333,8 @@
 
       </div>
 
-      <!-- ================================================================= -->
-      <!-- PASO 3: DETALLES OPERATIVOS & CONFIRMACIÓN -->
-      <!-- ================================================================= -->
-      <div id="wizard-step-3" class="wizard-step-panel space-y-6 hidden">
+      <!-- ================= PASO 3 ================= -->
+      <div id="wizard-step-3" class="wizard-step-panel space-y-6" style="display: none;">
         
         <div class="glass rounded-2xl p-5 md:p-6 border-l-4 border-emerald-500 space-y-5">
           <div class="pb-3 border-b dark:border-darkBorder border-slate-200">
@@ -372,7 +345,6 @@
             <p class="text-xs text-slate-400 mt-0.5">Asigna un nombre a la cuenta de fondeo, configura su fase actual, estado y fechas clave.</p>
           </div>
 
-          <!-- NOMBRE DE LA CUENTA DE FONDEO -->
           <div>
             <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">
               Nombre de la cuenta de fondeo <span class="text-rose-500">*</span>
@@ -380,7 +352,6 @@
             <%= f.text_field :name, required: true, placeholder: "Ej. Topstep 50K Express #1", class: "input-field w-full px-3.5 py-2.5 rounded-xl text-sm font-bold focus:outline-none focus:border-brand" %>
           </div>
 
-          <!-- FASE DE LA CUENTA -->
           <div>
             <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-2">
               Fase Actual de la Cuenta <span class="text-rose-500">*</span>
@@ -401,7 +372,6 @@
             <%= f.hidden_field :phase, id: "prop_phase_field", value: "paso_1" %>
           </div>
 
-          <!-- ESTADO DE LA CUENTA -->
           <div>
             <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-2">
               Estado de la Cuenta <span class="text-rose-500">*</span>
@@ -422,7 +392,6 @@
             <%= f.hidden_field :status, id: "prop_status_field", value: "activa" %>
           </div>
 
-          <!-- MOTIVO DE QUEMA -->
           <div id="burn-reason-container" class="space-y-1.5 transition-all">
             <label class="block text-xs font-bold text-rose-500 flex items-center gap-1">
               <span class="material-symbols-outlined text-[14px]">warning</span> Motivo de Quema / Breach Reason
@@ -438,7 +407,6 @@
             ], { include_blank: "-- Seleccionar si aplica --" }, class: "input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-bold focus:outline-none focus:border-rose-500" %>
           </div>
 
-          <!-- FECHAS CLAVE -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
             <div>
               <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">
@@ -454,7 +422,6 @@
             </div>
           </div>
 
-          <!-- CUOTAS -->
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">
@@ -477,7 +444,6 @@
             </div>
           </div>
 
-          <!-- ESTRATEGIAS VINCULADAS -->
           <div>
             <div class="flex items-center justify-between mb-1.5">
               <label class="block text-xs font-bold dark:text-slate-300 text-slate-700">Estrategias Asignadas</label>
@@ -494,7 +460,6 @@
 
         </div>
 
-        <!-- NAVEGACIÓN PASO 3 -->
         <div class="flex items-center justify-between pt-4 border-t dark:border-darkBorder border-slate-200">
           <button type="button" onclick="prevStep()" class="px-5 py-2.5 text-xs font-bold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white rounded-xl border dark:border-darkBorder border-slate-200 transition-all flex items-center gap-1.5 cursor-pointer">
             <span class="material-symbols-outlined text-[18px]">arrow_back</span>
@@ -515,7 +480,7 @@
 
 </div>
 
-<!-- MODAL COMPLETO PARA EDITAR REGLAS Y OVERRIDES -->
+<!-- MODAL REGLAS PERSONALIZADAS -->
 <div id="custom-rules-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
   <div class="glass rounded-2xl p-6 w-full max-w-2xl mx-auto space-y-5 shadow-2xl border dark:border-darkBorder border-slate-200 my-8">
     
@@ -532,7 +497,6 @@
       </button>
     </div>
 
-    <!-- TABS DE EDICIÓN DE REGLAS -->
     <div class="flex p-1 bg-slate-100 dark:bg-darkCard rounded-xl gap-1 border border-slate-200 dark:border-darkBorder text-xs font-bold">
       <button type="button" onclick="switchModalTab('eval', this)" class="modal-tab-btn flex-1 py-2 rounded-lg bg-white dark:bg-slate-700 text-brand shadow-xs text-center">
         Fase de Evaluación (Paso 1 & 2)
@@ -542,7 +506,6 @@
       </button>
     </div>
 
-    <!-- SECCIÓN EVALUACIÓN -->
     <div id="modal-sec-eval" class="space-y-4">
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-bold dark:text-slate-200 text-slate-700">
         <div>
@@ -577,7 +540,6 @@
       </div>
     </div>
 
-    <!-- SECCIÓN FONDEADA -->
     <div id="modal-sec-funded" class="hidden space-y-4">
       <div class="p-3.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs text-blue-400 space-y-1">
         <p class="font-bold flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">info</span> Reglas de la Cuenta Fondeada / Live</p>
@@ -607,256 +569,3 @@
   </div>
 </div>
 
-<!-- SCRIPT DE LÓGICA MULTI-STEP SLIDE DE PROP FIRMS -->
-<script>
-let currentStep = 1;
-let selectedPropMode = "preset";
-
-let currentFirm = "Topstep";
-let currentPlan = "Estándar";
-let currentSize = "50K";
-let currentTab  = "step1";
-
-const RULES_DATABASE = {
-  "10K":  { target: "$600",   max_dd: "$1,000 (EOD)", daily: "$500", consistency: "50%", min_days: "2 días" },
-  "25K":  { target: "$1,500", max_dd: "$1,500 (EOD)", daily: "$1,000", consistency: "50%", min_days: "2 días" },
-  "50K":  { target: "$3,000", max_dd: "$2,000 (EOD)", daily: "$1,000", consistency: "50%", min_days: "2 días" },
-  "100K": { target: "$6,000", max_dd: "$3,000 (EOD)", daily: "$2,000", consistency: "50%", min_days: "2 días" },
-  "150K": { target: "$9,000", max_dd: "$4,500 (EOD)", daily: "$3,000", consistency: "50%", min_days: "2 días" },
-  "200K": { target: "$12,000", max_dd: "$5,000 (EOD)", daily: "$4,000", consistency: "50%", min_days: "2 días" },
-  "250K": { target: "$15,000", max_dd: "$6,000 (EOD)", daily: "$5,000", consistency: "50%", min_days: "2 días" }
-};
-
-window.selectPropAccountMode = function(mode, cardEl) {
-  selectedPropMode = mode || "preset";
-  const step2 = document.getElementById("wizard-step-2");
-  if (step2) {
-    step2.setAttribute("data-mode", selectedPropMode);
-  }
-
-  document.querySelectorAll(".account-mode-card").forEach(c => {
-    c.classList.remove("active", "border-brand", "ring-4", "ring-brand/10");
-    c.classList.add("border-slate-200", "dark:border-darkBorder");
-  });
-  if (cardEl && cardEl.classList) {
-    cardEl.classList.add("active", "border-brand", "ring-4", "ring-brand/10");
-    cardEl.classList.remove("border-slate-200", "dark:border-darkBorder");
-  }
-
-  // Actualizar etiqueta del Paso 2
-  const label2 = document.getElementById("step-label-2");
-  if (label2) {
-    if (mode === "preset") label2.textContent = "Firma & Reglas";
-    else if (mode === "manual") label2.textContent = "Reglas Manuales";
-    else if (mode === "csv") label2.textContent = "Adjuntar CSV";
-  }
-
-  // Avanza al Paso 2
-  goToStep(2);
-};
-
-window.goToStep = function(stepNum) {
-  stepNum = parseInt(stepNum) || 1;
-  if (stepNum < 1) stepNum = 1;
-  if (stepNum > 3) stepNum = 3;
-
-  if (stepNum === 3 && selectedPropMode === "manual") {
-    const manualFirm = document.getElementById("manual-firm-input")?.value?.trim();
-    const manualSize = document.getElementById("manual-size-input")?.value?.trim();
-    const fField = document.getElementById("prop_firm_name_field");
-    const sField = document.getElementById("prop_account_size_field");
-
-    if (fField && manualFirm) fField.value = manualFirm;
-    if (sField && manualSize) sField.value = manualSize;
-  }
-
-  currentStep = stepNum;
-
-  // 1. Mostrar/Ocultar paneles principales usando classList toggle
-  const step1 = document.getElementById("wizard-step-1");
-  const step2 = document.getElementById("wizard-step-2");
-  const step3 = document.getElementById("wizard-step-3");
-
-  if (step1) {
-    step1.removeAttribute("style");
-    if (stepNum === 1) step1.classList.remove("hidden");
-    else step1.classList.add("hidden");
-  }
-  if (step2) {
-    step2.removeAttribute("style");
-    if (stepNum === 2) step2.classList.remove("hidden");
-    else step2.classList.add("hidden");
-  }
-  if (step3) {
-    step3.removeAttribute("style");
-    if (stepNum === 3) step3.classList.remove("hidden");
-    else step3.classList.add("hidden");
-  }
-
-  // 2. Mostrar/Ocultar subpaneles del Paso 2
-  if (stepNum === 2) {
-    const pPreset = document.getElementById("mode-panel-preset");
-    const pManual = document.getElementById("mode-panel-manual");
-    const pCsv    = document.getElementById("mode-panel-csv");
-
-    if (pPreset) {
-      pPreset.removeAttribute("style");
-      if (selectedPropMode === "preset") pPreset.classList.remove("hidden");
-      else pPreset.classList.add("hidden");
-    }
-    if (pManual) {
-      pManual.removeAttribute("style");
-      if (selectedPropMode === "manual") pManual.classList.remove("hidden");
-      else pManual.classList.add("hidden");
-    }
-    if (pCsv) {
-      pCsv.removeAttribute("style");
-      if (selectedPropMode === "csv") pCsv.classList.remove("hidden");
-      else pCsv.classList.add("hidden");
-    }
-  }
-
-  // 3. Actualizar barra de progreso del Stepper
-  const progressBar = document.getElementById("stepper-progress-bar");
-  if (progressBar) {
-    const pct = ((stepNum - 1) / 2) * 100;
-    progressBar.style.width = pct + "%";
-  }
-
-  // 4. Actualizar nodos del Stepper
-  for (let i = 1; i <= 3; i++) {
-    const node = document.getElementById("step-node-" + i);
-    const label = document.getElementById("step-label-" + i);
-    if (!node) continue;
-
-    if (i <= stepNum) {
-      node.className = "w-10 h-10 rounded-full bg-brand text-white font-extrabold text-sm flex items-center justify-center shadow-md ring-4 ring-brand/20 transition-all";
-      if (label) label.className = "text-[11px] font-bold text-brand transition-colors";
-    } else {
-      node.className = "w-10 h-10 rounded-full bg-slate-200 dark:bg-darkBorder text-slate-500 font-extrabold text-sm flex items-center justify-center transition-all";
-      if (label) label.className = "text-[11px] font-bold text-slate-400 transition-colors";
-    }
-  }
-
-  try {
-    const targetEl = document.getElementById("onboarding-wizard-form") || document.body;
-    targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  } catch(e) {}
-};
-
-window.nextStep = function() {
-  goToStep(currentStep + 1);
-};
-
-window.prevStep = function() {
-  goToStep(currentStep - 1);
-};
-
-window.selectFirmConfig = function(firmName, btn) {
-  currentFirm = firmName;
-  const fField = document.getElementById("prop_firm_name_field");
-  if (fField) fField.value = firmName;
-  document.querySelectorAll(".firm-selector-btn").forEach(b => b.classList.remove("ring-2", "ring-brand", "border-brand", "bg-brand/10"));
-  if (btn && btn.classList) btn.classList.add("ring-2", "ring-brand", "border-brand", "bg-brand/10");
-  const fPlanLabel = document.getElementById("firm-plan-label");
-  if (fPlanLabel) fPlanLabel.textContent = `2 - CONFIGURACIÓN DE PLAN DE ${firmName.toUpperCase()}`;
-  updateRulesDisplay();
-};
-
-window.setPlanType = function(planType, btn) {
-  currentPlan = planType;
-  const pField = document.getElementById("prop_plan_name_field");
-  if (pField) pField.value = planType;
-  document.querySelectorAll(".plan-type-btn").forEach(b => b.classList.remove("ring-2", "ring-brand", "border-brand", "bg-brand/10"));
-  if (btn && btn.classList) btn.classList.add("ring-2", "ring-brand", "border-brand", "bg-brand/10");
-  updateRulesDisplay();
-};
-
-window.setAccountSize = function(size, btn) {
-  currentSize = size;
-  const sField = document.getElementById("prop_account_size_field");
-  if (sField) sField.value = size;
-  document.querySelectorAll(".size-btn").forEach(b => b.classList.remove("ring-2", "ring-brand", "border-brand", "bg-brand/10"));
-  if (btn && btn.classList) btn.classList.add("ring-2", "ring-brand", "border-brand", "bg-brand/10");
-  updateRulesDisplay();
-};
-
-window.setAccountPhase = function(phaseId, btn) {
-  const pField = document.getElementById("prop_phase_field");
-  if (pField) pField.value = phaseId;
-  document.querySelectorAll(".phase-btn").forEach(b => b.classList.remove("ring-2", "ring-emerald-500", "border-emerald-500", "bg-emerald-500/10", "text-emerald-500"));
-  if (btn && btn.classList) btn.classList.add("ring-2", "ring-emerald-500", "border-emerald-500", "bg-emerald-500/10", "text-emerald-500");
-};
-
-window.setAccountStatus = function(statusId, btn) {
-  const sField = document.getElementById("prop_status_field");
-  if (sField) sField.value = statusId;
-  document.querySelectorAll(".status-btn").forEach(b => b.classList.remove("ring-2", "ring-emerald-500", "border-emerald-500", "bg-emerald-500/10", "text-emerald-500"));
-  if (btn && btn.classList) btn.classList.add("ring-2", "ring-emerald-500", "border-emerald-500", "bg-emerald-500/10", "text-emerald-500");
-};
-
-window.switchRuleTab = function(tabName, btn) {
-  currentTab = tabName;
-  document.querySelectorAll(".rule-tab-btn").forEach(b => {
-    b.classList.remove("bg-white", "dark:bg-slate-700", "text-brand", "shadow-xs");
-    b.classList.add("text-slate-400");
-  });
-  if (btn && btn.classList) {
-    btn.classList.add("bg-white", "dark:bg-slate-700", "text-brand", "shadow-xs");
-    btn.classList.remove("text-slate-400");
-  }
-  updateRulesDisplay();
-};
-
-function updateRulesDisplay() {
-  const titleEl = document.getElementById("rules-box-title");
-  if (titleEl) titleEl.textContent = `3 - REGLAS: ${currentFirm.toUpperCase()} (${currentSize})`;
-  const data = RULES_DATABASE[currentSize] || RULES_DATABASE["50K"];
-  
-  const elTarget = document.getElementById("rule-target");
-  const elMaxDD = document.getElementById("rule-max-dd");
-  const elDailyLoss = document.getElementById("rule-daily-loss");
-  const elConsistency = document.getElementById("rule-consistency");
-
-  if (currentTab === "funded") {
-    if (elTarget) elTarget.textContent = "N/A (Retiros / Payouts)";
-    if (elMaxDD) elMaxDD.textContent = data.max_dd;
-    if (elDailyLoss) elDailyLoss.textContent = data.daily;
-    if (elConsistency) elConsistency.textContent = "30% (Regla Retiro)";
-  } else {
-    if (elTarget) elTarget.textContent = data.target;
-    if (elMaxDD) elMaxDD.textContent = data.max_dd;
-    if (elDailyLoss) elDailyLoss.textContent = data.daily;
-    if (elConsistency) elConsistency.textContent = data.consistency;
-  }
-}
-
-window.toggleCustomRulesModal = function() {
-  const modal = document.getElementById("custom-rules-modal");
-  if (modal) modal.classList.toggle("hidden");
-};
-
-window.switchModalTab = function(tabName, btn) {
-  document.querySelectorAll(".modal-tab-btn").forEach(b => {
-    b.classList.remove("bg-white", "dark:bg-slate-700", "text-brand", "shadow-xs");
-    b.classList.add("text-slate-400");
-  });
-  if (btn && btn.classList) {
-    btn.classList.add("bg-white", "dark:bg-slate-700", "text-brand", "shadow-xs");
-    btn.classList.remove("text-slate-400");
-  }
-
-  const evalSec = document.getElementById("modal-sec-eval");
-  const fundedSec = document.getElementById("modal-sec-funded");
-  if (tabName === "funded") {
-    if (evalSec) evalSec.classList.add("hidden");
-    if (fundedSec) fundedSec.classList.remove("hidden");
-  } else {
-    if (evalSec) evalSec.classList.remove("hidden");
-    if (fundedSec) fundedSec.classList.add("hidden");
-  }
-};
-
-document.addEventListener("DOMContentLoaded", function() { goToStep(1); });
-document.addEventListener("turbo:load", function() { goToStep(1); });
-</script>

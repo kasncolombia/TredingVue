@@ -2,12 +2,17 @@
 
 <div class="space-y-6 fade-in pb-12" data-controller="prop-filter">
   
-  <!-- BOTÓN PARA VER / OCULTAR INTRO EN CUALQUIER MOMENTO -->
+  <!-- TOP ACTIONS -->
   <div class="flex items-center justify-between">
-    <button type="button" onclick="toggleIntroHero()" class="inline-flex items-center gap-2 text-xs font-bold text-brand hover:underline cursor-pointer bg-brand/10 dark:bg-brand/20 px-3.5 py-1.5 rounded-xl border border-brand/20">
+    <button type="button" onclick="toggleIntroHero()" class="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-brand transition-colors cursor-pointer bg-slate-100 dark:bg-darkCard px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-darkBorder">
       <span class="material-symbols-outlined text-[16px]">info</span>
-      <span id="intro-hero-btn-text"><%= @accounts.any? ? "Ver Guía de Introducción 💼" : "Ocultar Guía 💼" %></span>
+      <span id="intro-hero-btn-text"><%= @accounts.any? ? "Ver Guía de Introducción" : "Ocultar Guía" %></span>
     </button>
+    
+    <%= link_to new_prop_firm_account_path, class: "px-5 py-2 bg-brand text-white font-extrabold text-xs rounded-xl shadow-lg shadow-brand/20 hover:-translate-y-0.5 hover:shadow-brand/30 transition-all flex items-center gap-1.5" do %>
+      <span class="material-symbols-outlined text-[18px]">add_circle</span>
+      <span>Nueva Cuenta de Fondeo</span>
+    <% end %>
   </div>
 
   <!-- SECCIÓN INTRO HERO (VISIBLE POR DEFAULT SI NO HAY CUENTAS, O TOGGLEABLE SI HAY CUENTAS) -->

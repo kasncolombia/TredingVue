@@ -33,10 +33,30 @@ Rails.application.routes.draw do
 
   resource :analytics, only: [:show]
 
-  # Pro Tools Hub (Backtesting + Prop Firms)
-  get  "pro-tools",           to: "pro_tools#index",    as: :pro_tools
-  resources :backtest_sessions, path: "pro-tools/sesiones", only: [:create, :show, :destroy]
-  resources :prop_transactions,  path: "pro-tools/prop-firms", only: [:index, :create, :destroy], as: :prop_ledger
+  # Legacy Redirects
+get 'pro-tools', to: redirect('/prop_firm_accounts')
+get 'prop_firms', to: redirect('/prop_firm_accounts')
+get 'backtester', to: redirect('/backtesting')
+
+resources :prop_transactions, path: 'prop-firms/transacciones', only: [:index, :create, :destroy], as: :prop_ledger
+
+namespace :backtesting do
+  root to: 'dashboard#index'
+  resources :sessions, only: [:new, :create, :show] do
+    member do
+      get :replay
+      post :play
+      post :pause
+      post :next
+      post :step_back
+      post :change_timeframe
+      post :finish
+      post :record_trade
+      get :historical_data
+    end
+  end
+end
+
   resources :prop_firm_accounts do
     collection do
       get :templates_json
@@ -53,8 +73,6 @@ Rails.application.routes.draw do
       get :brokers_json
     end
   end
-  get  "prop_firms",          to: redirect("/pro-tools"), as: :prop_transactions
-  get  "backtester",          to: redirect("/pro-tools"), as: :backtester
 
   resource :ai_coach, controller: "ai_coach", only: [:show] do
     post :analyze_trade

@@ -1,0 +1,97 @@
+<!-- app/views/backtesting/sessions/show.html.erb -->
+<% stats = Backtesting::StatsCalculator.new(@session).calculate %>
+
+<div class="max-w-5xl mx-auto py-10 px-4 space-y-8 fade-in h-screen overflow-y-auto">
+  <!-- HEADER -->
+  <div class="flex items-center justify-between border-b border-slate-200 dark:border-darkBorder pb-6">
+    <div>
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-500 text-xs font-bold uppercase tracking-wider mb-3">
+        <span class="material-symbols-outlined text-[14px]">done_all</span> Sesión Finalizada
+      </div>
+      <h1 class="text-3xl font-black text-slate-800 dark:text-white"><%= @session.name %></h1>
+      <p class="text-slate-500 font-mono mt-1">Símbolo: <span class="font-bold"><%= @session.symbol %></span></p>
+    </div>
+    
+    <div class="text-right">
+      <p class="text-sm text-slate-500 font-bold mb-1">Balance Final</p>
+      <h2 class="text-3xl font-mono font-black <%= stats[:net_pnl] >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
+        <%= number_to_currency(@session.balance_actual) %>
+      </h2>
+    </div>
+  </div>
+
+  <!-- METRICS GRID -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="glass p-5 rounded-2xl border border-slate-200 dark:border-darkBorder shadow-sm">
+      <p class="text-xs text-slate-400 font-bold uppercase">Total Trades</p>
+      <p class="text-2xl font-black text-slate-800 dark:text-white mt-1"><%= stats[:total_trades] %></p>
+    </div>
+
+    <div class="glass p-5 rounded-2xl border border-slate-200 dark:border-darkBorder shadow-sm">
+      <p class="text-xs text-slate-400 font-bold uppercase">Win Rate</p>
+      <p class="text-2xl font-black text-slate-800 dark:text-white mt-1"><%= number_to_percentage(stats[:win_rate], precision: 1) %></p>
+    </div>
+
+    <div class="glass p-5 rounded-2xl border border-slate-200 dark:border-darkBorder shadow-sm">
+      <p class="text-xs text-slate-400 font-bold uppercase">Profit Factor</p>
+      <p class="text-2xl font-black text-slate-800 dark:text-white mt-1"><%= number_with_precision(stats[:profit_factor], precision: 2) %></p>
+    </div>
+
+    <div class="glass p-5 rounded-2xl border border-slate-200 dark:border-darkBorder shadow-sm">
+      <p class="text-xs text-slate-400 font-bold uppercase">Mx Drawdown</p>
+      <p class="text-2xl font-black text-rose-500 mt-1 font-mono">-$<%= number_with_precision(stats[:max_drawdown], precision: 2) %></p>
+    </div>
+  </div>
+
+  <!-- TRADE JOURNAL (Historial) -->
+  <div class="glass border border-slate-200 dark:border-darkBorder rounded-2xl overflow-hidden shadow-sm">
+    <div class="p-4 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-darkBorder">
+      <h3 class="font-bold text-slate-800 dark:text-white">Registro de Operaciones (Journal)</h3>
+    </div>
+    
+    <table class="w-full text-left text-sm">
+      <thead class="text-xs uppercase bg-slate-50 dark:bg-slate-800/80 text-slate-500 font-bold">
+        <tr>
+          <th class="px-4 py-3">ID / Fecha</th>
+          <th class="px-4 py-3 text-center">Direction</th>
+          <th class="px-4 py-3 text-right">Qtty</th>
+          <th class="px-4 py-3 text-right">Entry</th>
+          <th class="px-4 py-3 text-right">Exit</th>
+          <th class="px-4 py-3 text-right">Net P&L</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y text-slate-700 dark:text-slate-300 divide-slate-200 dark:divide-darkBorder">
+        <% @session.backtest_trades.order(created_at: :desc).each do |trade| %>
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+            <td class="px-4 py-3 font-mono text-xs"><%= trade.created_at.strftime('%Y-%m-%d %H:%M') %></td>
+            <td class="px-4 py-3 text-center">
+              <span class="px-2 py-0.5 text-[10px] font-bold uppercase rounded-md <%= trade.direction == 'Long' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500' %>">
+                <%= trade.direction %>
+              </span>
+            </td>
+            <td class="px-4 py-3 text-right font-mono"><%= trade.quantity %></td>
+            <td class="px-4 py-3 text-right font-mono"><%= trade.entry_price %></td>
+            <td class="px-4 py-3 text-right font-mono"><%= trade.exit_price %></td>
+            <td class="px-4 py-3 text-right font-mono font-bold <%= trade.pnl >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
+              <%= number_to_currency(trade.pnl) %>
+            </td>
+          </tr>
+        <% end %>
+        
+        <% if @session.backtest_trades.empty? %>
+          <tr>
+            <td colspan="6" class="px-4 py-10 text-center text-slate-500">
+              No ejecutaste ninguna operación en esta sesión.
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  
+  <div class="flex justify-center pt-6">
+    <%= link_to backtesting_root_path, class: "bg-slate-200 dark:bg-darkBorder hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-600 dark:text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-xs transition-all" do %>
+      Volver al Dashboard
+    <% end %>
+  </div>
+</div>
