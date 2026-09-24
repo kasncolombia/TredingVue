@@ -357,3 +357,18 @@ end
 puts "  ✔ #{Broker.count} brokers/plataformas registradas"
 
 puts "✅ Datos de Community y Brokers sembrados con éxito!"
+
+# db/seeds.rb
+if HistoricalBar1m.count.zero?
+  puts "Importando datos históricos iniciales desde Massive API..."
+  api_key = ENV['MASSIVE_API_KEY']
+  
+  if api_key.present?
+    importer = Backtesting::MassiveImporter.new(api_key: api_key)
+    # Importa 7 días de AAPL como datos base
+    importer.import_m1_aggs('AAPL', Date.today - 7, Date.today)
+    puts "¡Datos históricos cargados exitosamente!"
+  else
+    puts "ADVERTENCIA: No se encontró MASSIVE_API_KEY en las variables de entorno."
+  end
+end
