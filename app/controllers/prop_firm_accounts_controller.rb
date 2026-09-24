@@ -29,20 +29,25 @@ class PropFirmAccountsController < ApplicationController
     @strategies = current_user.strategies
   end
 
-  def create
-    @account = current_user.prop_firm_accounts.new(account_params)
-    @account.status ||= "activa"
+def create
+  @account = current_user.prop_firm_accounts.new(account_params)
+  @account.status ||= "activa"
 
-    @account.strategy_ids = params[:strategy_ids] if params[:strategy_ids].present?
+  strategy_ids = Array(params[:strategy_ids]).reject(&:blank?)
 
-    if @account.save
-      redirect_to prop_firm_account_path(@account), notice: "✅ Cuenta de Fondeo creada exitosamente."
-    else
-      @templates  = PropFirmRuleTemplate.all.order(:firm_name, :account_size)
-      @strategies = current_user.strategies
-      render :new, status: :unprocessable_entity
-    end
+  if strategy_ids.any?
+    @account.strategy_ids = current_user.strategies.where(id: strategy_ids).ids
   end
+
+  if @account.save
+    redirect_to prop_firm_account_path(@account),
+                notice: "✅ Cuenta de Fondeo creada exitosamente."
+  else
+    @templates  = PropFirmRuleTemplate.all.order(:firm_name, :account_size)
+    @strategies = current_user.strategies
+    render :new, status: :unprocessable_entity
+  end
+end
 
   def update
     @account.strategy_ids = params[:strategy_ids] if params[:strategy_ids].present?
