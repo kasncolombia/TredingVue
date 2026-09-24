@@ -363,15 +363,13 @@ if HistoricalBar1m.count.zero?
   puts "Importando datos históricos iniciales desde Massive API..."
 
   if ENV["MASSIVE_API_KEY"].present?
-    importer = Backtesting::MassiveImporter.new
-
-    importer.import_m1_aggs(
+    count = Backtesting::MassiveImporter.import_historical_range(
       "AAPL",
       Date.today - 7,
       Date.today
     )
 
-    puts "¡Datos históricos cargados exitosamente!"
+    puts "¡Datos históricos cargados exitosamente! #{count} velas."
   else
     puts "ADVERTENCIA: No se encontró MASSIVE_API_KEY en las variables de entorno."
   end
