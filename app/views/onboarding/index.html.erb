@@ -1,610 +1,225 @@
-<%# app/views/pages/landing.html.erb %>
-<div class="min-h-screen relative flex flex-col justify-between bg-white text-slate-900 dark:bg-[#05080d] dark:text-white overflow-hidden selection:bg-[#009DFA]/25 selection:text-[#009DFA] transition-colors duration-150">
+<%# app/views/onboarding/index.html.erb %>
+<div class="w-full max-w-2xl relative z-10 flex flex-col items-center justify-center min-h-[500px]"
+     data-controller="onboarding"
+     data-onboarding-wizard-url-value="<%= prop_firm_accounts_path %>"
+     data-onboarding-backtester-url-value="<%= backtesting_root_path %>"
+     data-onboarding-journal-url-value="<%= trades_path %>"
+     data-onboarding-dashboard-url-value="<%= dashboard_path %>">
 
-  <!-- BACKGROUND: grid técnico + un único glow de acento -->
-  <div class="pointer-events-none fixed inset-0 z-0">
-    <div class="absolute -top-40 left-1/2 h-[500px] w-[700px] -translate-x-1/2 rounded-full bg-[#009DFA]/[0.06] dark:bg-[#009DFA]/10 blur-[120px]"></div>
-    <div class="absolute inset-0 opacity-[0.025] dark:opacity-[0.035]" style="background-image: linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px); background-size: 50px 50px;"></div>
+  <!-- TOP HEADER / BRANDING & BACK BUTTON -->
+  <div class="w-full flex items-center justify-between mb-6">
+    <button data-onboarding-target="backButton"
+            data-action="click->onboarding#back"
+            class="hidden px-3.5 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer border border-slate-700/60">
+      <span class="material-symbols-outlined text-[16px]">arrow_back</span> Regresar
+    </button>
+    <div class="flex items-center gap-2 mx-auto sm:mx-0">
+      <div class="flex h-7 w-7 items-center justify-center rounded-lg border border-[#009DFA]/30 bg-[#009DFA]/10">
+        <svg class="h-4 w-4 text-[#009DFA]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 19V5m0 14h16M7 15l3-4 3 2 5-7"/>
+        </svg>
+      </div>
+      <span class="text-base font-bold tracking-tight text-white">Trade<span class="text-[#009DFA]">Tres</span></span>
+    </div>
   </div>
 
-  <!-- NAVBAR -->
-  <header class="w-full max-w-[1280px] mx-auto flex items-center justify-between h-20 px-5 sm:px-8 lg:px-12 z-30 relative border-b border-slate-200 dark:border-white/[0.06] backdrop-blur-xl bg-white/80 dark:bg-[#05080d]/80 sticky top-0">
-    <div class="flex items-center gap-10">
-      <%= link_to root_path, class: "flex items-center gap-2 shrink-0" do %>
-        <div class="flex h-8 w-8 items-center justify-center rounded-lg border border-[#009DFA]/30 bg-[#009DFA]/10">
-          <svg class="h-4 w-4 text-[#009DFA]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 19V5m0 14h16M7 15l3-4 3 2 5-7"/>
-          </svg>
-        </div>
-        <span class="text-lg font-bold tracking-tight">Trade<span class="text-[#009DFA]">Tres</span></span>
-      <% end %>
-
-      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600 dark:text-slate-400">
-        <a href="#herramientas" class="hover:text-slate-900 dark:hover:text-white transition-colors">Producto</a>
-        <a href="#ecosistema" class="hover:text-slate-900 dark:hover:text-white transition-colors">Recursos</a>
-        <a href="#comunidad" class="hover:text-slate-900 dark:hover:text-white transition-colors">Comunidad</a>
-        <a href="#precios" class="hover:text-slate-900 dark:hover:text-white transition-colors">Precios</a>
-      </nav>
+  <!-- PROGRESS INDICATOR -->
+  <div data-onboarding-target="progressContainer" class="hidden opacity-0 transition-opacity duration-300 w-full flex-col gap-2 mb-8">
+    <div class="flex items-center justify-between text-xs font-mono text-slate-400">
+      <span>Paso <span data-onboarding-target="progressText" class="text-[#009DFA] font-bold">1</span> de 3</span>
+      <span class="text-[11px]">Configuración de Perfil</span>
     </div>
+    <div class="w-full bg-slate-800/80 rounded-full h-2 overflow-hidden border border-slate-700/50">
+      <div data-onboarding-target="progressBar" class="bg-gradient-to-r from-[#009DFA] to-blue-500 h-full w-0 transition-all duration-300 rounded-full shadow-[0_0_12px_rgba(0,157,250,0.6)]"></div>
+    </div>
+  </div>
 
-    <div class="flex items-center gap-2">
-      <button onclick="toggleTheme()" type="button" aria-label="Cambiar tema" class="w-9 h-9 rounded-xl bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.08] flex items-center justify-center text-slate-600 dark:text-slate-300 hover:border-[#009DFA]/40 transition-colors shrink-0">
-        <span class="material-symbols-outlined text-[18px] dark:hidden">dark_mode</span>
-        <span class="material-symbols-outlined text-[18px] hidden dark:block">light_mode</span>
+  <!-- CONTAINER CARD -->
+  <div class="w-full bg-slate-900/90 border border-slate-800/90 rounded-3xl p-6 sm:p-10 shadow-2xl backdrop-blur-xl relative overflow-hidden min-h-[420px] flex flex-col justify-between">
+    
+    <!-- STEP 0: BIENVENIDA -->
+    <div data-onboarding-target="step" data-step="0" class="flex flex-col items-center text-center space-y-6 my-auto transition-all duration-300">
+      <div class="w-16 h-16 rounded-2xl bg-[#009DFA]/10 border border-[#009DFA]/30 flex items-center justify-center text-[#009DFA] text-3xl shadow-[0_0_30px_rgba(0,157,250,0.2)]">
+        🚀
+      </div>
+      <div class="space-y-2">
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          ¡Bienvenido a <span class="text-[#009DFA]">TradeTres</span>!
+        </h1>
+        <p class="text-sm text-slate-400 max-w-md mx-auto leading-relaxed">
+          Diseñado para ayudarte a dominar tu disciplina, validar tus estrategias y escalar cuentas fondeadas. Configura tu perfil en 3 sencillos pasos.
+        </p>
+      </div>
+
+      <button data-action="click->onboarding#next" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-[#009DFA] hover:bg-blue-600 text-white font-bold text-sm shadow-[0_0_25px_rgba(0,157,250,0.35)] transition-all flex items-center justify-center gap-2 group cursor-pointer">
+        <span>Comenzar Configuración</span>
+        <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
       </button>
-
-      <% if user_signed_in? %>
-        <%= link_to dashboard_path, class: "ml-1 px-4 py-2 rounded-xl bg-[#009DFA] hover:bg-[#14a8ff] text-white font-semibold text-sm transition-colors" do %>
-          Ir a la plataforma
-        <% end %>
-      <% else %>
-        <%= link_to "Iniciar sesión", new_user_session_path, class: "px-3.5 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors hidden sm:block" %>
-        <%= link_to new_user_registration_path, class: "ml-1 px-4 py-2 rounded-xl bg-[#009DFA] hover:bg-[#14a8ff] text-white font-semibold text-sm shadow-[0_0_25px_rgba(0,157,250,0.2)] transition-all" do %>
-          Comienza gratis
-        <% end %>
-      <% end %>
     </div>
-  </header>
 
-  <!-- HERO -->
-  <main class="relative z-10 flex-1 w-full max-w-[1280px] mx-auto px-5 sm:px-8 lg:px-12">
-    <section class="py-14 lg:py-24">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-10 items-center">
-
-        <div class="lg:col-span-5 space-y-7 text-center lg:text-left">
-          <div class="inline-flex items-center gap-2 rounded-full border border-[#009DFA]/20 bg-[#009DFA]/5 px-3.5 py-1.5 text-xs font-medium text-[#009DFA]">
-            <span class="h-1.5 w-1.5 rounded-full bg-[#009DFA]"></span>
-            Journal, prop firms y backtesting en un solo lugar
-          </div>
-
-          <h1 class="text-4xl sm:text-5xl lg:text-[56px] leading-[1.05] tracking-[-0.02em] font-bold">
-            Cada operación cuenta una historia.
-            <span class="text-[#009DFA]"> Aprende a leerla.</span>
-          </h1>
-
-          <p class="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed max-w-lg mx-auto lg:mx-0">
-            Registra tus trades, prueba tu estrategia contra datos históricos y gestiona tus cuentas de fondeo, todo conectado en un mismo lugar.
-          </p>
-
-          <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-1">
-            <%= link_to new_user_registration_path, class: "w-full sm:w-auto px-6 py-3.5 rounded-xl bg-[#009DFA] hover:bg-[#14a8ff] text-white font-semibold text-sm shadow-[0_0_30px_rgba(0,157,250,0.25)] transition-all flex items-center justify-center gap-2" do %>
-              <span>Comienza gratis</span>
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-6-6l6 6-6 6"/></svg>
-            <% end %>
-
-            <a href="#herramientas" class="w-full sm:w-auto px-6 py-3.5 rounded-xl border border-slate-200 dark:border-white/[0.08] text-slate-700 dark:text-slate-200 font-medium text-sm hover:border-slate-300 dark:hover:border-white/[0.16] transition-colors flex items-center justify-center gap-2">
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5v14l11-7z"/></svg>
-              <span>Ver cómo funciona</span>
-            </a>
-          </div>
-
-          <!-- MÉTRICAS: dato real de negocio, no decoración de color -->
-          <div class="grid grid-cols-4 gap-4 pt-8 border-t border-slate-200 dark:border-white/[0.06] text-left max-w-md mx-auto lg:mx-0">
-            <div>
-              <p class="text-2xl font-bold font-mono">10K+</p>
-              <p class="text-xs text-slate-500 mt-0.5">traders activos</p>
-            </div>
-            <div>
-              <p class="text-2xl font-bold font-mono">1M+</p>
-              <p class="text-xs text-slate-500 mt-0.5">operaciones</p>
-            </div>
-            <div>
-              <p class="text-2xl font-bold font-mono">$500M+</p>
-              <p class="text-xs text-slate-500 mt-0.5">volumen</p>
-            </div>
-            <div>
-              <p class="text-2xl font-bold font-mono">4.8/5</p>
-              <p class="text-xs text-slate-500 mt-0.5">valoración</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- HERO MOCKUP -->
-        <div class="lg:col-span-7 relative">
-          <div class="relative rounded-2xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.02] p-2 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.15)] dark:shadow-[0_30px_80px_-20px_rgba(0,157,250,0.12)]">
-            <div class="relative overflow-hidden rounded-xl">
-              <%= image_tag "landing-portada.png", class: "w-full h-auto object-cover rounded-xl", alt: "Panel de TradeTres" %>
-            </div>
-          </div>
-
-          <!-- Una sola nota flotante, con contenido real -->
-          <div class="absolute -bottom-5 left-6 bg-white dark:bg-[#0b1119] border border-slate-200 dark:border-white/[0.1] rounded-xl px-4 py-3 shadow-lg flex items-center gap-3">
-            <div class="h-9 w-9 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17l5-5 4 4 6-8"/></svg>
-            </div>
-            <div>
-              <p class="text-sm font-semibold">Win rate 67%</p>
-              <p class="text-xs text-slate-500">últimos 30 días</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- CINCO HERRAMIENTAS -->
-    <section id="herramientas" class="py-16 border-t border-slate-200 dark:border-white/[0.06]">
-      <div class="max-w-xl mb-10">
-        <h2 class="text-2xl sm:text-3xl font-bold">Cinco herramientas, una sola plataforma.</h2>
-        <p class="mt-2 text-slate-600 dark:text-slate-400">Todo lo que necesitas para operar con disciplina, en un mismo flujo de trabajo.</p>
+    <!-- STEP 1: INTENCIONES / OBJETIVOS -->
+    <div data-onboarding-target="step" data-step="1" class="hidden flex-col space-y-6 my-auto transition-all duration-300">
+      <div>
+        <h2 class="text-xl sm:text-2xl font-bold text-white mb-1">¿Cuál es tu objetivo principal en TradeTres?</h2>
+        <p class="text-xs text-slate-400">Selecciona una o más opciones según tus metas de trading.</p>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-        <% [
-          ["dashboard", "Journal", "Registra y analiza tu rendimiento."],
-          ["account_balance", "Prop firms", "Administra cuentas y objetivos."],
-          ["replay", "Backtesting", "Prueba estrategias con datos históricos."],
-          ["smart_toy", "AI Coach", "Recomendaciones basadas en tu propio historial."],
-          ["groups", "Comunidad", "Comparte y aprende de otros traders."]
-        ].each do |icon, title, desc| %>
-          <div class="p-5 rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.02] hover:border-[#009DFA]/40 transition-colors">
-            <div class="w-9 h-9 rounded-lg bg-[#009DFA]/10 text-[#009DFA] flex items-center justify-center mb-3">
-              <span class="material-symbols-outlined text-[19px]"><%= icon %></span>
-            </div>
-            <h3 class="font-semibold text-sm mb-1"><%= title %></h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed"><%= desc %></p>
+      <div class="grid grid-cols-1 gap-3">
+        <label class="p-4 rounded-2xl border border-slate-800 bg-slate-950/50 hover:border-[#009DFA]/60 hover:bg-[#009DFA]/5 transition-all cursor-pointer flex items-center gap-4 group">
+          <input type="checkbox" value="Prop Firms" data-onboarding-target="intention" data-action="change->onboarding#updateNextButton" class="w-5 h-5 rounded border-slate-700 bg-slate-900 text-[#009DFA] focus:ring-[#009DFA]">
+          <div class="text-2xl group-hover:scale-110 transition-transform">🏦</div>
+          <div class="flex-1">
+            <h3 class="text-sm font-bold text-white group-hover:text-[#009DFA] transition-colors">Prop Firms & Fondeo</h3>
+            <p class="text-xs text-slate-400">Aprobar evaluaciones, monitorear drawdown y escalar cuentas fondeadas.</p>
           </div>
-        <% end %>
-      </div>
-    </section>
+        </label>
 
-    <!-- DASHBOARD / JOURNAL -->
-    <section class="py-20">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
-        <div class="lg:col-span-5 space-y-5">
-          <h2 class="text-3xl sm:text-4xl font-bold leading-tight">Tu centro de control de trading.</h2>
-          <p class="text-base text-slate-600 dark:text-slate-400 leading-relaxed">
-            Registra cada operación y mide cada estrategia para entender exactamente qué impulsa tu rendimiento.
-          </p>
-          <ul class="space-y-3 pt-1 text-sm text-slate-700 dark:text-slate-300">
-            <li class="flex items-start gap-2.5">
-              <svg class="h-5 w-5 text-[#009DFA] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>Analíticas avanzadas y reportes</span>
-            </li>
-            <li class="flex items-start gap-2.5">
-              <svg class="h-5 w-5 text-[#009DFA] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>Seguimiento de estrategias y playbook</span>
-            </li>
-            <li class="flex items-start gap-2.5">
-              <svg class="h-5 w-5 text-[#009DFA] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>Capturas, notas y estado emocional por trade</span>
-            </li>
-            <li class="flex items-start gap-2.5">
-              <svg class="h-5 w-5 text-[#009DFA] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>Identifica patrones y corrígelos más rápido</span>
-            </li>
-          </ul>
-          <a href="#precios" class="inline-flex items-center gap-1.5 text-sm font-semibold text-[#009DFA] hover:underline pt-1">
-           999 Explorar el journal
-          </a>
-        </div>
-
-        <div class="lg:col-span-7">
-          <div class="rounded-2xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.02] p-2 shadow-sm">
-            <%= image_tag "calendario-landing.png", class: "w-full h-auto object-cover rounded-xl", alt: "Calendario de trading TradeTres" %>
+        <label class="p-4 rounded-2xl border border-slate-800 bg-slate-950/50 hover:border-[#009DFA]/60 hover:bg-[#009DFA]/5 transition-all cursor-pointer flex items-center gap-4 group">
+          <input type="checkbox" value="Backtesting" data-onboarding-target="intention" data-action="change->onboarding#updateNextButton" class="w-5 h-5 rounded border-slate-700 bg-slate-900 text-[#009DFA] focus:ring-[#009DFA]">
+          <div class="text-2xl group-hover:scale-110 transition-transform">📊</div>
+          <div class="flex-1">
+            <h3 class="text-sm font-bold text-white group-hover:text-[#009DFA] transition-colors">Backtesting & Replay</h3>
+            <p class="text-xs text-slate-400">Simular sesiones históricas vela a vela y calcular la esperanza matemática de mi sistema.</p>
           </div>
-        </div>
-      </div>
-    </section>
+        </label>
 
-    <!-- PROP FIRMS -->
-    <section class="py-20 border-t border-slate-200 dark:border-white/[0.06]">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
-        <div class="lg:col-span-7 order-2 lg:order-1">
-          <div class="p-6 rounded-2xl bg-white dark:bg-white/[0.02] border border-slate-200 dark:border-white/[0.08] shadow-sm space-y-6">
-            <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-white/[0.06]">
-              <div>
-                <p class="text-xs text-slate-500">Cuentas fondeadas</p>
-                <p class="text-2xl font-bold font-mono mt-0.5">$1,250,000 <span class="text-xs text-slate-400 font-normal">capital total</span></p>
-              </div>
-              <div class="flex gap-5 text-right">
-                <div>
-                  <p class="text-[11px] text-slate-500">Pagos recibidos</p>
-                  <p class="text-sm font-semibold text-emerald-500 font-mono">$14,750</p>
-                </div>
-                <div>
-                  <p class="text-[11px] text-slate-500">Ganancia neta</p>
-                  <p class="text-sm font-semibold text-emerald-500 font-mono">$12,910</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="overflow-x-auto">
-              <table class="w-full text-left text-xs">
-                <thead>
-                  <tr class="text-slate-500 border-b border-slate-100 dark:border-white/[0.06]">
-                    <th class="pb-2 font-medium">Firma</th>
-                    <th class="pb-2 font-medium">Cuenta</th>
-                    <th class="pb-2 font-medium">Tipo</th>
-                    <th class="pb-2 font-medium">Balance</th>
-                    <th class="pb-2 font-medium">P&L</th>
-                    <th class="pb-2 font-medium">Estado</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100 dark:divide-white/[0.06] font-mono">
-                  <tr>
-                    <td class="py-3 font-sans font-semibold">Apex</td>
-                    <td class="py-3 text-slate-500">250k</td>
-                    <td class="py-3 text-emerald-500">Fondeada</td>
-                    <td class="py-3">$254,450</td>
-                    <td class="py-3 text-emerald-500">+$4,450</td>
-                    <td class="py-3"><span class="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-500 font-sans font-medium text-[10px]">Activa</span></td>
-                  </tr>
-                  <tr>
-                    <td class="py-3 font-sans font-semibold">Topstep</td>
-                    <td class="py-3 text-slate-500">50k</td>
-                    <td class="py-3 text-emerald-500">Fondeada</td>
-                    <td class="py-3">$52,140</td>
-                    <td class="py-3 text-emerald-500">+$2,140</td>
-                    <td class="py-3"><span class="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-500 font-sans font-medium text-[10px]">Activa</span></td>
-                  </tr>
-                  <tr>
-                    <td class="py-3 font-sans font-semibold">AlphaFutures</td>
-                    <td class="py-3 text-slate-500">50k</td>
-                    <td class="py-3 text-amber-500">Evaluación</td>
-                    <td class="py-3">$51,120</td>
-                    <td class="py-3 text-emerald-500">+$1,120</td>
-                    <td class="py-3"><span class="px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-500 font-sans font-medium text-[10px]">En curso</span></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+        <label class="p-4 rounded-2xl border border-slate-800 bg-slate-950/50 hover:border-[#009DFA]/60 hover:bg-[#009DFA]/5 transition-all cursor-pointer flex items-center gap-4 group">
+          <input type="checkbox" value="Journal & Analytics" data-onboarding-target="intention" data-action="change->onboarding#updateNextButton" class="w-5 h-5 rounded border-slate-700 bg-slate-900 text-[#009DFA] focus:ring-[#009DFA]">
+          <div class="text-2xl group-hover:scale-110 transition-transform">📓</div>
+          <div class="flex-1">
+            <h3 class="text-sm font-bold text-white group-hover:text-[#009DFA] transition-colors">Diario de Operaciones (Journal)</h3>
+            <p class="text-xs text-slate-400">Registrar ejecuciones en vivo, medir mi Win Rate y recibir consejos del AI Coach.</p>
           </div>
-        </div>
-
-        <div class="lg:col-span-5 order-1 lg:order-2 space-y-5">
-          <h2 class="text-3xl sm:text-4xl font-bold leading-tight">Lleva el trading fondeado al siguiente nivel.</h2>
-          <p class="text-base text-slate-600 dark:text-slate-400 leading-relaxed">
-            Gestiona evaluaciones, cuentas fondeadas, drawdowns y pagos, todo en un solo lugar con métricas exactas.
-          </p>
-          <ul class="space-y-3 pt-1 text-sm text-slate-700 dark:text-slate-300">
-            <li class="flex items-start gap-2.5">
-              <svg class="h-5 w-5 text-[#009DFA] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>Múltiples prop firms en una sola cuenta</span>
-            </li>
-            <li class="flex items-start gap-2.5">
-              <svg class="h-5 w-5 text-[#009DFA] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>Monitoreo de drawdowns y objetivos</span>
-            </li>
-            <li class="flex items-start gap-2.5">
-              <svg class="h-5 w-5 text-[#009DFA] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>Seguimiento de pagos y retorno</span>
-            </li>
-          </ul>
-          <a href="#precios" class="inline-flex items-center gap-1.5 text-sm font-semibold text-[#009DFA] hover:underline pt-1">
-            Explorar prop firms
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- BACKTESTING -->
-    <section class="py-20 border-t border-slate-200 dark:border-white/[0.06]">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
-        <div class="lg:col-span-5 space-y-5">
-          <h2 class="text-3xl sm:text-4xl font-bold leading-tight">Reproduce. Prueba. Demuestra.</h2>
-          <p class="text-base text-slate-600 dark:text-slate-400 leading-relaxed">
-            Practica sobre cualquier sesión histórica y descubre si tu estrategia realmente tiene ventaja antes de arriesgar capital real.
-          </p>
-          <ul class="space-y-3 pt-1 text-sm text-slate-700 dark:text-slate-300">
-            <li class="flex items-start gap-2.5">
-              <svg class="h-5 w-5 text-[#009DFA] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>Reproducción de mercados históricos, vela a vela</span>
-            </li>
-            <li class="flex items-start gap-2.5">
-              <svg class="h-5 w-5 text-[#009DFA] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>Estadísticas de rendimiento detalladas</span>
-            </li>
-            <li class="flex items-start gap-2.5">
-              <svg class="h-5 w-5 text-[#009DFA] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>Sincroniza tus backtests con tu journal</span>
-            </li>
-          </ul>
-          <a href="#precios" class="inline-flex items-center gap-1.5 text-sm font-semibold text-[#009DFA] hover:underline pt-1">
-            Explorar backtesting
-          </a>
-        </div>
-
-        <div class="lg:col-span-7">
-          <div class="p-5 rounded-2xl bg-[#0b1119] text-white border border-white/[0.08] shadow-sm space-y-4">
-            <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
-              <div class="flex items-center gap-3">
-                <span class="px-2 py-0.5 rounded-md bg-[#009DFA]/15 text-[#5cc8ff] font-mono text-xs font-medium">MNQ · 1m</span>
-                <span class="text-xs text-slate-500 font-mono">14 dic 2025</span>
-              </div>
-              <div class="flex gap-2">
-                <span class="px-3 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 font-medium text-xs">BUY</span>
-                <span class="px-3 py-1 rounded-lg bg-rose-500/15 text-rose-400 font-medium text-xs">SELL</span>
-              </div>
-            </div>
-
-            <div class="h-44 rounded-xl bg-black/20 border border-white/[0.06] p-4 relative flex items-end justify-between overflow-hidden">
-              <div class="absolute top-2 left-4 text-[10px] font-mono text-slate-500">O 245.20 H 246.10 L 244.80 C 245.90</div>
-              <div class="w-full flex items-end justify-between gap-1.5 h-32">
-                <% [40, 55, 30, 70, 60, 90, 80, 110, 95, 125, 115, 140].each_with_index do |h, i| %>
-                  <div class="flex-1 flex flex-col items-center justify-end h-full">
-                    <div class="w-1 rounded-sm <%= i.even? ? 'bg-emerald-500' : 'bg-rose-500' %>" style="height: <%= h %>px;"></div>
-                  </div>
-                <% end %>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-4 gap-2 text-center font-mono pt-1">
-              <div class="p-2.5 rounded-lg bg-white/[0.03]">
-                <p class="text-[10px] text-slate-500">Trades</p>
-                <p class="text-sm font-semibold">42</p>
-              </div>
-              <div class="p-2.5 rounded-lg bg-white/[0.03]">
-                <p class="text-[10px] text-slate-500">Win rate</p>
-                <p class="text-sm font-semibold text-emerald-400">67%</p>
-              </div>
-              <div class="p-2.5 rounded-lg bg-white/[0.03]">
-                <p class="text-[10px] text-slate-500">Profit factor</p>
-                <p class="text-sm font-semibold">2.41</p>
-              </div>
-              <div class="p-2.5 rounded-lg bg-white/[0.03]">
-                <p class="text-[10px] text-slate-500">P&L</p>
-                <p class="text-sm font-semibold text-emerald-400">+$38.4K</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- AI COACH -->
-    <section class="py-20 border-t border-slate-200 dark:border-white/[0.06]">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
-        <div class="lg:col-span-7 order-2 lg:order-1">
-          <div class="p-6 rounded-2xl bg-white dark:bg-white/[0.02] border border-slate-200 dark:border-white/[0.08] shadow-sm space-y-4">
-            <div class="flex items-center gap-3 pb-3 border-b border-slate-100 dark:border-white/[0.06]">
-              <div class="w-9 h-9 rounded-lg bg-[#009DFA]/10 text-[#009DFA] flex items-center justify-center">
-                <span class="material-symbols-outlined text-[18px]">smart_toy</span>
-              </div>
-              <div>
-                <p class="text-sm font-semibold">TresBot</p>
-                <p class="text-xs text-slate-500">Análisis en vivo de tu trading</p>
-              </div>
-            </div>
-
-            <div class="space-y-3 text-sm">
-              <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-white/[0.03] text-slate-700 dark:text-slate-300">
-                ¿Qué puedo mejorar de mis últimas 100 operaciones en el NQ?
-              </div>
-
-              <div class="p-4 rounded-xl bg-[#009DFA]/5 border border-[#009DFA]/15 text-slate-700 dark:text-slate-300 space-y-2">
-                <ul class="space-y-1.5 text-sm list-disc pl-4">
-                  <li>Tu setup de FVG tiene un 77% de win rate entre 9:45 y 10:30 am.</li>
-                  <li>El 61% de tus pérdidas ocurren al sobreoperar tras un trade perdedor.</li>
-                  <li>Rindes un 28% más en backtesting que en real: la brecha está en la disciplina.</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="lg:col-span-5 order-1 lg:order-2 space-y-5">
-          <h2 class="text-3xl sm:text-4xl font-bold leading-tight">Conoce a TresBot.</h2>
-          <p class="text-base text-slate-600 dark:text-slate-400 leading-relaxed">
-            Un coach con IA que conoce tu historial real y te ayuda a identificar los sesgos que te cuestan dinero.
-          </p>
-          <ul class="space-y-3 pt-1 text-sm text-slate-700 dark:text-slate-300">
-            <li class="flex items-start gap-2.5">
-              <svg class="h-5 w-5 text-[#009DFA] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>Análisis personalizado de tu rendimiento</span>
-            </li>
-            <li class="flex items-start gap-2.5">
-              <svg class="h-5 w-5 text-[#009DFA] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>Identifica patrones y errores recurrentes</span>
-            </li>
-            <li class="flex items-start gap-2.5">
-              <svg class="h-5 w-5 text-[#009DFA] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>Compara tu trading en vivo con tus backtests</span>
-            </li>
-          </ul>
-          <a href="#precios" class="inline-flex items-center gap-1.5 text-sm font-semibold text-[#009DFA] hover:underline pt-1">
-            Hablar con TresBot
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- COMUNIDAD -->
-    <section id="comunidad" class="py-20 border-t border-slate-200 dark:border-white/[0.06]">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
-        <div class="lg:col-span-5 space-y-5">
-          <h2 class="text-3xl sm:text-4xl font-bold leading-tight">Opera en comunidad. Mejora juntos.</h2>
-          <p class="text-base text-slate-600 dark:text-slate-400 leading-relaxed">
-            Comparte ideas, backtests y resultados con traders que están en el mismo camino hacia la consistencia.
-          </p>
-          <a href="#precios" class="inline-flex items-center gap-1.5 text-sm font-semibold text-[#009DFA] hover:underline pt-1">
-            Unirse a la comunidad
-          </a>
-        </div>
-
-        <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="p-5 rounded-2xl bg-white dark:bg-white/[0.02] border border-slate-200 dark:border-white/[0.08] shadow-sm space-y-3">
-            <div class="flex items-center gap-2.5">
-              <div class="w-8 h-8 rounded-full bg-[#009DFA]/10 text-[#009DFA] font-semibold text-xs flex items-center justify-center">J</div>
-              <div>
-                <p class="text-xs font-semibold">jacogetti</p>
-                <p class="text-[11px] text-slate-500">compartió un backtest</p>
-              </div>
-            </div>
-            <p class="text-xs text-slate-600 dark:text-slate-400">NQ, sesión NY. +$2,450 en 2 trades respetando la estrategia.</p>
-            <div class="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/15 text-center font-mono">
-              <p class="text-[10px] text-emerald-600 dark:text-emerald-400">P&L de hoy</p>
-              <p class="text-lg font-bold text-emerald-500">+$2,450</p>
-            </div>
-          </div>
-
-          <div class="p-5 rounded-2xl bg-white dark:bg-white/[0.02] border border-slate-200 dark:border-white/[0.08] shadow-sm space-y-3">
-            <div class="flex items-center gap-2.5">
-              <div class="w-8 h-8 rounded-full bg-[#009DFA]/10 text-[#009DFA] font-semibold text-xs flex items-center justify-center">C</div>
-              <div>
-                <p class="text-xs font-semibold">carlostraders</p>
-                <p class="text-[11px] text-emerald-500">recibió su primer pago</p>
-              </div>
-            </div>
-            <p class="text-xs text-slate-600 dark:text-slate-400">$4,450 en su cuenta Topstep. La disciplina pagó.</p>
-            <div class="p-3 rounded-xl bg-slate-50 dark:bg-black/20 text-center font-mono">
-              <p class="text-[10px] text-slate-500">Pago recibido</p>
-              <p class="text-lg font-bold text-emerald-500">$4,450</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ECOSISTEMA -->
-    <section id="ecosistema" class="py-16 border-t border-b border-slate-200 dark:border-white/[0.06]">
-      <div class="max-w-xl mb-10">
-        <h2 class="text-2xl sm:text-3xl font-bold">Un ecosistema conectado.</h2>
-        <p class="mt-2 text-slate-600 dark:text-slate-400">De la idea a la ejecución: cada módulo alimenta al siguiente.</p>
+        </label>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
-        <% [
-          ["dashboard", "Journal", "Opera y registra"],
-          ["account_balance", "Prop firms", "Evalúa cuentas"],
-          ["replay", "Backtesting", "Prueba estrategias"],
-          ["smart_toy", "AI Coach", "Analiza y mejora"],
-          ["groups", "Comunidad", "Crece con otros"]
-        ].each do |icon, title, desc| %>
-          <div class="p-4 rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.02] text-center">
-            <span class="material-symbols-outlined text-[22px] text-[#009DFA]"><%= icon %></span>
-            <p class="font-semibold text-xs mt-1.5"><%= title %></p>
-            <p class="text-[11px] text-slate-500"><%= desc %></p>
-          </div>
-        <% end %>
+      <div class="flex justify-end pt-2">
+        <button data-onboarding-target="nextButton" data-action="click->onboarding#next" disabled class="px-6 py-3 rounded-xl bg-gray-700 opacity-50 cursor-not-allowed text-white font-bold text-xs transition-all flex items-center gap-1">
+          <span>Siguiente</span>
+          <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+        </button>
       </div>
-    </section>
+    </div>
 
-    <!-- PRECIOS -->
-    <section id="precios" class="py-20">
-      <div class="text-center max-w-xl mx-auto mb-12">
-        <h2 class="text-3xl sm:text-4xl font-bold">Empieza gratis. Crece cuando estés listo.</h2>
+    <!-- STEP 2: MERCADO PRINCIPAL -->
+    <div data-onboarding-target="step" data-step="2" class="hidden flex-col space-y-6 my-auto transition-all duration-300">
+      <div>
+        <h2 class="text-xl sm:text-2xl font-bold text-white mb-1">¿En qué mercados operas habitualmente?</h2>
+        <p class="text-xs text-slate-400">Elige los activos que más monitoreas en tus análisis.</p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-        <!-- FREE -->
-        <div class="p-8 rounded-2xl bg-white dark:bg-white/[0.02] border border-slate-200 dark:border-white/[0.08] flex flex-col justify-between">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <label class="p-4 rounded-2xl border border-slate-800 bg-slate-950/50 hover:border-[#009DFA]/60 hover:bg-[#009DFA]/5 transition-all cursor-pointer flex items-center gap-3 group">
+          <input type="checkbox" value="Futuros" data-onboarding-target="market" data-action="change->onboarding#updateNextButton" class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-[#009DFA] focus:ring-[#009DFA]">
+          <span class="text-xl">📈</span>
           <div>
-            <h3 class="text-xl font-bold mb-1">Hobby Trader</h3>
-            <p class="text-sm text-slate-500 mb-6">Ideal para quienes empiezan a registrar trades.</p>
-            <div class="text-4xl font-bold mb-6">$0<span class="text-sm font-normal text-slate-500">/mes</span></div>
-            <ul class="space-y-3 text-sm mb-8">
-              <li class="flex items-center gap-2.5"><svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Hasta 50 trades mensuales</li>
-              <li class="flex items-center gap-2.5"><svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Dashboard de métricas básicas</li>
-              <li class="flex items-center gap-2.5"><svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Diario en texto plano</li>
-            </ul>
+            <h3 class="text-xs font-bold text-white group-hover:text-[#009DFA]">Futuros</h3>
+            <p class="text-[10px] text-slate-400">NQ, ES, CL, Gold, YM</p>
           </div>
-          <%= link_to "Comenzar gratis", new_user_registration_path, class: "w-full py-3.5 rounded-xl text-center bg-slate-100 dark:bg-white/[0.06] text-slate-900 dark:text-white font-semibold hover:bg-slate-200 dark:hover:bg-white/[0.1] transition-colors block" %>
-        </div>
+        </label>
 
-        <!-- PRO -->
-        <div class="p-8 rounded-2xl bg-[#0b1119] text-white border border-[#009DFA]/40 shadow-[0_0_50px_rgba(0,157,250,0.1)] relative flex flex-col justify-between">
-          <div class="absolute -top-3 left-8 bg-[#009DFA] text-white text-[11px] font-semibold px-3 py-1 rounded-full">
-            Más popular
-          </div>
+        <label class="p-4 rounded-2xl border border-slate-800 bg-slate-950/50 hover:border-[#009DFA]/60 hover:bg-[#009DFA]/5 transition-all cursor-pointer flex items-center gap-3 group">
+          <input type="checkbox" value="Forex" data-onboarding-target="market" data-action="change->onboarding#updateNextButton" class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-[#009DFA] focus:ring-[#009DFA]">
+          <span class="text-xl">💱</span>
           <div>
-            <h3 class="text-xl font-bold text-[#5cc8ff] mb-1">Coach PRO</h3>
-            <p class="text-sm text-slate-400 mb-6">Para traders decididos a pasar pruebas de fondeo.</p>
-            <div class="text-4xl font-bold mb-6">$19<span class="text-sm font-normal text-slate-400">/mes</span></div>
-            <ul class="space-y-3 text-sm text-slate-200 mb-8">
-              <li class="flex items-center gap-2.5"><svg class="h-4 w-4 text-[#009DFA]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> AI Trading Coach 24/7</li>
-              <li class="flex items-center gap-2.5"><svg class="h-4 w-4 text-[#009DFA]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Trades ilimitados</li>
-              <li class="flex items-center gap-2.5"><svg class="h-4 w-4 text-[#009DFA]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Importación CSV multi-broker</li>
-              <li class="flex items-center gap-2.5"><svg class="h-4 w-4 text-[#009DFA]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Replay engine ilimitado</li>
-            </ul>
+            <h3 class="text-xs font-bold text-white group-hover:text-[#009DFA]">Forex</h3>
+            <p class="text-[10px] text-slate-400">EUR/USD, GBP/USD, USD/JPY</p>
           </div>
-          <%= link_to "Obtener plan PRO", new_user_registration_path, class: "w-full py-3.5 rounded-xl text-center bg-[#009DFA] hover:bg-[#14a8ff] text-white font-semibold shadow-[0_0_25px_rgba(0,157,250,0.25)] transition-colors block" %>
-        </div>
-      </div>
-    </section>
+        </label>
 
-    <!-- CTA FINAL -->
-    <section class="py-20 my-10 rounded-2xl bg-[#05080d] text-white relative overflow-hidden text-center border border-white/[0.08]">
-      <div class="absolute -top-32 left-1/2 h-[400px] w-[600px] -translate-x-1/2 rounded-full bg-[#009DFA]/10 blur-[120px] pointer-events-none"></div>
-      <div class="relative z-10 max-w-xl mx-auto px-6 space-y-6">
-        <h2 class="text-3xl sm:text-5xl font-bold tracking-tight">Opera con datos, no con instinto.</h2>
-        <p class="text-base text-slate-400">Únete a miles de traders que ya están construyendo un mejor proceso con TradeTres.</p>
-        <div class="flex flex-col sm:flex-row justify-center gap-3 pt-2">
-          <%= link_to "Comienza gratis", new_user_registration_path, class: "px-7 py-3.5 rounded-xl bg-[#009DFA] hover:bg-[#14a8ff] text-white font-semibold text-sm shadow-[0_0_30px_rgba(0,157,250,0.25)] transition-colors inline-block" %>
-          <a href="#precios" class="px-7 py-3.5 rounded-xl border border-white/[0.12] text-white font-medium text-sm hover:border-white/[0.25] transition-colors inline-block">Ver precios</a>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- FOOTER -->
-  <footer class="w-full max-w-[1280px] mx-auto px-5 sm:px-8 lg:px-12 py-12 border-t border-slate-200 dark:border-white/[0.06] relative z-10 text-sm text-slate-500 dark:text-slate-400">
-    <div class="flex flex-col md:flex-row justify-between gap-10 mb-10">
-      <div class="max-w-xs">
-        <div class="flex items-center gap-2 mb-3">
-          <div class="flex h-7 w-7 items-center justify-center rounded-lg border border-[#009DFA]/30 bg-[#009DFA]/10">
-            <svg class="h-3.5 w-3.5 text-[#009DFA]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 19V5m0 14h16M7 15l3-4 3 2 5-7"/>
-            </svg>
+        <label class="p-4 rounded-2xl border border-slate-800 bg-slate-950/50 hover:border-[#009DFA]/60 hover:bg-[#009DFA]/5 transition-all cursor-pointer flex items-center gap-3 group">
+          <input type="checkbox" value="Criptomonedas" data-onboarding-target="market" data-action="change->onboarding#updateNextButton" class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-[#009DFA] focus:ring-[#009DFA]">
+          <span class="text-xl">🪙</span>
+          <div>
+            <h3 class="text-xs font-bold text-white group-hover:text-[#009DFA]">Criptomonedas</h3>
+            <p class="text-[10px] text-slate-400">BTC, ETH, SOL, Futures</p>
           </div>
-          <span class="font-bold text-slate-900 dark:text-white">Trade<span class="text-[#009DFA]">Tres</span></span>
-        </div>
-        <p class="leading-relaxed">El ecosistema para registrar, analizar y mejorar tu trading con inteligencia artificial.</p>
+        </label>
+
+        <label class="p-4 rounded-2xl border border-slate-800 bg-slate-950/50 hover:border-[#009DFA]/60 hover:bg-[#009DFA]/5 transition-all cursor-pointer flex items-center gap-3 group">
+          <input type="checkbox" value="Acciones & Opciones" data-onboarding-target="market" data-action="change->onboarding#updateNextButton" class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-[#009DFA] focus:ring-[#009DFA]">
+          <span class="text-xl">📊</span>
+          <div>
+            <h3 class="text-xs font-bold text-white group-hover:text-[#009DFA]">Acciones & Opciones</h3>
+            <p class="text-[10px] text-slate-400">NVDA, AAPL, SPY, QQQ</p>
+          </div>
+        </label>
       </div>
 
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-8">
-        <div>
-          <p class="font-semibold text-slate-900 dark:text-white mb-2.5">Producto</p>
-          <ul class="space-y-1.5">
-            <li><a href="#herramientas" class="hover:text-slate-900 dark:hover:text-white transition-colors">Journal</a></li>
-            <li><a href="#herramientas" class="hover:text-slate-900 dark:hover:text-white transition-colors">Prop firms</a></li>
-            <li><a href="#herramientas" class="hover:text-slate-900 dark:hover:text-white transition-colors">Backtesting</a></li>
-          </ul>
-        </div>
-        <div>
-          <p class="font-semibold text-slate-900 dark:text-white mb-2.5">Recursos</p>
-          <ul class="space-y-1.5">
-            <li><a href="#herramientas" class="hover:text-slate-900 dark:hover:text-white transition-colors">AI Coach</a></li>
-            <li><a href="#comunidad" class="hover:text-slate-900 dark:hover:text-white transition-colors">Comunidad</a></li>
-            <li><a href="#precios" class="hover:text-slate-900 dark:hover:text-white transition-colors">Precios</a></li>
-          </ul>
-        </div>
-        <div>
-          <p class="font-semibold text-slate-900 dark:text-white mb-2.5">Empresa</p>
-          <ul class="space-y-1.5">
-            <li><span>Sobre nosotros</span></li>
-            <li><span>Contacto</span></li>
-          </ul>
-        </div>
-        <div>
-          <p class="font-semibold text-slate-900 dark:text-white mb-2.5">Legal</p>
-          <ul class="space-y-1.5">
-            <li><span>Privacidad</span></li>
-            <li><span>Términos</span></li>
-          </ul>
-        </div>
+      <div class="flex justify-end pt-2">
+        <button data-onboarding-target="nextButton" data-action="click->onboarding#next" disabled class="px-6 py-3 rounded-xl bg-gray-700 opacity-50 cursor-not-allowed text-white font-bold text-xs transition-all flex items-center gap-1">
+          <span>Siguiente</span>
+          <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+        </button>
       </div>
     </div>
 
-    <div class="pt-6 border-t border-slate-100 dark:border-white/[0.04] flex flex-col sm:flex-row justify-between items-center gap-4">
-      <p>© 2026 TradeTres Technologies Inc. Todos los derechos reservados.</p>
-      <div class="flex gap-4 text-base">
-        <span>𝕏</span>
-        <span>📷</span>
-        <span>▶</span>
-        <span>💼</span>
+    <!-- STEP 3: NIVEL DE EXPERIENCIA -->
+    <div data-onboarding-target="step" data-step="3" class="hidden flex-col space-y-6 my-auto transition-all duration-300">
+      <div>
+        <h2 class="text-xl sm:text-2xl font-bold text-white mb-1">¿Cuál es tu nivel actual como trader?</h2>
+        <p class="text-xs text-slate-400">Nos ayuda a personalizar los insights del AI Coach.</p>
+      </div>
+
+      <div class="grid grid-cols-1 gap-3">
+        <label class="p-4 rounded-2xl border border-slate-800 bg-slate-950/50 hover:border-[#009DFA]/60 hover:bg-[#009DFA]/5 transition-all cursor-pointer flex items-center gap-4 group">
+          <input type="radio" name="trader_level" value="Principiante" data-onboarding-target="experience" data-action="change->onboarding#updateNextButton" class="w-4 h-4 border-slate-700 bg-slate-900 text-[#009DFA] focus:ring-[#009DFA]">
+          <span class="text-2xl">🌱</span>
+          <div class="flex-1">
+            <h3 class="text-sm font-bold text-white group-hover:text-[#009DFA]">Principiante</h3>
+            <p class="text-xs text-slate-400">Llevo menos de 1 año o estoy consolidando mi plan de trading.</p>
+          </div>
+        </label>
+
+        <label class="p-4 rounded-2xl border border-slate-800 bg-slate-950/50 hover:border-[#009DFA]/60 hover:bg-[#009DFA]/5 transition-all cursor-pointer flex items-center gap-4 group">
+          <input type="radio" name="trader_level" value="Intermedio" data-onboarding-target="experience" data-action="change->onboarding#updateNextButton" class="w-4 h-4 border-slate-700 bg-slate-900 text-[#009DFA] focus:ring-[#009DFA]">
+          <span class="text-2xl">⚖️</span>
+          <div class="flex-1">
+            <h3 class="text-sm font-bold text-white group-hover:text-[#009DFA]">Intermedio</h3>
+            <p class="text-xs text-slate-400">Tengo estrategia definida y he operado cuentas de evaluación o reales.</p>
+          </div>
+        </label>
+
+        <label class="p-4 rounded-2xl border border-slate-800 bg-slate-950/50 hover:border-[#009DFA]/60 hover:bg-[#009DFA]/5 transition-all cursor-pointer flex items-center gap-4 group">
+          <input type="radio" name="trader_level" value="Avanzado" data-onboarding-target="experience" data-action="change->onboarding#updateNextButton" class="w-4 h-4 border-slate-700 bg-slate-900 text-[#009DFA] focus:ring-[#009DFA]">
+          <span class="text-2xl">🏆</span>
+          <div class="flex-1">
+            <h3 class="text-sm font-bold text-white group-hover:text-[#009DFA]">Avanzado / Rentable</h3>
+            <p class="text-xs text-slate-400">Trader consistente gestionando cuentas fondeadas o capital propio.</p>
+          </div>
+        </label>
+      </div>
+
+      <div class="flex justify-end pt-2">
+        <button data-onboarding-target="submitButton" data-action="click->onboarding#submit" disabled class="px-6 py-3 rounded-xl bg-gray-700 opacity-50 cursor-not-allowed text-white font-bold text-xs transition-all flex items-center gap-2">
+          <span data-onboarding-target="submitText">Finalizar y Personalizar</span>
+          <span data-onboarding-target="submitSpinner" class="hidden material-symbols-outlined animate-spin text-sm">sync</span>
+        </button>
       </div>
     </div>
-  </footer>
+
+    <!-- STEP 4: CARGANDO / ENRUTAMIENTO -->
+    <div data-onboarding-target="step" data-step="4" class="hidden flex-col items-center justify-center text-center space-y-4 my-auto transition-all duration-300">
+      <span class="material-symbols-outlined animate-spin text-4xl text-[#009DFA]">sync</span>
+      <h2 class="text-xl font-bold text-white">Configurando tu experiencia personalizada...</h2>
+      <p class="text-xs text-slate-400">Guardando tus preferencias y preparando tus módulos de trading.</p>
+    </div>
+
+    <!-- STEP 5: SELECCIÓN FINAL DE MÓDULOS -->
+    <div data-onboarding-target="step" data-step="5" class="hidden flex-col space-y-6 my-auto transition-all duration-300">
+      <div class="text-center space-y-2">
+        <div class="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-2xl flex items-center justify-center mx-auto">
+          ✓
+        </div>
+        <h2 class="text-2xl font-extrabold text-white">¡Perfil configurado con éxito!</h2>
+        <div data-onboarding-target="multipleSelectionList" class="text-xs text-slate-300 flex items-center justify-center flex-wrap pt-1"></div>
+      </div>
+
+      <div class="space-y-3">
+        <p class="text-xs font-bold uppercase tracking-wider text-slate-400 text-center">¿Por dónde deseas comenzar hoy?</p>
+        <div data-onboarding-target="multipleSelectionOptions" class="space-y-2.5"></div>
+      </div>
+    </div>
+
+  </div>
 </div>
-
-<script>
-  function toggleTheme() {
-    if (document.documentElement.classList.contains('dark')) {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    } else {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    }
-  }
-</script>
