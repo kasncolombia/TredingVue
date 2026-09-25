@@ -27,6 +27,9 @@ class Users::ProfileController < ApplicationController
   private
 
   def profile_params
-    params.require(:user).permit(:onboarding_completed, :trader_type, :main_market, :trading_goal, :timezone)
+    params.require(:user).permit(
+      :name, :email, :preferred_currency, :initial_capital,
+      :onboarding_completed, :trader_type, :main_market, :trading_goal, :timezone
+    )
   end
 end

@@ -12,12 +12,9 @@ Rails.application.routes.draw do
   end
 
   # Onboarding Routes
-  get  "onboarding/paso_1",    to: "onboarding#paso_1",    as: :onboarding_paso_1
-  post "onboarding/paso_2",    to: "onboarding#paso_2",    as: :onboarding_paso_2
-  get  "onboarding/paso_2",    to: "onboarding#paso_2"
-  post "onboarding/paso_3",    to: "onboarding#paso_3",    as: :onboarding_paso_3
-  get  "onboarding/paso_3",    to: "onboarding#paso_3"
-  post "onboarding/completar", to: "onboarding#completar", as: :onboarding_completar
+  get  "onboarding",            to: "onboarding#index",     as: :onboarding_paso_1 # keep as alias if needed or just rename, I will rename it in application_controller too
+  get  "onboarding/start",      to: "onboarding#index",     as: :onboarding
+  post "onboarding/completar",  to: "onboarding#completar", as: :onboarding_completar
 
   resources :trades do
     member do

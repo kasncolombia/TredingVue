@@ -18,13 +18,13 @@ class ApplicationController < ActionController::Base
     return if is_a?(OnboardingController) || is_a?(PagesController)
 
     unless current_user.onboarding_completed?
-      redirect_to onboarding_paso_1_path
+      redirect_to onboarding_path
     end
   end
 
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:sign_up, keys: [:name])
-    devise_parameter_sanitizer.permit(:account_update, keys: [:name, :timezone, :preferred_currency, :initial_capital, :trader_type, :main_market, :trading_goal])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:name, :timezone, :preferred_currency, :initial_capital, :trader_type, :main_market, :trading_goal, :onboarding_completed])
   end
 
   def require_pro!

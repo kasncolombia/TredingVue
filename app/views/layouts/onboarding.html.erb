@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html class="h-full bg-[#0B0F19] text-white" data-theme="dark">
+  <head>
+    <title>Bienvenido a TradeTres</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" rescue nil %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" rescue nil %>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: { extend: {
+          fontFamily: { sans: ["Manrope", "sans-serif"] }
+        }}
+      }
+    </script>
+    <style> body { font-family: "Manrope", sans-serif; } </style>
+    <%= javascript_importmap_tags %>
+  </head>
+  <body class="h-full antialiased bg-[#0B0F19] text-white">
+    <main class="h-full w-full flex flex-col justify-center items-center relative overflow-hidden">
+      <!-- Background subtle elements (optional logic later) -->
+      <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(0,157,250,0.15),rgba(255,255,255,0))]"></div>
+      
+      <%= yield %>
+    </main>
+  </body>
+</html>

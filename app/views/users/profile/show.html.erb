@@ -148,7 +148,7 @@
         <h3 class="text-base font-bold dark:text-white text-slate-800">Parámetros de la Cuenta & Perfil</h3>
       </div>
 
-      <%= form_for(current_user, url: registration_path(:user), html: { method: :put, class: "space-y-4" }) do |f| %>
+      <%= form_for(current_user, url: profile_path, html: { method: :put, class: "space-y-4" }) do |f| %>
         
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
           <div>
@@ -189,6 +189,18 @@
           <div class="sm:col-span-2">
             <label class="block font-bold dark:text-slate-300 text-slate-700 mb-1">Objetivo Prioritario</label>
             <%= f.text_field :trading_goal, placeholder: "ej. Mejorar disciplina y frenar el revenge trading", class: "input-field w-full px-4 py-2.5 rounded-xl focus:outline-none" %>
+          </div>
+
+          <div class="sm:col-span-2 flex items-center justify-between p-4 rounded-xl dark:bg-darkInput bg-slate-50 border dark:border-darkBorder border-lightBorder">
+            <div>
+              <p class="font-bold dark:text-slate-300 text-slate-700">Completar Onboarding</p>
+              <p class="text-[11px] text-slate-400">Desactiva esta opción si deseas volver a ver el asistente de bienvenida.</p>
+            </div>
+            
+            <label class="relative inline-flex items-center cursor-pointer">
+              <%= f.check_box :onboarding_completed, class: "sr-only peer" %>
+              <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-brand"></div>
+            </label>
           </div>
         </div>
 
