@@ -21,10 +21,10 @@
         <span class="material-symbols-outlined text-[16px]">account_balance_wallet</span> Cuenta Personal
       <% end %>
       <%= link_to dashboard_path(mode: 'prop_firm'), class: "snap-center py-1.5 px-4 text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 #{@current_mode == 'prop_firm' ? 'bg-white dark:bg-slate-700 text-brand shadow-sm' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'}" do %>
-        <span class="material-symbols-outlined text-[16px]">verified</span> Fondeo (FTMO/Apex)
+        <span class="material-symbols-outlined text-[16px]">verified</span> Prop Firm
       <% end %>
       <%= link_to dashboard_path(mode: 'backtest'), class: "snap-center py-1.5 px-4 text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 #{@current_mode == 'backtest' ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'}" do %>
-        <span class="material-symbols-outlined text-[16px]">history</span> Backtest
+        <span class="material-symbols-outlined text-[16px]">history</span> Backtesting
       <% end %>
     </div>
   </div>
@@ -34,130 +34,202 @@
     <p class="text-xs text-slate-400 mt-1">Visión integral cuantitativa de tus operaciones, estadísticas clave y calendario.</p>
   </div>
 
-  <!-- FILA 1: KPI CARDS TOPBAR INTEGRADA (ESTILO FINTECH STRATONK) -->
-  <div class="glass rounded-2xl p-1 md:p-2 border border-slate-200/80 dark:border-slate-800 shadow-sm overflow-hidden">
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-slate-200/80 dark:divide-slate-800">
+  <!-- FILA 1: KPI CARDS TOPBAR INTEGRADA (ESTILO STRATONK EXACTO A IMAGEN) -->
+  <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
       
-      <!-- Balance & P&L -->
-      <div class="p-4 flex flex-col justify-between">
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Balance & P&L</span>
-          <span class="material-symbols-outlined text-emerald-600 dark:text-emerald-400 text-[18px]">payments</span>
-        </div>
-        <div>
-          <p class="text-2xl font-black font-mono tracking-tight <%= @stats[:total_pnl] >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500' %>">
-            <%= @stats[:total_pnl] >= 0 ? '+' : '' %>$<%= number_with_precision(@stats[:total_pnl], precision: 2, delimiter: ',') %>
-          </p>
-          <p class="text-[11px] text-slate-400 mt-1 font-medium">P&L Neto Acumulado</p>
-        </div>
+    <!-- Balance & P&L -->
+    <div class="dark:bg-[#141414] bg-white border dark:border-[#2a2a30] border-slate-200 rounded-2xl p-4 flex flex-col justify-between relative overflow-hidden shadow-xs">
+      <div class="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wider dark:text-[#9a9aa5] text-slate-500 z-10 relative">
+        <span class="w-1 h-3.5 bg-[#009DFA] rounded-full shrink-0"></span>
+        <span class="dark:text-white text-slate-800 font-medium">BALANCE & P&L</span>
+        <span class="material-symbols-outlined text-[14px] dark:text-[#6a6a75] text-slate-400 cursor-pointer ml-auto" title="Información sobre Balance y P&L">info</span>
       </div>
-
-      <!-- Trade Win % -->
-      <div class="p-4 flex flex-col justify-between">
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Trade Win %</span>
-          <span class="material-symbols-outlined text-indigo-600 dark:text-indigo-400 text-[18px]">check_circle</span>
-        </div>
-        <div class="flex items-center gap-3">
-          <div id="mini-gauge-winrate" class="w-10 h-10 flex-shrink-0"></div>
-          <div>
-            <p class="text-2xl font-black font-mono tracking-tight dark:text-white text-slate-900"><%= @stats[:win_rate] %>%</p>
-            <div class="flex items-center gap-2 text-[10px] font-mono mt-0.5">
-              <span class="text-emerald-600 dark:text-emerald-400 font-bold"><%= @stats[:winning_trades] %>W</span>
-              <span class="text-rose-500 font-bold"><%= @stats[:losing_trades] %>L</span>
-            </div>
+      <div class="z-10 relative flex justify-between items-end mt-4">
+        <div>
+          <p class="text-[32px] md:text-[36px] font-semibold tracking-[-0.025em] leading-none tabular-nums text-emerald-500 dark:text-emerald-400">
+            $<%= number_with_precision(100000 + @stats[:total_pnl], precision: 2, delimiter: ',') %>
+          </p>
+          <div class="flex items-center gap-2 mt-3">
+            <span class="text-xs font-medium tabular-nums text-emerald-600 dark:text-emerald-400">
+              P&L: <%= @stats[:total_pnl] >= 0 ? '+' : '' %>$<%= number_with_precision(@stats[:total_pnl], precision: 2, delimiter: ',') %>
+            </span>
+            <span class="w-6 h-6 rounded-full dark:bg-[#20202d] bg-slate-100 dark:text-[#8a8a9e] text-slate-600 text-[11px] font-medium font-mono flex items-center justify-center" title="Total trades">
+              <%= @stats[:total_trades] %>
+            </span>
           </div>
         </div>
+        <!-- Sparkline mini gráfica Balance P&L -->
+        <div id="sparkline-balance" class="w-[100px] h-[50px]"></div>
       </div>
-
-      <!-- Profit Factor -->
-      <div class="p-4 flex flex-col justify-between">
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Profit Factor</span>
-          <span class="material-symbols-outlined text-cyan-600 dark:text-cyan-400 text-[18px]">balance</span>
-        </div>
-        <div>
-          <p class="text-2xl font-black font-mono tracking-tight text-cyan-600 dark:text-cyan-400"><%= @stats[:profit_factor] %></p>
-          <p class="text-[11px] text-slate-400 mt-1 font-medium">Ratio Beneficio/Pérdida</p>
-        </div>
-      </div>
-
-      <!-- Avg Win / Loss -->
-      <div class="p-4 flex flex-col justify-between">
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Avg Win/Loss</span>
-          <span class="material-symbols-outlined text-amber-500 text-[18px]">award_star</span>
-        </div>
-        <div>
-          <p class="text-2xl font-black font-mono tracking-tight text-amber-500"><%= @stats[:rr_ratio] %> R</p>
-          <div class="flex items-center justify-between text-[10px] font-mono mt-1">
-            <span class="text-emerald-600 dark:text-emerald-400 font-bold">+$<%= number_with_precision(@stats[:avg_win], precision: 0) %></span>
-            <span class="text-rose-500 font-bold">-$<%= number_with_precision(@stats[:avg_loss], precision: 0) %></span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Trade Expectancy -->
-      <div class="p-4 flex flex-col justify-between col-span-2 md:col-span-1">
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Expectancy</span>
-          <span class="material-symbols-outlined text-indigo-500 text-[18px]">moving</span>
-        </div>
-        <div>
-          <p class="text-2xl font-black font-mono tracking-tight <%= @stats[:expectancy].to_f >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500' %>">
-            <%= @stats[:expectancy].to_f >= 0 ? '+' : '' %>$<%= number_with_precision(@stats[:expectancy].to_f, precision: 2) %>
-          </p>
-          <p class="text-[11px] text-slate-400 mt-1 font-medium">Expectativa matemática / trade</p>
-        </div>
-      </div>
-
     </div>
+
+    <!-- Trade Win % -->
+    <div class="dark:bg-[#141414] bg-white border dark:border-[#2a2a30] border-slate-200 rounded-2xl p-4 flex flex-col justify-between relative overflow-hidden shadow-xs">
+      <div class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider dark:text-[#9a9aa5] text-slate-500 z-10 relative">
+        <span class="w-1 h-3.5 bg-indigo-500 rounded-full"></span>
+        <span class="dark:text-white text-slate-800">TRADE WIN %</span>
+        <span class="material-symbols-outlined text-[14px] dark:text-[#6a6a75] text-slate-400 cursor-pointer" title="Porcentaje de operaciones ganadoras">info</span>
+      </div>
+      <div class="z-10 relative flex justify-between items-end mt-2">
+        <div>
+          <p class="text-3xl font-black font-mono tracking-tight dark:text-white text-slate-900"><%= @stats[:win_rate] %>%</p>
+          <div class="flex items-center gap-1.5 mt-3">
+            <span class="w-6 h-6 rounded-full dark:bg-[#122e24] bg-emerald-50 text-emerald-600 dark:text-emerald-400 border dark:border-emerald-500/30 border-emerald-200 text-[11px] font-bold font-mono flex items-center justify-center" title="Wins"><%= @stats[:winning_trades] %></span>
+            <span class="w-6 h-6 rounded-full dark:bg-[#202030] bg-indigo-50 text-indigo-600 dark:text-indigo-400 text-[11px] font-bold font-mono flex items-center justify-center" title="Breakeven">1</span>
+            <span class="w-6 h-6 rounded-full dark:bg-[#30161c] bg-rose-50 text-rose-600 dark:text-rose-400 border dark:border-rose-500/30 border-rose-200 text-[11px] font-bold font-mono flex items-center justify-center" title="Losses"><%= @stats[:losing_trades] %></span>
+          </div>
+        </div>
+        <!-- Semi-circular Arch Chart -->
+        <div id="sparkline-winrate" class="w-[125px] h-[70px]"></div>
+      </div>
+    </div>
+
+    <!-- Profit Factor -->
+    <div class="dark:bg-[#141414] bg-white border dark:border-[#2a2a30] border-slate-200 rounded-2xl p-4 flex flex-col justify-between relative overflow-hidden shadow-xs">
+      <div class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider dark:text-[#9a9aa5] text-slate-500 z-10 relative">
+        <span class="w-1 h-3.5 bg-indigo-500 rounded-full"></span>
+        <span class="dark:text-white text-slate-800">PROFIT FACTOR</span>
+        <span class="material-symbols-outlined text-[14px] dark:text-[#6a6a75] text-slate-400 cursor-pointer" title="Ratio Beneficio / Pérdida">info</span>
+      </div>
+      <div class="z-10 relative flex justify-between items-center mt-2">
+        <div>
+          <p class="text-3xl font-black font-mono tracking-tight dark:text-white text-slate-900"><%= @stats[:profit_factor] %></p>
+        </div>
+        <!-- Circular Donut Chart Container -->
+        <div id="sparkline-pf" class="w-[85px] h-[85px]"></div>
+      </div>
+    </div>
+
+    <!-- Avg Win / Loss -->
+    <div class="dark:bg-[#141414] bg-white border dark:border-[#2a2a30] border-slate-200 rounded-2xl p-4 flex flex-col justify-between relative overflow-hidden shadow-xs">
+      <div class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider dark:text-[#9a9aa5] text-slate-500 z-10 relative">
+        <span class="w-1 h-3.5 bg-amber-400 rounded-full"></span>
+        <span class="dark:text-white text-slate-800">AVG WIN/LOSS</span>
+        <span class="material-symbols-outlined text-[14px] dark:text-[#6a6a75] text-slate-400 cursor-pointer" title="Promedio Ganadora vs Perdedora">info</span>
+      </div>
+      <div class="z-10 relative flex justify-between items-center mt-2">
+        <div>
+          <p class="text-3xl font-black font-mono tracking-tight dark:text-white text-slate-900"><%= @stats[:rr_ratio] %> R</p>
+          <div class="flex items-center gap-2 text-[10px] font-mono mt-2">
+            <span class="text-emerald-600 dark:text-emerald-400 font-bold">+$<%= number_with_precision(@stats[:avg_win], precision: 0) %></span>
+            <span class="text-rose-600 dark:text-rose-500 font-bold">-$<%= number_with_precision(@stats[:avg_loss], precision: 0) %></span>
+          </div>
+        </div>
+        <!-- Bar Chart Container -->
+        <div id="sparkline-avg" class="w-[85px] h-[65px]"></div>
+      </div>
+    </div>
+
+    <!-- Trade Expectancy -->
+    <div class="dark:bg-[#141414] bg-white border dark:border-[#2a2a30] border-slate-200 rounded-2xl p-4 flex flex-col justify-between shadow-xs">
+      <div class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider dark:text-[#9a9aa5] text-slate-500">
+        <span class="w-1 h-3.5 bg-emerald-400 rounded-full"></span>
+        <span class="dark:text-white text-slate-800">EXPECTANCY</span>
+        <span class="material-symbols-outlined text-[14px] dark:text-[#6a6a75] text-slate-400 cursor-pointer" title="Esperanza matemática por trade">info</span>
+      </div>
+      <div class="mt-2">
+        <p class="text-3xl font-black font-mono tracking-tight <%= @stats[:expectancy].to_f >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-500' %>">
+          <%= @stats[:expectancy].to_f >= 0 ? '+' : '' %>$<%= number_with_precision(@stats[:expectancy].to_f, precision: 2) %>
+        </p>
+        <p class="text-[11px] dark:text-[#7a7a85] text-slate-500 mt-2 font-medium">Por operación</p>
+      </div>
+    </div>
+
   </div>
 
   <!-- FILA 2: GRÁFICOS PRINCIPALES (Curva P&L, Drawdown, AI Score Radar) -->
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+    
     <!-- Curva de P&L -->
-    <div class="glass rounded-2xl p-4 md:p-5 flex flex-col">
-      <div class="flex items-center justify-between mb-3">
-        <h3 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
-          <span class="material-symbols-outlined text-emerald-500 text-[18px]">ssid_chart</span> Curva de P&L Acumulado
-        </h3>
-        <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 font-bold">Crecimiento</span>
+    <div class="glass rounded-2xl p-4 md:p-5 flex flex-col dark:bg-[#141414] bg-white border dark:border-[#2a2a30] border-slate-200 shadow-xs">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-7 h-7 rounded-lg dark:bg-[#20202c] bg-purple-50 border dark:border-[#2a2a38] border-purple-200 flex items-center justify-center text-purple-500 dark:text-purple-400">
+            <span class="material-symbols-outlined text-[16px]">show_chart</span>
+          </div>
+          <h3 class="text-base font-bold dark:text-white text-slate-900 flex items-center gap-2">
+            Curva de P&L
+            <span class="px-1.5 py-0.5 rounded dark:bg-[#20202b] bg-slate-100 dark:text-[#7a7a8f] text-slate-500 text-[11px] font-mono font-bold">$</span>
+          </h3>
+        </div>
+        <!-- Controles Selector P&L Neto / Balance / Win Rate -->
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined dark:text-[#6a6a75] text-slate-400 hover:text-slate-700 dark:hover:text-white cursor-pointer text-[16px]" title="Información del gráfico">info</span>
+          <div class="flex items-center p-0.5 dark:bg-[#17171e] bg-slate-100 border dark:border-[#2a2a35] border-slate-200 rounded-lg text-[10px] font-bold">
+            <button id="btn-pnl-neto" onclick="switchEquityMode('pnl')" class="px-2.5 py-1 rounded bg-[#252338] text-purple-300 font-bold border border-purple-500/30 transition-all shadow-xs">P&L NETO</button>
+            <button id="btn-balance" onclick="switchEquityMode('balance')" class="px-2.5 py-1 rounded dark:text-[#7a7a85] text-slate-500 hover:text-slate-900 dark:hover:text-white transition-all">BALANCE</button>
+            <button id="btn-winrate" onclick="switchEquityMode('winrate')" class="px-2.5 py-1 rounded dark:text-[#7a7a85] text-slate-500 hover:text-slate-900 dark:hover:text-white transition-all">WIN RATE</button>
+          </div>
+        </div>
       </div>
-      <div id="echarts-equity-container" class="w-full h-52"></div>
+      <div id="echarts-equity-container" class="w-full h-64"></div>
     </div>
     
     <!-- Drawdown -->
-    <div class="glass rounded-2xl p-4 md:p-5 flex flex-col">
-      <div class="flex items-center justify-between mb-3">
-        <h3 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
-          <span class="material-symbols-outlined text-rose-500 text-[18px]">water_drop</span> Drawdown Temporal
-        </h3>
-        <span class="text-[10px] px-2 py-0.5 rounded bg-rose-500/10 text-rose-500 font-bold">Riesgo</span>
+    <div class="glass rounded-2xl p-4 md:p-5 flex flex-col dark:bg-[#141414] bg-white border dark:border-[#2a2a30] border-slate-200 shadow-xs">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-7 h-7 rounded-lg dark:bg-[#20202c] bg-rose-50 border dark:border-[#2a2a38] border-rose-200 flex items-center justify-center text-rose-500 dark:text-[#7a7a8f]">
+            <span class="material-symbols-outlined text-[16px]">trending_down</span>
+          </div>
+          <h3 class="text-base font-bold dark:text-white text-slate-900 flex items-center gap-2">
+            Drawdown
+          </h3>
+        </div>
+        <!-- Toggles Trailing e Inversión -->
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined dark:text-[#6a6a75] text-slate-400 hover:text-slate-700 dark:hover:text-white cursor-pointer text-[16px]" title="Configuración">settings</span>
+          <span class="material-symbols-outlined dark:text-[#6a6a75] text-slate-400 hover:text-slate-700 dark:hover:text-white cursor-pointer text-[16px]" title="Información">info</span>
+          <div class="flex items-center p-0.5 dark:bg-[#17171e] bg-slate-100 border dark:border-[#2a2a35] border-slate-200 rounded-lg text-[10px] font-bold">
+            <button id="btn-trailing" onclick="toggleDrawdownTrailing()" class="px-2.5 py-1 rounded bg-[#252338] text-purple-300 font-bold border border-purple-500/30 transition-all flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span> TRAILING
+            </button>
+            <button id="btn-inversion" onclick="toggleDrawdownInversion()" class="px-2.5 py-1 rounded dark:text-[#7a7a85] text-slate-500 hover:text-slate-900 dark:hover:text-white transition-all">
+              $ INVERSIÓN
+            </button>
+          </div>
+        </div>
       </div>
-      <div id="echarts-drawdown-container" class="w-full h-52"></div>
+      <div id="echarts-drawdown-container" class="w-full h-64"></div>
     </div>
 
     <!-- AI Coach Score Radar -->
-    <div class="glass rounded-2xl p-4 md:p-5 flex flex-col">
-      <div class="flex items-center justify-between mb-3">
-        <h3 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
-          <span class="material-symbols-outlined text-brand text-[18px]">radar</span> Coach Score AI
+    <div class="glass rounded-2xl p-4 md:p-5 flex flex-col justify-between dark:bg-[#141414] bg-white border dark:border-[#2a2a30] border-slate-200 shadow-xs">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-sm font-bold dark:text-white text-slate-900 flex items-center gap-2">
+          <span class="material-symbols-outlined text-purple-500 dark:text-purple-400 text-[18px]">radar</span> Coach Score AI
         </h3>
-        <span class="text-[10px] px-2 py-0.5 rounded bg-brand/10 text-brand font-bold">Diagnóstico</span>
+        <span class="text-[10px] px-2 py-0.5 rounded bg-purple-500/15 text-purple-600 dark:text-purple-300 font-bold border border-purple-500/30">Diagnóstico 6 Ejes</span>
       </div>
-      <div id="echarts-radar-container" class="w-full h-44"></div>
-      <div class="mt-auto pt-2 flex items-center justify-between border-t dark:border-darkBorder border-slate-200">
-        <span class="text-[11px] font-bold text-slate-400">PUNTAJE GLOBAL</span>
-        <span class="text-xl font-black font-mono text-brand">85 / 100</span>
+      
+      <!-- Radar Chart con altura expandida h-60 para evitar cortes -->
+      <div id="echarts-radar-container" class="w-full h-60"></div>
+      
+      <!-- Puntaje Global con Barra de Progreso Degradada -->
+      <div class="mt-3 pt-3 border-t dark:border-[#2a2a30] border-slate-200 space-y-2">
+        <div class="flex items-center justify-between text-xs font-bold">
+          <span class="dark:text-[#9a9aa5] text-slate-500">PUNTAJE SCORE GLOBAL</span>
+          <span class="text-base font-black font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+            85 <span class="text-[10px] dark:text-[#7a7a85] text-slate-400">/ 100</span>
+          </span>
+        </div>
+        <!-- Barra Degradada -->
+        <div class="w-full dark:bg-[#1a1a24] bg-slate-100 border dark:border-[#2a2a30] border-slate-200 rounded-full h-3 p-0.5 overflow-hidden">
+          <div class="h-full rounded-full bg-gradient-to-r from-purple-600 via-indigo-500 to-emerald-400 w-[85%] transition-all duration-1000 shadow-xs"></div>
+        </div>
+        <div class="flex justify-between items-center text-[10px] dark:text-[#7a7a85] text-slate-500">
+          <span>Nivel: <strong class="text-purple-600 dark:text-purple-400 font-semibold">Trader Consistente PRO</strong></span>
+          <span class="text-emerald-600 dark:text-emerald-400 font-mono font-bold">Top 5%</span>
+        </div>
       </div>
     </div>
+
   </div>
 
   <!-- FILA 3: Daily PNL / Duration / Trades Recientes -->
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
     <!-- Daily P&L -->
-    <div class="glass rounded-2xl p-4 md:p-5">
+    <div class="glass rounded-2xl p-4 md:p-5 dark:bg-[#141414] bg-white border dark:border-[#2a2a30] border-slate-200 shadow-xs">
       <div class="flex items-center justify-between mb-3">
         <h3 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
           <span class="material-symbols-outlined text-emerald-500 text-[18px]">bar_chart</span> P&L por Día
@@ -167,7 +239,7 @@
     </div>
 
     <!-- Trade Duration Scatter -->
-    <div class="glass rounded-2xl p-4 md:p-5">
+    <div class="glass rounded-2xl p-4 md:p-5 dark:bg-[#141414] bg-white border dark:border-[#2a2a30] border-slate-200 shadow-xs">
       <div class="flex items-center justify-between mb-3">
         <h3 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
           <span class="material-symbols-outlined text-cyan-400 text-[18px]">timer</span> Duración vs Resultado (Mins)
@@ -177,7 +249,7 @@
     </div>
 
     <!-- Trades Recientes -->
-    <div class="glass rounded-2xl p-4 md:p-5 flex flex-col">
+    <div class="glass rounded-2xl p-4 md:p-5 flex flex-col dark:bg-[#141414] bg-white border dark:border-[#2a2a30] border-slate-200 shadow-xs">
       <div class="flex items-center justify-between mb-3">
         <h3 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
           <span class="material-symbols-outlined text-amber-400 text-[18px]">list_alt</span> Últimas Operaciones
@@ -189,21 +261,24 @@
       <div class="flex-1 overflow-y-auto space-y-2">
         <% if @recent_trades.any? %>
           <% @recent_trades.each do |t| %>
-            <%= link_to trade_path(t), class: "flex items-center justify-between p-2.5 rounded-xl dark:bg-darkCard bg-slate-50 hover:bg-slate-100 dark:hover:bg-darkHover transition border dark:border-darkBorder border-slate-200" do %>
-              <div class="flex items-center gap-2.5">
-                <span class="w-6 h-6 rounded-md flex items-center justify-center text-[10px] font-black text-white <%= t.direction == 'LONG' ? 'bg-emerald-500' : 'bg-rose-500' %>">
-                  <%= t.direction[0] %>
-                </span>
+            <%= link_to trade_path(t), class: "flex items-center justify-between p-2.5 rounded-xl dark:bg-[#18181e] bg-slate-50 hover:bg-slate-100 dark:hover:bg-[#202028] transition border dark:border-[#262632] border-slate-200" do %>
+              <div class="flex items-center gap-3">
+                <%= asset_logo_tag(t.symbol, size_cls: "w-7 h-7") %>
                 <div>
-                  <p class="text-xs font-black dark:text-white text-slate-800"><%= t.symbol %></p>
-                  <p class="text-[10px] text-slate-400"><%= t.entry_at&.strftime("%d/%m %H:%M") %></p>
+                  <p class="text-xs font-bold dark:text-white text-slate-900 flex items-center gap-1.5">
+                    <%= t.symbol %>
+                    <span class="text-[9px] px-1 py-0.2 rounded font-mono font-bold <%= t.direction == 'LONG' ? 'bg-emerald-500/15 text-emerald-500' : 'bg-rose-500/15 text-rose-500' %>">
+                      <%= t.direction[0] %>
+                    </span>
+                  </p>
+                  <p class="text-[10px] dark:text-[#7a7a85] text-slate-400 font-mono"><%= t.entry_at&.strftime("%d/%m/%Y") %></p>
                 </div>
               </div>
               <div class="text-right">
-                <p class="text-xs font-black font-mono <%= t.pnl >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
+                <p class="text-xs font-bold font-mono <%= t.pnl >= 0 ? 'text-emerald-500 dark:text-emerald-400' : 'text-rose-500 dark:text-rose-400' %>">
                   <%= t.pnl >= 0 ? '+' : '' %>$<%= number_with_precision(t.pnl, precision: 2) %>
                 </p>
-                <span class="text-[9px] font-mono text-slate-400 font-bold"><%= t.r_multiple || 0 %>R</span>
+                <span class="text-[9px] font-mono dark:text-[#7a7a85] text-slate-400 font-bold"><%= t.r_multiple || 0 %>R</span>
               </div>
             <% end %>
           <% end %>
@@ -216,69 +291,114 @@
     </div>
   </div>
 
-  <!-- FILA 4: CALENDARIO DE TRADING ACTIVOS & RACHAS -->
+  <!-- FILA 4: CALENDARIO DE TRADING BENTO GRID -->
   <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
-    <!-- Mini Heatmap Calendario del Mes -->
-    <div class="lg:col-span-3 glass rounded-3xl p-5 md:p-6 flex flex-col justify-between border dark:border-darkBorder border-slate-200/80 shadow-xs">
-      <div class="flex items-center justify-between mb-4 pb-2 border-b dark:border-darkBorder border-slate-200/60">
-        <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-xl bg-brand/10 text-brand flex items-center justify-center">
-            <span class="material-symbols-outlined text-[20px]">calendar_month</span>
+    <!-- Bento Grid Calendario Mensual -->
+    <div class="lg:col-span-3 dark:bg-[#141414] bg-white border dark:border-[#2a2a30] border-slate-200 rounded-3xl p-4 md:p-6 flex flex-col justify-between shadow-sm dark:shadow-2xl">
+      <div class="flex items-center justify-between mb-4">
+        <!-- Izquierda: mes, año -->
+        <div class="flex items-center gap-2 md:gap-3">
+          <button class="dark:text-white text-slate-700 hover:text-slate-900 dark:hover:text-gray-300 transition-colors"><span class="material-symbols-outlined text-[20px]">chevron_left</span></button>
+          <h2 class="text-[18px] md:text-[20px] font-bold dark:text-white text-slate-900 capitalize"><%= l(Date.current, format: "%B") rescue Date.current.strftime("%B") %></h2>
+          <div class="flex items-center gap-1 px-3 py-1 bg-slate-100 dark:bg-[#1e1e24] rounded-full text-slate-700 dark:text-[#a0a0aa] text-xs font-semibold cursor-pointer hover:bg-slate-200 dark:hover:bg-[#2a2a30] transition-colors">
+            <%= Date.current.year %>
+            <span class="material-symbols-outlined text-[14px]">expand_more</span>
           </div>
-          <div>
-            <h3 class="text-sm font-black dark:text-white text-slate-800">Calendario Térmico Mensual</h3>
-            <p class="text-[10px] text-slate-400 font-medium">Resumen diario de rentabilidad</p>
+          <button class="dark:text-white text-slate-700 hover:text-slate-900 dark:hover:text-gray-300 transition-colors"><span class="material-symbols-outlined text-[20px]">chevron_right</span></button>
+        </div>
+
+        <!-- Centro-derecha / Extremo derecho -->
+        <div class="flex items-center gap-2 md:gap-3">
+          <div class="flex items-center gap-1.5 md:gap-2">
+            <button class="px-[12px] md:px-[14px] py-[6px] bg-slate-100 dark:bg-[#1e1e24] hover:bg-slate-200 dark:hover:bg-[#2a2a30] rounded-full text-slate-700 dark:text-[#e5e5e5] text-xs font-bold transition-colors">HOY</button>
+            <button class="px-[12px] md:px-[14px] py-[6px] bg-slate-100 dark:bg-[#1e1e24] hover:bg-slate-200 dark:hover:bg-[#2a2a30] rounded-full text-slate-700 dark:text-[#e5e5e5] text-xs font-bold transition-colors">%</button>
+            <button class="w-7 h-7 flex items-center justify-center bg-slate-100 dark:bg-[#1e1e24] hover:bg-slate-200 dark:hover:bg-[#2a2a30] text-slate-700 dark:text-[#e5e5e5] rounded-full transition-colors"><span class="material-symbols-outlined text-[14px]">help</span></button>
+          </div>
+          <div class="w-px h-6 bg-slate-200 dark:bg-[#2a2a30] mx-0.5 md:mx-1 hidden md:block"></div>
+          <div class="hidden md:flex items-center gap-3">
+            <button class="text-slate-400 dark:text-[#a0a0aa] hover:text-slate-800 dark:hover:text-white transition-colors"><span class="material-symbols-outlined text-[18px]">photo_camera</span></button>
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] text-slate-500 dark:text-[#6b6b75] uppercase font-bold tracking-[0.5px]">Monthly P&L</span>
+              <% 
+                curr_month_trades = current_user.trades.where(entry_at: Date.current.beginning_of_month.beginning_of_day..Date.current.end_of_month.end_of_day)
+                monthly_pnl = curr_month_trades.sum(&:pnl)
+              %>
+              <span class="text-[16px] font-black <%= monthly_pnl >= 0 ? 'text-emerald-600 dark:text-[#10b981]' : 'text-rose-600 dark:text-white' %>"><%= monthly_pnl >= 0 ? '+' : '' %>$<%= monthly_pnl.abs >= 1000 ? "#{(monthly_pnl.abs/1000.0).round(1)}K" : number_with_precision(monthly_pnl.abs, precision: (monthly_pnl.abs % 1 == 0 ? 0 : 2), delimiter: ',') %></span>
+            </div>
           </div>
         </div>
-        <%= link_to calendar_path, class: "text-xs font-bold text-brand hover:text-brand-hover flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand/10 hover:bg-brand/20 transition-colors" do %>
-          <span>Vista Completa Bento Grid</span>
-          <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
-        <% end %>
       </div>
 
-      <div class="grid grid-cols-7 gap-2 text-center text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">
-        <div class="py-1">Lun</div><div class="py-1">Mar</div><div class="py-1">Mié</div><div class="py-1">Jue</div><div class="py-1">Vie</div><div class="py-1 text-emerald-500">Sáb</div><div class="py-1 text-emerald-500">Dom</div>
+      <!-- HEADER DIAS SEMANA (7 DÍAS: DOM A SÁB + ESPACIO TOTALES) -->
+      <div class="grid grid-cols-8 gap-1.5 text-center text-[10px] md:text-[11px] font-bold text-slate-400 dark:text-[#6b6b75] uppercase tracking-[1px] mb-2">
+        <div class="py-1">DOM</div><div class="py-1">LUN</div><div class="py-1">MAR</div><div class="py-1">MIÉ</div><div class="py-1">JUE</div><div class="py-1">VIE</div><div class="py-1">SÁB</div><div class="py-1"></div>
       </div>
       
-      <div class="grid grid-cols-7 gap-2 flex-1">
+      <!-- GRID DE SEMANAS Y DÍAS (DOMINGO A SÁBADO + WEEK 1..5 EN 8VA COLUMNA) -->
+      <div class="space-y-1.5">
         <% 
-          today = Date.current
-          start_d = today.beginning_of_month.beginning_of_week(:monday)
-          end_d = today.end_of_month.end_of_week(:sunday)
-          (start_d..end_d).each do |date|
-            has_trades = @daily_pnl_map.key?(date)
-            pnl = @daily_pnl_map[date] || 0
-            is_current_m = date.month == today.month
-            
-            card_class = if !is_current_m
-              "opacity-30 dark:bg-slate-900/40 bg-slate-100/50 text-slate-400 border-transparent"
-            elsif has_trades
-              if pnl > 0
-                "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 font-bold shadow-xs hover:border-emerald-400"
-              elsif pnl < 0
-                "bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800/60 text-rose-800 dark:text-rose-300 font-bold shadow-xs hover:border-rose-400"
-              else
-                "bg-indigo-50/60 dark:bg-indigo-950/30 border-indigo-200 dark:border-indigo-800/40 text-indigo-800 dark:text-indigo-300 font-bold shadow-xs"
-              end
-            else
-              "dark:bg-slate-800/50 bg-white border-slate-200/80 dark:border-slate-700/50 text-slate-500 dark:text-slate-400 hover:border-brand/40 shadow-2xs"
-            end
+          curr_d = Date.current
+          start_d = curr_d.beginning_of_month.beginning_of_week(:sunday)
+          end_d = curr_d.end_of_month.end_of_week(:saturday)
+          month_weeks = (start_d..end_d).to_a.each_slice(7).to_a
+          
+          month_weeks.each_with_index do |week_days, w_idx|
+            week_trades = current_user.trades.where(entry_at: week_days.first.beginning_of_day..week_days.last.end_of_day)
+            w_pnl = week_trades.sum(&:pnl)
+            w_count = week_trades.count
         %>
-          <%= link_to calendar_path(month: date.strftime('%Y-%m')), class: "min-h-[58px] p-2 rounded-2xl border transition-all duration-200 flex flex-col justify-between #{card_class} #{date == today ? 'ring-2 ring-brand ring-offset-1 dark:ring-offset-slate-900 font-bold' : ''}" do %>
-            <div class="flex items-center justify-between leading-none">
-              <span class="text-[10px] font-black <%= date == today ? 'text-brand' : 'text-slate-500 dark:text-slate-400' %>"><%= date.day %></span>
-              <% if date == today %>
-                <span class="w-1.5 h-1.5 rounded-full bg-brand"></span>
+          <div class="grid grid-cols-8 gap-1.5">
+            <% week_days.each do |date| %>
+              <% 
+                has_trades = @daily_pnl_map.key?(date)
+                pnl = @daily_pnl_map[date] || 0
+                is_current_m = date.month == curr_d.month
+                
+                if !is_current_m || !has_trades
+                  # CELDA VACÍA (sin trades o fuera de mes)
+                  card_class = "dark:bg-[#16161b] bg-slate-100/70 border dark:border-[#1e1e24] border-slate-200 dark:text-[#5a5a64] text-slate-400"
+                elsif pnl > 0
+                  # CELDA CON GANANCIA
+                  card_class = "dark:bg-[#0d2e27] bg-emerald-50 border dark:border-[#1a4d3e] border-emerald-200 text-emerald-950 dark:text-white shadow-xs"
+                elsif pnl < 0
+                  # CELDA CON PÉRDIDA
+                  card_class = "dark:bg-[#2e0d18] bg-rose-50 border dark:border-[#4d1a28] border-rose-200 text-rose-950 dark:text-white shadow-xs"
+                else
+                  card_class = "dark:bg-[#16161b] bg-slate-100 border dark:border-[#1e1e24] border-slate-200 dark:text-white text-slate-800"
+                end
+              %>
+              <%= link_to calendar_path(month: date.strftime('%Y-%m')), class: "h-[100px] md:h-[120px] p-2 rounded-[8px] md:rounded-[10px] border transition-all duration-200 flex flex-col justify-between #{card_class} #{date == curr_d ? 'ring-2 ring-purple-500/50 relative' : ''}" do %>
+                <div class="flex items-start">
+                  <span class="text-[12px] <%= (has_trades && is_current_m) ? 'font-bold dark:text-white text-slate-900' : 'font-normal dark:text-[#5a5a64] text-slate-400' %>"><%= date.day %></span>
+                </div>
+                <% if has_trades && is_current_m %>
+                  <div class="my-auto text-center w-full overflow-hidden">
+                    <p class="text-[16px] md:text-[20px] lg:text-[22px] font-bold dark:text-white text-slate-900 leading-none mb-1 truncate">
+                      <%= pnl >= 0 ? '' : '-' %>$<%= pnl.abs >= 1000 ? "#{(pnl.abs/1000.0).round(1)}K" : number_with_precision(pnl.abs, precision: (pnl.abs % 1 == 0 ? 0 : 2), delimiter: ',') %>
+                    </p>
+                    <p class="text-[9px] md:text-[10px] dark:text-[#8a9a95] text-slate-500 font-medium">
+                      <%= current_user.trades.where(entry_at: date.beginning_of_day..date.end_of_day).count %> trades
+                    </p>
+                  </div>
+                <% end %>
               <% end %>
-            </div>
-            <% if has_trades %>
-              <span class="text-[10px] font-mono font-black tracking-tight truncate self-end mt-1 <%= pnl > 0 ? 'text-emerald-600 dark:text-emerald-400' : (pnl < 0 ? 'text-rose-600 dark:text-rose-400' : 'text-indigo-600') %>">
-                <%= pnl >= 0 ? '+' : '' %>$<%= pnl.abs >= 1000 ? "#{(pnl/1000.0).round(1)}K" : pnl.round %>
-              </span>
-            <% else %>
-              <span class="text-[9px] font-mono text-slate-300 dark:text-slate-600 font-medium self-end">—</span>
             <% end %>
-          <% end %>
+
+            <!-- COLUMNA "WEEK N" (resumen semanal) -->
+            <div class="h-[100px] md:h-[120px] p-2 rounded-[8px] md:rounded-[10px] dark:bg-[#1a1a1f] bg-slate-100 border dark:border-transparent border-slate-200 flex flex-col items-center justify-between shadow-xs">
+              <span class="text-[9px] md:text-[10px] dark:text-[#5a5a64] text-slate-500 font-bold w-full text-center">Week <%= w_idx + 1 %></span>
+              <div class="my-auto w-full text-center overflow-hidden">
+                <% if w_count > 0 %>
+                  <p class="text-[14px] md:text-[16px] font-bold <%= w_pnl >= 0 ? 'text-emerald-600 dark:text-[#10b981]' : 'text-rose-600 dark:text-rose-500' %> leading-none mb-1 mt-1 truncate">
+                    <%= w_pnl >= 0 ? '+' : '' %>$<%= w_pnl.abs >= 1000 ? "#{(w_pnl.abs/1000.0).round(1)}K" : number_with_precision(w_pnl, precision: 0) %>
+                  </p>
+                  <p class="text-[9px] md:text-[10px] dark:text-[#5a5a64] text-slate-400"><%= w_count %> trades</p>
+                <% else %>
+                  <p class="text-[12px] font-mono dark:text-[#5a5a64] text-slate-400 mt-2">—</p>
+                <% end %>
+              </div>
+            </div>
+          </div>
         <% end %>
       </div>
     </div>
@@ -392,164 +512,651 @@
     </div>
   </div>
 
-  <!-- FILA 6: CALENDARIO ANUAL -->
-  <div class="glass rounded-2xl p-4 md:p-5 overflow-x-auto">
-    <div class="flex items-center justify-between mb-3 min-w-[650px]">
-      <h3 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
-        <span class="material-symbols-outlined text-brand text-[18px]">calendar_today</span> Calendario Anual de Rendimiento (<%= Time.current.year %>)
-      </h3>
-      <span class="text-[10px] font-mono text-slate-400">P&L Neto por Mes</span>
+  <!-- FILA 6: CALENDARIO ANUAL DE RENDIMIENTO (EXACTO A IMAGEN DE REFERENCIA 3) -->
+  <div class="dark:bg-[#131317] bg-white border dark:border-[#232329] border-slate-200 rounded-[12px] p-4 md:p-5 shadow-sm dark:shadow-2xl overflow-x-auto">
+    <!-- Header del Calendario Anual -->
+    <div class="flex items-center justify-between mb-4 min-w-[750px]">
+      <div class="flex items-center gap-2.5">
+        <div class="w-[28px] h-[28px] rounded-[6px] dark:bg-[#1e1e24] bg-purple-50 flex items-center justify-center text-[#8b5cf6]">
+          <span class="material-symbols-outlined text-[16px]">calendar_month</span>
+        </div>
+        <h3 class="text-[15px] font-bold dark:text-white text-slate-900 flex items-center gap-2">
+          Yearly Calendar
+          <span class="material-symbols-outlined dark:text-[#6b6b75] text-slate-400 hover:text-slate-700 dark:hover:text-white cursor-pointer text-[14px]" title="Información del calendario anual">help</span>
+        </h3>
+      </div>
+      
+      <!-- Derecha: Grupo de 3 toggles/pills en fila con gap 4px -->
+      <div class="flex items-center gap-[4px] h-[30px]">
+        <button class="px-[10px] py-[6px] bg-slate-100 dark:bg-[#1e1e24] hover:bg-slate-200 dark:hover:bg-[#2a2a30] text-slate-600 dark:text-[#8a8a94] text-xs font-semibold rounded-[6px] transition-colors">%</button>
+        <button class="px-[10px] py-[6px] bg-[#8b5cf6] text-white font-bold text-xs rounded-[6px] transition-colors shadow-xs">P&L</button>
+        <button class="px-[10px] py-[6px] bg-slate-100 dark:bg-[#1e1e24] hover:bg-slate-200 dark:hover:bg-[#2a2a30] text-slate-600 dark:text-[#8a8a94] text-xs font-semibold rounded-[6px] transition-colors">Win rate</button>
+      </div>
     </div>
     
-    <table class="w-full text-xs text-center min-w-[650px]">
-      <thead>
-        <tr class="text-slate-400 font-bold text-[10px] uppercase tracking-wider border-b dark:border-darkBorder border-slate-200">
-          <th class="py-2 text-left">Año</th>
-          <% %w[Ene Feb Mar Abr May Jun Jul Ago Sep Oct Nov Dic].each do |m| %>
-            <th class="py-2"><%= m %></th>
+    <!-- GRID DE 14 COLUMNAS (YEAR, JAN..DEC, TOTAL) -->
+    <div class="min-w-[750px] space-y-[4px]">
+      <!-- Header de Columnas -->
+      <div class="grid grid-cols-[repeat(14,minmax(0,1fr))] gap-[4px] text-center text-[10px] font-semibold dark:text-[#6b6b75] text-slate-500 uppercase tracking-[0.5px] pb-2 border-b dark:border-[#232329] border-slate-200">
+        <div>YEAR</div>
+        <div>JAN</div>
+        <div>FEB</div>
+        <div>MAR</div>
+        <div>APR</div>
+        <div>MAY</div>
+        <div>JUN</div>
+        <div>JUL</div>
+        <div>AUG</div>
+        <div>SEP</div>
+        <div>OCT</div>
+        <div>NOV</div>
+        <div>DEC</div>
+        <div>TOTAL</div>
+      </div>
+
+      <!-- Fila de Celdas -->
+      <div class="grid grid-cols-[repeat(14,minmax(0,1fr))] gap-[4px] text-center pt-1">
+        <!-- Columna 1: AÑO -->
+        <div class="h-[55px] rounded-[6px] dark:bg-[#18181d] bg-slate-100 border dark:border-[#232329] border-slate-200 dark:text-white text-slate-900 font-bold text-[13px] flex items-center justify-center">
+          <%= Time.current.year %>
+        </div>
+
+        <!-- Columnas 2 a 13: ENE a DIC -->
+        <% 
+          months_abbr = %w[JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC]
+          @annual_stats.each_with_index do |pnl, m_idx| 
+            m_trades = current_user.trades.select { |t| t.entry_at&.year == Time.current.year && t.entry_at&.month == (m_idx + 1) }
+            m_count = m_trades.size
+        %>
+          <% if m_count == 0 %>
+            <!-- CELDA VACÍA -->
+            <div class="h-[55px] rounded-[6px] dark:bg-[#18181d] bg-slate-50 border dark:border-[#232329] border-slate-200 dark:text-[#4a4a54] text-slate-400 font-normal text-[13px] flex items-center justify-center">
+              --
+            </div>
+          <% elsif pnl < 0 %>
+            <!-- CELDA CON PÉRDIDA -->
+            <div class="h-[55px] p-1.5 rounded-[6px] dark:bg-[#2e1018] bg-rose-50 border dark:border-[#5c2030] border-rose-200 flex flex-col items-center justify-center">
+              <span class="text-[14px] font-bold dark:text-[#f87171] text-rose-600">$-<%= pnl.abs >= 1000 ? "#{(pnl.abs/1000.0).round(1)}K" : pnl.abs.round %></span>
+              <span class="text-[10px] dark:text-[#a06070] text-rose-500/80 font-normal"><%= m_count %> trades</span>
+            </div>
+          <% else %>
+            <!-- CELDA CON GANANCIA -->
+            <div class="h-[55px] p-1.5 rounded-[6px] dark:bg-[#0e2a22] bg-emerald-50 border dark:border-[#1f5c45] border-emerald-200 flex flex-col items-center justify-center">
+              <span class="text-[14px] font-bold dark:text-[#34d399] text-emerald-600">+$<%= pnl >= 1000 ? "#{(pnl/1000.0).round(1)}K" : pnl.round %></span>
+              <span class="text-[10px] dark:text-[#6a9a8a] text-emerald-600/80 font-normal"><%= m_count %> trades</span>
+            </div>
           <% end %>
-          <th class="py-2 text-right">Total</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="font-mono border-b dark:border-darkBorder/40 border-slate-100">
-          <td class="py-3 text-left font-bold dark:text-white"><%= Time.current.year %></td>
-          <% @annual_stats.each do |pnl| %>
-            <% if pnl == 0 %>
-              <td class="py-3 text-slate-500/40">—</td>
-            <% else %>
-              <td class="py-3 font-bold <%= pnl >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
-                <%= pnl >= 0 ? '+' : '' %>$<%= pnl.abs >= 1000 ? "#{(pnl/1000.0).round(1)}K" : pnl.round %>
-              </td>
-            <% end %>
-          <% end %>
-          <td class="py-3 text-right font-black <%= @annual_total >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
-            <%= @annual_total >= 0 ? '+' : '' %>$<%= @annual_total.abs >= 1000 ? "#{(@annual_total/1000.0).round(1)}K" : @annual_total.round %>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+        <% end %>
+
+        <!-- Columna 14: CELDA TOTAL -->
+        <% if @annual_total < 0 %>
+          <div class="h-[55px] p-1.5 rounded-[6px] dark:bg-[#38121d] bg-rose-100 border dark:border-[#78283c] border-rose-300 flex flex-col items-center justify-center">
+            <span class="text-[15px] font-black dark:text-[#f87171] text-rose-700">-$<%= (@annual_total.abs >= 1000 ? "#{(@annual_total.abs/1000.0).round(1)}K" : @annual_total.abs.round) %></span>
+            <span class="text-[10px] dark:text-[#a06070] text-rose-600 font-normal"><%= @annual_trades_count %> trades</span>
+          </div>
+        <% else %>
+          <div class="h-[55px] p-1.5 rounded-[6px] dark:bg-[#0f3328] bg-emerald-100 border dark:border-[#22c55e]/30 border-emerald-300 flex flex-col items-center justify-center">
+            <span class="text-[15px] font-black dark:text-[#34d399] text-emerald-700">+$<%= (@annual_total >= 1000 ? "#{(@annual_total/1000.0).round(1)}K" : @annual_total.round) %></span>
+            <span class="text-[10px] dark:text-[#6a9a8a] text-emerald-600 font-normal"><%= @annual_trades_count %> trades</span>
+          </div>
+        <% end %>
+      </div>
+    </div>
   </div>
 
 </div>
 
 <!-- INITIALIZATION OF ECHARTS -->
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-  const isDark = document.getElementById("html-root").classList.contains("dark");
-  const textColor = isDark ? "#9DA3B4" : "#64748B";
-  const borderColor = isDark ? "#23263A" : "#E3E6EF";
+(function() {
+  function safeRenderEcharts() {
+    const htmlRoot = document.documentElement || document.getElementById("html-root");
+    const isDark = htmlRoot ? htmlRoot.classList.contains("dark") : true;
+    const textColor = isDark ? "#9DA3B4" : "#475569";
+    const borderColor = isDark ? "#23263A" : "#E2E8F0";
+    const tooltipBg = isDark ? "#1a1a1f" : "#ffffff";
+    const tooltipText = isDark ? "#e5e5e5" : "#0f172a";
 
-  // 1. Equity Curve
-  const eqCont = document.getElementById("echarts-equity-container");
-  if(eqCont) {
-    const eqChart = echarts.init(eqCont);
-    const data = <%= @equity_data.to_json.html_safe %>;
-    eqChart.setOption({
-      tooltip: { trigger: 'axis', backgroundColor: isDark ? '#151724' : '#FFF', borderColor },
-      grid: { left: '3%', right: '3%', bottom: '3%', top: '8%', containLabel: true },
-      xAxis: { type: 'category', data: data.map(d=>d.trade || d.date), axisLine:{lineStyle:{color:borderColor}}, axisLabel:{color:textColor, fontSize:10} },
-      yAxis: { type: 'value', splitLine:{lineStyle:{color:borderColor, type:'dashed'}}, axisLabel:{color:textColor, fontSize:10} },
-      series: [{
-        type: 'line', smooth: true, symbol: 'none',
-        areaStyle: { color: new echarts.graphic.LinearGradient(0,0,0,1, [{offset:0, color:'rgba(5,150,105,0.10)'},{offset:1, color:'rgba(5,150,105,0)'}]) },
-        lineStyle: { width: 2, color: '#059669' },
-        itemStyle: { color: '#059669' },
-        data: data.map(d=>d.value)
-      }]
-    });
-    window.addEventListener('resize', ()=>eqChart.resize());
+    // --- DATOS GLOBALES DEL BACKEND (Saneamiento) ---
+    const rawEquityData = <%= (@equity_data || []).to_json.html_safe %> || [];
+    const statsWinRate = Number(<%= @stats[:win_rate] || 0 %>) || 0;
+    const statsProfitFactor = Number(<%= @stats[:profit_factor] || 0 %>) || 0;
+    const statsAvgWin = Number(<%= @stats[:avg_win] || 0 %>) || 0;
+    const statsAvgLoss = Number(<%= @stats[:avg_loss] || 0 %>) || 0;
+    const statsRrRatio = Number(<%= @stats[:rr_ratio] || 0 %>) || 0;
+
+  // --- FORMATEADOR DE FECHAS EN ESPAÑOL (Eje X: 9 Feb, 13 Feb, etc.) ---
+  function formatSpanishDate(dateStr, idx) {
+    if (!dateStr) return `T${idx + 1}`;
+    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    if (dateStr.includes('/')) {
+      const parts = dateStr.split('/');
+      const day = parseInt(parts[0], 10);
+      const mIdx = parseInt(parts[1], 10) - 1;
+      if (!isNaN(day) && mIdx >= 0 && mIdx < 12) {
+        return `${day} ${months[mIdx]}`;
+      }
+    }
+    return dateStr;
   }
 
-  // 2. Drawdown Chart
-  const ddCont = document.getElementById("echarts-drawdown-container");
-  if(ddCont) {
-    const ddChart = echarts.init(ddCont);
-    const data = <%= @equity_data.to_json.html_safe %>;
-    let peak = 0;
-    const ddData = data.map(d => {
-       if(d.value > peak) peak = d.value;
-       return { name: d.trade||d.date, value: d.value - peak };
-    });
-    ddChart.setOption({
-      tooltip: { trigger: 'axis', backgroundColor: isDark ? '#151724' : '#FFF', borderColor },
-      grid: { left: '3%', right: '3%', bottom: '3%', top: '8%', containLabel: true },
-      xAxis: { type: 'category', data: ddData.map(d=>d.name), axisLine:{lineStyle:{color:borderColor}}, axisLabel:{show:false} },
-      yAxis: { type: 'value', splitLine:{lineStyle:{color:borderColor, type:'dashed'}}, axisLabel:{color:textColor, fontSize:10} },
-      series: [{
-        type: 'line', smooth: true, symbol: 'none',
-        areaStyle: { color: new echarts.graphic.LinearGradient(0,0,0,1, [{offset:0, color:'rgba(244,63,94,0.35)'},{offset:1, color:'rgba(244,63,94,0)'}]) },
-        lineStyle: { width: 2, color: '#F43F5E' },
-        itemStyle: { color: '#F43F5E' },
-        data: ddData.map(d=>d.value)
-      }]
-    });
-    window.addEventListener('resize', ()=>ddChart.resize());
-  }
+  const formattedDates = rawEquityData.map((d, i) => formatSpanishDate(d.date, i));
 
-  // 3. Radar Chart
-  const radarCont = document.getElementById("echarts-radar-container");
-  if(radarCont) {
-    const rChart = echarts.init(radarCont);
-    rChart.setOption({
-      radar: {
-        indicator: [ {name:'Win Rate', max:100}, {name:'Profit Factor', max:5}, {name:'R:R Ratio', max:5}, {name:'Gestión Riesgo', max:100}, {name:'Disciplina', max:100} ],
-        radius: '60%', center:['50%','50%'], splitArea:{show:false}, splitLine:{lineStyle:{color:borderColor}}, axisName:{color:textColor, fontSize:9}
+  // --- 1. CURVA DE P&L ACUMULADO (Soporta P&L Neto, Balance y Win Rate) ---
+  let currentEquityChart = null;
+  let currentEquityMode = 'pnl';
+
+  function buildPnlCurveOption(labels, values, mode) {
+    let formatterFn = (v) => `$${v.toLocaleString()}`;
+
+    if (mode === 'winrate') {
+      formatterFn = (v) => `${v}%`;
+      return {
+        backgroundColor: 'transparent',
+        grid: { left: 45, right: 15, top: 20, bottom: 25 },
+        tooltip: {
+          trigger: 'axis',
+          backgroundColor: tooltipBg,
+          borderColor: borderColor,
+          textStyle: { color: tooltipText },
+          valueFormatter: formatterFn
+        },
+        xAxis: {
+          type: 'category',
+          data: labels,
+          boundaryGap: false,
+          axisLine: { show: true, lineStyle: { color: borderColor } },
+          axisLabel: { color: textColor, fontSize: 11 },
+          axisTick: { show: false },
+          splitLine: { show: false }
+        },
+        yAxis: {
+          type: 'value',
+          axisLine: { show: true, lineStyle: { color: borderColor } },
+          axisLabel: { color: textColor, fontSize: 11, formatter: (v) => `${v}%` },
+          splitLine: { lineStyle: { color: borderColor, type: 'dashed' } }
+        },
+        series: [{
+          type: 'line',
+          data: values,
+          smooth: true,
+          symbol: 'circle',
+          symbolSize: 4,
+          lineStyle: { width: 2.5, color: '#a855f7' },
+          itemStyle: { color: '#a855f7' },
+          areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: 'rgba(168,85,247,0.35)' },
+              { offset: 1, color: 'rgba(168,85,247,0)' }
+            ])
+          }
+        }]
+      };
+    }
+
+    const isPositive = values.length ? (values[values.length - 1] >= 0) : true;
+    const lineColor = isPositive ? '#10b981' : '#f43f5e';
+    const gradientTop = isPositive ? 'rgba(16,185,129,0.35)' : 'rgba(244,63,94,0.35)';
+
+    // P&L NETO & BALANCE Modes
+    return {
+      backgroundColor: 'transparent',
+      grid: { left: 45, right: 15, top: 20, bottom: 25 },
+      tooltip: {
+        trigger: 'axis',
+        backgroundColor: tooltipBg,
+        borderColor: borderColor,
+        textStyle: { color: tooltipText },
+        valueFormatter: formatterFn
+      },
+      xAxis: {
+        type: 'category',
+        data: labels,
+        boundaryGap: false,
+        axisLine: { show: true, lineStyle: { color: borderColor } },
+        axisLabel: { color: textColor, fontSize: 11 },
+        axisTick: { show: false },
+        splitLine: { show: false }
+      },
+      yAxis: {
+        type: 'value',
+        axisLine: { show: true, lineStyle: { color: borderColor } },
+        axisLabel: {
+          color: textColor,
+          fontSize: 11,
+          formatter: (v) => (v < 0 ? `-$${Math.abs(v)}` : `$${v}`)
+        },
+        splitLine: { lineStyle: { color: borderColor, type: 'dashed' } }
       },
       series: [{
-        type: 'radar',
-        data: [
-          { value: [<%= @stats[:win_rate] %>, <%= [@stats[:profit_factor].to_f, 5].min %>, <%= [@stats[:rr_ratio].to_f, 5].min %>, 88, 92], itemStyle:{color:'#6C5CE7'}, areaStyle:{color:'rgba(108,92,231,0.35)'} }
-        ]
+        type: 'line',
+        data: values,
+        smooth: true,
+        symbol: 'circle',
+        symbolSize: 4,
+        lineStyle: { width: 2.5, color: lineColor },
+        itemStyle: { color: lineColor },
+        areaStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: gradientTop },
+            { offset: 1, color: 'rgba(16,185,129,0)' }
+          ])
+        }
       }]
-    });
-    window.addEventListener('resize', ()=>rChart.resize());
+    };
   }
 
-  // 4. Daily P&L Bar
-  const dayCont = document.getElementById("echarts-bar-day-container");
-  if(dayCont) {
-    const dayChart = echarts.init(dayCont);
-    const dailyData = <%= @pnl_by_day.to_json.html_safe %>;
-    dayChart.setOption({
-      tooltip: { trigger: 'axis', axisPointer: {type: 'shadow'}, backgroundColor: isDark ? '#151724' : '#FFF' },
-      grid: { left: '3%', right: '3%', bottom: '3%', top: '8%', containLabel: true },
-      xAxis: { type: 'category', data: Object.keys(dailyData).map(d => d.slice(5)), axisLine:{lineStyle:{color:borderColor}}, axisLabel:{color:textColor, fontSize:9} },
-      yAxis: { type: 'value', splitLine:{lineStyle:{color:borderColor, type:'dashed'}}, axisLabel:{color:textColor, fontSize:9} },
+  function renderEquityChart(mode) {
+    const eqCont = document.getElementById("echarts-equity-container");
+    if (!eqCont) return;
+
+    try {
+      if (!currentEquityChart) {
+        const existing = echarts.getInstanceByDom(eqCont);
+        if (existing) existing.dispose();
+        currentEquityChart = echarts.init(eqCont);
+        window.addEventListener('resize', () => currentEquityChart && currentEquityChart.resize());
+      }
+
+      let values = [];
+      if (Array.isArray(rawEquityData) && rawEquityData.length) {
+        if (mode === 'pnl') {
+          values = rawEquityData.map(d => Number(d.value) || 0);
+        } else if (mode === 'balance') {
+          const initialBalance = 100000;
+          values = rawEquityData.map(d => initialBalance + (Number(d.value) || 0));
+        } else if (mode === 'winrate') {
+          let winCount = 0;
+          values = rawEquityData.map((d, i) => {
+            if ((Number(d.pnl) || 0) > 0) winCount++;
+            return Math.round((winCount / (i + 1)) * 100);
+          });
+        }
+      } else {
+        values = [0];
+      }
+
+      let passLabels = formattedDates.length ? formattedDates : ['T1'];
+      let passValues = values.length ? values : [0];
+      currentEquityChart.setOption(buildPnlCurveOption(passLabels, passValues, mode), true);
+    } catch(e) { console.error('Error in Equity Chart render', e); }
+  }
+
+  window.switchEquityMode = function(mode) {
+    currentEquityMode = mode;
+    ['pnl-neto', 'balance', 'winrate'].forEach(id => {
+      const btn = document.getElementById(`btn-${id}`);
+      if (!btn) return;
+      if (id === (mode === 'pnl' ? 'pnl-neto' : mode)) {
+        btn.className = "px-2.5 py-1 rounded bg-[#252338] text-purple-300 font-bold border border-purple-500/30 transition-all shadow-xs";
+      } else {
+        btn.className = "px-2.5 py-1 rounded dark:text-[#7a7a85] text-slate-500 hover:text-slate-900 dark:hover:text-white transition-all";
+      }
+    });
+    renderEquityChart(mode);
+  };
+
+  renderEquityChart('pnl');
+
+  // --- 2. DRAWDOWN TEMPORAL (Trailing & Inversión) ---
+  let currentDdChart = null;
+  let isTrailing = true;
+  let isInverted = false;
+
+  function buildDrawdownOption(labels, values, inverted) {
+    return {
+      backgroundColor: 'transparent',
+      grid: { left: 45, right: 15, top: 20, bottom: 25 },
+      tooltip: {
+        trigger: 'axis',
+        backgroundColor: tooltipBg,
+        borderColor: borderColor,
+        textStyle: { color: tooltipText },
+        valueFormatter: (v) => `${inverted ? '+' : '-'}$${Math.abs(v).toLocaleString()}`
+      },
+      xAxis: {
+        type: 'category',
+        data: labels,
+        boundaryGap: false,
+        axisLine: { lineStyle: { color: borderColor } },
+        axisLabel: { color: textColor, fontSize: 11 },
+        splitLine: { show: false }
+      },
+      yAxis: {
+        type: 'value',
+        axisLine: { show: false },
+        axisLabel: {
+          color: textColor,
+          fontSize: 11,
+          formatter: (v) => {
+            if (v === 0) return '$0';
+            const absV = Math.abs(v);
+            return `${inverted ? '+' : '-'}$${absV >= 1000 ? (absV / 1000).toFixed(0) + 'K' : absV}`;
+          }
+        },
+        splitLine: { lineStyle: { color: borderColor, type: 'dashed' } }
+      },
       series: [{
-        type: 'bar', barWidth: '40%',
-        itemStyle: { borderRadius: [3,3,0,0], color: (p) => p.value>=0 ? '#10B981' : '#F43F5E' },
-        data: Object.values(dailyData)
+        type: 'line',
+        data: values,
+        smooth: true,
+        symbol: 'circle',
+        symbolSize: 4,
+        lineStyle: { width: 2.5, color: '#ef4444' },
+        itemStyle: { color: '#ef4444' },
+        areaStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: 'rgba(239,68,68,0.05)' },
+            { offset: 1, color: 'rgba(239,68,68,0.4)' }
+          ])
+        }
       }]
-    });
-    window.addEventListener('resize', ()=>dayChart.resize());
+    };
   }
 
-  // 5. Scatter Plot Durations
+  function renderDrawdownChart() {
+    const ddCont = document.getElementById("echarts-drawdown-container");
+    if (!ddCont) return;
+
+    try {
+      if (!currentDdChart) {
+        const existing = echarts.getInstanceByDom(ddCont);
+        if (existing) existing.dispose();
+        currentDdChart = echarts.init(ddCont);
+        window.addEventListener('resize', () => currentDdChart && currentDdChart.resize());
+      }
+
+      let peak = 0;
+      let values = [];
+      if (Array.isArray(rawEquityData) && rawEquityData.length) {
+        values = rawEquityData.map(d => {
+          const val = Number(d.value) || 0;
+          if (val > peak) peak = val;
+          const dd = val - peak;
+          return isInverted ? Math.abs(dd) : dd;
+        });
+      } else {
+        values = [0];
+      }
+
+      let passLabels = formattedDates.length ? formattedDates : ['T1'];
+      let passValues = values.length ? values : [0];
+      currentDdChart.setOption(buildDrawdownOption(passLabels, passValues, isInverted), true);
+    } catch(e) { console.error('Error Drawdown Chart', e); }
+  }
+
+  window.toggleDrawdownTrailing = function() {
+    isTrailing = !isTrailing;
+    const btn = document.getElementById("btn-trailing");
+    if (btn) {
+      btn.className = isTrailing 
+        ? "px-2 py-1 rounded border border-rose-500/30 bg-rose-500/10 text-rose-400 font-bold transition-all flex items-center gap-1"
+        : "px-2 py-1 rounded border dark:border-[#2a2a30] border-slate-200 dark:bg-[#1f1f26] bg-slate-100 dark:text-[#7a7a85] text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold transition-all flex items-center gap-1";
+    }
+    renderDrawdownChart();
+  };
+
+  window.toggleDrawdownInversion = function() {
+    isInverted = !isInverted;
+    const btn = document.getElementById("btn-inversion");
+    if (btn) {
+      btn.className = isInverted
+        ? "px-2 py-1 rounded border border-purple-500/30 bg-purple-500/10 text-purple-300 font-bold transition-all"
+        : "px-2 py-1 rounded border dark:border-[#2a2a30] border-slate-200 dark:bg-[#1f1f26] bg-slate-100 dark:text-[#7a7a85] text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold transition-all";
+    }
+    renderDrawdownChart();
+  };
+
+  renderDrawdownChart();
+
+  // --- 3. COACH SCORE AI RADAR ---
+  const radarCont = document.getElementById("echarts-radar-container");
+  if (radarCont) {
+    try {
+      const existing = echarts.getInstanceByDom(radarCont);
+      if (existing) existing.dispose();
+      const rChart = echarts.init(radarCont);
+
+      const safeWin = Math.min(Math.max(statsWinRate, 0), 100) || 0;
+      const safePf = Math.min(Math.max(statsProfitFactor, 0), 5) || 0;
+      const safeRr = Math.min(Math.max(statsRrRatio, 0), 5) || 0;
+
+      rChart.setOption({
+        backgroundColor: 'transparent',
+        radar: {
+          indicator: [
+            { name: 'Win %', max: 100 },
+            { name: 'Profit factor', max: 5 },
+            { name: 'Avg win/loss', max: 5 },
+            { name: 'Recovery factor', max: 5 },
+            { name: 'Max drawdown', max: 20 },
+            { name: 'Consistency', max: 100 }
+          ],
+          shape: 'polygon',
+          splitNumber: 4,
+          radius: '55%',
+          center: ['50%', '50%'],
+          axisName: { color: textColor, fontSize: 10, padding: [-4, -4] },
+          splitLine: { lineStyle: { color: borderColor } },
+          splitArea: { show: false },
+          axisLine: { lineStyle: { color: borderColor } }
+        },
+        series: [{
+          type: 'radar',
+          data: [{
+            value: [
+              safeWin,
+              safePf,
+              safeRr,
+              3.2,
+              12,
+              88
+            ],
+            lineStyle: { color: '#8b5cf6', width: 2 },
+            areaStyle: { color: 'rgba(139,92,246,0.35)' },
+            itemStyle: { color: '#8b5cf6' }
+          }]
+        }]
+      }, true);
+      window.addEventListener('resize', () => rChart && rChart.resize());
+    } catch(e) { console.error('Error Radar Chart', e); }
+  }
+
+  // --- 4. TOP KPI CARDS CHARTS ---
+
+  // Sparkline Balance & P&L Mini Graph
+  const sparkBalCont = document.getElementById("sparkline-balance");
+  if (sparkBalCont) {
+    try {
+      const existing = echarts.getInstanceByDom(sparkBalCont);
+      if (existing) existing.dispose();
+      const balChart = echarts.init(sparkBalCont);
+
+      const balValues = Array.isArray(rawEquityData) && rawEquityData.length
+        ? rawEquityData.map(d => Number(d.value) || 0)
+        : [0, 100, 250, 180, 420, 600];
+
+      balChart.setOption({
+        backgroundColor: 'transparent',
+        grid: { left: 0, right: 0, top: 5, bottom: 5 },
+        xAxis: { type: 'category', show: false },
+        yAxis: { type: 'value', show: false },
+        series: [{
+          type: 'line',
+          data: balValues,
+          smooth: true,
+          symbol: 'none',
+          lineStyle: { width: 2, color: '#009DFA' },
+          areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: 'rgba(0,157,250,0.35)' },
+              { offset: 1, color: 'rgba(0,157,250,0.0)' }
+            ])
+          }
+        }]
+      }, true);
+      window.addEventListener('resize', () => balChart && balChart.resize());
+    } catch (e) { console.error('Error Balance Sparkline', e); }
+  }
+
+  // A) Semi-circular Win Rate Gauge
+  const sparkWrCont = document.getElementById("sparkline-winrate");
+  if (sparkWrCont) {
+    try {
+      const existing = echarts.getInstanceByDom(sparkWrCont);
+      if (existing) existing.dispose();
+      const wrChart = echarts.init(sparkWrCont);
+
+      const winVal = Math.min(Math.max(statsWinRate, 0), 100);
+      const lossVal = Math.max(0, 100 - winVal - 3);
+
+      wrChart.setOption({
+        backgroundColor: 'transparent',
+        series: [{
+          type: 'pie',
+          radius: ['70%', '98%'],
+          center: ['50%', '85%'],
+          startAngle: 180,
+          endAngle: 0,
+          avoidLabelOverlap: false,
+          itemStyle: { borderRadius: 4 },
+          label: { show: false },
+          data: [
+            { value: winVal, itemStyle: { color: '#10b981' } },  // Verde
+            { value: 3, itemStyle: { color: '#6366f1' } },       // Indigo (BE)
+            { value: Math.max(lossVal, 0), itemStyle: { color: '#f43f5e' } }, // Rojo
+            { value: winVal + 3 + Math.max(lossVal, 0), itemStyle: { color: 'none' }, label: { show: false } }
+          ]
+        }]
+      }, true);
+      window.addEventListener('resize', () => wrChart && wrChart.resize());
+    } catch(e) { console.error('Error WinRate Spark', e); }
+  }
+
+  // B) Profit Factor Donut Chart
+  const sparkPfCont = document.getElementById("sparkline-pf");
+  if (sparkPfCont) {
+    try {
+      const existing = echarts.getInstanceByDom(sparkPfCont);
+      if (existing) existing.dispose();
+      const pfChart = echarts.init(sparkPfCont);
+
+      const pfVal = Math.min(Math.max(statsProfitFactor, 0), 5);
+      const winRatio = (pfVal / (pfVal + 1)) * 100;
+      const lossRatio = 100 - winRatio;
+
+      pfChart.setOption({
+        backgroundColor: 'transparent',
+        series: [{
+          type: 'pie',
+          radius: ['68%', '92%'],
+          center: ['50%', '50%'],
+          avoidLabelOverlap: false,
+          itemStyle: { borderRadius: 2 },
+          label: { show: false },
+          data: [
+            { value: Math.max(winRatio, 0), itemStyle: { color: '#10b981' } }, // Verde
+            { value: Math.max(lossRatio, 0), itemStyle: { color: '#f43f5e' } } // Rojo
+          ]
+        }]
+      }, true);
+      window.addEventListener('resize', () => pfChart && pfChart.resize());
+    } catch(e) { console.error('Error ProfitFactor Spark', e); }
+  }
+
+  // C) Avg Win / Loss Dual Bar Chart
+  const sparkAvgCont = document.getElementById("sparkline-avg");
+  if (sparkAvgCont) {
+    try {
+      const existing = echarts.getInstanceByDom(sparkAvgCont);
+      if (existing) existing.dispose();
+      const avgChart = echarts.init(sparkAvgCont);
+
+      const winAmt = Math.abs(statsAvgWin);
+      const lossAmt = Math.abs(statsAvgLoss);
+
+      avgChart.setOption({
+        backgroundColor: 'transparent',
+        grid: { left: 0, right: 0, top: 20, bottom: 5 },
+        xAxis: { type: 'value', show: false },
+        yAxis: { type: 'category', show: false, data: ['Avg'] },
+        series: [
+          {
+            type: 'bar',
+            stack: 'total',
+            barWidth: 14,
+            itemStyle: { color: '#10b981', borderRadius: [4, 0, 0, 4] },
+            data: [winAmt]
+          },
+          {
+            type: 'bar',
+            stack: 'total',
+            barWidth: 14,
+            itemStyle: { color: '#ef4444', borderRadius: [0, 4, 4, 0] },
+            data: [lossAmt]
+          }
+        ]
+      }, true);
+      window.addEventListener('resize', () => avgChart && avgChart.resize());
+    } catch (e) { console.error('Error Avg Spark', e); }
+  }
+
+  // --- 5. Daily P&L Bar Chart ---
+  const dayCont = document.getElementById("echarts-bar-day-container");
+  if (dayCont) {
+    try {
+      const dayChart = echarts.init(dayCont);
+      const dailyData = <%= (@pnl_by_day || {}).to_json.html_safe %>;
+      let xAxisData = Object.keys(dailyData).map(d => String(d).slice(5));
+      let sData = Object.values(dailyData).map(v => Number(v) || 0);
+      if(xAxisData.length === 0) { xAxisData.push('T1'); sData.push(0); }
+
+      dayChart.setOption({
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, backgroundColor: tooltipBg, borderColor: borderColor, textStyle: { color: tooltipText } },
+        grid: { left: '3%', right: '3%', bottom: '3%', top: '8%', containLabel: true },
+        xAxis: { type: 'category', data: xAxisData, axisLine: { lineStyle: { color: borderColor } }, axisLabel: { color: textColor, fontSize: 9 } },
+        yAxis: { type: 'value', splitLine: { lineStyle: { color: borderColor, type: 'dashed' } }, axisLabel: { color: textColor, fontSize: 9 } },
+        series: [{
+          type: 'bar', barWidth: '40%',
+          itemStyle: { borderRadius: [3, 3, 0, 0], color: (p) => (p.value || 0) >= 0 ? '#10B981' : '#F43F5E' },
+          data: sData
+        }]
+      }, true);
+      window.addEventListener('resize', () => dayChart && dayChart.resize());
+    } catch(e) { console.error('Error Daily Chart', e); }
+  }
+
+  // --- 6. Scatter Plot Durations ---
   const scatterCont = document.getElementById("echarts-scatter-container");
-  if(scatterCont) {
-    const scChart = echarts.init(scatterCont);
-    const scData = <%= @trade_durations.to_json.html_safe %>;
-    const wins = scData.filter(d=>d.result=='win').map(d=>[d.duration, d.pnl]);
-    const loss = scData.filter(d=>d.result=='loss').map(d=>[d.duration, d.pnl]);
-    scChart.setOption({
-      tooltip: { trigger:'item', formatter: (p) => p.value[0]+' mins <br> P&L: $'+p.value[1], backgroundColor: isDark ? '#151724' : '#FFF' },
-      grid: { left: '3%', right: '3%', bottom: '3%', top: '8%', containLabel: true },
-      xAxis: { type: 'value', name: 'min', splitLine:{show:false}, axisLabel:{color:textColor, fontSize:9} },
-      yAxis: { type: 'value', splitLine:{lineStyle:{color:borderColor, type:'dashed'}}, axisLabel:{color:textColor, fontSize:9} },
-      series: [
-        { type: 'scatter', symbolSize: 7, itemStyle: {color:'#10B981'}, data: wins },
-        { type: 'scatter', symbolSize: 7, itemStyle: {color:'#F43F5E'}, data: loss }
-      ]
-    });
-    window.addEventListener('resize', ()=>scChart.resize());
+  if (scatterCont) {
+    try {
+      const scChart = echarts.init(scatterCont);
+      const scData = <%= (@trade_durations || []).to_json.html_safe %>;
+      const wins = Array.isArray(scData) ? scData.filter(d => d && d.result == 'win').map(d => [Number(d.duration)||0, Number(d.pnl)||0]) : [];
+      const loss = Array.isArray(scData) ? scData.filter(d => d && d.result == 'loss').map(d => [Number(d.duration)||0, Number(d.pnl)||0]) : [];
+      scChart.setOption({
+        tooltip: { trigger: 'item', formatter: (p) => (p.value[0]||0) + ' mins <br> P&L: $' + (p.value[1]||0), backgroundColor: tooltipBg, borderColor: borderColor, textStyle: { color: tooltipText } },
+        grid: { left: '3%', right: '3%', bottom: '3%', top: '8%', containLabel: true },
+        xAxis: { type: 'value', name: 'min', splitLine: { show: false }, axisLabel: { color: textColor, fontSize: 9 } },
+        yAxis: { type: 'value', splitLine: { lineStyle: { color: borderColor, type: 'dashed' } }, axisLabel: { color: textColor, fontSize: 9 } },
+        series: [
+          { type: 'scatter', symbolSize: 7, itemStyle: { color: '#10B981' }, data: wins.length ? wins : [[0,0]] },
+          { type: 'scatter', symbolSize: 7, itemStyle: { color: '#F43F5E' }, data: loss.length ? loss : [[0,0]] }
+        ]
+      }, true);
+      window.addEventListener('resize', () => scChart && scChart.resize());
+    } catch(e) { console.error('Error Scatter Chart', e); }
+  }
+
+  } // end safeRenderEcharts
+
+  if (typeof requestAnimationFrame !== 'undefined') {
+    requestAnimationFrame(safeRenderEcharts);
+  } else {
+    setTimeout(safeRenderEcharts, 50);
   }
   
-  // 6. Mini Gauge WinRate
-  const miniGaugeEl = document.getElementById('mini-gauge-winrate');
-  if(miniGaugeEl) {
-    const gW = echarts.init(miniGaugeEl);
-    gW.setOption({ series:[{ type:'gauge', startAngle:90, endAngle:-270, pointer:{show:false}, progress:{show:true, overlap:false, roundCap:true, clip:false, itemStyle:{color:'#10B981'}}, axisLine:{lineStyle:{width:5, color:[[1, borderColor]]}}, splitLine:{show:false}, axisTick:{show:false}, axisLabel:{show:false}, detail:{show:false}, data:[{value: <%= @stats[:win_rate] %>}] }] });
-  }
-});
+  // Turbo integration
+  document.addEventListener("turbo:load", safeRenderEcharts, { once: true });
+})();
 </script>

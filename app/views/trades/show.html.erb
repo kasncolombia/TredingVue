@@ -13,19 +13,30 @@
   <!-- ========================================================== -->
   <!-- 1. GLOBAL / TRADE HEADER -->
   <!-- ========================================================== -->
-  <header class="h-14 border-b border-slate-200 dark:border-darkBorder bg-white dark:bg-darkCard px-4 flex items-center justify-between shrink-0">
-    <!-- Left Navigation -->
-    <div class="flex items-center gap-1 overflow-x-auto no-scrollbar">
-      <%= link_to trades_path, class: "w-9 h-9 rounded-lg hover:bg-slate-100 dark:hover:bg-darkHover flex items-center justify-center text-slate-500 mr-2 transition-colors", title: "Volver al Journal" do %>
+  <header class="h-14 border-b border-slate-200 dark:border-darkBorder bg-white dark:bg-darkCard px-3 sm:px-4 flex items-center justify-between shrink-0">
+    <!-- Left Navigation & Mobile Switcher -->
+    <div class="flex items-center gap-2 overflow-x-auto no-scrollbar">
+      <%= link_to trades_path, class: "w-8 h-8 rounded-lg hover:bg-slate-100 dark:hover:bg-darkHover flex items-center justify-center text-slate-500 transition-colors shrink-0", title: "Volver al Journal" do %>
         <span class="material-symbols-outlined text-[20px]">arrow_back</span>
       <% end %>
       
-      <!-- TABS (MOVIDOS AL SIDEBAR POR REQUERIMIENTO VISUAL) -->
-      <span class="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider ml-1">Trade #<%= @trade.id %></span>
+      <span class="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider hidden sm:inline shrink-0">Trade #<%= @trade.id %></span>
+
+      <!-- Switcher Selector para Móvil (Gráfico vs Detalles) -->
+      <div class="flex lg:hidden bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg text-xs font-bold border dark:border-slate-700 shrink-0">
+        <button type="button" id="m-btn-chart" onclick="switchMobileTradeView('chart')" class="px-2.5 py-1 rounded-md bg-brand text-white font-extrabold shadow-xs transition-all flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px]">show_chart</span>
+          <span>Gráfico</span>
+        </button>
+        <button type="button" id="m-btn-details" onclick="switchMobileTradeView('details')" class="px-2.5 py-1 rounded-md text-slate-500 dark:text-slate-400 font-bold transition-all flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px]">article</span>
+          <span>Detalles</span>
+        </button>
+      </div>
     </div>
 
     <!-- Right Actions -->
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-2 shrink-0">
       <!-- MOCK Navigation -->
       <button class="w-8 h-8 rounded-lg border border-slate-200 dark:border-darkBorder flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-darkHover transition-colors" title="Previous Trade">
         <span class="material-symbols-outlined text-[16px]">chevron_left</span>
@@ -51,7 +62,7 @@
     <!-- ========================================================== -->
     <!-- 2. TRADE SIDEBAR (380px) -->
     <!-- ========================================================== -->
-    <aside class="w-full lg:w-[380px] lg:border-r border-b lg:border-b-0 border-slate-200 dark:border-darkBorder bg-white dark:bg-darkCard flex flex-col overflow-y-auto custom-scrollbar shrink-0">
+    <aside id="trade-aside" class="w-full lg:w-[380px] lg:border-r border-b lg:border-b-0 border-slate-200 dark:border-darkBorder bg-white dark:bg-darkCard flex-col overflow-y-auto custom-scrollbar shrink-0 hidden lg:flex h-full">
       
       <!-- HORIZONTAL TABS SLIDER -->
       <div class="flex items-center gap-2 overflow-x-auto no-scrollbar px-5 py-3 border-b border-slate-200 dark:border-darkBorder shrink-0">
@@ -68,8 +79,9 @@
       <div class="p-5 border-b border-slate-200 dark:border-darkBorder">
         <div class="flex items-start justify-between mb-2">
           <div>
-            <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-              <%= @trade.symbol %>
+            <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2.5">
+              <%= asset_logo_tag(@trade.symbol, size_cls: "w-8 h-8") %>
+              <span><%= @trade.symbol %></span>
               <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded-md border <%= direction_color %>"><%= @trade.direction %></span>
             </h2>
             <p class="text-xs text-slate-500 mt-1"><%= @trade.entry_at&.strftime("%Y-%m-%d %H:%M") %> • <%= @trade.market %></p>
@@ -304,9 +316,7 @@
         <!-- Symbol Info Header Card -->
         <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-[#11121C] border border-slate-200 dark:border-darkBorder font-sans">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-brand/10 text-brand border border-brand/20 flex items-center justify-center font-black text-sm uppercase">
-              <%= @trade.symbol[0..2] %>
-            </div>
+            <%= asset_logo_tag(@trade.symbol, size_cls: "w-10 h-10") %>
             <div>
               <h4 class="font-extrabold text-sm text-slate-900 dark:text-white tracking-tight"><%= @trade.symbol %></h4>
               <p class="text-[11px] text-slate-500"><%= @trade.market || "Índices / Equities" %></p>
@@ -440,10 +450,10 @@
     <!-- ========================================================== -->
     <!-- 3. CHART WORKSPACE (1fr) -->
     <!-- ========================================================== -->
-    <main class="flex-1 flex flex-col p-4 space-y-4">
+    <main id="trade-main" class="flex-1 flex flex-col p-2 sm:p-4 space-y-4 w-full h-full min-h-[400px]">
       
       <!-- VISUALIZADOR REUTILIZABLE TIPO TRADINGVIEW SUPERCHARTS -->
-      <div class="flex-1 h-full shadow-lg rounded-2xl overflow-hidden border border-slate-200 dark:border-darkBorder bg-white dark:bg-darkCard">
+      <div class="flex-1 h-full shadow-lg rounded-2xl overflow-hidden border border-slate-200 dark:border-darkBorder bg-white dark:bg-darkCard min-h-[380px] sm:min-h-[500px]">
         <%= render "shared/charts/trading_chart", symbol: @trade.symbol, data_url: chart_data_trade_path(@trade), id: dom_id(@trade) %>
       </div>
 
@@ -453,6 +463,34 @@
 </div>
 
 <script>
+function switchMobileTradeView(view) {
+  const aside = document.getElementById('trade-aside');
+  const main = document.getElementById('trade-main');
+  const btnChart = document.getElementById('m-btn-chart');
+  const btnDetails = document.getElementById('m-btn-details');
+
+  if (view === 'chart') {
+    if (main) { main.classList.remove('hidden'); main.classList.add('flex'); }
+    if (aside) { aside.classList.add('hidden'); aside.classList.remove('flex'); }
+    if (btnChart) { 
+      btnChart.className = 'px-2.5 py-1 rounded-md bg-brand text-white font-extrabold shadow-xs transition-all flex items-center gap-1'; 
+    }
+    if (btnDetails) { 
+      btnDetails.className = 'px-2.5 py-1 rounded-md text-slate-500 dark:text-slate-400 font-bold transition-all flex items-center gap-1'; 
+    }
+    setTimeout(() => { window.dispatchEvent(new Event('resize')); }, 50);
+  } else {
+    if (main) { main.classList.add('hidden'); main.classList.remove('flex'); }
+    if (aside) { aside.classList.remove('hidden'); aside.classList.add('flex'); }
+    if (btnChart) { 
+      btnChart.className = 'px-2.5 py-1 rounded-md text-slate-500 dark:text-slate-400 font-bold transition-all flex items-center gap-1'; 
+    }
+    if (btnDetails) { 
+      btnDetails.className = 'px-2.5 py-1 rounded-md bg-brand text-white font-extrabold shadow-xs transition-all flex items-center gap-1'; 
+    }
+  }
+}
+
 function analyzeNow() {
   const btn = document.getElementById('analyze-btn');
   if(btn) btn.innerHTML = `<span class="material-symbols-outlined text-[16px] animate-spin">sync</span> Analizando...`;

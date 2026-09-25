@@ -1,5 +1,18 @@
 <!-- app/views/backtesting/sessions/replay.html.erb -->
-<div class="h-screen flex flex-col md:flex-row bg-[#FAFAFA] dark:bg-darkBg text-slate-800 dark:text-gray-100 overflow-hidden" 
+<style>
+  [data-controller="backtest-replayer"]:fullscreen,
+  [data-controller="backtest-replayer"]:-webkit-full-screen {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    background-color: #0B0F19 !important;
+  }
+</style>
+
+<div class="h-[calc(100vh-6.5rem)] flex flex-col md:flex-row bg-[#FAFAFA] dark:bg-darkBg text-slate-800 dark:text-gray-100 overflow-hidden rounded-2xl" 
      style="font-family: 'Inter', sans-serif;"
      data-controller="backtest-replayer"
      data-backtest-replayer-session-id-value="<%= @session.id %>"
@@ -9,7 +22,7 @@
   <!-- ===============================
        MAIN PANEL: CHART & REPLAY CONTROLS
        =============================== -->
-  <div class="flex-1 flex flex-col h-full bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-darkBorder relative">
+  <div class="flex-1 min-w-0 flex flex-col h-full bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-darkBorder relative overflow-hidden">
     
     <!-- TOP NAVBAR & REPLAYER CONTROLS -->
     <div class="h-14 flex items-center justify-between px-4 border-b border-slate-200 dark:border-darkBorder bg-slate-50 dark:bg-slate-800/50">
@@ -17,25 +30,29 @@
         <%= link_to backtesting_root_path, class: "text-slate-400 hover:text-brand transition-colors" do %>
           <span class="material-symbols-outlined text-lg">arrow_back</span>
         <% end %>
-        
+        <%= asset_logo_tag(@session.symbol, size_cls: "w-6 h-6") %>
         <h1 class="text-sm font-bold truncate max-w-[150px]"><%= @session.name.presence || "Simulación" %></h1>
       </div>
 
       <!-- REPLAYER CONTROLS -->
       <div class="flex items-center gap-2">
-        <button data-action="click->backtest-replayer#stepBack" class="p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-slate-700 transition" title="Step Back">
+        <button data-action="click->backtest-replayer#resetToStart" class="p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-slate-700 transition" title="Reiniciar al inicio (Bar 0)">
+          <span class="material-symbols-outlined text-[18px]">first_page</span>
+        </button>
+
+        <button data-action="click->backtest-replayer#stepBack" class="p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-slate-700 transition" title="Step Back (Flecha Izquierda)">
           <span class="material-symbols-outlined text-[18px]">skip_previous</span>
         </button>
         
-        <button data-backtest-replayer-target="playBtn" data-action="click->backtest-replayer#togglePlay" class="p-1.5 rounded-lg text-brand hover:bg-brand/10 transition shadow-sm border border-brand/20 bg-brand/5" title="Play">
+        <button data-backtest-replayer-target="playBtn" data-action="click->backtest-replayer#togglePlay" class="p-1.5 rounded-lg text-brand hover:bg-brand/10 transition shadow-sm border border-brand/20 bg-brand/5" title="Play / Pausa (Barra Espaciadora)">
           <span class="material-symbols-outlined text-[18px]">play_arrow</span>
         </button>
         
-        <button data-backtest-replayer-target="pauseBtn" data-action="click->backtest-replayer#togglePlay" class="hidden p-1.5 rounded-lg text-amber-500 hover:bg-amber-500/10 transition shadow-sm border border-amber-500/20 bg-amber-500/5" title="Pause">
+        <button data-backtest-replayer-target="pauseBtn" data-action="click->backtest-replayer#togglePlay" class="hidden p-1.5 rounded-lg text-amber-500 hover:bg-amber-500/10 transition shadow-sm border border-amber-500/20 bg-amber-500/5" title="Pause (Barra Espaciadora)">
           <span class="material-symbols-outlined text-[18px]">pause</span>
         </button>
         
-        <button data-action="click->backtest-replayer#stepForward" class="p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-slate-700 transition" title="Step Forward">
+        <button data-action="click->backtest-replayer#stepForward" class="p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-slate-700 transition" title="Step Forward (Flecha Derecha)">
           <span class="material-symbols-outlined text-[18px]">skip_next</span>
         </button>
         
@@ -53,24 +70,57 @@
           <option value="5">5x Speed</option>
           <option value="20">20x Speed</option>
         </select>
+
+        <div class="h-5 w-px bg-slate-300 dark:bg-darkBorder mx-1"></div>
+
+        <!-- INDICATORS TOGGLE -->
+        <button data-action="click->backtest-replayer#toggleEma" class="px-2 py-1 rounded-md text-[11px] font-bold border border-slate-700 bg-slate-800 text-slate-300 hover:text-white transition flex items-center gap-1" title="Superponer EMA 9 y 20">
+          <span class="material-symbols-outlined text-[13px] text-amber-400">show_chart</span> EMA 9/20
+        </button>
+
+        <!-- SNAPSHOT BUTTON -->
+        <button data-action="click->backtest-replayer#takeSnapshot" class="p-1 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition" title="Captura de Pantalla / Exportar Imagen">
+          <span class="material-symbols-outlined text-[17px]">photo_camera</span>
+        </button>
+
+        <!-- FULLSCREEN BUTTON -->
+        <button data-action="click->backtest-replayer#toggleFullscreen" class="p-1 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition" title="Pantalla Completa (F11 / ESC)">
+          <span class="material-symbols-outlined text-[17px]">fullscreen</span>
+        </button>
+
+        <%= link_to backtesting_session_path(@session), class: "ml-2 px-2.5 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-500 border border-emerald-500/30 text-xs font-bold flex items-center gap-1 transition-all" do %>
+          <span class="material-symbols-outlined text-[14px]">done_all</span> Finalizar
+        <% end %>
       </div>
     </div>
 
     <!-- OHLC HEADER LAYER (Superimposed over chart) -->
     <div class="absolute top-[56px] left-0 right-0 z-10 px-4 py-3 pointer-events-none flex flex-col gap-1.5">
-       <div class="flex items-center gap-3">
-         <span class="flex items-center gap-1 text-xs font-black text-slate-800 dark:text-gray-200">
-           <% if @session.state == 'playing' %>
-             <span class="w-2 h-2 rounded-full bg-brand animate-pulse"></span>
-           <% else %>
-             <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-           <% end %>
-           <span data-backtest-replayer-target="headerSymbol"><%= @session.symbol %></span> 
-           <span class="text-slate-400">·</span> 
-           <span data-backtest-replayer-target="headerTimeframe"><%= @session.timeframe || 'M1' %></span>
-         </span>
-         <span data-backtest-replayer-target="headerTime" class="text-xs font-mono font-medium text-slate-500">Cargando...</span>
+       <div class="flex items-center justify-between">
+         <div class="flex items-center gap-3">
+           <span class="flex items-center gap-2 text-xs font-black text-slate-800 dark:text-gray-200">
+             <% if @session.state == 'playing' %>
+               <span class="w-2 h-2 rounded-full bg-brand animate-pulse"></span>
+             <% else %>
+               <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+             <% end %>
+             <%= asset_logo_tag(@session.symbol, size_cls: "w-5 h-5") %>
+             <span data-backtest-replayer-target="headerSymbol"><%= @session.symbol %></span> 
+             <span class="text-slate-400">·</span> 
+             <span data-backtest-replayer-target="headerTimeframe"><%= @session.timeframe || 'M1' %></span>
+           </span>
+           <span data-backtest-replayer-target="headerTime" class="text-xs font-mono font-medium text-slate-500">Cargando...</span>
+         </div>
+         
+         <!-- Progress Scrubber -->
+         <div class="flex items-center gap-2 pointer-events-auto bg-slate-900/60 backdrop-blur-md px-3 py-1 rounded-full border border-slate-700/50">
+           <div class="w-24 bg-slate-800 rounded-full h-1.5 overflow-hidden">
+             <div data-backtest-replayer-target="progressBar" class="bg-brand h-full w-0 transition-all duration-150"></div>
+           </div>
+           <span data-backtest-replayer-target="progressText" class="text-[10px] font-mono font-bold text-slate-400">0%</span>
+         </div>
        </div>
+
        <div class="flex items-center gap-4 text-[11px] font-mono whitespace-nowrap overflow-hidden text-ellipsis">
          <span class="text-slate-500">O <span data-backtest-replayer-target="legendO" class="text-slate-300 ml-1 font-semibold">—</span></span>
          <span class="text-slate-500">H <span data-backtest-replayer-target="legendH" class="text-slate-300 ml-1 font-semibold">—</span></span>
@@ -87,7 +137,7 @@
           <!-- Loading overlay -->
           <div data-backtest-replayer-target="loadingOverlay" class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm rounded-3xl">
              <span class="material-symbols-outlined animate-spin text-brand text-4xl mb-3">sync</span>
-             <p class="text-sm font-bold text-slate-500 animate-pulse">Cargando datos históricos...</p>
+             <p class="text-sm font-bold text-slate-500 animate-pulse">Cargando datos históricos de <%= @session.symbol %>...</p>
           </div>
         </div>
       </div>
@@ -97,61 +147,93 @@
   <!-- ===============================
        RIGHT SIDEBAR: TRADE & STATS
        =============================== -->
-  <div class="w-full md:w-80 h-full flex flex-col bg-white dark:bg-slate-900/95 overflow-y-auto z-10">
+  <div class="w-full md:w-80 flex-shrink-0 h-full flex flex-col bg-white dark:bg-slate-900/95 overflow-y-auto z-10 font-sans border-l border-slate-200 dark:border-darkBorder">
     
     <!-- Balance & PNL -->
-    <div class="p-5 border-b border-slate-200 dark:border-darkBorder space-y-4 shadow-sm">
+    <div class="p-5 border-b border-slate-200 dark:border-darkBorder space-y-4 shadow-sm bg-slate-50/50 dark:bg-slate-900/40">
       <div class="flex justify-between items-end">
         <div>
           <p class="text-xs text-slate-500 font-semibold mb-1">Balance Actual</p>
-          <h2 class="text-2xl font-black font-mono text-slate-800 dark:text-white">
+          <h2 data-backtest-replayer-target="balanceDisplay" class="text-2xl font-black font-mono text-slate-800 dark:text-white" data-initial-balance="<%= @session.balance_actual %>">
             <%= number_to_currency(@session.balance_actual, precision: 2) %>
           </h2>
         </div>
         <div class="text-right">
           <p class="text-xs text-slate-500 font-semibold mb-1">Unrealized P&L</p>
-          <p class="text-sm font-bold font-mono text-slate-500">
+          <p data-backtest-replayer-target="unrealizedPnlDisplay" class="text-sm font-bold font-mono text-slate-500">
             $0.00
           </p>
+        </div>
+      </div>
+
+      <!-- LIVE METRICS PILLS -->
+      <div data-backtest-replayer-target="metricsContainer" class="grid grid-cols-3 gap-1.5 pt-2 border-t border-slate-200 dark:border-darkBorder text-center">
+        <div class="bg-white/60 dark:bg-slate-800/40 p-1.5 rounded-lg border border-slate-200/60 dark:border-darkBorder">
+          <span class="text-[9px] text-slate-400 font-bold block">WIN RATE</span>
+          <span class="font-mono font-bold text-xs text-slate-700 dark:text-slate-200">—</span>
+        </div>
+        <div class="bg-white/60 dark:bg-slate-800/40 p-1.5 rounded-lg border border-slate-200/60 dark:border-darkBorder">
+          <span class="text-[9px] text-slate-400 font-bold block">PROFIT FACTOR</span>
+          <span class="font-mono font-bold text-xs text-slate-700 dark:text-slate-200">—</span>
+        </div>
+        <div class="bg-white/60 dark:bg-slate-800/40 p-1.5 rounded-lg border border-slate-200/60 dark:border-darkBorder">
+          <span class="text-[9px] text-slate-400 font-bold block">TRADES</span>
+          <span class="font-mono font-bold text-xs text-slate-700 dark:text-slate-200">0</span>
         </div>
       </div>
     </div>
 
     <!-- ORDER EXECUTION FORM -->
     <div class="p-5 border-b border-slate-200 dark:border-darkBorder space-y-4">
-      <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Ejecutar Orden</h3>
+      <div class="flex items-center justify-between">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Ejecutar Orden</h3>
+        <span data-backtest-replayer-target="rrDisplay" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-brand/10 text-brand border border-brand/20">Ratio 1:2.00</span>
+      </div>
       
       <div class="grid grid-cols-2 gap-3">
-        <button data-action="click->backtest-replayer#handleBuy" class="glass border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 font-bold py-3 rounded-xl transition-all flex flex-col items-center justify-center cursor-pointer">
+        <button data-action="click->backtest-replayer#handleBuy" class="glass border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 font-extrabold py-3 rounded-xl transition-all flex flex-col items-center justify-center cursor-pointer shadow-xs active:scale-95">
           <span class="material-symbols-outlined mb-1">trending_up</span>
-          BUY
+          BUY (Comprar)
         </button>
-        <button data-action="click->backtest-replayer#handleSell" class="glass border border-rose-500/30 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 font-bold py-3 rounded-xl transition-all flex flex-col items-center justify-center cursor-pointer">
+        <button data-action="click->backtest-replayer#handleSell" class="glass border border-rose-500/30 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 font-extrabold py-3 rounded-xl transition-all flex flex-col items-center justify-center cursor-pointer shadow-xs active:scale-95">
           <span class="material-symbols-outlined mb-1">trending_down</span>
-          SELL
+          SELL (Vender)
         </button>
       </div>
 
-      <div class="grid grid-cols-2 gap-3 pt-2">
+      <div class="grid grid-cols-3 gap-2 pt-2">
         <div>
-          <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Qtty / Lotes</label>
-          <input type="number" value="1" class="w-full bg-slate-50 dark:bg-darkBorder/50 border border-slate-200 dark:border-darkBorder rounded-lg px-2 py-1.5 text-sm font-mono text-center focus:ring-1 focus:ring-brand font-bold text-slate-700 dark:text-white">
+          <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Lotes</label>
+          <input type="number" step="0.1" value="1" data-backtest-replayer-target="quantityInput" data-action="input->backtest-replayer#updateRrRatio" class="w-full bg-slate-50 dark:bg-darkBorder/50 border border-slate-200 dark:border-darkBorder rounded-lg px-2 py-1.5 text-xs font-mono text-center focus:ring-1 focus:ring-brand font-bold text-slate-700 dark:text-white">
         </div>
         <div>
-          <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">SL (Ticks)</label>
-          <input type="number" value="20" class="w-full bg-slate-50 dark:bg-darkBorder/50 border border-slate-200 dark:border-darkBorder rounded-lg px-2 py-1.5 text-sm font-mono text-center focus:ring-1 focus:ring-brand font-bold text-slate-700 dark:text-white">
+          <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">SL (Pts)</label>
+          <input type="number" step="0.5" value="15" data-backtest-replayer-target="slInput" data-action="input->backtest-replayer#updateRrRatio" class="w-full bg-slate-50 dark:bg-darkBorder/50 border border-slate-200 dark:border-darkBorder rounded-lg px-2 py-1.5 text-xs font-mono text-center focus:ring-1 focus:ring-brand font-bold text-slate-700 dark:text-white">
+        </div>
+        <div>
+          <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">TP (Pts)</label>
+          <input type="number" step="0.5" value="30" data-backtest-replayer-target="tpInput" data-action="input->backtest-replayer#updateRrRatio" class="w-full bg-slate-50 dark:bg-darkBorder/50 border border-slate-200 dark:border-darkBorder rounded-lg px-2 py-1.5 text-xs font-mono text-center focus:ring-1 focus:ring-brand font-bold text-slate-700 dark:text-white">
         </div>
       </div>
     </div>
 
     <!-- POSITIONS AND JOURNAL -->
-    <div class="flex-1 p-5 flex flex-col">
-      <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Posición Activa</h3>
+    <div class="flex-1 p-5 flex flex-col space-y-4">
+      <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Posición Activa</h3>
       
-      <!-- Empty State -->
-      <div class="flex-1 flex flex-col items-center justify-center text-center opacity-50 space-y-2">
-        <span class="material-symbols-outlined text-4xl">inventory_2</span>
-        <p class="text-xs font-medium">No hay compras ni ventas activas.<br>Dale PLAY al motor y ejecuta una orden.</p>
+      <div data-backtest-replayer-target="activePositionContainer" class="flex flex-col">
+        <!-- Empty State Default -->
+        <div class="flex flex-col items-center justify-center text-center py-6 text-slate-400 space-y-2 border border-dashed border-slate-200 dark:border-darkBorder rounded-2xl">
+          <span class="material-symbols-outlined text-3xl">inventory_2</span>
+          <p class="text-xs font-medium">Sin posición activa.<br>Presiona BUY o SELL para simular.</p>
+        </div>
+      </div>
+
+      <div class="pt-2 border-t border-slate-200 dark:border-darkBorder">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Historial de la Sesión</h3>
+        <div data-backtest-replayer-target="tradesListContainer" class="space-y-2 max-h-52 overflow-y-auto pr-1 text-xs">
+          <p class="text-slate-400 text-center text-[11px] py-4">No se han ejecutado trades en esta sesión.</p>
+        </div>
       </div>
     </div>
     

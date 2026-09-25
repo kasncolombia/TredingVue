@@ -9,7 +9,11 @@
         <span class="material-symbols-outlined text-[14px]">done_all</span> Sesión Finalizada
       </div>
       <h1 class="text-3xl font-black text-slate-800 dark:text-white"><%= @session.name %></h1>
-      <p class="text-slate-500 font-mono mt-1">Símbolo: <span class="font-bold"><%= @session.symbol %></span></p>
+      <p class="text-slate-500 font-mono mt-1 flex items-center gap-2">
+        <span>Símbolo:</span>
+        <%= asset_logo_tag(@session.symbol, size_cls: "w-5 h-5") %>
+        <span class="font-bold text-slate-800 dark:text-white"><%= @session.symbol %></span>
+      </p>
     </div>
     
     <div class="text-right">

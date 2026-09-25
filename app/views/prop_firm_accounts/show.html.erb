@@ -363,7 +363,7 @@
 
 <!-- ═══ GRÁFICO ECHARTS ═══ -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+(function() {
   const chartDom = document.getElementById('equity-chart');
   if (!chartDom) return;
   const chart = echarts.init(chartDom);
@@ -423,5 +423,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
   chart.setOption(option);
   window.addEventListener('resize', () => chart.resize());
-});
+})();
 </script>

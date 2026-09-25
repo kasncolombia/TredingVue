@@ -1,141 +1,116 @@
 <%# app/views/devise/registrations/new.html.erb %>
-<div class="min-h-screen relative flex flex-col justify-between py-6 px-4 sm:px-6 lg:px-8 dark:bg-slate-950 bg-slate-50 dark:text-slate-100 text-slate-900 overflow-hidden selection:bg-brand/30 selection:text-brand transition-colors duration-300">
+<div class="min-h-screen relative flex flex-col bg-white text-slate-900 dark:bg-[#05080d] dark:text-white overflow-hidden selection:bg-[#009DFA]/25 selection:text-[#009DFA] transition-colors duration-150">
 
-  <!-- BACKGROUND GLOW EFFECTS & GRID -->
-  <div class="absolute inset-0 dark:bg-[linear-gradient(to_right,#1f293715_1px,transparent_1px),linear-gradient(to_bottom,#1f293715_1px,transparent_1px)] bg-[linear-gradient(to_right,#e5e7eb_1px,transparent_1px),linear-gradient(to_bottom,#e5e7eb_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none"></div>
-  <div class="absolute -top-40 -right-40 w-96 h-96 bg-brand/20 rounded-full blur-[128px] pointer-events-none"></div>
-  <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-emerald-500/15 rounded-full blur-[128px] pointer-events-none"></div>
+  <!-- BACKGROUND: mismo grid técnico + glow de acento que la landing -->
+  <div class="pointer-events-none fixed inset-0 z-0">
+    <div class="absolute -top-40 left-1/2 h-[500px] w-[700px] -translate-x-1/2 rounded-full bg-[#009DFA]/[0.06] dark:bg-[#009DFA]/10 blur-[120px]"></div>
+    <div class="absolute inset-0 opacity-[0.025] dark:opacity-[0.035]" style="background-image: linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px); background-size: 50px 50px;"></div>
+  </div>
 
-  <!-- TOP BAR / LOGO & STATUS -->
-  <header class="w-full max-w-7xl mx-auto flex items-center justify-between py-4 px-2 z-30 relative">
-    <div class="flex items-center gap-3">
-      <%= link_to root_path, class: "flex items-center justify-start transition-transform hover:scale-105 py-2" do %>
-        <%= image_tag "tradetres_logo.png", class: "h-12 sm:h-16 w-auto object-contain drop-shadow-lg" %>
-      <% end %>
-    </div>
+  <!-- NAVBAR -->
+  <header class="w-full max-w-[1280px] mx-auto flex items-center justify-between h-20 px-5 sm:px-8 lg:px-12 z-30 relative border-b border-slate-200 dark:border-white/[0.06] backdrop-blur-xl bg-white/80 dark:bg-[#05080d]/80">
+    <%= link_to root_path, class: "flex items-center gap-2 shrink-0" do %>
+      <div class="flex h-8 w-8 items-center justify-center rounded-lg border border-[#009DFA]/30 bg-[#009DFA]/10">
+        <svg class="h-4 w-4 text-[#009DFA]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 19V5m0 14h16M7 15l3-4 3 2 5-7"/>
+        </svg>
+      </div>
+      <span class="text-lg font-bold tracking-tight">Trade<span class="text-[#009DFA]">Tres</span></span>
+    <% end %>
 
-    <div class="flex items-center gap-3 sm:gap-4">
-      <!-- THEME TOGGLE BUTTON -->
-      <button onclick="toggleTheme()" type="button" class="w-10 h-10 rounded-2xl dark:bg-slate-900/80 bg-white border dark:border-slate-800 border-slate-200 flex items-center justify-center dark:text-amber-400 text-slate-700 hover:border-brand/40 transition-all shadow-sm group" title="Cambiar Tema (Claro / Oscuro)">
-        <span class="material-symbols-outlined text-[20px] dark:hidden">dark_mode</span>
-        <span class="material-symbols-outlined text-[20px] hidden dark:block text-amber-400">light_mode</span>
+    <div class="flex items-center gap-2">
+      <button onclick="toggleTheme()" type="button" aria-label="Cambiar tema" class="w-9 h-9 rounded-xl bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.08] flex items-center justify-center text-slate-600 dark:text-slate-300 hover:border-[#009DFA]/40 transition-colors shrink-0">
+        <span class="material-symbols-outlined text-[18px] dark:hidden">dark_mode</span>
+        <span class="material-symbols-outlined text-[18px] hidden dark:block">light_mode</span>
       </button>
 
-      <p class="text-xs dark:text-slate-400 text-slate-500 hidden sm:block font-medium">
-        ¿Ya eres miembro?
-        <%= link_to "Iniciar Sesión", new_session_path(resource_name), class: "text-brand font-bold hover:underline ml-1" %>
-      </p>
+      <%= link_to "Iniciar sesión", new_session_path(resource_name), class: "px-4 py-2 rounded-xl border border-slate-200 dark:border-white/[0.08] text-sm font-medium text-slate-700 dark:text-slate-300 hover:border-[#009DFA]/40 hover:text-slate-900 dark:hover:text-white transition-colors" %>
     </div>
   </header>
 
-  <!-- MAIN SPLIT CONTAINER -->
-  <main class="flex-1 max-w-7xl w-full mx-auto my-auto py-8 flex items-center justify-center relative z-20">
-    <div class="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
+  <!-- MAIN -->
+  <main class="relative z-10 flex-1 w-full max-w-[1280px] mx-auto px-5 sm:px-8 lg:px-12 py-10 lg:py-16 flex items-center">
+    <div class="w-full grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
 
-      <!-- LEFT COLUMN: HERO SHOWCASE -->
-      <div class="hidden lg:flex lg:col-span-6 xl:col-span-7 flex-col justify-center space-y-7 pr-2">
-
-        <div class="inline-flex items-center gap-2.5 self-start px-4 py-2 rounded-full dark:bg-slate-900/90 bg-white/90 border border-brand/30 text-brand dark:text-brand-light text-xs font-semibold backdrop-blur-xl shadow-md">
-          <span class="material-symbols-outlined text-emerald-500 text-[18px]">stars</span>
-          <span>Prueba 100% Gratuita — Sin tarjeta de crédito</span>
+      <!-- LEFT: SHOWCASE -->
+      <div class="hidden lg:flex lg:col-span-7 flex-col justify-center space-y-7">
+        <div class="inline-flex items-center gap-2 self-start rounded-full border border-[#009DFA]/20 bg-[#009DFA]/5 px-3.5 py-1.5 text-xs font-medium text-[#009DFA]">
+          <span class="h-1.5 w-1.5 rounded-full bg-[#009DFA]"></span>
+          Prueba gratuita, sin tarjeta de crédito
         </div>
 
         <div class="space-y-3">
-          <h1 class="text-4xl xl:text-5xl font-black tracking-tight dark:text-white text-slate-900 leading-[1.15]">
-            Toma el control de tu <br/>
-            <span class="bg-gradient-to-r from-brand via-cyan-500 to-emerald-500 bg-clip-text text-transparent">psicología y rentabilidad</span>.
+          <h1 class="text-4xl xl:text-5xl leading-[1.1] tracking-[-0.02em] font-bold">
+            Toma el control de tu
+            <span class="text-[#009DFA]"> psicología y rentabilidad.</span>
           </h1>
-          <p class="text-base dark:text-slate-400 text-slate-600 max-w-xl leading-relaxed font-normal">
-            Únete a más de 2,400 traders profesionales que auditan su disciplina diaria con analítica institucional y acompañamiento de IA en tiempo real.
+          <p class="text-base text-slate-600 dark:text-slate-400 leading-relaxed max-w-lg">
+            Únete a traders que auditan su disciplina diaria con analítica y acompañamiento de IA en tiempo real.
           </p>
         </div>
 
-        <!-- STATS BAR -->
-        <div class="w-full relative rounded-2xl dark:bg-slate-900/90 bg-white/90 border dark:border-slate-800 border-slate-200 shadow-xl backdrop-blur-xl mt-6 mb-4 flex flex-col sm:flex-row overflow-hidden divide-y sm:divide-y-0 sm:divide-x dark:divide-slate-800 divide-slate-100">
-          <div class="flex-1 p-5 flex items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-            <div class="w-12 h-12 rounded-full bg-brand/10 text-brand flex items-center justify-center shrink-0 border border-brand/20 shadow-inner">
-              <span class="material-symbols-outlined text-[24px]">psychology</span>
-            </div>
-            <div>
-              <p class="text-2xl sm:text-3xl font-black dark:text-white text-slate-900 leading-none tracking-tight">+42%</p>
-              <p class="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mt-1">Disciplina</p>
-            </div>
+        <!-- STATS -->
+        <div class="grid grid-cols-3 rounded-2xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.02] divide-x divide-slate-100 dark:divide-white/[0.06] overflow-hidden">
+          <div class="p-5">
+            <p class="text-2xl font-bold font-mono">2.4K+</p>
+            <p class="text-xs text-slate-500 mt-0.5">traders activos</p>
           </div>
-          
-          <div class="flex-1 p-5 flex items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-            <div class="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0 border border-emerald-500/20 shadow-inner">
-              <span class="material-symbols-outlined text-[24px]">trending_up</span>
-            </div>
-            <div class="leading-none">
-              <span class="font-black text-2xl tracking-tight dark:text-white text-slate-900">Trade<span class="bg-gradient-to-r from-brand via-cyan-400 to-emerald-500 bg-clip-text text-transparent">Tres</span></span>
-              <span class="ml-2 inline-block text-[10px] font-extrabold uppercase tracking-widest px-2 py-0.5 rounded-full bg-brand/15 text-brand dark:text-brand-light border border-brand/30 align-top shadow-sm">PRO</span>
-            </div>
+          <div class="p-5">
+            <p class="text-2xl font-bold font-mono">+42%</p>
+            <p class="text-xs text-slate-500 mt-0.5">disciplina promedio</p>
           </div>
-
-          <div class="flex-1 p-5 flex items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-            <div class="w-12 h-12 rounded-full bg-cyan-500/10 text-cyan-500 flex items-center justify-center shrink-0 border border-cyan-500/20 shadow-inner">
-              <span class="material-symbols-outlined text-[24px]">support_agent</span>
-            </div>
-            <div>
-              <p class="text-2xl sm:text-3xl font-black dark:text-white text-slate-900 leading-none tracking-tight">24/7</p>
-              <p class="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mt-1">AI Coach</p>
-            </div>
+          <div class="p-5">
+            <p class="text-2xl font-bold font-mono">24/7</p>
+            <p class="text-xs text-slate-500 mt-0.5">AI Coach</p>
           </div>
         </div>
 
-        <!-- TESTIMONIAL CARD -->
-        <div class="p-5 rounded-2xl dark:bg-slate-900/80 bg-white/90 border dark:border-slate-800 border-slate-200 backdrop-blur-xl flex items-center gap-4 shadow-xl">
+        <!-- TESTIMONIAL -->
+        <div class="p-5 rounded-2xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.02] flex items-center gap-4">
           <div class="flex -space-x-2 shrink-0">
-            <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-brand to-cyan-500 text-white font-black text-xs flex items-center justify-center border-2 dark:border-slate-950 border-white shadow-md">AR</div>
-            <div class="w-9 h-9 rounded-full bg-emerald-500 text-white font-black text-xs flex items-center justify-center border-2 dark:border-slate-950 border-white shadow-md">JV</div>
-            <div class="w-9 h-9 rounded-full bg-cyan-600 text-white font-black text-xs flex items-center justify-center border-2 dark:border-slate-950 border-white shadow-md">MC</div>
+            <div class="w-9 h-9 rounded-full bg-[#009DFA] text-white font-semibold text-xs flex items-center justify-center border-2 border-white dark:border-[#05080d]">AR</div>
+            <div class="w-9 h-9 rounded-full bg-emerald-500 text-white font-semibold text-xs flex items-center justify-center border-2 border-white dark:border-[#05080d]">JV</div>
+            <div class="w-9 h-9 rounded-full bg-slate-700 text-white font-semibold text-xs flex items-center justify-center border-2 border-white dark:border-[#05080d]">MC</div>
           </div>
           <div class="text-xs space-y-0.5">
-            <p class="font-bold dark:text-slate-200 text-slate-800">"El AI Coach detectó mis sesgos emocionales y transformó mi estrategia."</p>
-            <p class="text-slate-400 font-medium">Carlos M. • Trader Fondeado $150K</p>
+            <p class="font-medium text-slate-700 dark:text-slate-300">El AI Coach detectó mis sesgos emocionales y transformó mi estrategia.</p>
+            <p class="text-slate-400">Carlos M. · Trader fondeado $150K</p>
           </div>
         </div>
-
       </div>
 
-      <!-- RIGHT COLUMN: REGISTRATION CARD -->
-      <div class="w-full lg:col-span-6 xl:col-span-5 max-w-md mx-auto">
+      <!-- RIGHT: REGISTER CARD -->
+      <div class="w-full lg:col-span-5 max-w-md mx-auto">
         <turbo-frame id="auth_card" target="_top" class="block w-full">
-        <div class="dark:bg-slate-900/90 bg-white/90 border dark:border-slate-800 border-slate-200 p-8 sm:p-10 rounded-3xl shadow-2xl backdrop-blur-2xl relative overflow-hidden transition-all">
+        <div class="rounded-2xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.02] p-7 sm:p-8 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.15)] dark:shadow-[0_30px_80px_-20px_rgba(0,157,250,0.12)]">
 
-          <div class="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500/15 rounded-full blur-2xl pointer-events-none"></div>
-
-          <div class="mb-6 text-center sm:text-left relative z-10">
-            <h2 class="text-2xl sm:text-3xl font-black dark:text-white text-slate-900 tracking-tight">
-              Crea tu Cuenta Pro
-            </h2>
-            <p class="text-xs dark:text-slate-400 text-slate-500 mt-2 font-normal leading-relaxed">
-              Acceso inmediato e ilimitado al Journal, Analytics y AI Coach.
+          <div class="mb-6">
+            <h2 class="text-2xl font-bold tracking-tight">Crea tu cuenta</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1.5">
+              Acceso inmediato al journal, analíticas y AI Coach.
             </p>
           </div>
-          
-          <div class="space-y-3 mb-6 relative z-10">
-            <button type="button" class="w-full py-3 px-4 flex items-center justify-center gap-3 rounded-2xl dark:bg-slate-800 bg-white border dark:border-slate-700 border-slate-200 shadow-sm hover:shadow-md hover:border-brand/40 transition-all text-xs font-bold dark:text-slate-200 text-slate-800">
-              <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-              Continuar con Google
-            </button>
+
+          <button type="button" class="w-full mb-5 py-3 px-4 flex items-center justify-center gap-3 rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.02] hover:border-slate-300 dark:hover:border-white/[0.16] transition-colors text-sm font-medium text-slate-700 dark:text-slate-200">
+            <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Continuar con Google
+          </button>
+
+          <div class="flex items-center gap-3 mb-5">
+            <div class="flex-1 h-px bg-slate-200 dark:bg-white/[0.08]"></div>
+            <span class="text-[11px] font-medium text-slate-400">o con tu correo</span>
+            <div class="flex-1 h-px bg-slate-200 dark:bg-white/[0.08]"></div>
           </div>
 
-          <div class="flex items-center gap-3 mb-6 relative z-10">
-            <div class="flex-1 h-px bg-lightBorder dark:bg-darkBorder"></div>
-            <span class="text-[10px] uppercase font-bold text-slate-400 tracking-widest">o regístrate con email</span>
-            <div class="flex-1 h-px bg-lightBorder dark:bg-darkBorder"></div>
-          </div>
-
-          <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "space-y-4 relative z-10" }) do |f| %>
+          <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "space-y-4" }) do |f| %>
 
             <% if resource.errors.any? %>
-              <div class="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-500 text-xs space-y-1 backdrop-blur-md">
-                <div class="font-extrabold flex items-center gap-1.5">
+              <div class="p-3.5 rounded-xl bg-rose-500/5 border border-rose-500/20 text-rose-500 text-xs space-y-1">
+                <div class="font-semibold flex items-center gap-1.5">
                   <span class="material-symbols-outlined text-[16px]">error</span>
-                  <span>No se pudo crear la cuenta:</span>
+                  <span>No se pudo crear la cuenta</span>
                 </div>
-                <ul class="list-disc list-inside space-y-0.5 font-medium pl-1 text-[11px]">
+                <ul class="list-disc list-inside space-y-0.5 pl-1 text-[11px] text-rose-500/90">
                   <% resource.errors.full_messages.each do |msg| %>
                     <li><%= msg %></li>
                   <% end %>
@@ -145,71 +120,68 @@
 
             <!-- NOMBRE -->
             <div>
-              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Nombre Completo</label>
+              <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Nombre completo</label>
               <div class="relative">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
-                  <span class="material-symbols-outlined text-[19px]">person</span>
+                  <span class="material-symbols-outlined text-[18px]">person</span>
                 </span>
                 <%= f.text_field :name, autofocus: true, placeholder: "Alex Rivera",
-                    class: "w-full dark:bg-slate-950/80 bg-slate-50 border dark:border-slate-800 border-slate-300 dark:text-white text-slate-900 rounded-2xl pl-11 pr-4 py-3 text-xs focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all placeholder:text-slate-400" %>
+                    class: "w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white rounded-xl pl-11 pr-4 py-3 text-sm focus:outline-none focus:border-[#009DFA] focus:ring-1 focus:ring-[#009DFA] transition-colors placeholder:text-slate-400" %>
               </div>
             </div>
 
             <!-- EMAIL -->
             <div>
-              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Correo Electrónico</label>
+              <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Correo electrónico</label>
               <div class="relative">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
-                  <span class="material-symbols-outlined text-[19px]">mail</span>
+                  <span class="material-symbols-outlined text-[18px]">mail</span>
                 </span>
                 <%= f.email_field :email, autocomplete: "email", placeholder: "alex.rivera@ejemplo.com",
-                    class: "w-full dark:bg-slate-950/80 bg-slate-50 border dark:border-slate-800 border-slate-300 dark:text-white text-slate-900 rounded-2xl pl-11 pr-4 py-3 text-xs focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all placeholder:text-slate-400 font-mono" %>
+                    class: "w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white rounded-xl pl-11 pr-4 py-3 text-sm focus:outline-none focus:border-[#009DFA] focus:ring-1 focus:ring-[#009DFA] transition-colors placeholder:text-slate-400 font-mono" %>
               </div>
             </div>
 
             <!-- PASSWORD -->
-            <div>
-              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Contraseña</label>
+            <div data-controller="password-toggle password-strength">
+              <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Contraseña</label>
               <div class="relative">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
-                  <span class="material-symbols-outlined text-[19px]">lock</span>
+                  <span class="material-symbols-outlined text-[18px]">lock</span>
                 </span>
-                <%= f.password_field :password, autocomplete: "new-password", id: "reg-password-field",
-                    oninput: "updateStrengthMeter(this.value)",
+                <%= f.password_field :password, autocomplete: "new-password",
                     placeholder: "Mínimo 8 caracteres",
-                    class: "w-full dark:bg-slate-950/80 bg-slate-50 border dark:border-slate-800 border-slate-300 dark:text-white text-slate-900 rounded-2xl pl-11 pr-11 py-3 text-xs focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all placeholder:text-slate-400 font-mono" %>
-                
-                <button type="button" onclick="togglePasswordVisibility('reg-password-field', this)" class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-brand transition-colors">
-                  <span class="material-symbols-outlined text-[19px]">visibility</span>
+                    data: { "password-toggle-target": "input", "password-strength-target": "input", action: "input->password-strength#check" },
+                    class: "w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white rounded-xl pl-11 pr-11 py-3 text-sm focus:outline-none focus:border-[#009DFA] focus:ring-1 focus:ring-[#009DFA] transition-colors placeholder:text-slate-400 font-mono" %>
+                <button type="button" data-action="password-toggle#toggle" class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+                  <span data-password-toggle-target="icon" class="material-symbols-outlined text-[18px]">visibility</span>
                 </button>
               </div>
 
-              <!-- STRENGTH METER CON BURBUJAS Y NIVELES ANIMADOS -->
-              <div class="mt-2.5 space-y-2 p-3 rounded-2xl dark:bg-slate-950/70 bg-slate-100/80 border dark:border-slate-800/80 border-slate-200/80 backdrop-blur-md">
-                <div class="flex items-center justify-between text-xs">
-                  <span class="text-[11px] font-bold dark:text-slate-400 text-slate-500">Nivel de Seguridad</span>
-                  <span id="strength-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider transition-all duration-300 flex items-center gap-1 dark:bg-slate-900 bg-slate-200 dark:text-slate-400 text-slate-600 border dark:border-slate-800 border-slate-300">
+              <!-- STRENGTH METER -->
+              <div class="mt-2.5 space-y-2 p-3 rounded-xl bg-slate-50 dark:bg-black/20 border border-slate-100 dark:border-white/[0.06]">
+                <div class="flex items-center justify-between">
+                  <span class="text-[11px] font-medium text-slate-500">Nivel de seguridad</span>
+                  <span data-password-strength-target="badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold border flex items-center gap-1 bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-white/10">
                     <span class="material-symbols-outlined text-[13px]">lock</span> Ingresa tu clave
                   </span>
                 </div>
 
-                <!-- BARS -->
-                <div class="flex items-center gap-1.5 h-2 w-full">
-                  <div id="bar1" class="h-2 flex-1 rounded-full dark:bg-slate-800 bg-slate-300 transition-all duration-300"></div>
-                  <div id="bar2" class="h-2 flex-1 rounded-full dark:bg-slate-800 bg-slate-300 transition-all duration-300"></div>
-                  <div id="bar3" class="h-2 flex-1 rounded-full dark:bg-slate-800 bg-slate-300 transition-all duration-300"></div>
-                  <div id="bar4" class="h-2 flex-1 rounded-full dark:bg-slate-800 bg-slate-300 transition-all duration-300"></div>
+                <div class="flex items-center gap-1.5">
+                  <div data-password-strength-target="bar" class="h-1.5 flex-1 rounded-full bg-slate-200 dark:bg-white/10"></div>
+                  <div data-password-strength-target="bar" class="h-1.5 flex-1 rounded-full bg-slate-200 dark:bg-white/10"></div>
+                  <div data-password-strength-target="bar" class="h-1.5 flex-1 rounded-full bg-slate-200 dark:bg-white/10"></div>
+                  <div data-password-strength-target="bar" class="h-1.5 flex-1 rounded-full bg-slate-200 dark:bg-white/10"></div>
                 </div>
 
-                <!-- BURBUJAS DE REQUISITOS (CHIPS) -->
-                <div class="flex flex-wrap gap-1.5 pt-1">
-                  <span id="chip-len" class="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-medium dark:bg-slate-900 bg-white dark:text-slate-500 text-slate-400 border dark:border-slate-800 border-slate-200 transition-all duration-200">
+                <div class="flex flex-wrap gap-1.5 pt-0.5">
+                  <span data-password-strength-target="chipLength" data-label="8+ caracteres" class="inline-flex items-center gap-1 text-[10px] px-2.5 py-0.5 rounded-full font-medium bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-white/10">
                     <span class="material-symbols-outlined text-[12px]">radio_button_unchecked</span> 8+ caracteres
                   </span>
-                  <span id="chip-num" class="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-medium dark:bg-slate-900 bg-white dark:text-slate-500 text-slate-400 border dark:border-slate-800 border-slate-200 transition-all duration-200">
-                    <span class="material-symbols-outlined text-[12px]">radio_button_unchecked</span> Mayúscula + Nro
+                  <span data-password-strength-target="chipComplexity" data-label="Mayúscula + número" class="inline-flex items-center gap-1 text-[10px] px-2.5 py-0.5 rounded-full font-medium bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-white/10">
+                    <span class="material-symbols-outlined text-[12px]">radio_button_unchecked</span> Mayúscula + número
                   </span>
-                  <span id="chip-spec" class="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-medium dark:bg-slate-900 bg-white dark:text-slate-500 text-slate-400 border dark:border-slate-800 border-slate-200 transition-all duration-200">
+                  <span data-password-strength-target="chipSymbol" data-label="Símbolo (!@#)" class="inline-flex items-center gap-1 text-[10px] px-2.5 py-0.5 rounded-full font-medium bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-white/10">
                     <span class="material-symbols-outlined text-[12px]">radio_button_unchecked</span> Símbolo (!@#)
                   </span>
                 </div>
@@ -217,38 +189,41 @@
             </div>
 
             <!-- CONFIRM PASSWORD -->
-            <div>
-              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Confirmar Contraseña</label>
+            <div data-controller="password-toggle">
+              <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Confirmar contraseña</label>
               <div class="relative">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
-                  <span class="material-symbols-outlined text-[19px]">lock_reset</span>
+                  <span class="material-symbols-outlined text-[18px]">lock_reset</span>
                 </span>
                 <%= f.password_field :password_confirmation, autocomplete: "new-password",
                     placeholder: "Repite tu clave",
-                    class: "w-full dark:bg-slate-950/80 bg-slate-50 border dark:border-slate-800 border-slate-300 dark:text-white text-slate-900 rounded-2xl pl-11 pr-4 py-3 text-xs focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all placeholder:text-slate-400 font-mono" %>
+                    data: { "password-toggle-target": "input" },
+                    class: "w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white rounded-xl pl-11 pr-11 py-3 text-sm focus:outline-none focus:border-[#009DFA] focus:ring-1 focus:ring-[#009DFA] transition-colors placeholder:text-slate-400 font-mono" %>
+                <button type="button" data-action="password-toggle#toggle" class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+                  <span data-password-toggle-target="icon" class="material-symbols-outlined text-[18px]">visibility</span>
+                </button>
               </div>
             </div>
 
             <!-- TERMS -->
-            <div class="flex items-start gap-2.5 pt-1">
-              <input type="checkbox" id="terms-reg" required class="mt-0.5 w-4 h-4 rounded border-slate-300 dark:border-slate-800 dark:bg-slate-950 bg-white text-brand focus:ring-brand/30 cursor-pointer">
-              <label for="terms-reg" class="text-xs dark:text-slate-400 text-slate-600 leading-relaxed cursor-pointer select-none">
-                Acepto los <a href="#" class="text-brand font-bold hover:underline">Términos de Servicio</a> y la <a href="#" class="text-brand font-bold hover:underline">Política de Privacidad</a>.
-              </label>
-            </div>
+            <label class="flex items-start gap-2.5 pt-1 cursor-pointer select-none">
+              <input type="checkbox" required class="mt-0.5 w-4 h-4 rounded border-slate-300 dark:border-white/20 dark:bg-black/20 text-[#009DFA] focus:ring-[#009DFA]/30 cursor-pointer">
+              <span class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                Acepto los <a href="#" class="text-[#009DFA] font-medium hover:underline">Términos de servicio</a> y la <a href="#" class="text-[#009DFA] font-medium hover:underline">Política de privacidad</a>.
+              </span>
+            </label>
 
-            <!-- SUBMIT BUTTON -->
-            <%= f.button type: :submit, class: "group relative w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-brand to-cyan-500 hover:from-brand-hover hover:to-cyan-600 text-white font-extrabold text-xs shadow-xl shadow-brand/25 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer mt-3" do %>
-              <span>Crear Cuenta de Trader Pro</span>
-              <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            <!-- SUBMIT -->
+            <%= f.button type: :submit, class: "group w-full py-3.5 px-4 rounded-xl bg-[#009DFA] hover:bg-[#14a8ff] text-white font-semibold text-sm shadow-[0_0_25px_rgba(0,157,250,0.25)] transition-all flex items-center justify-center gap-2 cursor-pointer mt-2" do %>
+              <span>Crear cuenta gratis</span>
+              <svg class="h-4 w-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-6-6l6 6-6 6"/></svg>
             <% end %>
 
           <% end %>
 
-          <!-- LOGIN LINK -->
-          <p class="text-center text-xs dark:text-slate-400 text-slate-500 mt-5">
-            ¿Ya tienes cuenta en CoachTrading?
-            <%= link_to "Iniciar Sesión", new_session_path(resource_name), class: "text-brand font-bold hover:underline ml-1" %>
+          <p class="text-center text-xs text-slate-500 dark:text-slate-400 mt-5">
+            ¿Ya tienes cuenta?
+            <%= link_to "Iniciar sesión", new_session_path(resource_name), class: "text-[#009DFA] font-semibold hover:underline ml-1" %>
           </p>
 
         </div>
@@ -259,99 +234,7 @@
   </main>
 
   <!-- FOOTER -->
-  <footer class="w-full max-w-7xl mx-auto px-4 py-4 text-center text-xs dark:text-slate-500 text-slate-400 relative z-30">
-    <p>© 2026 CoachTrading Technologies Inc. Todos los derechos reservados.</p>
+  <footer class="w-full max-w-[1280px] mx-auto px-5 sm:px-8 lg:px-12 py-6 text-center text-xs text-slate-500 dark:text-slate-500 relative z-10">
+    <p>© 2026 TradeTres Technologies Inc. Todos los derechos reservados.</p>
   </footer>
 </div>
-
-<script>
-  function togglePasswordVisibility(fieldId, btn) {
-    const input = document.getElementById(fieldId);
-    if (!input) return;
-    const icon = btn.querySelector('.material-symbols-outlined');
-    if (input.type === 'password') {
-      input.type = 'text';
-      icon.textContent = 'visibility_off';
-    } else {
-      input.type = 'password';
-      icon.textContent = 'visibility';
-    }
-  }
-
-  function updateStrengthMeter(val) {
-    const bars = [
-      document.getElementById('bar1'),
-      document.getElementById('bar2'),
-      document.getElementById('bar3'),
-      document.getElementById('bar4')
-    ];
-    const badge = document.getElementById('strength-badge');
-    const chipLen = document.getElementById('chip-len');
-    const chipNum = document.getElementById('chip-num');
-    const chipSpec = document.getElementById('chip-spec');
-
-    if (!bars[0] || !badge) return;
-
-    const hasMinLen = val.length >= 8;
-    const hasUpperNum = /[A-Z]/.test(val) && /[0-9]/.test(val);
-    const hasSpec = /[^A-Za-z0-9]/.test(val);
-
-    updateChip(chipLen, hasMinLen, '8+ caracteres');
-    updateChip(chipNum, hasUpperNum, 'Mayúscula + Nro');
-    updateChip(chipSpec, hasSpec, 'Símbolo (!@#)');
-
-    let score = 0;
-    if (val.length >= 1) score = 1;
-    if (val.length >= 8) score = 2;
-    if (hasMinLen && hasUpperNum) score = 3;
-    if (hasMinLen && hasUpperNum && hasSpec && val.length >= 10) score = 4;
-
-    if (val.length === 0) {
-      score = 0;
-      badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider transition-all duration-300 flex items-center gap-1 dark:bg-slate-900 bg-slate-200 dark:text-slate-400 text-slate-600 border dark:border-slate-800 border-slate-300';
-      badge.innerHTML = '<span class="material-symbols-outlined text-[13px]">lock</span> Ingresa tu clave';
-    } else if (score === 1) {
-      badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider transition-all duration-300 flex items-center gap-1 bg-rose-500/15 text-rose-500 border border-rose-500/30 shadow-sm shadow-rose-500/20';
-      badge.innerHTML = '<span class="material-symbols-outlined text-[13px]">warning</span> Débil';
-    } else if (score === 2) {
-      badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider transition-all duration-300 flex items-center gap-1 bg-amber-500/15 text-amber-500 border border-amber-500/30 shadow-sm shadow-amber-500/20';
-      badge.innerHTML = '<span class="material-symbols-outlined text-[13px]">shield</span> Aceptable';
-    } else if (score === 3) {
-      badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider transition-all duration-300 flex items-center gap-1 bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-sm shadow-emerald-500/20';
-      badge.innerHTML = '<span class="material-symbols-outlined text-[13px]">verified</span> Buena 🔥';
-    } else if (score === 4) {
-      badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider transition-all duration-300 flex items-center gap-1 bg-brand/20 text-brand-light border border-brand/40 shadow-md shadow-brand/30 animate-pulse';
-      badge.innerHTML = '<span class="material-symbols-outlined text-[13px]">rocket_launch</span> Inviolable 🚀';
-    }
-
-    const isDark = document.getElementById('html-root')?.classList.contains('dark');
-    const emptyStyle = isDark ? 'h-2 flex-1 rounded-full bg-slate-800 transition-all duration-300' : 'h-2 flex-1 rounded-full bg-slate-300 transition-all duration-300';
-
-    const activeStyles = [
-      'h-2 flex-1 rounded-full bg-rose-500 shadow-sm shadow-rose-500/50 transition-all duration-300',
-      'h-2 flex-1 rounded-full bg-amber-500 shadow-sm shadow-amber-500/50 transition-all duration-300',
-      'h-2 flex-1 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50 transition-all duration-300',
-      'h-2 flex-1 rounded-full bg-gradient-to-r from-brand to-violet-500 shadow-md shadow-brand/50 transition-all duration-300'
-    ];
-
-    bars.forEach((bar, idx) => {
-      if (!bar) return;
-      if (idx < score) {
-        bar.className = activeStyles[score - 1];
-      } else {
-        bar.className = emptyStyle;
-      }
-    });
-  }
-
-  function updateChip(el, ok, text) {
-    if (!el) return;
-    if (ok) {
-      el.className = 'inline-flex items-center gap-1 text-[10px] px-2.5 py-0.5 rounded-full font-bold bg-emerald-500/15 text-emerald-500 border border-emerald-500/30 transition-all duration-200 shadow-sm';
-      el.innerHTML = `<span class="material-symbols-outlined text-[12px]">check_circle</span> ${text}`;
-    } else {
-      el.className = 'inline-flex items-center gap-1 text-[10px] px-2.5 py-0.5 rounded-full font-medium dark:bg-slate-900 bg-white dark:text-slate-500 text-slate-400 border dark:border-slate-800 border-slate-200 transition-all duration-200';
-      el.innerHTML = `<span class="material-symbols-outlined text-[12px]">radio_button_unchecked</span> ${text}`;
-    }
-  }
-</script>

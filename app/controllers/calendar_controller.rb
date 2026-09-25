@@ -6,8 +6,8 @@ class CalendarController < ApplicationController
       Date.current.beginning_of_month
     end
 
-    start_date = @current_month.beginning_of_month.beginning_of_week(:monday)
-    end_date   = @current_month.end_of_month.end_of_week(:sunday)
+    start_date = @current_month.beginning_of_month.beginning_of_week(:sunday)
+    end_date   = @current_month.end_of_month.end_of_week(:saturday)
 
     # Solo generar datos de muestra si el usuario NO tiene ninguna operación creada en la base de datos
     ensure_sample_trades_for_month(@current_month) if current_user.trades.none?

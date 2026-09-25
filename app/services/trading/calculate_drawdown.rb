@@ -8,15 +8,29 @@ module Trading
       return demo_equity_curve if @trades.empty?
 
       cumulative = 0.0
-      @trades.map.with_index do |t, idx|
-        cumulative += t.pnl.to_f
+      first_trade = @trades.first
+      start_date = first_trade&.entry_at ? (first_trade.entry_at - 1.day).strftime("%d/%m") : "Inicio"
+
+      points = [
         {
+          trade: "Inicio",
+          date: start_date,
+          pnl: 0.0,
+          value: 0.0
+        }
+      ]
+
+      @trades.each_with_index do |t, idx|
+        cumulative += t.pnl.to_f
+        points << {
           trade: "T#{idx + 1} (#{t.symbol})",
           date: t.entry_at&.strftime("%d/%m") || "T#{idx + 1}",
           pnl: t.pnl.to_f.round(2),
           value: cumulative.round(2)
         }
       end
+
+      points
     end
 
     def max_drawdown

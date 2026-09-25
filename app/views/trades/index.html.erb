@@ -124,7 +124,12 @@
           <% @trades.each do |trade| %>
           <tr class="table-row-hover transition-colors cursor-pointer group" onclick="window.location.href='<%= trade_path(trade) %>'">
             <td class="py-3.5 px-4 text-slate-400 font-mono whitespace-nowrap"><%= (trade.entry_at || trade.created_at)&.strftime("%d/%m/%Y %H:%M") %></td>
-            <td class="py-3.5 px-4 font-black dark:text-white text-slate-900 font-mono"><%= trade.symbol %></td>
+            <td class="py-3.5 px-4 font-black dark:text-white text-slate-900 font-mono">
+              <div class="flex items-center gap-2.5">
+                <%= asset_logo_tag(trade.symbol, size_cls: "w-6 h-6") %>
+                <span><%= trade.symbol %></span>
+              </div>
+            </td>
             <td class="py-3.5 px-4">
               <span class="px-2.5 py-0.5 rounded text-[10px] font-extrabold <%= trade.direction == 'LONG' ? 'badge-long' : 'badge-short' %>">
                 <%= trade.direction %>
