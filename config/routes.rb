@@ -90,6 +90,8 @@ end
     end
   end
 
+  resources :news, only: [:index]
+
   resource :subscription, only: [:new, :create, :destroy]
 
   # Community Routes

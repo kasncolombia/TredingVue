@@ -1,0 +1,75 @@
+<% content_for :page_title, "Noticias y Mercado" %>
+
+<div class="space-y-6 fade-in max-w-5xl mx-auto">
+  
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h2 class="text-2xl font-bold dark:text-white text-slate-900 flex items-center gap-2">
+        <span class="material-symbols-outlined text-brand text-[28px]">newspaper</span> 
+        Noticias de Trading
+      </h2>
+      <p class="text-sm dark:text-slate-400 text-slate-500 mt-1">
+        Mantente actualizado con los fundamentales del mercado y noticias macroeconómicas de impacto.
+      </p>
+    </div>
+    <div class="px-3 py-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-500 text-xs font-bold flex items-center gap-1.5">
+      <span class="material-symbols-outlined text-[16px]">construction</span>
+      En Construcción
+    </div>
+  </div>
+
+  <div class="glass border dark:border-darkBorder border-slate-200 rounded-3xl p-8 md:p-12 text-center shadow-lg relative overflow-hidden">
+    <!-- Glow effect de fondo -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-brand/30 blur-[100px] rounded-full pointer-events-none"></div>
+
+    <div class="relative z-10">
+      <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand to-indigo-600 text-white flex items-center justify-center mx-auto shadow-xl glow-brand mb-6 transform hover:scale-110 transition-all duration-300">
+        <span class="material-symbols-outlined text-[32px]">campaign</span>
+      </div>
+      
+      <h3 class="text-xl md:text-2xl font-bold dark:text-white text-slate-800 mb-3">
+        Módulo de Noticias en Desarrollo
+      </h3>
+      
+      <p class="text-sm md:text-base dark:text-slate-400 text-slate-500 max-w-lg mx-auto leading-relaxed mb-8">
+        Estamos creando e integrando la mejor fuente de información macroeconómica y eventos de alto impacto para que planifiques tu sesión de trading de forma profesional. 
+        <br><br>
+        Pronto verás el calendario económico y un feed relevante.
+      </p>
+
+      <button class="px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold border dark:border-slate-700/50 border-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-all">
+        Volver al Dashboard
+      </button>
+    </div>
+  </div>
+
+  <!-- Cards de Mockup para dar idea visual -->
+  <div class="mt-8">
+    <h4 class="text-sm font-bold dark:text-white text-slate-800 mb-4 px-2 uppercase tracking-wider">Próximos Componentes</h4>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="dark:bg-darkCard bg-white border dark:border-darkBorder border-slate-200 rounded-2xl p-5 shadow-sm opacity-50 select-none">
+        <div class="flex items-center justify-between mb-2 border-b dark:border-darkBorder border-slate-100 pb-2">
+          <span class="text-rose-500 font-bold text-xs flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Alto Impacto</span>
+          <span class="text-slate-400 text-xs">08:30 AM EST</span>
+        </div>
+        <p class="font-bold dark:text-white text-slate-800">Non-Farm Employment Change (NFP)</p>
+        <div class="flex items-center gap-4 mt-3">
+          <div class="text-xs"><span class="text-slate-500">Act:</span> <span class="font-bold dark:text-white text-slate-800">---</span></div>
+          <div class="text-xs"><span class="text-slate-500">Prev:</span> <span class="font-bold text-slate-500">142K</span></div>
+        </div>
+      </div>
+      
+      <div class="dark:bg-darkCard bg-white border dark:border-darkBorder border-slate-200 rounded-2xl p-5 shadow-sm opacity-50 select-none">
+         <div class="flex items-center justify-between mb-2 border-b dark:border-darkBorder border-slate-100 pb-2">
+          <span class="text-amber-500 font-bold text-xs flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Medio Impacto</span>
+          <span class="text-slate-400 text-xs">10:00 AM EST</span>
+        </div>
+        <p class="font-bold dark:text-white text-slate-800">Jerome Powell Speaks</p>
+        <div class="flex items-center gap-2 mt-3 text-xs text-slate-400">
+          <span class="material-symbols-outlined text-[14px]">videocam</span> Conferencia en vivo USD
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

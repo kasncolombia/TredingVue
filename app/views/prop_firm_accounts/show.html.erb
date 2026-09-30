@@ -125,13 +125,13 @@
 
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-    <!-- ═══ GRÁFICO BALANCE VS DRAWDOWN ═══ -->
+    <!-- ═══ UNDERWATER DRAWDOWN CHART ═══ -->
     <div class="lg:col-span-8 glass rounded-2xl p-5 space-y-4">
       <h2 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
-        <span class="material-symbols-outlined text-brand text-[18px]">show_chart</span>
-        Curva de Balance vs Piso de Drawdown
+        <span class="material-symbols-outlined text-rose-500 text-[18px]">water_drop</span>
+        Underwater Drawdown Chart
       </h2>
-      <div id="equity-chart" style="width:100%; height:300px;"></div>
+      <div id="underwater-drawdown-chart" style="width:100%; height:300px;"></div>
     </div>
 
     <!-- ═══ PATH TO FUNDING ═══ -->
@@ -364,17 +364,26 @@
 <!-- ═══ GRÁFICO ECHARTS ═══ -->
 <script>
 (function() {
-  const chartDom = document.getElementById('equity-chart');
+  const chartDom = document.getElementById('underwater-drawdown-chart');
   if (!chartDom) return;
   const chart = echarts.init(chartDom);
 
   const equityData = <%= raw @equity_data.to_json %>;
   const initialBalance = <%= @account.initial_balance %>;
-  const drawdownFloor = <%= @account.drawdown_floor %>;
 
   const dates = equityData.map(d => d.date);
-  const balances = equityData.map(d => initialBalance + d.value);
-  const floorLine = equityData.map(() => drawdownFloor);
+  
+  let peak = initialBalance;
+  const underwaterData = equityData.map(d => {
+    // Si la serie tiene pocos datos y empieza en negativo, el pico se ajusta.
+    // Aunque normalmente el primer pico es el balance inicial.
+    const currentBalance = initialBalance + d.value;
+    if (currentBalance > peak) {
+      peak = currentBalance;
+    }
+    // El "Underwater" es la diferencia bajo el pico más alto (siempre negativa o 0)
+    return currentBalance - peak;
+  });
 
   const isDark = document.documentElement.classList.contains('dark');
 
@@ -386,37 +395,73 @@
       borderColor: isDark ? '#23263A' : '#E2E6F0',
       textStyle: { color: isDark ? '#E5E0ED' : '#0F0E1A', fontFamily: 'Manrope', fontSize: 11 },
       formatter: function(params) {
-        let bal = params[0] ? `$${params[0].value.toLocaleString('en-US', {minimumFractionDigits:2})}` : '';
-        let fl  = params[1] ? `$${params[1].value.toLocaleString('en-US', {minimumFractionDigits:2})}` : '';
-        return `<strong>${params[0].axisValue}</strong><br/>Balance: <strong style="color:#10B981">${bal}</strong><br/>Piso DD: <strong style="color:#F43F5E">${fl}</strong>`;
+        let val = params[0] ? params[0].value : 0;
+        let pnlColor = val === 0 ? '#10B981' : '#D94B68';
+        return `<strong>${params[0].axisValue}</strong><br/>Drawdown: <strong style="color:${pnlColor}">-$${Math.abs(val).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}</strong>`;
       }
     },
-    grid: { left: '3%', right: '3%', top: '8%', bottom: '12%', containLabel: true },
+    grid: { left: '4%', right: '4%', top: '15%', bottom: '12%', containLabel: true },
     xAxis: {
-      type: 'category', data: dates, boundaryGap: false,
-      axisLine: { lineStyle: { color: isDark ? '#23263A' : '#E2E6F0' } },
-      axisLabel: { color: isDark ? '#8286A8' : '#64748B', fontSize: 10 }
+      type: 'category', 
+      data: dates, 
+      boundaryGap: false,
+      axisLine: { show: false },
+      axisTick: { show: false },
+      axisLabel: { color: isDark ? '#8286A8' : '#64748B', fontSize: 10, margin: 12 }
     },
     yAxis: {
       type: 'value',
+      max: 0,
       axisLine: { show: false },
-      splitLine: { lineStyle: { color: isDark ? '#1E2235' : '#F0F0F5', type: 'dashed' } },
-      axisLabel: { color: isDark ? '#8286A8' : '#64748B', fontSize: 10, formatter: '${value}' }
+      splitLine: { 
+        lineStyle: { 
+          color: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.03)', 
+          type: 'solid' 
+        } 
+      },
+      axisLabel: { 
+        color: isDark ? '#8286A8' : '#64748B', 
+        fontSize: 10,
+        formatter: function(value) {
+            if (value === 0) return '$0';
+            let val = Math.abs(value);
+            if (val >= 1000) {
+                return '-$' + (val / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+            }
+            return '-$' + val;
+        }
+      }
     },
     series: [
       {
-        name: 'Balance', type: 'line', data: balances, smooth: true,
-        lineStyle: { width: 2.5, color: '#6C5CE7' },
-        areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [
-          { offset: 0, color: 'rgba(108,92,231,0.25)' },
-          { offset: 1, color: 'rgba(108,92,231,0.02)' }
-        ]}},
-        itemStyle: { color: '#6C5CE7' }, symbol: 'circle', symbolSize: 5
-      },
-      {
-        name: 'Piso Drawdown', type: 'line', data: floorLine,
-        lineStyle: { width: 1.5, color: '#F43F5E', type: 'dashed' },
-        itemStyle: { color: '#F43F5E' }, symbol: 'none'
+        name: 'Underwater Drawdown',
+        type: 'line',
+        data: underwaterData,
+        smooth: true,
+        symbol: 'none',
+        lineStyle: { 
+          width: 2.5, 
+          color: '#D94B68' 
+        },
+        areaStyle: { 
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: 'rgba(217, 75, 104, 0.20)' },
+            { offset: 1, color: 'rgba(217, 75, 104, 0.00)' }
+          ])
+        },
+        itemStyle: { color: '#D94B68' },
+        markLine: {
+          silent: true,
+          symbol: ['none', 'none'],
+          label: { show: false },
+          lineStyle: { 
+            type: 'dashed', 
+            color: isDark ? '#8286A8' : '#64748B',
+            width: 1,
+            opacity: 0.5
+          },
+          data: [{ yAxis: 0 }]
+        }
       }
     ]
   };

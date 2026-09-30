@@ -18,7 +18,7 @@
   <!-- ===================== FONTS ===================== -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 
   <!-- ===================== TAILWIND ===================== -->
@@ -60,9 +60,9 @@
           muted:  "#8B8FA8"
         },
         fontFamily: {
-          sans:    ["Manrope", "sans-serif"],
+          sans:    ["'League Spartan'", "sans-serif"],
           mono:    ["JetBrains Mono", "monospace"],
-          heading: ["Manrope", "sans-serif"]
+          heading: ["'League Spartan'", "sans-serif"]
         }
       }}
     }
@@ -73,7 +73,9 @@
        BASE
     ────────────────────────────────────────── */
     * { box-sizing: border-box; }
-    body { font-family: "Manrope", sans-serif; }
+    body { font-family: "League Spartan", sans-serif; }
+    h1, h2, h3, h4, h5, h6, .title-white { font-family: "League Spartan", sans-serif; }
+    .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6, .dark .title-white { color: #FFFFFF !important; }
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
 
     /* ── TRANSICIÓN GLOBAL UNIFICADA ──
@@ -262,7 +264,7 @@
       <!-- CENTRO: ACCESOS RÁPIDOS (PROP FIRMS & BACKTESTING) -->
       <div class="flex flex-col items-center gap-3 my-auto w-full px-1">
         <%= link_to pro_tools_path(tab: 'prop'), class: "w-full py-2.5 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-brand transition-all flex flex-col items-center justify-center gap-0.5 group", title: "Cuentas Prop Firms" do %>
-          <span class="material-symbols-outlined text-[22px] group-hover:scale-110 transition-transform text-amber-400">verified</span>
+          <span class="material-symbols-outlined text-[22px] group-hover:scale-110 transition-transform text-indigo-400">verified</span>
           <span class="text-[9px] font-extrabold tracking-tighter">PROP</span>
         <% end %>
 
@@ -271,9 +273,9 @@
           <span class="text-[9px] font-extrabold tracking-tighter">BACK</span>
         <% end %>
 
-        <%= link_to trading_accounts_path, class: "w-full py-2.5 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-emerald-400 transition-all flex flex-col items-center justify-center gap-0.5 group", title: "Brokers & Cuentas" do %>
-          <span class="material-symbols-outlined text-[22px] group-hover:scale-110 transition-transform text-emerald-400">hub</span>
-          <span class="text-[9px] font-extrabold tracking-tighter">BROKER</span>
+        <%= link_to dashboard_path, class: "w-full py-2.5 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-indigo-400 transition-all flex flex-col items-center justify-center gap-0.5 group", title: "Brokers & Cuentas" do %>
+          <span class="material-symbols-outlined text-[22px] group-hover:scale-110 transition-transform text-indigo-400">hub</span>
+          <span class="text-[9px] font-extrabold tracking-tighter">Journal</span>
         <% end %>
       </div>
 
@@ -325,8 +327,8 @@
           { label: "Dashboard",        path: dashboard_path,             icon: "dashboard" },
           { label: "Trades",           path: trades_path,                icon: "swap_horiz", count: current_user.trades.count },
           { label: "Estrategia",       path: strategies_path,            icon: "target" },
-          { label: "Cuentas & Reglas", path: prop_firm_accounts_path,    icon: "account_tree" },
-          { label: "Brokers & Cuentas",path: trading_accounts_path,      icon: "hub", count: current_user.trading_accounts.count },
+          { label: "Prop Firm", path: prop_firm_accounts_path,    icon: "account_tree" },
+          { label: "Noticias",         path: news_index_path,            icon: "newspaper" },
           { label: "AI Coach",         path: ai_coach_path,              icon: "smart_toy" },
           { label: "Comunidad",        path: community_feed_index_path,  icon: "forum" },
         ] %>
@@ -423,7 +425,7 @@
         <!-- BOTÓN ADMINISTRAR CUENTAS (TOP RIGHT HEADER SOBRIO) -->
         <button type="button" onclick="openManageAccountsModal()" class="px-2.5 md:px-3 py-1.5 text-xs font-bold bg-slate-100 dark:bg-slate-800/90 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl transition-all flex items-center gap-1.5 border border-slate-300/60 dark:border-slate-700/80 shadow-xs cursor-pointer" title="Administrar Cuentas (Personales & Prop Firms)">
           <span class="material-symbols-outlined text-[16px] text-slate-500 dark:text-slate-400">manage_accounts</span>
-          <span class="hidden lg:inline">Administrar Cuentas</span>
+          <span class="hidden lg:inline">Crear Cuentas</span>
         </button>
 
         <!-- THEME TOGGLE -->
@@ -432,11 +434,7 @@
           <span class="toggle-moon material-symbols-outlined text-[18px] text-brand-light">dark_mode</span>
         </button>
 
-        <!-- NUEVA OPERACIÓN -->
-        <%= link_to new_trade_path, class: "px-3.5 py-1.5 text-xs font-black bg-brand hover:bg-brand-hover text-white rounded-xl glow-brand transition-all flex items-center gap-1.5 shadow-md hover:scale-105" do %>
-          <span class="material-symbols-outlined text-[16px]">add_circle</span>
-          <span>Add Trade +</span>
-        <% end %>
+     
       </div>
     </header>
 

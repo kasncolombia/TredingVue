@@ -8,19 +8,21 @@
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" rescue nil %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" rescue nil %>
     <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     <script>
       tailwind.config = {
         darkMode: "class",
         theme: { extend: {
-          fontFamily: { sans: ["Manrope", "sans-serif"] },
+          fontFamily: { sans: ["'League Spartan'", "sans-serif"] },
           colors: { brand: "#009DFA" }
         }}
       }
     </script>
     <style>
-      body { font-family: "Manrope", sans-serif; }
+      body { font-family: "League Spartan", sans-serif; }
+      h1, h2, h3, h4, h5, h6, .title-white { font-family: "League Spartan", sans-serif; }
+      .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6, .dark .title-white { color: #FFFFFF !important; }
       .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; display: inline-block; vertical-align: middle; }
     </style>
     <%= javascript_importmap_tags %>
