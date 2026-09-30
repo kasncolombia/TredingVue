@@ -2,7 +2,7 @@
   <div class="flex items-center gap-2.5">
     <span>Dashboard</span>
     <% if @stats[:is_demo] %>
-      <span class="text-[10px] px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-400 font-extrabold border border-amber-500/30 tracking-wider">MODO DEMO</span>
+      <span class="text-[10px] px-2.5 py-0.5 rounded-full dark:bg-[#261d0e] dark:text-amber-500 bg-amber-500/15 text-amber-500 font-extrabold border border-amber-500/30 tracking-wider">MODO DEMO</span>
     <% else %>
       <span class="text-[10px] px-2.5 py-0.5 rounded-full <%= @current_mode == 'backtest' ? 'bg-slate-500/15 text-slate-500 dark:text-slate-400 border-slate-500/30' : (@current_mode == 'prop_firm' ? 'bg-brand/15 text-brand border-brand/30' : 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30') %> font-extrabold border tracking-wider flex items-center gap-1">
         <% if @current_mode == 'real_account' %><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span><% end %>
@@ -38,11 +38,11 @@
   <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
       
     <!-- Balance & P&L -->
-    <div class="dark:bg-[#141414] bg-white border dark:border-[#2a2a30] border-slate-200 rounded-2xl p-4 flex flex-col justify-between relative overflow-hidden shadow-xs">
+    <div class="dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 rounded-2xl p-4 flex flex-col justify-between relative overflow-hidden shadow-xs">
       <div class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider dark:text-white text-slate-800 z-10 relative">
         <span class="w-1 h-3.5 bg-emerald-400 rounded-full shrink-0"></span>
         <span class="dark:text-white text-slate-800 font-bold">BALANCE & P&L</span>
-        <span class="material-symbols-outlined text-[14px] dark:text-[#6a6a75] text-slate-400 cursor-pointer ml-auto" title="Información sobre Balance y P&L">info</span>
+        <span class="material-symbols-outlined text-[14px] dark:text-[#40453e] text-slate-400 cursor-pointer ml-auto" title="Información sobre Balance y P&L">info</span>
       </div>
       <div class="z-10 relative flex justify-between items-end mt-4">
         <div>
@@ -65,7 +65,7 @@
 
     <!-- Trade Win % -->
    <!-- Trade Win % -->
-<div class="dark:bg-[#141414] bg-white border dark:border-[#2a2a30] border-slate-200 rounded-2xl p-4 relative overflow-hidden shadow-xs">
+<div class="dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 rounded-2xl p-4 relative overflow-hidden shadow-xs">
   <div class="grid grid-cols-2 gap-2" style="min-height:110px">
 
     <!-- Columna izquierda (50%): título + valor + badges -->
@@ -73,7 +73,7 @@
       <div class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider mb-2">
         <span class="w-1 h-3.5 bg-indigo-500 rounded-full shrink-0"></span>
         <span class="dark:text-white text-slate-800 font-bold truncate">TRADE WIN %</span>
-        <span class="material-symbols-outlined text-[14px] dark:text-[#6a6a75] text-slate-400 cursor-pointer ml-auto shrink-0" title="Porcentaje de operaciones ganadoras">info</span>
+        <span class="material-symbols-outlined text-[14px] dark:text-[#40453e] text-slate-400 cursor-pointer ml-auto shrink-0" title="Porcentaje de operaciones ganadoras">info</span>
       </div>
 
       <div class="flex flex-col justify-center flex-1">
@@ -95,14 +95,14 @@
 </div>
 
     <!-- Profit Factor -->
-    <div class="dark:bg-[#141414] bg-white border dark:border-[#2a2a30] border-slate-200 rounded-2xl p-4 relative overflow-hidden shadow-xs">
+    <div class="dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 rounded-2xl p-4 relative overflow-hidden shadow-xs">
       <div class="grid grid-cols-2 gap-2" style="min-height:110px">
         <!-- Columna izquierda (50%): título + valor -->
         <div class="flex flex-col min-w-0">
           <div class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider mb-2">
             <span class="w-1 h-3.5 bg-indigo-500 rounded-full shrink-0"></span>
             <span class="dark:text-white text-slate-800 font-bold truncate">PROFIT FACTOR</span>
-            <span class="material-symbols-outlined text-[14px] dark:text-[#6a6a75] text-slate-400 cursor-pointer ml-auto shrink-0" title="Ratio Beneficio / Pérdida">info</span>
+            <span class="material-symbols-outlined text-[14px] dark:text-[#40453e] text-slate-400 cursor-pointer ml-auto shrink-0" title="Ratio Beneficio / Pérdida">info</span>
           </div>
           <div class="flex flex-col justify-center flex-1">
             <p class="text-3xl font-black font-mono tracking-tight dark:text-white text-slate-900 leading-none"><%= @stats[:profit_factor] %></p>
@@ -117,7 +117,7 @@
 
     <!-- Avg Win / Loss -->
 <!-- Avg Win / Loss -->
-<div class="dark:bg-[#141414] bg-white border dark:border-[#2a2a30] border-slate-200 rounded-2xl p-4 relative overflow-hidden shadow-xs">
+<div class="dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 rounded-2xl p-4 relative overflow-hidden shadow-xs">
   <div class="grid grid-cols-2 gap-2" style="min-height:110px">
 
     <!-- Columna izquierda (50%): título + valor + promedios -->
@@ -125,7 +125,7 @@
       <div class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider mb-2">
         <span class="w-1 h-3.5 bg-indigo-500 rounded-full shrink-0"></span>
         <span class="dark:text-white text-slate-800 font-bold truncate">AVG WIN/LOSS</span>
-        <span class="material-symbols-outlined text-[14px] dark:text-[#6a6a75] text-slate-400 cursor-pointer ml-auto shrink-0" title="Promedio Ganadora vs Perdedora">info</span>
+        <span class="material-symbols-outlined text-[14px] dark:text-[#40453e] text-slate-400 cursor-pointer ml-auto shrink-0" title="Promedio Ganadora vs Perdedora">info</span>
       </div>
 
       <div class="flex flex-col justify-center flex-1">
@@ -146,11 +146,11 @@
 </div>
 
     <!-- Trade Expectancy -->
-    <div class="dark:bg-[#141414] bg-white border dark:border-[#2a2a30] border-slate-200 rounded-2xl p-4 flex flex-col justify-between shadow-xs">
+    <div class="dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 rounded-2xl p-4 flex flex-col justify-between shadow-xs">
       <div class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider dark:text-white text-slate-800">
         <span class="w-1 h-3.5 bg-emerald-400 rounded-full"></span>
         <span class="dark:text-white text-slate-800 font-bold">EXPECTANCY</span>
-        <span class="material-symbols-outlined text-[14px] dark:text-[#6a6a75] text-slate-400 cursor-pointer" title="Esperanza matemática por trade">info</span>
+        <span class="material-symbols-outlined text-[14px] dark:text-[#40453e] text-slate-400 cursor-pointer" title="Esperanza matemática por trade">info</span>
       </div>
       <div class="mt-2">
         <p class="text-3xl font-black font-mono tracking-tight <%= @stats[:expectancy].to_f >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-500' %>">
@@ -166,9 +166,9 @@
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
     
     <!-- Curva de P&L -->
-    <div class="glass rounded-2xl overflow-hidden flex flex-col  min-h-0 dark:bg-[#0e0f14] bg-white border dark:border-[#1e2030] border-slate-200 shadow-xs">
+    <div class="glass rounded-2xl overflow-hidden flex flex-col  min-h-0 dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 shadow-xs">
       <!-- Header estilo trading platform -->
-      <div class="flex flex-wrap items-center justify-between gap-2 px-4 pt-4 pb-3 border-b dark:border-[#1e2030] border-slate-100">
+      <div class="flex flex-wrap items-center justify-between gap-2 px-4 pt-4 pb-3 border-b dark:border-[#1d1d1d] border-slate-100">
         <div class="flex items-center gap-2">
           <span class="material-symbols-outlined text-[16px] dark:text-emerald-400 text-emerald-500">show_chart</span>
           <span class="text-[11px] font-black uppercase tracking-widest dark:text-white text-slate-800">Curva de P&L</span>
@@ -188,9 +188,9 @@
     </div>
     
     <!-- Drawdown -->
-    <div class="glass rounded-2xl overflow-hidden flex flex-col min-h-0 dark:bg-[#0e0f14] bg-white border dark:border-[#1e2030] border-slate-200 shadow-xs">
+    <div class="glass rounded-2xl overflow-hidden flex flex-col min-h-0 dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 shadow-xs">
       <!-- Header estilo trading platform -->
-      <div class="flex flex-wrap items-center justify-between gap-2 px-4 pt-4 pb-3 border-b dark:border-[#1e2030] border-slate-100">
+      <div class="flex flex-wrap items-center justify-between gap-2 px-4 pt-4 pb-3 border-b dark:border-[#1d1d1d] border-slate-100">
         <div class="flex items-center gap-2">
           <span class="material-symbols-outlined text-[16px] dark:text-rose-400 text-rose-500">trending_down</span>
           <span class="text-[11px] font-black uppercase tracking-widest dark:text-white text-slate-800">Drawdown</span>
@@ -211,7 +211,7 @@
     </div>
 
     <!-- AI Coach Score Radar -->
-    <div class="glass rounded-2xl p-4 md:p-5 flex flex-col  min-h-0 justify-between dark:bg-[#141414] bg-white border dark:border-[#2a2a30] border-slate-200 shadow-xs">
+    <div class="glass rounded-2xl p-4 md:p-5 flex flex-col  min-h-0 justify-between dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 shadow-xs">
       <div class="flex items-center justify-between mb-2">
         <h3 class="text-sm font-bold dark:text-white text-slate-900 flex items-center gap-2">
           <span class="material-symbols-outlined text-purple-500 dark:text-purple-400 text-[18px]">radar</span> TRADETRES SCORE
@@ -223,7 +223,7 @@
       <div id="echarts-radar-container" class="w-full h-60"></div>
       
       <!-- Puntaje Global con Barra de Progreso Degradada -->
-      <div class="mt-3 pt-3 border-t dark:border-[#2a2a30] border-slate-200 space-y-2">
+      <div class="mt-3 pt-3 border-t dark:border-[#1d1d1d] border-slate-200 space-y-2">
         <div class="flex items-center justify-between text-xs font-bold">
           <span class="dark:text-[#9a9aa5] text-slate-500">PUNTAJE SCORE GLOBAL</span>
           <span class="text-base font-black font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
@@ -231,7 +231,7 @@
           </span>
         </div>
         <!-- Barra Degradada -->
-        <div class="w-full dark:bg-[#1a1a24] bg-slate-100 border dark:border-[#2a2a30] border-slate-200 rounded-full h-3 p-0.5 overflow-hidden">
+        <div class="w-full dark:bg-[#1a1a24] bg-slate-100 border dark:border-[#1d1d1d] border-slate-200 rounded-full h-3 p-0.5 overflow-hidden">
           <div class="h-full rounded-full bg-gradient-to-r from-purple-600 via-indigo-500 to-emerald-400 w-[85%] transition-all duration-1000 shadow-xs"></div>
         </div>
         <div class="flex justify-between items-center text-[10px] dark:text-[#7a7a85] text-slate-500">
@@ -248,7 +248,7 @@
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 items-start">
 
   <!-- Daily P&L -->
-  <div class="glass rounded-2xl p-4 md:p-5 dark:bg-[#141414] bg-white border dark:border-[#2a2a30] border-slate-200 shadow-xs">
+  <div class="glass rounded-2xl p-4 md:p-5 dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 shadow-xs">
     <div class="flex items-center justify-between mb-3">
       <h3 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
         <span class="material-symbols-outlined text-emerald-500 text-[18px]">bar_chart</span> P&L por Día
@@ -258,7 +258,7 @@
   </div>
 
   <!-- Trade Duration Scatter -->
-  <div class="glass rounded-2xl p-4 md:p-5 dark:bg-[#141414] bg-white border dark:border-[#2a2a30] border-slate-200 shadow-xs">
+  <div class="glass rounded-2xl p-4 md:p-5 dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 shadow-xs">
     <div class="flex items-center justify-between mb-3">
       <h3 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
         <span class="material-symbols-outlined text-cyan-400 text-[18px]">timer</span> Duración vs Resultado (Mins)
@@ -268,7 +268,7 @@
   </div>
 
   <!-- Trades Recientes -->
-  <div class="glass rounded-2xl p-4 md:p-5 flex flex-col dark:bg-[#141414] bg-white border dark:border-[#2a2a30] border-slate-200 shadow-xs">
+  <div class="glass rounded-2xl p-4 md:p-5 flex flex-col dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 shadow-xs">
     <div class="flex items-center justify-between mb-3.5 shrink-0">
       <h3 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
         <span class="material-symbols-outlined text-amber-400 text-[20px]">list_alt</span> Últimos Trades
@@ -280,7 +280,7 @@
     <div class="overflow-y-auto space-y-2.5 pr-1" style="max-height:520px">
       <% if @recent_trades.any? %>
         <% @recent_trades.each do |t| %>
-          <%= link_to trade_path(t), class: "flex items-center justify-between p-3 rounded-2xl dark:bg-[#18181e] bg-slate-50/80 hover:bg-slate-100/90 dark:hover:bg-[#20202a] transition-all duration-200 border dark:border-[#262632] border-slate-200/80 hover:shadow-xs group" do %>
+          <%= link_to trade_path(t), class: "flex items-center justify-between p-3 rounded-2xl dark:bg-[#1e1e1e] bg-slate-50/80 hover:bg-slate-100/90 dark:hover:bg-[#20202a] transition-all duration-200 border dark:border-[#1d1d1d] border-slate-200/80 hover:shadow-xs group" do %>
             <div class="flex items-center gap-3.5">
               <%= asset_logo_tag(t.symbol, size_cls: "w-11 h-11") %>
               <div>
@@ -319,7 +319,7 @@
   <!-- FILA 4: CALENDARIO DE TRADING BENTO GRID -->
   <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
     <!-- Bento Grid Calendario Mensual -->
-    <div class="lg:col-span-3 dark:bg-[#141414] bg-white border dark:border-[#2a2a30] border-slate-200 rounded-3xl p-4 md:p-6 flex flex-col justify-between shadow-sm dark:shadow-2xl">
+    <div class="lg:col-span-3 dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 rounded-3xl p-4 md:p-6 flex flex-col justify-between shadow-sm dark:shadow-2xl">
       <div class="flex items-center justify-between mb-4">
         <!-- Izquierda: mes, año -->
         <div class="flex items-center gap-2 md:gap-3">
@@ -534,7 +534,7 @@
     %>
 
     <!-- 1. P&L por Día (ECharts Bar Chart — mismo estilo que Fila 3) -->
-    <div class="glass dark:bg-[#111116] rounded-[20px] p-5 border border-slate-200 dark:border-[#212128] flex flex-col relative overflow-hidden shadow-sm">
+    <div class="glass dark:bg-[#18181a] rounded-[20px] p-5 border border-slate-200 dark:border-[#1d1d1d] flex flex-col relative overflow-hidden shadow-sm">
       <div class="flex items-center gap-2 mb-3">
         <div class="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
           <span class="material-symbols-outlined text-[16px]">bar_chart</span>
@@ -545,7 +545,7 @@
     </div>
 
     <!-- 2. Day of Week Performance (Igual a imagen 1) -->
-    <div class="glass dark:bg-[#111116] rounded-[20px] p-5 border border-slate-200 dark:border-[#212128] flex flex-col justify-between relative overflow-hidden shadow-sm">
+    <div class="glass dark:bg-[#18181a] rounded-[20px] p-5 border border-slate-200 dark:border-[#1d1d1d] flex flex-col justify-between relative overflow-hidden shadow-sm">
       <div class="flex items-center gap-2 mb-4">
         <div class="w-7 h-7 rounded-lg dark:bg-[#1e1e26] bg-slate-100 dark:text-slate-300 text-slate-600 flex items-center justify-center">
           <span class="material-symbols-outlined text-[16px]">calendar_view_week</span>
@@ -626,7 +626,7 @@
   </div>
 
   <!-- FILA 6: CALENDARIO ANUAL DE RENDIMIENTO (EXACTO A IMAGEN DE REFERENCIA 3) -->
-  <div class="dark:bg-[#131317] bg-white border dark:border-[#232329] border-slate-200 rounded-[12px] p-4 md:p-5 shadow-sm dark:shadow-2xl overflow-x-auto">
+  <div class="dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 rounded-[12px] p-4 md:p-5 shadow-sm dark:shadow-2xl overflow-x-auto">
     <!-- Header del Calendario Anual -->
     <div class="flex items-center justify-between mb-4 min-w-[750px]">
       <div class="flex items-center gap-2.5">
@@ -650,7 +650,7 @@
     <!-- GRID DE 14 COLUMNAS (YEAR, JAN..DEC, TOTAL) -->
     <div class="min-w-[750px] space-y-[4px]">
       <!-- Header de Columnas -->
-      <div class="grid grid-cols-[repeat(14,minmax(0,1fr))] gap-[4px] text-center text-[10px] font-semibold dark:text-[#6b6b75] text-slate-500 uppercase tracking-[0.5px] pb-2 border-b dark:border-[#232329] border-slate-200">
+      <div class="grid grid-cols-[repeat(14,minmax(0,1fr))] gap-[4px] text-center text-[10px] font-semibold dark:text-[#6b6b75] text-slate-500 uppercase tracking-[0.5px] pb-2 border-b dark:border-[#1d1d1d] border-slate-200">
         <div>YEAR</div>
         <div>JAN</div>
         <div>FEB</div>
@@ -670,7 +670,7 @@
       <!-- Fila de Celdas -->
       <div class="grid grid-cols-[repeat(14,minmax(0,1fr))] gap-[4px] text-center pt-1">
         <!-- Columna 1: AÑO -->
-        <div class="h-[55px] rounded-[6px] dark:bg-[#18181d] bg-slate-100 border dark:border-[#232329] border-slate-200 dark:text-white text-slate-900 font-bold text-[13px] flex items-center justify-center">
+        <div class="h-[55px] rounded-[6px] dark:bg-[#18181d] bg-slate-100 border dark:border-[#1d1d1d] border-slate-200 dark:text-white text-slate-900 font-bold text-[13px] flex items-center justify-center">
           <%= Time.current.year %>
         </div>
 
@@ -683,7 +683,7 @@
         %>
           <% if m_count == 0 %>
             <!-- CELDA VACÍA -->
-            <div class="h-[55px] rounded-[6px] dark:bg-[#18181d] bg-slate-50 border dark:border-[#232329] border-slate-200 dark:text-[#4a4a54] text-slate-400 font-normal text-[13px] flex items-center justify-center">
+            <div class="h-[55px] rounded-[6px] dark:bg-[#18181d] bg-slate-50 border dark:border-[#1d1d1d] border-slate-200 dark:text-[#4a4a54] text-slate-400 font-normal text-[13px] flex items-center justify-center">
               --
             </div>
           <% elsif pnl < 0 %>
@@ -793,7 +793,7 @@
   const C_RED        = '#E05260';
   const C_PURPLE     = '#8B7EFA';
   const C_GRID       = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.05)';
-  const C_AXIS_TEXT  = isDark ? '#4E5470' : '#94A3B8';
+  const C_AXIS_TEXT  = isDark ? '#40453e' : '#94A3B8';
   const C_ZERO_LINE  = isDark ? 'rgba(100,110,160,0.35)' : 'rgba(100,116,139,0.30)';
 
   // Tooltip profesional de trading
@@ -1536,3 +1536,4 @@ renderDailyPnlPremium();
   document.addEventListener("turbo:load", safeRenderEcharts, { once: true });
 })();
 </script>
+
