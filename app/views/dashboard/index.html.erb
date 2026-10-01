@@ -29,9 +29,23 @@
     </div>
   </div>
 
-  <div>
-    <h2 class="text-xl font-bold dark:text-white text-slate-900">Dashboard</h2>
-    <p class="text-xs text-slate-400 mt-1">Visión integral cuantitativa de tus operaciones, estadísticas clave y calendario.</p>
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <div>
+      <h2 class="text-xl font-bold dark:text-white text-slate-900">Dashboard</h2>
+      <p class="text-xs text-slate-400 mt-1">Visión integral cuantitativa de tus operaciones, estadísticas clave y calendario.</p>
+    </div>
+
+    <!-- BOTONES DE CAMBIO DE VISTA Y GRID -->
+    <div class="flex items-center gap-1 p-1 bg-slate-200/50 dark:bg-[#1a1a1f] rounded-xl border border-slate-300/50 dark:border-[#2a2a30] shrink-0 self-start sm:self-auto shadow-xs">
+      <button id="btn-layout-3x2" onclick="setDashboardLayout('3x2')" class="py-1.5 px-3 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer bg-white dark:bg-slate-700 text-brand shadow-xs">
+        <span class="material-symbols-outlined text-[16px]">grid_view</span>
+        <span>Grid 3x2</span>
+      </button>
+      <button id="btn-layout-classic" onclick="setDashboardLayout('classic')" class="py-1.5 px-3 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer text-slate-400 hover:text-slate-700 dark:hover:text-white">
+        <span class="material-symbols-outlined text-[16px]">dashboard_customize</span>
+        <span>Vista Clásica</span>
+      </button>
+    </div>
   </div>
 
   <!-- FILA 1: KPI CARDS TOPBAR INTEGRADA (ESTILO STRATONK EXACTO A IMAGEN) -->
@@ -162,15 +176,15 @@
 
   </div>
 
-  <!-- LAYOUT PRINCIPAL: 2 Columnas Maestras -->
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 items-start">
-    
-    <!-- COLUMNA IZQUIERDA (Abarca 2/3) -->
-    <div class="lg:col-span-2 flex flex-col gap-4 sm:gap-6">
+  <!-- CONTENEDORES DE LAYOUT DINÁMICO (3x2 vs CLÁSICO) -->
+
+  <!-- LAYOUT 3x2 (Grid Simétrico) -->
+  <div id="layout-wrapper-3x2" class="w-full">
+    <div id="layout-3x2-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 items-start">
       
-      <!-- CURVA DE P&L -->
-      <div class="rounded-[14px] overflow-hidden flex flex-col dark:bg-[#171717] bg-[#ffffff] border dark:border-[#2a2a2a] border-[#e5e7eb] shadow-sm sm:shadow-none p-4">
-        <div class="flex flex-wrap items-center justify-between gap-[12px] pb-3 border-b dark:border-[#262626] border-[#eef0f4]">
+      <!-- 1. CURVA DE P&L -->
+      <div id="card-equity" class="h-[400px] rounded-[14px] overflow-hidden flex flex-col dark:bg-[#171717] bg-[#ffffff] border dark:border-[#2a2a2a] border-[#e5e7eb] shadow-sm sm:shadow-none p-4">
+        <div class="flex flex-wrap items-center justify-between gap-[12px] pb-3 border-b dark:border-[#262626] border-[#eef0f4] shrink-0">
           <div class="flex items-center gap-[12px]">
             <div class="w-[36px] h-[36px] shrink-0 rounded-[10px] dark:bg-[#222222] bg-[#f5f6fa] border dark:border-[#2f2f2f] border-[#e5e7eb] flex items-center justify-center">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" class="lucide lucide-trending-up dark:stroke-[#a78bfa] stroke-[#7c5cf0]" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
@@ -187,12 +201,82 @@
             </div>
           </div>
         </div>
-        <div id="echarts-equity-container" class="w-full mt-3" style="height:340px;"></div>
+        <div id="echarts-equity-container" class="w-full grow mt-2" style="min-height:0;"></div>
       </div>
 
-      <!-- DRAWDOWN -->
-      <div class="h-[400px] rounded-[14px] overflow-hidden flex flex-col dark:bg-[#171717] bg-[#ffffff] border dark:border-[#2a2a2a] border-[#e5e7eb] p-4 shadow-sm sm:shadow-none">
-        <div class="flex flex-wrap items-center justify-between gap-[12px] pb-3 border-b dark:border-[#262626] border-[#eef0f4]">
+      <!-- 2. DAILY P&L -->
+      <div id="card-daily-pnl" class="h-[400px] rounded-[14px] overflow-visible flex flex-col dark:bg-[#171717] bg-[#ffffff] border dark:border-[#2a2a2a] border-[#e5e7eb] px-[20px] py-4 shadow-sm sm:shadow-none relative font-sans">
+        <div class="flex items-center justify-between h-[50px] shrink-0 border-b dark:border-[#262626] border-[#eef0f4]">
+          <div class="flex items-center gap-[10px]">
+            <div class="w-[34px] h-[34px] shrink-0 rounded-[10px] dark:bg-[#222222] bg-[#f5f6fa] border dark:border-[#2f2f2f] border-[#e5e7eb] flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" class="lucide lucide-bar-chart-3 dark:stroke-[#8b7cf6] stroke-[#7c5cf0]" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+            </div>
+            <h3 class="text-[17px] font-[700] dark:text-[#ffffff] text-[#111827]">Daily P&L</h3>
+          </div>
+          <div class="flex items-center gap-[12px] relative z-50">
+            <!-- Boton Dropdown -->
+            <button id="btn-daily-window" onclick="toggleDailyWindowMenu()" class="h-[22px] flex items-center gap-[5px] px-[8px] rounded-[8px] border dark:border-[#4b4f8f] border-[#c7cbf5] dark:bg-[rgba(99,102,241,0.10)] bg-[#eef0ff] dark:text-[#a5b4fc] text-[#4f46e5] cursor-pointer transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+              <span id="daily-window-label" class="text-[11px] font-[700] pt-[1px]">30D</span>
+            </button>
+            
+            <!-- Dropdown Menu -->
+            <div id="daily-window-menu" class="hidden absolute top-[30px] right-[26px] w-[220px] rounded-[12px] p-[8px] z-50 dark:bg-[#14172e] bg-[#ffffff] border dark:border-[#2b2f58] border-[#e3e6ee] shadow-[0_10px_28px_rgba(15,23,42,0.12)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.55),0_0_0_1px_rgba(99,102,241,0.08)]">
+              <div class="text-[10px] font-[700] tracking-[0.10em] dark:text-[#9aa3e6] text-[#6b72a8] px-[8px] pt-[6px] pb-[8px] uppercase">VENTANA TEMPORAL</div>
+              <ul class="flex flex-col space-y-1" role="menu">
+                <li onclick="selectDailyWindow('30D', this)" class="daily-window-opt flex items-center justify-between h-[28px] px-[8px] rounded-[8px] text-[13px] font-[700] cursor-pointer dark:bg-[#20244d] bg-[#eef0ff] dark:text-[#a5b4fc] text-[#4f46e5]">
+                  <span>Últimos 30 días operados</span><svg class="check-icon lucide lucide-check" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </li>
+                <li onclick="selectDailyWindow('60D', this)" class="daily-window-opt flex items-center justify-between h-[28px] px-[8px] rounded-[8px] text-[13px] font-[500] cursor-pointer hover:dark:bg-[rgba(255,255,255,0.05)] hover:bg-[#f5f6fa] dark:text-[#e5e7eb] text-[#1f2937]">
+                  <span>Últimos 60 días operados</span><svg class="check-icon hidden lucide lucide-check" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </li>
+                <li onclick="selectDailyWindow('90D', this)" class="daily-window-opt flex items-center justify-between h-[28px] px-[8px] rounded-[8px] text-[13px] font-[500] cursor-pointer hover:dark:bg-[rgba(255,255,255,0.05)] hover:bg-[#f5f6fa] dark:text-[#e5e7eb] text-[#1f2937]">
+                  <span>Últimos 90 días operados</span><svg class="check-icon hidden lucide lucide-check" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </li>
+                <li onclick="selectDailyWindow('MES', this)" class="daily-window-opt flex items-center justify-between h-[28px] px-[8px] rounded-[8px] text-[13px] font-[500] cursor-pointer hover:dark:bg-[rgba(255,255,255,0.05)] hover:bg-[#f5f6fa] dark:text-[#e5e7eb] text-[#1f2937]">
+                  <span>Este mes</span><svg class="check-icon hidden lucide lucide-check" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </li>
+                <li onclick="selectDailyWindow('TODO', this)" class="daily-window-opt flex items-center justify-between h-[28px] px-[8px] rounded-[8px] text-[13px] font-[500] cursor-pointer hover:dark:bg-[rgba(255,255,255,0.05)] hover:bg-[#f5f6fa] dark:text-[#e5e7eb] text-[#1f2937]">
+                  <span>Todo el histórico</span><svg class="check-icon hidden lucide lucide-check" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </li>
+              </ul>
+            </div>
+
+            <span class="material-symbols-outlined text-[#8b8fa3] text-[14px] cursor-help" title="P&L neto por día operado">info</span>
+          </div>
+        </div>
+        <div id="echarts-bar-day-container" class="w-full grow mt-2" style="min-height:0;"></div>
+      </div>
+
+      <!-- 3. TRADETRES SCORE -->
+      <div id="card-radar" class="h-[400px] rounded-[14px] overflow-hidden p-4 flex flex-col justify-between dark:bg-[#181818] bg-white border dark:border-[#2a2a2a] border-[#e5e7eb] shadow-sm sm:shadow-none">
+        <div class="flex items-center justify-between shrink-0 pb-2 border-b dark:border-[#262626] border-[#eef0f4]">
+          <h3 class="text-sm font-bold dark:text-white text-slate-900 flex items-center gap-2">
+            <span class="material-symbols-outlined text-purple-500 dark:text-purple-400 text-[18px]">radar</span> TRADETRES SCORE
+          </h3>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-purple-500/15 text-purple-600 dark:text-purple-300 font-bold border border-purple-500/30">Diagnóstico</span>
+        </div>
+        <div id="echarts-radar-container" class="w-full grow min-h-[170px]"></div>
+        <div class="mt-2 pt-2 border-t dark:border-[#262626] border-[#eef0f4] space-y-1.5 shrink-0">
+          <div class="flex items-center justify-between text-xs font-bold">
+            <span class="dark:text-[#9a9aa5] text-slate-500">SCORE GLOBAL</span>
+            <span class="text-base font-black font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+              85 <span class="text-[10px] dark:text-[#7a7a85] text-slate-400">/ 100</span>
+            </span>
+          </div>
+          <div class="w-full dark:bg-[#1a1a24] bg-slate-100 border dark:border-[#1d1d1d] border-slate-200 rounded-full h-2.5 p-0.5 overflow-hidden">
+            <div class="h-full rounded-full bg-gradient-to-r from-purple-600 via-indigo-500 to-emerald-400 w-[85%] transition-all duration-1000 shadow-xs"></div>
+          </div>
+          <div class="flex justify-between items-center text-[10px] dark:text-[#7a7a85] text-slate-500">
+            <span>Nivel: <strong class="text-purple-600 dark:text-purple-400 font-semibold">Trader Consistente</strong></span>
+            <span class="text-emerald-600 dark:text-emerald-400 font-mono font-bold">Top 5%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. DRAWDOWN -->
+      <div id="card-drawdown" class="h-[400px] rounded-[14px] overflow-hidden flex flex-col dark:bg-[#171717] bg-[#ffffff] border dark:border-[#2a2a2a] border-[#e5e7eb] p-4 shadow-sm sm:shadow-none">
+        <div class="flex flex-wrap items-center justify-between gap-[12px] pb-3 border-b dark:border-[#262626] border-[#eef0f4] shrink-0">
           <div class="flex items-center gap-[12px]">
             <div class="w-[36px] h-[36px] shrink-0 rounded-[10px] dark:bg-[#222222] bg-[#f5f6fa] border dark:border-[#2f2f2f] border-[#e5e7eb] flex items-center justify-center">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" class="lucide lucide-trending-down dark:stroke-[#a78bfa] stroke-[#f0426a]" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>
@@ -212,50 +296,36 @@
             </div>
           </div>
         </div>
-        <div id="echarts-drawdown-container" class="w-full grow" style="min-height:0"></div>
-      </div>
-    </div>
-
-    <!-- COLUMNA DERECHA (Abarca 1/3) -->
-    <div class="lg:col-span-1 flex flex-col gap-4 sm:gap-6">
-      
-      <!-- AI Coach Score Radar -->
-      <div class="glass rounded-2xl p-4 md:p-5 flex flex-col justify-between dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 shadow-xs" style="height: 418px;">
-        <div class="flex items-center justify-between mb-2 shrink-0">
-          <h3 class="text-sm font-bold dark:text-white text-slate-900 flex items-center gap-2">
-            <span class="material-symbols-outlined text-purple-500 dark:text-purple-400 text-[18px]">radar</span> TRADETRES SCORE
-          </h3>
-          <span class="text-[10px] px-2 py-0.5 rounded bg-purple-500/15 text-purple-600 dark:text-purple-300 font-bold border border-purple-500/30">Diagnóstico</span>
-        </div>
-        <div id="echarts-radar-container" class="w-full grow min-h-[220px]"></div>
-        <div class="mt-3 pt-3 border-t dark:border-[#1d1d1d] border-slate-200 space-y-2 shrink-0">
-          <div class="flex items-center justify-between text-xs font-bold">
-            <span class="dark:text-[#9a9aa5] text-slate-500">SCORE GLOBAL</span>
-            <span class="text-base font-black font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-              85 <span class="text-[10px] dark:text-[#7a7a85] text-slate-400">/ 100</span>
-            </span>
-          </div>
-          <div class="w-full dark:bg-[#1a1a24] bg-slate-100 border dark:border-[#1d1d1d] border-slate-200 rounded-full h-3 p-0.5 overflow-hidden">
-            <div class="h-full rounded-full bg-gradient-to-r from-purple-600 via-indigo-500 to-emerald-400 w-[85%] transition-all duration-1000 shadow-xs"></div>
-          </div>
-          <div class="flex justify-between items-center text-[10px] dark:text-[#7a7a85] text-slate-500">
-            <span>Nivel: <strong class="text-purple-600 dark:text-purple-400 font-semibold">Trader Consistente</strong></span>
-            <span class="text-emerald-600 dark:text-emerald-400 font-mono font-bold">Top 5%</span>
-          </div>
-        </div>
+        <div id="echarts-drawdown-container" class="w-full grow mt-2" style="min-height:0"></div>
       </div>
 
-      <!-- Últimos Trades -->
-      <div class="glass rounded-2xl p-4 md:p-5 flex flex-col h-[420px] dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 shadow-xs">
-        <div class="flex items-center justify-between mb-3.5 shrink-0">
-          <h3 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
-            <span class="material-symbols-outlined text-amber-400 text-[20px]">list_alt</span> Últimos Trades
-          </h3>
+      <!-- 5. DURACIÓN VS RESULT (MIN) -->
+      <div id="card-scatter" class="h-[400px] rounded-[14px] overflow-hidden flex flex-col dark:bg-[#171717] bg-white border dark:border-[#2a2a2a] border-[#e5e7eb] shadow-sm sm:shadow-none p-4 md:p-5">
+        <div class="flex items-center justify-between pb-3 border-b dark:border-[#262626] border-[#eef0f4] shrink-0">
+          <div class="flex items-center gap-[10px]">
+            <div class="w-[34px] h-[34px] shrink-0 rounded-[10px] dark:bg-[#222222] bg-[#f5f6fa] border dark:border-[#2f2f2f] border-[#e5e7eb] flex items-center justify-center">
+              <span class="material-symbols-outlined text-cyan-400 text-[18px]">timer</span>
+            </div>
+            <h3 class="text-[17px] font-[700] dark:text-[#ffffff] text-[#111827]">Duración vs Result (Min)</h3>
+          </div>
+        </div>
+        <div id="echarts-scatter-container" class="w-full grow mt-2" style="min-height:0"></div>
+      </div>
+
+      <!-- 6. ÚLTIMOS TRADES -->
+      <div id="card-trades" class="h-[400px] rounded-[14px] overflow-hidden flex flex-col dark:bg-[#171717] bg-white border dark:border-[#2a2a2a] border-[#e5e7eb] shadow-sm sm:shadow-none p-4 md:p-5">
+        <div class="flex items-center justify-between pb-3 border-b dark:border-[#262626] border-[#eef0f4] shrink-0">
+          <div class="flex items-center gap-[10px]">
+            <div class="w-[34px] h-[34px] shrink-0 rounded-[10px] dark:bg-[#222222] bg-[#f5f6fa] border dark:border-[#2f2f2f] border-[#e5e7eb] flex items-center justify-center">
+              <span class="material-symbols-outlined text-amber-400 text-[18px]">list_alt</span>
+            </div>
+            <h3 class="text-[17px] font-[700] dark:text-[#ffffff] text-[#111827]">Últimos Trades</h3>
+          </div>
           <%= link_to trades_path, class: "text-xs font-bold text-brand hover:underline flex items-center gap-1" do %>
             Ver Todo <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
           <% end %>
         </div>
-        <div class="overflow-y-auto space-y-2.5 pr-1 grow">
+        <div class="overflow-y-auto space-y-2.5 pr-1 grow mt-2">
           <% if @recent_trades.any? %>
             <% @recent_trades.each do |t| %>
               <%= link_to trade_path(t), class: "flex items-center justify-between p-3 rounded-2xl dark:bg-[#1e1e1e] bg-slate-50/80 hover:bg-slate-100/90 dark:hover:bg-[#20202a] transition-all duration-200 border dark:border-[#1d1d1d] border-slate-200/80 hover:shadow-xs group" do %>
@@ -291,65 +361,20 @@
           <% end %>
         </div>
       </div>
+
     </div>
   </div>
 
-  <!-- FILA 3: Daily PNL / Duration -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mt-4 sm:mt-6 items-start">
-    
-    <!-- Daily P&L -->
-    <div class="h-[400px] rounded-[14px] overflow-visible flex flex-col dark:bg-[#171717] bg-[#ffffff] border dark:border-[#2a2a2a] border-[#e5e7eb] px-[20px] shadow-sm sm:shadow-none relative font-sans">
-      <div class="flex items-center justify-between h-[60px] shrink-0 border-b dark:border-[#262626] border-[#eef0f4]">
-        <div class="flex items-center gap-[10px]">
-          <div class="w-[34px] h-[34px] shrink-0 rounded-[10px] dark:bg-[#222222] bg-[#f5f6fa] border dark:border-[#2f2f2f] border-[#e5e7eb] flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" class="lucide lucide-bar-chart-3 dark:stroke-[#8b7cf6] stroke-[#7c5cf0]" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
-          </div>
-          <h3 class="text-[17px] font-[700] dark:text-[#ffffff] text-[#111827]">Daily P&L</h3>
-        </div>
-        <div class="flex items-center gap-[12px] relative z-50">
-          <!-- Boton Dropdown -->
-          <button id="btn-daily-window" onclick="toggleDailyWindowMenu()" class="h-[22px] flex items-center gap-[5px] px-[8px] rounded-[8px] border dark:border-[#4b4f8f] border-[#c7cbf5] dark:bg-[rgba(99,102,241,0.10)] bg-[#eef0ff] dark:text-[#a5b4fc] text-[#4f46e5] cursor-pointer transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
-            <span id="daily-window-label" class="text-[11px] font-[700] pt-[1px]">30D</span>
-          </button>
-          
-          <!-- Dropdown Menu -->
-          <div id="daily-window-menu" class="hidden absolute top-[30px] right-[26px] w-[220px] rounded-[12px] p-[8px] z-50 dark:bg-[#14172e] bg-[#ffffff] border dark:border-[#2b2f58] border-[#e3e6ee] shadow-[0_10px_28px_rgba(15,23,42,0.12)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.55),0_0_0_1px_rgba(99,102,241,0.08)]">
-            <div class="text-[10px] font-[700] tracking-[0.10em] dark:text-[#9aa3e6] text-[#6b72a8] px-[8px] pt-[6px] pb-[8px] uppercase">VENTANA TEMPORAL</div>
-            <ul class="flex flex-col space-y-1" role="menu">
-              <li onclick="selectDailyWindow('30D', this)" class="daily-window-opt flex items-center justify-between h-[28px] px-[8px] rounded-[8px] text-[13px] font-[700] cursor-pointer dark:bg-[#20244d] bg-[#eef0ff] dark:text-[#a5b4fc] text-[#4f46e5]">
-                <span>Últimos 30 días operados</span><svg class="check-icon lucide lucide-check" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              </li>
-              <li onclick="selectDailyWindow('60D', this)" class="daily-window-opt flex items-center justify-between h-[28px] px-[8px] rounded-[8px] text-[13px] font-[500] cursor-pointer hover:dark:bg-[rgba(255,255,255,0.05)] hover:bg-[#f5f6fa] dark:text-[#e5e7eb] text-[#1f2937]">
-                <span>Últimos 60 días operados</span><svg class="check-icon hidden lucide lucide-check" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              </li>
-              <li onclick="selectDailyWindow('90D', this)" class="daily-window-opt flex items-center justify-between h-[28px] px-[8px] rounded-[8px] text-[13px] font-[500] cursor-pointer hover:dark:bg-[rgba(255,255,255,0.05)] hover:bg-[#f5f6fa] dark:text-[#e5e7eb] text-[#1f2937]">
-                <span>Últimos 90 días operados</span><svg class="check-icon hidden lucide lucide-check" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              </li>
-              <li onclick="selectDailyWindow('MES', this)" class="daily-window-opt flex items-center justify-between h-[28px] px-[8px] rounded-[8px] text-[13px] font-[500] cursor-pointer hover:dark:bg-[rgba(255,255,255,0.05)] hover:bg-[#f5f6fa] dark:text-[#e5e7eb] text-[#1f2937]">
-                <span>Este mes</span><svg class="check-icon hidden lucide lucide-check" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              </li>
-              <li onclick="selectDailyWindow('TODO', this)" class="daily-window-opt flex items-center justify-between h-[28px] px-[8px] rounded-[8px] text-[13px] font-[500] cursor-pointer hover:dark:bg-[rgba(255,255,255,0.05)] hover:bg-[#f5f6fa] dark:text-[#e5e7eb] text-[#1f2937]">
-                <span>Todo el histórico</span><svg class="check-icon hidden lucide lucide-check" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              </li>
-            </ul>
-          </div>
-
-          <span class="material-symbols-outlined text-[#8b8fa3] text-[14px] cursor-help" title="P&L neto por día operado">info</span>
-        </div>
-      </div>
-      <div id="echarts-bar-day-container" class="w-full grow mt-2" style="min-height:0;"></div>
+  <!-- LAYOUT CLÁSICO (2/3 + 1/3 + 50/50) -->
+  <div id="layout-wrapper-classic" class="w-full hidden space-y-4 sm:space-y-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 items-start">
+      <!-- Columna Izquierda (2/3) -->
+      <div id="classic-col-left" class="lg:col-span-2 flex flex-col gap-4 sm:gap-6"></div>
+      <!-- Columna Derecha (1/3) -->
+      <div id="classic-col-right" class="lg:col-span-1 flex flex-col gap-4 sm:gap-6"></div>
     </div>
-
-    <!-- Trade Duration Scatter -->
-    <div class="h-[400px] rounded-[14px] overflow-hidden flex flex-col dark:bg-[#171717] bg-white border dark:border-[#2a2a2a] border-slate-200 shadow-xs p-4 md:p-5">
-      <div class="flex items-center justify-between mb-3 shrink-0">
-        <h3 class="text-sm font-bold dark:text-white text-slate-800 flex items-center gap-2">
-          <span class="material-symbols-outlined text-cyan-400 text-[18px]">timer</span> Duración vs Result (Min)
-        </h3>
-      </div>
-      <div id="echarts-scatter-container" class="w-full grow" style="min-height:0"></div>
-    </div>
+    <!-- Fila Inferior (50/50) -->
+    <div id="classic-row-bottom" class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-start"></div>
   </div>
 
   <!-- FILA 4: CALENDARIO DE TRADING BENTO GRID -->
@@ -1840,6 +1865,88 @@
   
   // Turbo integration
   document.addEventListener("turbo:load", safeRenderEcharts, { once: true });
+})();
+</script>
+
+<script>
+function setDashboardLayout(mode) {
+  try {
+    localStorage.setItem('coachtrading_layout_mode', mode);
+    
+    var container3x2 = document.getElementById('layout-3x2-container');
+    var classicColLeft = document.getElementById('classic-col-left');
+    var classicColRight = document.getElementById('classic-col-right');
+    var classicRowBottom = document.getElementById('classic-row-bottom');
+
+    var layoutWrapper3x2 = document.getElementById('layout-wrapper-3x2');
+    var layoutWrapperClassic = document.getElementById('layout-wrapper-classic');
+
+    var btn3x2 = document.getElementById('btn-layout-3x2');
+    var btnClassic = document.getElementById('btn-layout-classic');
+
+    var cardEquity = document.getElementById('card-equity');
+    var cardDailyPnl = document.getElementById('card-daily-pnl');
+    var cardRadar = document.getElementById('card-radar');
+    var cardDrawdown = document.getElementById('card-drawdown');
+    var cardScatter = document.getElementById('card-scatter');
+    var cardTrades = document.getElementById('card-trades');
+
+    if (!cardEquity || !container3x2 || !classicColLeft) return;
+
+    if (mode === 'classic') {
+      layoutWrapper3x2.classList.add('hidden');
+      layoutWrapperClassic.classList.remove('hidden');
+
+      classicColLeft.appendChild(cardEquity);
+      classicColLeft.appendChild(cardDrawdown);
+      
+      classicColRight.appendChild(cardRadar);
+      classicColRight.appendChild(cardTrades);
+
+      classicRowBottom.appendChild(cardDailyPnl);
+      classicRowBottom.appendChild(cardScatter);
+
+      if (btnClassic && btn3x2) {
+        btnClassic.className = "py-1.5 px-3 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer bg-white dark:bg-slate-700 text-brand shadow-xs";
+        btn3x2.className = "py-1.5 px-3 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer text-slate-400 hover:text-slate-700 dark:hover:text-white";
+      }
+    } else {
+      layoutWrapperClassic.classList.add('hidden');
+      layoutWrapper3x2.classList.remove('hidden');
+
+      container3x2.appendChild(cardEquity);
+      container3x2.appendChild(cardDailyPnl);
+      container3x2.appendChild(cardRadar);
+      container3x2.appendChild(cardDrawdown);
+      container3x2.appendChild(cardScatter);
+      container3x2.appendChild(cardTrades);
+
+      if (btnClassic && btn3x2) {
+        btn3x2.className = "py-1.5 px-3 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer bg-white dark:bg-slate-700 text-brand shadow-xs";
+        btnClassic.className = "py-1.5 px-3 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer text-slate-400 hover:text-slate-700 dark:hover:text-white";
+      }
+    }
+
+    setTimeout(function() {
+      window.dispatchEvent(new Event('resize'));
+    }, 60);
+  } catch(e) {
+    console.error("Layout switch error:", e);
+  }
+}
+
+// Auto load layout preference on page load and turbo load
+(function() {
+  function applyLayout() {
+    var savedMode = localStorage.getItem('coachtrading_layout_mode') || '3x2';
+    setDashboardLayout(savedMode);
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyLayout);
+  } else {
+    applyLayout();
+  }
+  document.addEventListener('turbo:load', applyLayout);
 })();
 </script>
 
