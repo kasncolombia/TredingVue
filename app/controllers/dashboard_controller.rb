@@ -7,7 +7,7 @@ class DashboardController < ApplicationController
     end
 
     all_trades     = current_user.trades.where(portfolio_mode: @current_mode).recent
-    @recent_trades = all_trades.limit(3)
+    @recent_trades = all_trades.limit(6)
     
     @stats         = Trading::CalculateStatistics.new(all_trades).call
     
