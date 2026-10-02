@@ -51,7 +51,7 @@
 
   <!-- CONTENIDO DE PESTAÑA ACTIVA -->
   <div class="pt-2 fade-in">
-    <%= render partial: @active_tab, formats: [:html] rescue render partial: "dashboard" %>
+    <%= render partial: (@active_tab.presence || "dashboard") rescue render partial: "dashboard" %>
   </div>
 </div>
 

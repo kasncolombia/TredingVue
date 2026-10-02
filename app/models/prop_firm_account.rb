@@ -122,7 +122,7 @@ class PropFirmAccount < ApplicationRecord
   end
 
   def days_traded
-    trades.where.not(entry_at: nil).pluck(Arel.sql("DATE(entry_at)")).uniq.count
+    trades.where.not(entry_at: nil).pluck(:entry_at).map(&:to_date).uniq.count
   end
 
   def win_rate
@@ -197,10 +197,9 @@ class PropFirmAccount < ApplicationRecord
     return { pass: true, best_day_pct: 0.0 } if total_pnl <= 0
 
     best_day_pnl = trades.where.not(entry_at: nil)
-                         .group(Arel.sql("DATE(entry_at)"))
-                         .sum(:pnl)
+                         .group_by { |t| t.entry_at.to_date }
+                         .transform_values { |ts| ts.sum { |t| t.pnl.to_f } }
                          .values
-                         .map(&:to_f)
                          .max || 0.0
 
     limit_pct = active_consistency_pct.to_f
