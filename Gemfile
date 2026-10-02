@@ -19,6 +19,7 @@ gem "propshaft"
 gem "bootsnap", require: false
 gem "tzinfo-data", platforms: %i[windows jruby]
 gem "csv"
+gem "image_processing", "~> 1.2"
 
 group :development, :test do
   gem "debug", platforms: %i[mri windows]

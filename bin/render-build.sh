@@ -4,7 +4,8 @@ set -o errexit
 echo "====== INSTALANDO DEPENDENCIAS ======"
 bundle install
 
-echo "====== PREPARANDO BASE DE DATOS ======"
+echo "====== PREPARANDO BASE DE DATOS Y MIGRACIONES ======"
+bundle exec rails db:migrate
 bundle exec rails db:prepare
 
 echo "====== CARGANDO SEEDS ======"
