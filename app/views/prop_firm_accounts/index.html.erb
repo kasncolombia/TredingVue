@@ -1,1 +1,66 @@
-<%= render "hub" %>
+<% content_for :page_title, "Prop Firms" %>
+
+<% 
+  @active_tab = params[:tab] || 'dashboard'
+  tabs = [
+    { id: 'dashboard', label: 'Dashboard', icon: 'monitoring' },
+    { id: 'accounts', label: 'Cuentas', icon: 'account_tree' },
+    { id: 'transactions', label: 'Transacciones', icon: 'receipt_long' },
+    { id: 'summary', label: 'Resumen', icon: 'summarize' }
+  ]
+%>
+
+<div class="space-y-4">
+  <!-- HEADER & TÍTULO -->
+  <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 fade-in">
+    <div>
+      <h1 class="text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+        <span class="material-symbols-outlined text-brand text-[28px]">account_tree</span>
+        Prop Firms
+      </h1>
+      <p class="text-sm font-semibold text-slate-500 dark:text-slate-400 mt-1">
+        Tu negocio de fondeo: invertido, retirado y ROI real
+      </p>
+    </div>
+    <div class="flex-shrink-0">
+      <%= link_to new_prop_firm_account_path, class: "px-5 py-2.5 bg-brand hover:bg-brand-hover text-white font-extrabold text-xs rounded-xl shadow-lg glow-brand hover:-translate-y-0.5 hover:shadow-brand/30 transition-all flex items-center gap-1.5 cursor-pointer border border-brand-light/20" do %>
+        <span class="material-symbols-outlined text-[18px]">add_circle</span>
+        <span>Añadir cuenta</span>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- NAVEGACIÓN EN PESTAÑAS -->
+  <div class="border-b border-lightBorder dark:border-darkBorder fade-in mt-2 flex overflow-x-auto hide-scrollbar">
+    <nav class="flex gap-2 min-w-max pb-px" aria-label="Tabs Prop Firms">
+      <% tabs.each do |tab| %>
+        <% is_active = @active_tab == tab[:id] %>
+        <%= link_to prop_firm_accounts_path(tab: tab[:id]), class: "group relative px-4 py-2.5 flex items-center gap-2 text-sm font-bold transition-all whitespace-nowrap overflow-hidden z-10 #{is_active ? 'text-brand' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'}" do %>
+          <!-- Decoración Activa (Píldora interior difuminada) -->
+          <% if is_active %>
+            <div class="absolute inset-0 bg-brand/10 dark:bg-brand/15 rounded-t-xl -z-10 border-b-2 border-brand"></div>
+          <% end %>
+          <span class="material-symbols-outlined text-[18px] <%= is_active ? 'text-brand' : 'text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300' %> transition-colors">
+            <%= tab[:icon] %>
+          </span>
+          <%= tab[:label] %>
+        <% end %>
+      <% end %>
+    </nav>
+  </div>
+
+  <!-- CONTENIDO DE PESTAÑA ACTIVA -->
+  <div class="pt-2 fade-in">
+    <%= render partial: @active_tab, formats: [:html] rescue render partial: "dashboard" %>
+  </div>
+</div>
+
+<style>
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+</style>

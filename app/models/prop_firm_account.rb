@@ -2,29 +2,76 @@ class PropFirmAccount < ApplicationRecord
   belongs_to :user
   belongs_to :prop_firm_rule_template, optional: true
   has_many :trades, dependent: :nullify
+  has_many :prop_transactions, class_name: "PropTransaction", dependent: :nullify
   has_and_belongs_to_many :strategies
 
-  validates :name, :firm_name, :plan_name, :account_size, :phase, :status, presence: true
-
   # ── CONSTANTES ──
-  STATUSES = %w[activa quemada fondeada reseteada pausada].freeze
-  PHASES   = %w[paso_1 paso_2 fondeada express sim].freeze
+  # Estados mutuamente excluyentes (un solo campo `status`)
+  STATUSES = %w[evaluacion fondeada quemada cerrada].freeze
+
+  # Fases de evaluación (solo aplica cuando status == evaluacion)
+  PHASES = %w[paso_1 paso_2].freeze
 
   BURN_REASONS = [
-    "Rompió drawdown máximo",
-    "Rompió pérdida diaria",
-    "Overtrading",
-    "Presión de tiempo",
     "Falta de gestión de riesgo",
-    "Noticia / Evento inesperado",
+    "Noticia",
+    "Overtrading",
+    "Regla de consistencia",
+    "Drawdown máximo",
+    "Pérdida diaria máxima",
+    "Presión de tiempo",
     "Error técnico / Plataforma",
     "Otro"
   ].freeze
 
+  # ── VALIDACIONES ──
+  validates :name, :firm_name, :plan_name, :status, presence: true
+  validates :account_size, presence: true
+  validates :status, inclusion: { in: STATUSES }
+  validates :phase, inclusion: { in: PHASES }, allow_nil: true
+  validates :burn_reason, presence: true, if: -> { quemada? }
+  validate :account_size_within_range
+  validate :phase_only_in_evaluacion
+
   # ── SCOPES ──
-  scope :active,  -> { where(status: "activa") }
-  scope :burned,  -> { where(status: "quemada") }
-  scope :funded,  -> { where(status: "fondeada") }
+  scope :evaluacion, -> { where(status: "evaluacion") }
+  scope :fondeada,   -> { where(status: "fondeada") }
+  scope :quemada,    -> { where(status: "quemada") }
+  scope :cerrada,    -> { where(status: "cerrada") }
+  scope :activas,    -> { where(status: %w[evaluacion fondeada]) }
+
+  # ── ESTADO: PREDICADOS ──
+  def evaluacion?
+    status == "evaluacion"
+  end
+
+  def fondeada?
+    status == "fondeada"
+  end
+
+  def quemada?
+    status == "quemada"
+  end
+
+  def cerrada?
+    status == "cerrada"
+  end
+
+  # ── ETIQUETA LEGIBLE DE ESTADO (para la UI) ──
+  def status_label
+    case status
+    when "evaluacion" then "Evaluación"
+    when "fondeada"   then "Fondeada"
+    when "quemada"    then "Quemada"
+    when "cerrada"    then "Cerrada"
+    else status&.capitalize
+    end
+  end
+
+  def phase_label
+    return nil unless evaluacion? && phase.present?
+    phase.gsub("_", " ").capitalize # "paso_1" → "Paso 1"
+  end
 
   # ── REGLAS ACTIVAS (Fallback a templates) ──
   def active_profit_target
@@ -52,8 +99,18 @@ class PropFirmAccount < ApplicationRecord
   end
 
   # ── CÁLCULOS DE NEGOCIO ──
+
+  # Interpreta account_size de forma segura.
+  # Soporta formatos: "50K", "100K", "150000", 50000
   def initial_balance
-    account_size.to_s.gsub(/[^\d.]/, '').to_f * 1000
+    raw = account_size.to_s.strip
+    if raw =~ /\A[\d.]+K\z/i
+      # Formato "50K" → 50_000
+      raw.gsub(/K/i, "").to_f * 1_000
+    else
+      # Formato numérico directo "50000"
+      raw.gsub(/[^\d.]/, "").to_f
+    end
   end
 
   def pnl_total
@@ -65,7 +122,7 @@ class PropFirmAccount < ApplicationRecord
   end
 
   def days_traded
-    trades.where.not(entry_at: nil).pluck("DATE(entry_at)").uniq.count
+    trades.where.not(entry_at: nil).pluck(Arel.sql("DATE(entry_at)")).uniq.count
   end
 
   def win_rate
@@ -140,7 +197,7 @@ class PropFirmAccount < ApplicationRecord
     return { pass: true, best_day_pct: 0.0 } if total_pnl <= 0
 
     best_day_pnl = trades.where.not(entry_at: nil)
-                         .group("DATE(entry_at)")
+                         .group(Arel.sql("DATE(entry_at)"))
                          .sum(:pnl)
                          .values
                          .map(&:to_f)
@@ -163,51 +220,116 @@ class PropFirmAccount < ApplicationRecord
     }
   end
 
-  # ── ACCIONES DE ESTADO ──
+  # ══════════════════════════════════════════
+  # TRANSICIONES DE ESTADO
+  # Cada método valida la transición y crea
+  # transacciones financieras cuando corresponde.
+  # ══════════════════════════════════════════
+
+  # Pasa la cuenta a fondeada. Opcionalmente registra gasto de activación.
+  def pasar_a_fondeada!(costo_activacion: nil)
+    raise "Solo cuentas en evaluación pueden pasar a fondeada" unless evaluacion?
+
+    transaction do
+      update!(
+        status: "fondeada",
+        phase: nil,
+        funded_at: Date.current
+      )
+
+      costo = costo_activacion || activation_fee.to_f
+      if costo > 0
+        user.prop_transactions.create!(
+          prop_firm_account: self,
+          company_name: firm_name,
+          transaction_type: "expense",
+          category: "activacion",
+          amount: costo,
+          description: "Activación cuenta fondeada: #{name}",
+          transaction_date: Date.current
+        )
+      end
+    end
+  end
+
+  # Marca la cuenta como quemada. Motivo es obligatorio.
+  def quemar!(motivo:)
+    raise "No se puede quemar una cuenta ya quemada o cerrada" if quemada? || cerrada?
+    raise "Motivo de quema es obligatorio" if motivo.blank?
+
+    update!(
+      status: "quemada",
+      burn_reason: motivo,
+      burned_at: Date.current,
+      phase: nil
+    )
+  end
+
+  # Cierra definitivamente la cuenta.
+  def cerrar!
+    raise "Solo cuentas fondeadas o quemadas se pueden cerrar" unless fondeada? || quemada?
+
+    update!(status: "cerrada", phase: nil)
+  end
+
+  # Resetea una cuenta quemada a evaluación. Opcionalmente registra gasto de reset.
+  def resetear!(costo_reset: 0)
+    raise "Solo cuentas quemadas se pueden resetear" unless quemada?
+
+    transaction do
+      update!(
+        status: "evaluacion",
+        phase: "paso_1",
+        burn_reason: nil,
+        burned_at: nil
+      )
+
+      if costo_reset.to_f > 0
+        user.prop_transactions.create!(
+          prop_firm_account: self,
+          company_name: firm_name,
+          transaction_type: "expense",
+          category: "reset",
+          amount: costo_reset.to_f,
+          description: "Reset de cuenta: #{name}",
+          transaction_date: Date.current
+        )
+      end
+    end
+  end
+
+  # ── LEGACY ALIASES (compatibilidad con controlador existente) ──
   def mark_as_burned!(reason)
-    update!(status: "quemada", burn_reason: reason)
+    quemar!(motivo: reason)
   end
 
   def reset_account!(reset_cost = 0)
-    transaction do
-      update!(status: "activa", burn_reason: nil)
-      if reset_cost.to_f > 0
-        user.prop_transactions.create!(
-          company_name: firm_name,
-          transaction_type: "expense",
-          amount: reset_cost.to_f,
-          description: "Reset de cuenta: #{name}",
-          transaction_date: Date.today
-        )
-      end
-    end
+    resetear!(costo_reset: reset_cost)
   end
 
   def move_to_funded!(activation_cost = 0)
-    transaction do
-      update!(status: "fondeada", phase: "fondeada")
-      if activation_cost.to_f > 0
-        user.prop_transactions.create!(
-          company_name: firm_name,
-          transaction_type: "expense",
-          amount: activation_cost.to_f,
-          description: "Activación cuenta fondeada: #{name}",
-          transaction_date: Date.today
-        )
-      end
-    end
+    pasar_a_fondeada!(costo_activacion: activation_cost)
   end
 
   def burn_reason_name
-    read_attribute(:burn_reason).presence || burn_reason_fallback
+    burn_reason.presence
   end
 
   private
 
-  def burn_reason_fallback
-    return nil unless status == "quemada"
-    type_data = custom_drawdown_type.to_s
-    match = type_data.match(/burn:(.+)/)
-    match ? match[1] : nil
+  # Valida que el tamaño de cuenta interpretado esté en un rango razonable
+  def account_size_within_range
+    return if account_size.blank?
+    balance = initial_balance
+    if balance < 5_000 || balance > 1_000_000
+      errors.add(:account_size, "debe representar un valor entre $5,000 y $1,000,000 (valor interpretado: $#{balance.to_i})")
+    end
+  end
+
+  # La fase solo tiene sentido cuando el status es evaluación
+  def phase_only_in_evaluacion
+    if phase.present? && !evaluacion?
+      errors.add(:phase, "solo aplica cuando la cuenta está en evaluación")
+    end
   end
 end

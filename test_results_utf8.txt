@@ -1,0 +1,133 @@
+﻿bundle : D:/YOUTUBE/Antigravit
+y/10-PROYECTOS-MARATON/CoachTr
+ading/coachtrading_app/test/mo
+dels/prop_firm_account_test.rb
+:1:in 
+'Kernel#require_relative': 
+cannot load such file -- D:/YO
+UTUBE/Antigravity/10-PROYECTOS
+-MARATON/CoachTrading/coachtra
+ding_app/test/test_helper 
+(LoadError)
+En línea: 1 Carácter: 206
++ ... ruby\gems"; bundle exec 
+rails test test/models/prop_fi
+rm_account_test ...
++                 ~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
+    + CategoryInfo          : 
+    NotSpecified: (D:/YOUTUB  
+  E/Anti...per (LoadError):   
+ String) [], RemoteExcepti    
+on
+    + FullyQualifiedErrorId : 
+    NativeCommandError
+ 
+	from D:/YOUTUBE/Antigravity/1
+0-PROYECTOS-MARATON/CoachTradi
+ng/coachtrading_app/test/model
+s/prop_firm_account_test.rb:1:
+in '<compiled>'
+	from D:/ruby/lib/ruby/4.0.0/b
+undled_gems.rb:60:in 
+'Kernel.require'
+	from D:/ruby/lib/ruby/4.0.0/b
+undled_gems.rb:60:in 'block 
+(2 levels) in 
+Kernel#replace_require'
+	from D:/YOUTUBE/Antigravity/1
+0-PROYECTOS-MARATON/CoachTradi
+ng/coachtrading_app/vendor/bun
+dle/ruby/4.0.0/gems/bootsnap-1
+.26.0/lib/bootsnap/load_path_c
+ache/core_ext/kernel_require.r
+b:33:in 'Kernel#require'
+	from D:/YOUTUBE/Antigravity/1
+0-PROYECTOS-MARATON/CoachTradi
+ng/coachtrading_app/vendor/bun
+dle/ruby/4.0.0/gems/railties-8
+.1.3.1/lib/rails/test_unit/run
+ner.rb:71:in 'block in Rails::
+TestUnit::Runner.load_tests'
+	from D:/YOUTUBE/Antigravity/1
+0-PROYECTOS-MARATON/CoachTradi
+ng/coachtrading_app/vendor/bun
+dle/ruby/4.0.0/gems/railties-8
+.1.3.1/lib/rails/test_unit/run
+ner.rb:69:in 'Array#each'
+	from D:/YOUTUBE/Antigravity/1
+0-PROYECTOS-MARATON/CoachTradi
+ng/coachtrading_app/vendor/bun
+dle/ruby/4.0.0/gems/railties-8
+.1.3.1/lib/rails/test_unit/run
+ner.rb:69:in 'Rails::TestUnit:
+:Runner.load_tests'
+	from D:/YOUTUBE/Antigravity/1
+0-PROYECTOS-MARATON/CoachTradi
+ng/coachtrading_app/vendor/bun
+dle/ruby/4.0.0/gems/railties-8
+.1.3.1/lib/minitest/rails_plug
+in.rb:147:in 'block in 
+Minitest.plugin_rails_options'
+	from D:/ruby/lib/ruby/4.0.0/o
+ptparse.rb:1818:in 'block in 
+OptionParser#parse_in_order'
+	from D:/ruby/lib/ruby/4.0.0/o
+ptparse.rb:930:in 
+'OptionParser::List#search'
+	from D:/ruby/lib/ruby/4.0.0/o
+ptparse.rb:1949:in 'block in 
+OptionParser#visit'
+	from D:/ruby/lib/ruby/4.0.0/o
+ptparse.rb:1948:in 
+'Array#reverse_each'
+	from D:/ruby/lib/ruby/4.0.0/o
+ptparse.rb:1948:in 
+'OptionParser#visit'
+	from D:/ruby/lib/ruby/4.0.0/o
+ptparse.rb:1818:in 
+'OptionParser#parse_in_order'
+	from D:/ruby/lib/ruby/4.0.0/o
+ptparse.rb:1728:in 
+'OptionParser#order!'
+	from D:/ruby/lib/ruby/4.0.0/o
+ptparse.rb:1853:in 
+'OptionParser#permute!'
+	from D:/ruby/lib/ruby/4.0.0/o
+ptparse.rb:1878:in 
+'OptionParser#parse!'
+	from D:/YOUTUBE/Antigravity/1
+0-PROYECTOS-MARATON/CoachTradi
+ng/coachtrading_app/vendor/bun
+dle/ruby/4.0.0/gems/minitest-6
+.0.6/lib/minitest.rb:254:in 
+'block in 
+Minitest.process_args'
+	from D:/ruby/lib/ruby/4.0.0/o
+ptparse.rb:1192:in 
+'OptionParser#initialize'
+	from D:/YOUTUBE/Antigravity/1
+0-PROYECTOS-MARATON/CoachTradi
+ng/coachtrading_app/vendor/bun
+dle/ruby/4.0.0/gems/minitest-6
+.0.6/lib/minitest.rb:160:in 
+'Class#new'
+	from D:/YOUTUBE/Antigravity/1
+0-PROYECTOS-MARATON/CoachTradi
+ng/coachtrading_app/vendor/bun
+dle/ruby/4.0.0/gems/minitest-6
+.0.6/lib/minitest.rb:160:in 
+'Minitest.process_args'
+	from D:/YOUTUBE/Antigravity/1
+0-PROYECTOS-MARATON/CoachTradi
+ng/coachtrading_app/vendor/bun
+dle/ruby/4.0.0/gems/minitest-6
+.0.6/lib/minitest.rb:300:in 
+'Minitest.run'
+	from D:/YOUTUBE/Antigravity/1
+0-PROYECTOS-MARATON/CoachTradi
+ng/coachtrading_app/vendor/bun
+dle/ruby/4.0.0/gems/minitest-6
+.0.6/lib/minitest.rb:84:in 
+'block in Minitest.autorun'

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_24_173424) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_02_174500) do
   create_table "ai_analyses", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "discipline_score"
@@ -221,6 +221,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_24_173424) do
     t.decimal "activation_fee", precision: 10, scale: 2, default: "0.0"
     t.date "billing_date"
     t.string "burn_reason"
+    t.date "burned_at"
     t.datetime "created_at", null: false
     t.decimal "custom_consistency_pct", precision: 5, scale: 2
     t.decimal "custom_daily_loss_limit", precision: 12, scale: 2
@@ -230,12 +231,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_24_173424) do
     t.decimal "custom_profit_target", precision: 12, scale: 2
     t.decimal "eval_fee", precision: 10, scale: 2, default: "0.0"
     t.string "firm_name", null: false
+    t.date "funded_at"
     t.string "name", null: false
-    t.string "phase", null: false
+    t.string "phase"
     t.string "plan_name", null: false
     t.integer "prop_firm_rule_template_id"
+    t.boolean "sim", default: false, null: false
     t.date "start_date"
-    t.string "status", default: "activa", null: false
+    t.string "status", default: "evaluacion", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["prop_firm_rule_template_id"], name: "index_prop_firm_accounts_on_prop_firm_rule_template_id"
@@ -270,13 +273,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_24_173424) do
 
   create_table "prop_transactions", force: :cascade do |t|
     t.decimal "amount", precision: 12, scale: 2, null: false
+    t.string "category"
     t.string "company_name", null: false
     t.datetime "created_at", null: false
     t.string "description"
+    t.integer "prop_firm_account_id"
     t.date "transaction_date", null: false
     t.string "transaction_type", default: "expense", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
+    t.index ["prop_firm_account_id"], name: "index_prop_transactions_on_prop_firm_account_id"
     t.index ["user_id"], name: "index_prop_transactions_on_user_id"
   end
 
@@ -451,6 +457,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_24_173424) do
   add_foreign_key "posts", "users"
   add_foreign_key "prop_firm_accounts", "prop_firm_rule_templates"
   add_foreign_key "prop_firm_accounts", "users"
+  add_foreign_key "prop_transactions", "prop_firm_accounts"
   add_foreign_key "prop_transactions", "users"
   add_foreign_key "reactions", "posts"
   add_foreign_key "reactions", "users"

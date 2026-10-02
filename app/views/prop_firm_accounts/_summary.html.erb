@@ -1,0 +1,370 @@
+<!-- VISTA: RESUMEN DE PROP FIRMS -->
+<!-- Fondo principal general heredado del layout, aquí implementamos la Tarjeta Principal -->
+
+<%
+  # Precompute real data for the Javascript Rendering
+  transformed_data = @accounts.group_by(&:firm_name).map do |firm, auth_accounts|
+    totals = { balance: 0, pnl: 0, invertido: 0, retirado: 0, roi: 0, trades: 0, win: 0, pf: 0 }
+    
+    accounts_json = auth_accounts.map do |a|
+      trades_count = a.trades.count # cached or queried
+      w_pct = a.win_rate
+      p_factor = a.profit_factor
+      
+      # Transacciones de PropFirmAccount
+      inv = -a.prop_transactions.where(transaction_type: 'expense').sum(:amount).to_f
+      ret = a.prop_transactions.where(transaction_type: 'payout').sum(:amount).to_f
+      roi_val = inv.abs > 0 ? ((ret + inv) / inv.abs * 100).round : (ret > 0 ? 100 : 0)
+
+      totals[:balance] += a.current_balance.to_f
+      totals[:pnl] += a.pnl_total.to_f
+      totals[:invertido] += inv
+      totals[:retirado] += ret
+      totals[:trades] += trades_count
+
+      {
+        id: a.id,
+        name: a.name,
+        size: a.account_size,
+        status: a.status.capitalize, # Evaluacion, Fondeada, Quemada
+        balance: a.current_balance.to_f,
+        pnl: a.pnl_total.to_f,
+        invertido: inv,
+        retirado: ret,
+        roi: roi_val,
+        trades: trades_count,
+        win: w_pct,
+        pf: p_factor,
+        url: prop_firm_account_path(a)
+      }
+    end
+
+    total_roi = totals[:invertido].abs > 0 ? ((totals[:retirado] + totals[:invertido]) / totals[:invertido].abs * 100).round : (totals[:retirado] > 0 ? 100 : 0)
+
+    {
+      firm: firm.to_s.upcase,
+      accountsCount: accounts_json.size,
+      logoUrl: firm.to_s[0]&.upcase || "X",
+      totals: {
+        balance: totals[:balance],
+        pnl: totals[:pnl],
+        invertido: totals[:invertido],
+        retirado: totals[:retirado],
+        roi: total_roi,
+        trades: totals[:trades],
+        win: accounts_json.size > 0 ? (accounts_json.sum{|a| a[:win]} / accounts_json.size).round(1) : 0,
+        pf: accounts_json.size > 0 ? (accounts_json.sum{|a| a[:pf]} / accounts_json.size).round(2) : 0
+      },
+      accounts: accounts_json
+    }
+  end
+
+  totalRow = {
+    balance: transformed_data.sum { |f| f[:totals][:balance] },
+    pnl: transformed_data.sum { |f| f[:totals][:pnl] },
+    invertido: transformed_data.sum { |f| f[:totals][:invertido] },
+    retirado: transformed_data.sum { |f| f[:totals][:retirado] },
+    trades: transformed_data.sum { |f| f[:totals][:trades] },
+    cuentas: @accounts.size
+  }
+  
+  t_inv_abs = totalRow[:invertido].abs
+  totalRow[:roi] = t_inv_abs > 0 ? ((totalRow[:retirado] + totalRow[:invertido]) / t_inv_abs * 100).round : (totalRow[:retirado] > 0 ? 100 : 0)
+  totalRow[:win] = transformed_data.size > 0 ? (transformed_data.sum { |f| f[:totals][:win] } / transformed_data.size).round(1) : 0
+  totalRow[:pf] = transformed_data.size > 0 ? (transformed_data.sum { |f| f[:totals][:pf] } / transformed_data.size).round(2) : 0
+%>
+
+<div class="bg-white dark:bg-[#0b1020] border border-slate-200 dark:border-[#1c2340] rounded-[16px] p-[20px] shadow-lg dark:shadow-2xl relative w-full overflow-hidden">
+  
+  <!-- Encabezado de la Tarjeta -->
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+    <div class="flex items-center gap-3">
+      <!-- Icono billetera -->
+      <div class="w-10 h-10 flex items-center justify-center rounded-lg bg-brand-light/30 dark:bg-[#1a1f3d] border border-brand-light dark:border-[#3b3f8f] shrink-0">
+        <span class="material-symbols-outlined text-brand dark:text-[#7c7cf5] text-[20px]">account_balance_wallet</span>
+      </div>
+      <div>
+        <h2 class="text-slate-900 dark:text-white font-bold text-[16px]">Resumen por cuenta</h2>
+        <div class="flex items-center gap-1.5 mt-0.5">
+          <span class="material-symbols-outlined text-[13px] text-[#8a94a6]">info</span>
+          <span class="text-[12px] text-[#8a94a6]">Toca una firma para desplegarla</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Filtro -->
+    <div class="relative">
+      <button id="btn-filter-summary" class="flex items-center gap-2 px-3 py-1.5 rounded-[10px] border border-slate-200 dark:border-[#1c2340] hover:bg-slate-50 dark:hover:bg-[#1a1f3d] transition-colors bg-transparent cursor-pointer">
+        <span class="material-symbols-outlined text-[16px] text-slate-700 dark:text-white">filter_list</span>
+        <span id="filter-label" class="text-[13px] font-semibold text-slate-700 dark:text-white">Todas</span>
+      </button>
+      
+      <!-- Menú Filtro (Oculto por defecto) -->
+      <div id="filter-menu" class="hidden absolute right-0 top-full mt-2 w-40 bg-white dark:bg-[#121836] border border-slate-200 dark:border-[#1c2340] rounded-xl shadow-xl z-50 overflow-hidden">
+        <button class="filter-opt block w-full text-left px-4 py-2 text-[13px] text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-[#1a1f3d] font-semibold" data-status="Todas">Todas</button>
+        <button class="filter-opt block w-full text-left px-4 py-2 text-[13px] text-[#22e08a] hover:bg-slate-50 dark:hover:bg-[#1a1f3d] font-semibold" data-status="Fondeada">Fondeada</button>
+        <button class="filter-opt block w-full text-left px-4 py-2 text-[13px] text-[#f5b942] hover:bg-slate-50 dark:hover:bg-[#1a1f3d] font-semibold" data-status="Evaluación">Evaluación</button>
+        <button class="filter-opt block w-full text-left px-4 py-2 text-[13px] text-[#f43f5e] hover:bg-slate-50 dark:hover:bg-[#1a1f3d] font-semibold" data-status="Quemada">Quemada</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor Tabla con Scroll (Responsive) -->
+  <div class="w-full overflow-x-auto pb-4 custom-scrollbar">
+    <div class="min-w-[1000px] w-full" id="prop-firms-table-container">
+      <!-- Header de Tabla -->
+      <div class="grid grid-cols-9 gap-2 px-4 mb-3 border-b border-slate-200 dark:border-[#1c2340] pb-2">
+        <div class="text-[11px] font-bold text-slate-500 dark:text-[#8a94a6] uppercase col-span-1">Cuenta</div>
+        <div class="text-[11px] font-bold text-slate-500 dark:text-[#8a94a6] uppercase text-center col-span-1">Balance</div>
+        <div class="text-[11px] font-bold text-slate-500 dark:text-[#8a94a6] uppercase text-center col-span-1">P&L</div>
+        <div class="text-[11px] font-bold text-slate-500 dark:text-[#8a94a6] uppercase text-center col-span-1">Invertido</div>
+        <div class="text-[11px] font-bold text-slate-500 dark:text-[#8a94a6] uppercase text-center col-span-1">Retirado</div>
+        <div class="text-[11px] font-bold text-slate-500 dark:text-[#8a94a6] uppercase text-center col-span-1">ROI</div>
+        <div class="text-[11px] font-bold text-slate-500 dark:text-[#8a94a6] uppercase text-center col-span-1">Trades</div>
+        <div class="text-[11px] font-bold text-slate-500 dark:text-[#8a94a6] uppercase text-center col-span-1">Win %</div>
+        <div class="text-[11px] font-bold text-slate-500 dark:text-[#8a94a6] uppercase text-center col-span-1">Profit Factor</div>
+      </div>
+
+      <!-- Aquí se inyectan dinámicamente las filas -->
+      <div id="table-body" class="flex flex-col gap-[20px]"></div>
+    </div>
+  </div>
+
+</div>
+
+<style>
+/* Estilos Custom Scrollbar para el contenedor de la tabla */
+.custom-scrollbar::-webkit-scrollbar {
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #0b1020; 
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #1c2340; 
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #3b3f8f; 
+}
+.rotate-180-anim {
+  transform: rotate(-90deg);
+  transition: transform 0.2s ease-in-out;
+}
+.rotate-0-anim {
+  transform: rotate(0deg);
+  transition: transform 0.2s ease-in-out;
+}
+</style>
+
+<script>
+(function() {
+  const propFirmsData = <%= raw transformed_data.to_json %>;
+  const totalRowConfig = <%= raw totalRow.to_json %>;
+
+  // Funciones formateadoras
+  const fMoney = (val, forceSign = false, zeroWhite = false) => {
+    if (val === 0 && zeroWhite) return `<span class="text-slate-800 dark:text-white">$0</span>`;
+    const sign = val >= 0 ? '+' : '-';
+    let formatted = Math.abs(val).toLocaleString('en-US');
+    const color = val > 0 ? 'text-[#22e08a]' : (val < 0 ? 'text-[#f43f5e]' : 'text-slate-800 dark:text-white');
+    const absStr = `$${formatted}`;
+    
+    if (forceSign === 'negative') {
+        const strictVal = Math.abs(val);
+        return `<span class="text-[#f43f5e]">-$${strictVal.toLocaleString('en-US')}</span>`;
+    }
+    
+    if (forceSign === 'payout') {
+      if (val > 0) return `<span class="text-[#22e08a]">+${absStr}</span>`;
+      return `<span class="text-slate-800 dark:text-white">$0</span>`;
+    }
+    
+    if (val === 0) return `<span class="text-slate-800 dark:text-white">${absStr}</span>`;
+    return `<span class="${color}">${sign}${absStr}</span>`;
+  };
+
+  const fROI = (val) => {
+    if (val > 0) return `<span class="text-[#22e08a]">+${val}%</span>`;
+    if (val < 0) return `<span class="text-[#f43f5e]">${val}%</span>`;
+    return `<span class="text-slate-800 dark:text-white">${val}%</span>`;
+  };
+
+  const statusBadge = (status) => {
+    let color, border, bg;
+    if (status === "Fondeada") { color = "text-[#22e08a]"; border = "border-[#22e08a]"; bg = "bg-[#22e08a]/10"; }
+    else if (status === "Quemada") { color = "text-[#f43f5e]"; border = "border-[#f43f5e]"; bg = "bg-[#f43f5e]/10"; }
+    else { color = "text-[#f5b942]"; border = "border-[#f5b942]"; bg = "bg-[#f5b942]/10"; }
+    return `<span class="px-2 py-0.5 rounded-[6px] border ${border} ${bg} ${color} text-[11px] font-bold">${status}</span>`;
+  };
+
+  const logoGenerator = (letter, firm) => {
+    let bg = "bg-slate-200 dark:bg-[#111827]"; 
+    let textColor = "text-slate-800 dark:text-white";
+    let border = "border border-slate-300 dark:border-white/20";
+    if (letter === "A" && firm.includes("ALPHA")) { textColor = "text-[#10B981] dark:text-[#22e08a]"; bg = "bg-emerald-50 dark:bg-[#0b1b14]"; border = "border-emerald-200 dark:border-[#22e08a]/30"; } 
+    if (letter === "A" && firm.includes("APEX")) { textColor = "text-blue-500 dark:text-[#3b82f6]"; bg = "bg-blue-50 dark:bg-[#0f172a]"; border = "border-blue-200 dark:border-[#3b82f6]/30"; } 
+    if (letter === "M") { textColor = "text-amber-500 dark:text-[#f5b942]"; bg = "bg-amber-50 dark:bg-[#1f160b]"; border = "border-amber-200 dark:border-[#f5b942]/30"; } 
+    return `<div class="w-8 h-8 rounded-full ${bg} ${border} flex items-center justify-center font-black ${textColor} text-[14px] shrink-0">${letter}</div>`;
+  };
+
+  function renderTable(filterStatus = "Todas") {
+    const container = document.getElementById("table-body");
+    if (!container) return;
+    container.innerHTML = "";
+
+    try {
+      let html = "";
+      
+      propFirmsData.forEach((firmData, idx) => {
+        // Filtramos cuentas si hay filtro
+        const activeAccounts = filterStatus === "Todas" ? firmData.accounts : firmData.accounts.filter(a => a.status === filterStatus);
+        
+        if (activeAccounts.length === 0) return; // Ocultar grupo si no tiene cuentas con este filtro
+
+        // Fila Grupo
+        html += `
+          <div class="firm-group relative">
+            <div class="flex grid grid-cols-9 gap-2 items-center px-4 py-3 bg-slate-50 dark:bg-[#121836] border border-transparent dark:border-transparent rounded-[10px] cursor-pointer group hover:bg-slate-100 dark:hover:bg-[#151b3d] transition-colors" onclick="document.getElementById('accounts-${idx}').classList.toggle('hidden'); this.querySelector('.arrow-icon').classList.toggle('rotate-180-anim');">
+              <div class="col-span-1 flex items-center gap-3">
+                <span class="arrow-icon rotate-0-anim text-brand dark:text-[#7c7cf5] text-[20px] material-symbols-outlined select-none">arrow_drop_down</span>
+                ${logoGenerator(firmData.logoUrl, firmData.firm)}
+                <div class="flex flex-col">
+                  <span class="text-brand dark:text-[#7c7cf5] font-black text-[13px] leading-tight uppercase tracking-wide truncate w-[140px]" title="${firmData.firm}">${firmData.firm}</span>
+                  <div class="mt-1"><span class="bg-brand-light dark:bg-[#1f2550] text-brand dark:text-[#7c7cf5] px-2 py-0.5 rounded-[6px] text-[10px] font-bold">${firmData.accountsCount} cuentas</span></div>
+                </div>
+              </div>
+              <div class="col-span-1 text-center font-bold text-slate-800 dark:text-white text-[14px]">
+                $${firmData.totals.balance.toLocaleString('en-US')}
+              </div>
+              <div class="col-span-1 text-center font-bold text-[14px]">
+                ${fMoney(firmData.totals.pnl)}
+              </div>
+              <div class="col-span-1 text-center font-bold text-[14px]">
+                ${fMoney(firmData.totals.invertido, 'negative')}
+              </div>
+              <div class="col-span-1 text-center font-bold text-[14px]">
+                ${fMoney(firmData.totals.retirado, 'payout')}
+              </div>
+              <div class="col-span-1 text-center font-bold text-[14px]">
+                ${fROI(firmData.totals.roi)}
+              </div>
+              <div class="col-span-1 text-center font-bold text-slate-800 dark:text-white text-[14px]">
+                ${firmData.totals.trades}
+              </div>
+              <div class="col-span-1 text-center font-bold text-slate-800 dark:text-white text-[14px]">
+                ${firmData.totals.win}%
+              </div>
+              <div class="col-span-1 text-center font-bold text-slate-800 dark:text-white text-[14px]">
+                ${firmData.totals.pf}
+              </div>
+            </div>
+
+            <!-- Cuentas Desplegables -->
+            <div id="accounts-${idx}" class="flex flex-col gap-[6px] mt-2 mb-2">
+              ${activeAccounts.map(acc => `
+                <a href="${acc.url}" data-turbo="true" class="grid grid-cols-9 gap-2 items-center px-4 py-2.5 bg-white dark:bg-[#0a0f20] border border-slate-100 dark:border-[#161d38] shadow-sm dark:shadow-none rounded-[10px] ml-6 hover:bg-slate-50 dark:hover:bg-[#0d1326] transition-colors cursor-pointer group/acc">
+                  <div class="col-span-1 flex items-center gap-3">
+                    <div class="flex flex-col">
+                      <span class="text-slate-800 dark:text-white font-semibold text-[13px] truncate w-[140px] group-hover/acc:text-brand transition-colors" title="${acc.name}">${acc.name}</span>
+                      <div class="flex items-center gap-2 mt-1">
+                        <span class="text-slate-500 dark:text-[#8a94a6] text-[11px] font-bold">${acc.size}</span>
+                        ${statusBadge(acc.status)}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-span-1 text-center font-bold text-slate-800 dark:text-white text-[14px]">$${acc.balance.toLocaleString('en-US')}</div>
+                  <div class="col-span-1 text-center font-bold text-[14px]">${fMoney(acc.pnl)}</div>
+                  <div class="col-span-1 text-center font-bold text-[14px]">${fMoney(acc.invertido, 'negative')}</div>
+                  <div class="col-span-1 text-center font-bold text-[14px]">${fMoney(acc.retirado, 'payout')}</div>
+                  <div class="col-span-1 text-center font-bold text-[14px]">${fROI(acc.roi)}</div>
+                  <div class="col-span-1 text-center font-bold text-slate-800 dark:text-white text-[14px]">${acc.trades}</div>
+                  <div class="col-span-1 text-center font-bold text-slate-800 dark:text-white text-[14px]">${acc.win}%</div>
+                  <div class="col-span-1 text-center font-bold text-slate-800 dark:text-white text-[14px]">${acc.pf}</div>
+                </a>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      });
+
+      // Fila TOTAL
+      html += `
+        <div class="mt-4 border border-slate-200 dark:border-[#1c2340] bg-slate-50 dark:bg-[#121836] rounded-[12px] p-4 flex grid grid-cols-9 gap-2 items-center shadow-lg">
+          <div class="col-span-1 flex items-center gap-3">
+            <div class="w-10 h-10 flex items-center justify-center rounded-lg bg-brand-light/30 dark:bg-[#1a1f3d] border border-brand-light dark:border-[#3b3f8f] shrink-0">
+              <span class="material-symbols-outlined text-brand dark:text-[#7c7cf5] text-[20px]">account_balance_wallet</span>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-slate-900 dark:text-white font-black text-[15px] uppercase tracking-wide">TOTAL</span>
+              <span class="text-slate-500 dark:text-[#8a94a6] text-[11px] font-bold mt-1">${totalRowConfig.cuentas} cuentas</span>
+            </div>
+          </div>
+          <div class="col-span-1 text-center font-bold text-slate-800 dark:text-white text-[15px]">$${totalRowConfig.balance.toLocaleString('en-US')}</div>
+          <div class="col-span-1 text-center font-bold text-[15px]">${fMoney(totalRowConfig.pnl)}</div>
+          <div class="col-span-1 text-center font-bold text-[15px]">${fMoney(totalRowConfig.invertido, 'negative')}</div>
+          <div class="col-span-1 text-center font-bold text-[15px]">${fMoney(totalRowConfig.retirado, 'payout')}</div>
+          <div class="col-span-1 text-center font-bold text-[15px]">${fROI(totalRowConfig.roi)}</div>
+          <div class="col-span-1 text-center font-bold text-slate-800 dark:text-white text-[15px]">${totalRowConfig.trades}</div>
+          <div class="col-span-1 text-center font-bold text-slate-800 dark:text-white text-[15px]">${totalRowConfig.win}%</div>
+          <div class="col-span-1 text-center font-bold text-slate-800 dark:text-white text-[15px]">${totalRowConfig.pf}</div>
+        </div>
+      `;
+
+      container.innerHTML = html;
+    } catch(e) {
+      console.error("Error renderizando la tabla Resumen:", e);
+    }
+  }
+
+  // Event Listeners Initialize
+  const initResumen = () => {
+    // Si ya inicializamos y hay contenido, salimos para evitar doble atadura en turbo calls.
+    const filterLabel = document.getElementById("filter-label");
+    if (!filterLabel) return;
+    
+    renderTable(); // render default Todas
+
+    const btnFilter = document.getElementById("btn-filter-summary");
+    const menuFilter = document.getElementById("filter-menu");
+
+    if (btnFilter && menuFilter) {
+      // Remover listeners viejos si turbo load dispara múltiple
+      const newBtn = btnFilter.cloneNode(true);
+      btnFilter.parentNode.replaceChild(newBtn, btnFilter);
+      
+      newBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        menuFilter.classList.toggle("hidden");
+      });
+
+      document.addEventListener("click", () => {
+        if (!menuFilter.classList.contains("hidden")) {
+          menuFilter.classList.add("hidden");
+        }
+      });
+
+      menuFilter.querySelectorAll(".filter-opt").forEach(btn => {
+        // override old ones
+        const newOpt = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newOpt, btn);
+        newOpt.addEventListener("click", (e) => {
+          const status = e.target.getAttribute("data-status");
+          document.getElementById("filter-label").innerText = status;
+          renderTable(status);
+        });
+      });
+    }
+  };
+
+  // Run on mount depending on environment
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initResumen);
+  } else {
+    initResumen();
+  }
+  document.addEventListener("turbo:load", initResumen);
+
+})();
+</script>

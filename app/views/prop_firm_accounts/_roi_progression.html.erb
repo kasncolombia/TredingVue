@@ -1,0 +1,234 @@
+<%# Tarjeta: Progresión del ROI (fila 2, izquierda) %>
+<section class="lg:col-span-6 glass p-5 rounded-2xl border border-slate-200 dark:border-darkBorder shadow-xs flex flex-col relative" id="roi-progress-card">
+  <div class="flex items-center gap-[12px] pb-3 border-b border-slate-100 dark:border-darkBorder mb-2">
+    <div class="w-[36px] h-[36px] shrink-0 rounded-[10px] bg-slate-50 dark:bg-darkCardAlt border border-slate-200 dark:border-darkBorder flex items-center justify-center">
+      <span class="material-symbols-outlined text-[18px] text-brand dark:text-[#8759E8]">monitoring</span>
+    </div>
+    <div>
+      <h3 class="text-[17px] font-[700] text-slate-900 dark:text-[#ffffff]">Progresión del ROI</h3>
+      <p class="text-[12px] font-medium text-slate-500 dark:text-slate-400">Cómo evoluciona tu retorno neto acumulado</p>
+    </div>
+  </div>
+
+  <%# Contenedor del gráfico %>
+  <div id="roi-chart-wrapper" class="mt-2 h-[240px] lg:h-[210px] w-full relative">
+    <canvas id="roiProgressCanvas"></canvas>
+  </div>
+
+  <%# Estado vacío %>
+  <p id="roi-chart-empty" class="hidden text-sm text-center text-slate-500 mt-10">
+    Aún no hay transacciones para graficar.
+  </p>
+</section>
+
+<script>
+(function() {
+  const chartData = <%= raw roi_progression.to_json %>;
+
+  const initChart = () => {
+    const wrapper = document.getElementById('roi-chart-wrapper');
+    const emptyMsg = document.getElementById('roi-chart-empty');
+    if (!wrapper) return;
+
+    const hasData = chartData && chartData.labels && chartData.labels.length > 0;
+    
+    if (emptyMsg) {
+      if (hasData) emptyMsg.classList.add("hidden");
+      else emptyMsg.classList.remove("hidden");
+    }
+    
+    if (wrapper) {
+      if (!hasData) wrapper.classList.add("hidden");
+      else wrapper.classList.remove("hidden");
+    }
+
+    if (!hasData) return;
+
+    // Load ChartJS if not present
+    if (typeof Chart === 'undefined') {
+      const script = document.createElement("script");
+      script.src = "https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js";
+      script.onload = () => renderChart();
+      document.head.appendChild(script);
+    } else {
+      renderChart();
+    }
+  };
+
+  const renderChart = () => {
+    const canvas = document.getElementById('roiProgressCanvas');
+    if (!canvas) return;
+
+    // Destruir instancia anterior si existe (hotwire turbo load)
+    if (window.activeRoiChart) window.activeRoiChart.destroy();
+
+    const isDark = document.documentElement.classList.contains('dark');
+    const ctx = canvas.getContext("2d");
+
+    const gradRetorno = ctx.createLinearGradient(0, 0, 0, 400);
+    gradRetorno.addColorStop(0, 'rgba(135,89,232,0.3)');
+    gradRetorno.addColorStop(1, 'rgba(135,89,232,0)');
+
+    const gradIngresos = ctx.createLinearGradient(0, 0, 0, 400);
+    gradIngresos.addColorStop(0, 'rgba(25,211,162,0.15)');
+    gradIngresos.addColorStop(1, 'rgba(25,211,162,0)');
+
+    const gradGastos = ctx.createLinearGradient(0, 0, 0, 400);
+    gradGastos.addColorStop(0, 'rgba(240,68,93,0.15)');
+    gradGastos.addColorStop(1, 'rgba(240,68,93,0)');
+
+    const verticalLinePlugin = {
+      id: 'verticalLinePlugin',
+      afterDraw: (chart) => {
+        if (chart.tooltip?._active && chart.tooltip._active.length) {
+          const activePoint = chart.tooltip._active[0];
+          const chartCtx = chart.ctx;
+          const topY = chart.scales.y.top;
+          const bottomY = chart.scales.y.bottom;
+          const currentX = activePoint.element.x;
+
+          chartCtx.save();
+          chartCtx.beginPath();
+          chartCtx.moveTo(currentX, topY);
+          chartCtx.lineTo(currentX, bottomY);
+          chartCtx.lineWidth = 1;
+          chartCtx.strokeStyle = isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)';
+          chartCtx.setLineDash([4, 4]);
+          chartCtx.stroke();
+          chartCtx.restore();
+        }
+      }
+    };
+
+    const dsRetorno = chartData.retorno || chartData.roi || [];
+
+    const config = {
+      type: 'line',
+      data: {
+        labels: chartData.labels,
+        datasets: [
+          {
+            label: 'Ingresos',
+            data: chartData.ingresos,
+            borderColor: '#19D3A2',
+            borderWidth: 2,
+            tension: 0.4,
+            fill: 'origin',
+            backgroundColor: gradIngresos,
+            pointBackgroundColor: '#19D3A2',
+            pointBorderColor: '#19D3A2',
+            pointRadius: 3,
+            pointHoverRadius: 5,
+            order: 1
+          },
+          {
+            label: 'Gastos',
+            data: chartData.gastos,
+            borderColor: '#F0445D',
+            borderWidth: 2,
+            tension: 0.4,
+            fill: 'origin',
+            backgroundColor: gradGastos,
+            pointBackgroundColor: '#F0445D',
+            pointBorderColor: '#F0445D',
+            pointRadius: 3,
+            pointHoverRadius: 5,
+            order: 2
+          },
+          {
+            label: 'Retorno de inversión',
+            data: dsRetorno,
+            borderColor: '#8759E8',
+            borderWidth: 2.5,
+            tension: 0.4,
+            fill: 'origin',
+            backgroundColor: gradRetorno,
+            pointBackgroundColor: '#8759E8',
+            pointBorderColor: '#8759E8',
+            pointRadius: 3.5,
+            pointHoverRadius: 6,
+            pointHoverBorderColor: isDark ? '#ffffff' : '#0f172a',
+            pointHoverBorderWidth: 2,
+            order: 3
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        animation: { duration: 800, easing: 'easeOutQuart' },
+        layout: { padding: { left: 0, right: 10, top: 20, bottom: 0 } },
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              usePointStyle: true, pointStyle: 'line', 
+              color: isDark ? '#9CA3AF' : '#4B5563',
+              font: { size: 12, family: 'Inter, system-ui, sans-serif' },
+              padding: 20
+            }
+          },
+          tooltip: {
+            backgroundColor: isDark ? 'rgba(15,23,42,0.95)' : 'rgba(255,255,255,0.95)', 
+            borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(226,232,240,1)',
+            borderWidth: 1, borderRadius: 8, padding: { top: 12, left: 12, right: 24, bottom: 12 },
+            titleColor: isDark ? '#ffffff' : '#0F172A', 
+            titleFont: { size: 13, weight: 'bold', family: 'Inter, system-ui, sans-serif' },
+            titleMarginBottom: 10, bodySpacing: 6,
+            callbacks: {
+              title: (ctx) => ctx[0].label,
+              label: (ctx) => `${ctx.dataset.label || ''}: $${(ctx.parsed.y || 0).toLocaleString('en-US')}`,
+              labelColor: () => ({ borderColor: 'transparent', backgroundColor: 'transparent' }),
+              labelTextColor: (ctx) => {
+                if (ctx.dataset.label === 'Ingresos') return '#19D3A2';
+                if (ctx.dataset.label === 'Gastos') return '#F0445D';
+                if (ctx.dataset.label === 'Retorno de inversión') return '#8759E8';
+                return isDark ? '#ffffff' : '#0F172A';
+              }
+            },
+            usePointStyle: false, displayColors: false
+          }
+        },
+        scales: {
+          x: {
+            type: 'category',
+            grid: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', drawBorder: false },
+            ticks: { color: isDark ? '#6B7280' : '#64748B', font: { size: 11, family: 'Inter, system-ui, sans-serif' } },
+            border: { display: false }
+          },
+          y: {
+            grid: { color: (ctx) => ctx.tick.value === 0 ? (isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)') : (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'), drawBorder: false },
+            ticks: {
+              color: isDark ? '#6B7280' : '#64748B', font: { size: 11, family: 'Inter, system-ui, sans-serif' }, padding: 10,
+              callback: (v) => v === 0 ? '0' : (v > 0 ? '' : '-') + Math.abs(v).toLocaleString('en-US')
+            },
+            border: { display: false }
+          }
+        }
+      },
+      plugins: [verticalLinePlugin]
+    };
+
+    window.activeRoiChart = new Chart(ctx, config);
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initChart);
+  } else {
+    initChart();
+  }
+  document.addEventListener("turbo:load", initChart);
+
+  // Escuchar cambios de tema (dark / light)
+  if (!window.roiThemeObserver) {
+    window.roiThemeObserver = new MutationObserver(() => {
+      if (document.getElementById('roiProgressCanvas')) {
+        renderChart();
+      }
+    });
+    window.roiThemeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  }
+
+})();
+</script>

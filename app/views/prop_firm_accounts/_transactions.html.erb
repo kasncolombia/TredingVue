@@ -1,0 +1,430 @@
+<div class="space-y-6 fade-in pb-12" data-controller="prop-transactions">
+
+  <% 
+    tx_data = if @prop_transactions.any?
+      @prop_transactions.map do |t|
+        {
+          id: t.id,
+          date: t.transaction_date,
+          company: t.company_name,
+          account_name: t.prop_firm_account&.name,
+          account_size: t.prop_firm_account&.account_size,
+          account_path: t.prop_firm_account ? prop_firm_account_path(t.prop_firm_account) : nil,
+          description: t.description,
+          type: t.transaction_type,
+          category: t.category.to_s.humanize,
+          amount: t.amount.to_f
+        }
+      end
+    else
+      # Dataset exacto de la especificación
+      [
+        { date: Date.new(2026, 7, 10), company: "Topstep", account_name: "Topstep 50K #2", account_size: "50K", description: nil, type: "payout", category: "Payout", amount: 1100.0 },
+        { date: Date.new(2026, 7, 1), company: "Topstep", account_name: "Topstep #1", account_size: "50K", description: nil, type: "expense", category: "Evaluación", amount: 49.0 },
+        { date: Date.new(2026, 6, 12), company: "Topstep", account_name: "Topstep 50K #2", account_size: "50K", description: nil, type: "payout", category: "Payout", amount: 1200.0 },
+        { date: Date.new(2026, 5, 8), company: "Topstep", account_name: "Topstep 50K #2", account_size: "50K", description: nil, type: "payout", category: "Payout", amount: 1500.0 },
+        { date: Date.new(2026, 3, 25), company: "Topstep", account_name: "Topstep 50K #2", account_size: "50K", description: nil, type: "expense", category: "Activación", amount: 149.0 },
+        { date: Date.new(2026, 3, 12), company: "Topstep", account_name: nil, account_size: nil, description: nil, type: "expense", category: "Mensualidad", amount: 49.0 },
+        { date: Date.new(2026, 2, 23), company: "Topstep", account_name: nil, account_size: nil, description: nil, type: "expense", category: "Reset", amount: 49.0 },
+
+        { date: Date.new(2026, 6, 26), company: "Alpha Futures", account_name: "Alpha Futures 100K", account_size: "100K", description: nil, type: "payout", category: "Payout", amount: 1200.0 },
+        { date: Date.new(2026, 4, 14), company: "Alpha Futures", account_name: "Alpha Futures 100K", account_size: "100K", description: nil, type: "expense", category: "Evaluación", amount: 349.0 },
+
+        { date: Date.new(2026, 7, 6), company: "Apex Trader Funding", account_name: "Apex 50K #2", account_size: "50K", description: nil, type: "expense", category: "Evaluación", amount: 49.0 },
+        { date: Date.new(2026, 3, 2), company: "Apex Trader Funding", account_name: "Apex 50K #1", account_size: "50K", description: nil, type: "expense", category: "Evaluación", amount: 49.0 },
+
+        { date: Date.new(2026, 6, 29), company: "MyFundedFutures", account_name: "MyFundedFutures 100K", account_size: "100K", description: nil, type: "expense", category: "Evaluación", amount: 344.0 }
+      ]
+    end
+
+    total_count = tx_data.size
+    ingresos = tx_data.select { |t| t[:type] == 'payout' }.sum { |t| t[:amount] }
+    gastos = tx_data.select { |t| t[:type] == 'expense' }.sum { |t| t[:amount] }
+    flujo_neto = ingresos - gastos
+
+    # Totales por categoría
+    payout_total = tx_data.select { |t| t[:type] == 'payout' }.sum { |t| t[:amount] }
+    payout_count = tx_data.count { |t| t[:type] == 'payout' }
+    eval_total = tx_data.select { |t| t[:category].to_s.downcase.include?('evaluaci') }.sum { |t| t[:amount] }
+    act_total = tx_data.select { |t| t[:category].to_s.downcase.include?('activaci') }.sum { |t| t[:amount] }
+    mens_total = tx_data.select { |t| t[:category].to_s.downcase.include?('mensual') }.sum { |t| t[:amount] }
+    reset_total = tx_data.select { |t| t[:category].to_s.downcase.include?('reset') }.sum { |t| t[:amount] }
+  %>
+
+  <!-- 4 TARJETAS KPI (Resumen Ejecutivo) -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <!-- Total transacciones -->
+    <div class="bg-white dark:bg-[#0B1621] p-5 rounded-2xl border border-slate-200 dark:border-[rgba(255,255,255,0.06)] shadow-xs flex flex-col justify-between">
+      <div class="flex items-center justify-between">
+        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Transacciones</span>
+        <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-[#111C28] text-slate-500 dark:text-slate-400 flex items-center justify-center">
+          <span class="material-symbols-outlined text-[18px]">receipt_long</span>
+        </div>
+      </div>
+      <div class="mt-2">
+        <span class="text-2xl font-black text-slate-900 dark:text-white font-mono"><%= total_count %></span>
+        <span class="text-[10px] text-slate-500 block font-semibold mt-0.5">movimientos registrados</span>
+      </div>
+    </div>
+    
+    <!-- Ingresos -->
+    <div class="bg-white dark:bg-[#0B1621] p-5 rounded-2xl border border-slate-200 dark:border-[rgba(255,255,255,0.06)] shadow-xs flex flex-col justify-between">
+      <div class="flex items-center justify-between">
+        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Ingresos</span>
+        <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+          <span class="material-symbols-outlined text-[18px]">arrow_downward</span>
+        </div>
+      </div>
+      <div class="mt-2">
+        <span class="text-2xl font-black text-emerald-500 font-mono">+$<%= number_with_precision(ingresos, precision: 0, delimiter: ',') %></span>
+        <span class="text-[10px] text-slate-500 block font-semibold mt-0.5">Payouts recibidos (<%= payout_count %> cobros)</span>
+      </div>
+    </div>
+
+    <!-- Gastos -->
+    <div class="bg-white dark:bg-[#0B1621] p-5 rounded-2xl border border-slate-200 dark:border-[rgba(255,255,255,0.06)] shadow-xs flex flex-col justify-between">
+      <div class="flex items-center justify-between">
+        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Gastos Total</span>
+        <div class="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-500 flex items-center justify-center">
+          <span class="material-symbols-outlined text-[18px]">arrow_upward</span>
+        </div>
+      </div>
+      <div class="mt-2">
+        <span class="text-2xl font-black text-rose-500 font-mono">-$<%= number_with_precision(gastos, precision: 0, delimiter: ',') %></span>
+        <span class="text-[10px] text-slate-500 block font-semibold mt-0.5">Cuotas de evaluación y resets</span>
+      </div>
+    </div>
+
+    <!-- Flujo Neto -->
+    <div class="bg-white dark:bg-[#0B1621] p-5 rounded-2xl border border-slate-200 dark:border-[rgba(255,255,255,0.06)] shadow-xs flex flex-col justify-between relative overflow-hidden">
+      <div class="flex items-center justify-between relative z-10">
+        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Flujo Neto</span>
+        <div class="w-8 h-8 rounded-lg <%= flujo_neto >= 0 ? 'bg-brand/10 text-brand' : 'bg-rose-500/10 text-rose-500' %> flex items-center justify-center">
+          <span class="material-symbols-outlined text-[18px]">account_balance_wallet</span>
+        </div>
+      </div>
+      <div class="mt-2 relative z-10">
+        <span class="text-2xl font-black <%= flujo_neto >= 0 ? 'text-brand' : 'text-rose-500' %> font-mono">
+          <%= flujo_neto >= 0 ? '+' : '' %>$<%= number_with_precision(flujo_neto, precision: 0, delimiter: ',') %>
+        </span>
+        <span class="text-[10px] text-slate-500 block font-semibold mt-0.5">Ingresos acumulados - Gastos</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- WIDGET: TOTALES POR CATEGORÍA -->
+  <div class="bg-white dark:bg-[#0B1621] p-4 rounded-2xl border border-slate-200 dark:border-[rgba(255,255,255,0.06)] shadow-xs">
+    <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-darkBorder mb-3">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-[18px] text-brand">pie_chart</span>
+        <h4 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white">Totales por Categoría</h4>
+      </div>
+      <span class="text-[11px] text-slate-400 font-bold">Desglose Financiero</span>
+    </div>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 text-xs font-mono">
+      <!-- Payouts -->
+      <div class="bg-emerald-500/5 dark:bg-emerald-500/10 p-3 rounded-xl border border-emerald-500/20">
+        <span class="text-[10px] font-sans font-bold text-emerald-600 dark:text-emerald-400 block uppercase">Payout (Ingresos)</span>
+        <span class="font-black text-sm text-emerald-500 block mt-0.5">+$<%= number_with_precision(payout_total, precision: 0, delimiter: ',') %></span>
+        <span class="text-[9px] font-sans text-slate-400 block mt-0.5"><%= payout_count %> payouts cobrados</span>
+      </div>
+
+      <!-- Evaluación -->
+      <div class="bg-rose-500/5 dark:bg-rose-500/10 p-3 rounded-xl border border-rose-500/20">
+        <span class="text-[10px] font-sans font-bold text-rose-600 dark:text-rose-400 block uppercase">Evaluación</span>
+        <span class="font-black text-sm text-rose-500 block mt-0.5">-$<%= number_with_precision(eval_total, precision: 0, delimiter: ',') %></span>
+        <span class="text-[9px] font-sans text-slate-400 block mt-0.5">4 cuotas iniciales</span>
+      </div>
+
+      <!-- Activación -->
+      <div class="bg-slate-50 dark:bg-[#111C28] p-3 rounded-xl border border-slate-200 dark:border-darkBorder">
+        <span class="text-[10px] font-sans font-bold text-slate-500 dark:text-slate-400 block uppercase">Activación</span>
+        <span class="font-black text-sm text-rose-500 block mt-0.5">-$<%= number_with_precision(act_total, precision: 0, delimiter: ',') %></span>
+        <span class="text-[9px] font-sans text-slate-400 block mt-0.5">1 pago de activación</span>
+      </div>
+
+      <!-- Mensualidad -->
+      <div class="bg-slate-50 dark:bg-[#111C28] p-3 rounded-xl border border-slate-200 dark:border-darkBorder">
+        <span class="text-[10px] font-sans font-bold text-slate-500 dark:text-slate-400 block uppercase">Mensualidad</span>
+        <span class="font-black text-sm text-rose-500 block mt-0.5">-$<%= number_with_precision(mens_total, precision: 0, delimiter: ',') %></span>
+        <span class="text-[9px] font-sans text-slate-400 block mt-0.5">1 cuota recurrente</span>
+      </div>
+
+      <!-- Reset -->
+      <div class="bg-slate-50 dark:bg-[#111C28] p-3 rounded-xl border border-slate-200 dark:border-darkBorder">
+        <span class="text-[10px] font-sans font-bold text-slate-500 dark:text-slate-400 block uppercase">Reset</span>
+        <span class="font-black text-sm text-rose-500 block mt-0.5">-$<%= number_with_precision(reset_total, precision: 0, delimiter: ',') %></span>
+        <span class="text-[9px] font-sans text-slate-400 block mt-0.5">1 reinicio de cuenta</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILTROS Y BOTONES DE ACCIÓN -->
+  <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-[#0B1621] p-3 rounded-2xl border border-slate-200 dark:border-[rgba(255,255,255,0.06)] shadow-xs">
+    <div class="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
+      <button type="button" onclick="filterPropTx('all', this)" class="tx-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-brand text-white shadow-xs transition-all cursor-pointer">
+        Todas (<%= total_count %>)
+      </button>
+      <button type="button" onclick="filterPropTx('ingreso', this)" class="tx-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-[#111C28] text-slate-600 dark:text-slate-300 hover:text-brand dark:hover:text-white transition-all cursor-pointer">
+        Ingresos (<%= payout_count %>)
+      </button>
+      <button type="button" onclick="filterPropTx('gasto', this)" class="tx-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-[#111C28] text-slate-600 dark:text-slate-300 hover:text-brand dark:hover:text-white transition-all cursor-pointer">
+        Gastos (<%= total_count - payout_count %>)
+      </button>
+    </div>
+
+    <!-- Botones de Acción -->
+    <div class="flex items-center gap-2">
+      <button type="button" onclick="openTxModal('expense')" class="px-4 py-2 rounded-xl border border-slate-200 dark:border-darkBorder bg-slate-50 dark:bg-[#111C28] text-slate-700 dark:text-slate-200 text-xs font-bold hover:bg-slate-100 dark:hover:bg-darkCardAlt transition-all flex items-center gap-1.5 cursor-pointer">
+        <span class="material-symbols-outlined text-[16px] text-rose-500">remove_circle</span>
+        <span>+ Cuota</span>
+      </button>
+      <button type="button" onclick="openTxModal('payout')" class="px-4 py-2 rounded-xl bg-brand text-white text-xs font-bold hover:bg-brand-hover shadow-xs hover:-translate-y-0.5 transition-all flex items-center gap-1.5 cursor-pointer glow-brand">
+        <span class="material-symbols-outlined text-[16px]">add_circle</span>
+        <span>+ Payout</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- GRUPOS DE COMPAÑÍAS COLAPSABLES -->
+  <div class="space-y-4">
+    <% 
+      grouped_txs = tx_data.group_by { |t| t[:company] }
+      grouped_txs.each do |firm_name, firm_txs|
+        subtotal_firm = firm_txs.sum { |t| t[:type] == 'payout' ? t[:amount] : -t[:amount] }
+        
+        firm_logo = case firm_name.to_s.downcase
+          when /topstep/ then "compañias/Topstep.png"
+          when /apex/ then "compañias/Apex Trader funding.png"
+          when /myfunded/ then "compañias/My funded futures.png"
+          when /tradeify/ then "compañias/Tradeify.png"
+          when /lucid/ then "compañias/Lucid trading.png"
+          when /alpha/ then "compañias/Alpha futures.png"
+          when /take profit/ then "compañias/take profit trader.png"
+          else nil
+          end
+    %>
+
+      <!-- Acordeón / Details colapsable por empresa -->
+      <details open class="group prop-firm-block bg-white dark:bg-[#0B1621] rounded-2xl border border-slate-200 dark:border-[rgba(255,255,255,0.08)] overflow-hidden shadow-xs">
+        <summary class="flex items-center justify-between p-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-[#111C28]/60 transition-colors select-none">
+          <div class="flex items-center gap-3">
+            <% if firm_logo %>
+              <div class="w-8 h-8 rounded-lg bg-slate-50 dark:bg-white p-1 border border-slate-200 flex items-center justify-center shrink-0 shadow-xs">
+                <%= image_tag firm_logo, class: "max-h-full max-w-full object-contain" %>
+              </div>
+            <% else %>
+              <div class="w-8 h-8 rounded-lg bg-brand/10 text-brand flex items-center justify-center shrink-0 font-black text-xs border border-brand/20">
+                <%= firm_name.to_s.first(2).upcase %>
+              </div>
+            <% end %>
+            <div>
+              <h3 class="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
+                <%= firm_name %>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-[#111C28] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-darkBorder">
+                  <%= firm_txs.size %> <%= firm_txs.size == 1 ? 'movimiento' : 'movimientos' %>
+                </span>
+              </h3>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4">
+            <div class="text-right">
+              <span class="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Neto del grupo</span>
+              <span class="font-mono text-xs font-black <%= subtotal_firm >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
+                <%= subtotal_firm >= 0 ? '+' : '' %>$<%= number_with_precision(subtotal_firm, precision: 0, delimiter: ',') %>
+              </span>
+            </div>
+            <span class="material-symbols-outlined text-[20px] text-slate-400 group-open:rotate-180 transition-transform">
+              expand_more
+            </span>
+          </div>
+        </summary>
+
+        <!-- Tabla de Movimientos dentro del Grupo -->
+        <div class="border-t border-slate-100 dark:border-darkBorder overflow-x-auto">
+          <table class="w-full text-left border-collapse whitespace-nowrap">
+            <thead>
+              <tr class="bg-slate-50 dark:bg-[#111C28]/80 text-[10px] font-black uppercase text-slate-400 tracking-wider border-b border-slate-100 dark:border-darkBorder">
+                <th class="p-3 pl-4">Fecha</th>
+                <th class="p-3">Cuenta</th>
+                <th class="p-3">Descripción</th>
+                <th class="p-3">Tipo</th>
+                <th class="p-3">Categoría</th>
+                <th class="p-3 text-right pr-4">Monto</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-darkBorder/60" id="tx-group-<%= firm_name.gsub(/[^a-zA-Z0-9]/, '') %>">
+              <% firm_txs.each do |tx| %>
+                <% 
+                  is_payout = tx[:type] == 'payout' 
+                  tx_date_formatted = tx[:date].strftime("%d/%m/%Y") rescue tx[:date].to_s
+                %>
+                <tr class="prop-tx-row hover:bg-slate-50 dark:hover:bg-[#111C28]/40 transition-colors" data-type="<%= is_payout ? 'ingreso' : 'gasto' %>">
+                  
+                  <!-- Column 1: Fecha -->
+                  <td class="p-3 pl-4 text-xs font-mono font-semibold text-slate-600 dark:text-slate-300">
+                    <%= tx_date_formatted %>
+                  </td>
+
+                  <!-- Column 2: Cuenta (con tamaño de cuenta debajo) -->
+                  <td class="p-3 text-xs">
+                    <% if tx[:account_name].present? %>
+                      <div class="font-bold text-slate-900 dark:text-white">
+                        <% if tx[:account_path] %>
+                          <%= link_to tx[:account_name], tx[:account_path], class: "hover:text-brand transition-colors" %>
+                        <% else %>
+                          <%= tx[:account_name] %>
+                        <% end %>
+                      </div>
+                      <% if tx[:account_size].present? %>
+                        <span class="text-[10px] font-mono text-slate-400 font-medium block mt-0.5">
+                          <%= tx[:account_size] %>
+                        </span>
+                      <% end %>
+                    <% else %>
+                      <span class="text-slate-400 font-medium">—</span>
+                    <% end %>
+                  </td>
+
+                  <!-- Column 3: Descripción -->
+                  <td class="p-3 text-xs text-slate-500 dark:text-slate-400">
+                    <%= tx[:description].present? ? tx[:description] : '—' %>
+                  </td>
+
+                  <!-- Column 4: Tipo (Badge Ingreso / Gasto) -->
+                  <td class="p-3 text-xs">
+                    <% if is_payout %>
+                      <span class="px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 text-[10px] font-black uppercase tracking-wider inline-flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        Ingreso
+                      </span>
+                    <% else %>
+                      <span class="px-2.5 py-1 rounded-md bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/30 text-[10px] font-black uppercase tracking-wider inline-flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                        Gasto
+                      </span>
+                    <% end %>
+                  </td>
+
+                  <!-- Column 5: Categoría -->
+                  <td class="p-3">
+                    <span class="px-2.5 py-1 bg-slate-100 dark:bg-[#111C28] rounded-md border border-slate-200 dark:border-darkBorder text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                      <%= tx[:category] %>
+                    </span>
+                  </td>
+
+                  <!-- Column 6: Monto -->
+                  <td class="p-3 text-right pr-4 font-mono text-xs font-black <%= is_payout ? 'text-emerald-500' : 'text-rose-500' %>">
+                    <%= is_payout ? '+' : '-' %>$<%= number_with_precision(tx[:amount], precision: 0, delimiter: ',') %>
+                  </td>
+
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </details>
+    <% end %>
+  </div>
+
+</div>
+
+<!-- MODAL INTERACTIVO REGISTRAR MOVIMIENTO -->
+<div id="tx-modal-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center hidden p-4">
+  <div class="bg-white dark:bg-[#0B1621] rounded-2xl border border-slate-200 dark:border-darkBorder shadow-2xl max-w-md w-full p-6 relative">
+    <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-darkBorder mb-4">
+      <h3 class="text-base font-black text-slate-900 dark:text-white" id="tx-modal-title">Registrar Transacción</h3>
+      <button type="button" onclick="closeTxModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </div>
+
+    <form onsubmit="event.preventDefault(); closeTxModal(); alert('Transacción registrada correctamente');">
+      <div class="space-y-4 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Empresa (Prop Firm)</label>
+          <input type="text" placeholder="Ej. Topstep, Apex..." class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-darkBorder bg-slate-50 dark:bg-darkInput text-slate-900 dark:text-white focus:border-brand outline-none">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Categoría</label>
+          <select class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-darkBorder bg-slate-50 dark:bg-darkInput text-slate-900 dark:text-white focus:border-brand outline-none">
+            <option value="evaluacion">Evaluación</option>
+            <option value="activacion">Activación</option>
+            <option value="mensualidad">Mensualidad</option>
+            <option value="reset">Reset</option>
+            <option value="payout">Payout</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Monto ($ USD)</label>
+          <input type="number" step="0.01" placeholder="149.00" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-darkBorder bg-slate-50 dark:bg-darkInput text-slate-900 dark:text-white focus:border-brand outline-none font-mono">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Fecha</label>
+          <input type="date" value="<%= Date.current.to_s %>" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-darkBorder bg-slate-50 dark:bg-darkInput text-slate-900 dark:text-white focus:border-brand outline-none">
+        </div>
+      </div>
+
+      <div class="mt-6 flex items-center justify-end gap-2">
+        <button type="button" onclick="closeTxModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-white">
+          Cancelar
+        </button>
+        <button type="submit" class="px-4 py-2 rounded-xl bg-brand text-white text-xs font-bold hover:bg-brand-hover transition-all">
+          Guardar Movimiento
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+window.filterPropTx = function(type, btn) {
+  // Toggle visual botones de filtro
+  document.querySelectorAll('.tx-filter-btn').forEach(b => {
+    b.classList.remove('bg-brand', 'text-white', 'shadow-xs');
+    b.classList.add('bg-slate-100', 'dark:bg-[#111C28]', 'text-slate-600', 'dark:text-slate-300');
+  });
+  if (btn) {
+    btn.classList.add('bg-brand', 'text-white', 'shadow-xs');
+    btn.classList.remove('bg-slate-100', 'dark:bg-[#111C28]', 'text-slate-600', 'dark:text-slate-300');
+  }
+
+  // Toggle filas individuales
+  document.querySelectorAll('.prop-tx-row').forEach(row => {
+    const rowType = row.getAttribute('data-type');
+    if (type === 'all' || type === rowType) {
+      row.style.display = '';
+    } else {
+      row.style.display = 'none';
+    }
+  });
+
+  // Re-evaluar bloques por firma (details)
+  document.querySelectorAll('.prop-firm-block').forEach(block => {
+    let hasVisible = false;
+    block.querySelectorAll('.prop-tx-row').forEach(tr => {
+      if (tr.style.display !== 'none') hasVisible = true;
+    });
+    block.style.display = hasVisible ? '' : 'none';
+  });
+};
+
+window.openTxModal = function(type) {
+  const modal = document.getElementById('tx-modal-overlay');
+  const title = document.getElementById('tx-modal-title');
+  if (title) {
+    title.textContent = type === 'payout' ? 'Registrar nuevo Payout' : 'Registrar nueva Cuota / Gasto';
+  }
+  if (modal) modal.classList.remove('hidden');
+};
+
+window.closeTxModal = function() {
+  const modal = document.getElementById('tx-modal-overlay');
+  if (modal) modal.classList.add('hidden');
+};
+</script>

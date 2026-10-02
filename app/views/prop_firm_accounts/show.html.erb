@@ -38,29 +38,34 @@
       <div>
         <h1 class="text-xl font-black dark:text-white text-slate-900 flex items-center gap-2">
           <%= @account.name %>
-          <% status_colors = { "activa" => "bg-emerald-500/15 text-emerald-500 border-emerald-500/20", "quemada" => "bg-rose-500/15 text-rose-500 border-rose-500/20", "fondeada" => "bg-brand/15 text-brand border-brand/20", "reseteada" => "bg-amber-500/15 text-amber-500 border-amber-500/20" } %>
-          <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border <%= status_colors[@account.status] || status_colors['activa'] %>">
-            <%= @account.status %>
+          <% status_colors = { "evaluacion" => "bg-blue-500/15 text-blue-500 border-blue-500/20", "quemada" => "bg-rose-500/15 text-rose-500 border-rose-500/20", "fondeada" => "bg-brand/15 text-brand border-brand/20", "cerrada" => "bg-slate-500/15 text-slate-400 border-slate-500/20" } %>
+          <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border <%= status_colors[@account.status] || status_colors['evaluacion'] %>">
+            <%= @account.status_label %>
           </span>
         </h1>
-        <p class="text-xs text-slate-400 font-bold"><%= @account.firm_name %> • <%= @account.plan_name %> • <%= @account.account_size %> • Fase: <%= @account.phase.gsub('_',' ').capitalize %></p>
+        <p class="text-xs text-slate-400 font-bold"><%= @account.firm_name %> • <%= @account.plan_name %> • <%= @account.account_size %><%= @account.phase_label ? " • #{@account.phase_label}" : '' %></p>
       </div>
     </div>
 
     <!-- BOTONES DE ACCIÓN DE ESTADO -->
-    <% if @account.status == "activa" %>
-      <div class="flex items-center gap-2 flex-wrap">
+    <div class="flex items-center gap-2 flex-wrap">
+      <% if @account.evaluacion? %>
         <button onclick="document.getElementById('modal-burn').classList.remove('hidden')" class="px-3 py-1.5 text-xs font-bold text-rose-500 border border-rose-500/30 hover:bg-rose-500/10 rounded-xl transition-all flex items-center gap-1">
-          <span class="material-symbols-outlined text-[14px]">local_fire_department</span> Quemada
+          <span class="material-symbols-outlined text-[14px]">local_fire_department</span> Marcar Quemada
         </button>
+        <button onclick="document.getElementById('modal-funded').classList.remove('hidden')" class="px-3 py-1.5 text-xs font-bold text-brand border border-brand/30 hover:bg-brand/10 rounded-xl transition-all flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px]">rocket_launch</span> Pasar a Fondeada
+        </button>
+      <% elsif @account.fondeada? %>
+        <button onclick="document.getElementById('modal-burn').classList.remove('hidden')" class="px-3 py-1.5 text-xs font-bold text-rose-500 border border-rose-500/30 hover:bg-rose-500/10 rounded-xl transition-all flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px]">local_fire_department</span> Marcar Quemada
+        </button>
+      <% elsif @account.quemada? %>
         <button onclick="document.getElementById('modal-reset').classList.remove('hidden')" class="px-3 py-1.5 text-xs font-bold text-amber-500 border border-amber-500/30 hover:bg-amber-500/10 rounded-xl transition-all flex items-center gap-1">
           <span class="material-symbols-outlined text-[14px]">restart_alt</span> Resetear
         </button>
-        <button onclick="document.getElementById('modal-funded').classList.remove('hidden')" class="px-3 py-1.5 text-xs font-bold text-brand border border-brand/30 hover:bg-brand/10 rounded-xl transition-all flex items-center gap-1">
-          <span class="material-symbols-outlined text-[14px]">rocket_launch</span> Fondeada
-        </button>
-      </div>
-    <% end %>
+      <% end %>
+    </div>
   </div>
 
   <!-- KPI CARDS -->
@@ -116,7 +121,7 @@
     </div>
   <% end %>
 
-  <% if @account.status == "quemada" && @account.burn_reason.present? %>
+  <% if @account.quemada? && @account.burn_reason.present? %>
     <div class="px-4 py-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm flex items-center gap-2">
       <span class="material-symbols-outlined text-[18px]">local_fire_department</span>
       <span>Cuenta quemada — Motivo: <strong><%= @account.burn_reason %></strong></span>

@@ -1,0 +1,390 @@
+<div class="space-y-6 fade-in pb-12" data-controller="prop-dashboard">
+
+  <% 
+    total_eval = @accounts.select(&:evaluacion?).count
+    total_fondeadas = @accounts.select(&:fondeada?).count
+    cap_eval = @accounts.select(&:evaluacion?).sum(&:initial_balance).to_f
+    cap_fond = @accounts.select(&:fondeada?).sum(&:initial_balance).to_f
+    
+    gastos = @prop_transactions.expenses.sum(:amount).to_f 
+    ingresos = @prop_transactions.payouts.sum(:amount).to_f
+    neto = ingresos - gastos
+    roi_pct = gastos > 0 ? (neto / gastos * 100).round : (ingresos > 0 ? 100 : 0)
+
+    # Preparar datos para progreso ROI
+    # Acumulamos por fecha
+    txs_asc = @prop_transactions.order(transaction_date: :asc)
+    acum_ingresos = 0
+    acum_gastos = 0
+    roi_data = []
+
+    tx_grouped_by_date = txs_asc.group_by { |t| t.transaction_date.to_date }
+    
+    tx_grouped_by_date.each do |date, txs_on_date|
+      ingresos_dia = txs_on_date.select { |t| t.transaction_type == 'payout' }.sum(&:amount)
+      gastos_dia = txs_on_date.select { |t| t.transaction_type == 'expense' }.sum(&:amount)
+      
+      acum_ingresos += ingresos_dia
+      acum_gastos += gastos_dia
+      retorno = acum_ingresos - acum_gastos
+      
+      roi_data << {
+        date: localize(date, format: "%d %b"),
+        ingresos: acum_ingresos,
+        gastos: acum_gastos,
+        retorno: retorno
+      }
+    end
+
+    # Asegurarnos de tener datos si está vacío
+    roi_data << { date: localize(Date.current, format: "%d %b"), ingresos: 0, gastos: 0, retorno: 0 } if roi_data.empty?
+  %>
+
+  <!-- CONTROLES -->
+  <div class="flex items-center justify-between px-5">
+    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-darkBorder bg-slate-50 dark:bg-darkCard text-xs font-bold text-slate-600 dark:text-slate-300">
+      <span class="material-symbols-outlined text-[16px] text-brand">calendar_today</span>
+      Todo el historial
+      <span class="material-symbols-outlined text-[16px] text-slate-400">arrow_drop_down</span>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-10 gap-3 px-5">
+    
+    <!-- ==================== FILA A: 5 KPIs ==================== -->
+    <div class="lg:col-span-2 glass p-4 rounded-2xl border border-slate-200 dark:border-darkBorder flex items-center justify-between shadow-xs">
+      <div>
+        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Fondeadas</span>
+        <span class="text-xl font-black text-slate-900 dark:text-white font-mono mt-0.5 block">
+          $<%= number_with_precision(cap_fond, precision: 0, delimiter: ',') %>
+        </span>
+        <span class="text-[10px] text-slate-500 font-semibold block mt-1"><%= total_fondeadas %> cuentas</span>
+      </div>
+    </div>
+    
+    <div class="lg:col-span-2 glass p-4 rounded-2xl border border-slate-200 dark:border-darkBorder flex items-center justify-between shadow-xs">
+      <div>
+        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Evaluación</span>
+        <span class="text-xl font-black text-slate-900 dark:text-white font-mono mt-0.5 block">
+          $<%= number_with_precision(cap_eval, precision: 0, delimiter: ',') %>
+        </span>
+        <span class="text-[10px] text-slate-500 font-semibold block mt-1"><%= total_eval %> cuentas</span>
+      </div>
+    </div>
+
+    <div class="lg:col-span-2 glass p-4 rounded-2xl border border-slate-200 dark:border-darkBorder flex items-center justify-between shadow-xs">
+      <div>
+        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Gasto Total</span>
+        <span class="text-xl font-black font-mono mt-0.5 block text-slate-900 dark:text-white">
+          $<%= number_with_precision(gastos, precision: 0, delimiter: ',') %>
+        </span>
+        <span class="text-[10px] text-slate-500 font-semibold block mt-1">Cuotas de evaluación y resets</span>
+      </div>
+    </div>
+
+    <div class="lg:col-span-2 glass p-4 rounded-2xl border border-slate-200 dark:border-darkBorder flex items-center justify-between shadow-xs">
+      <div>
+        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Ganado</span>
+        <span class="text-xl font-black font-mono mt-0.5 block text-slate-900 dark:text-white">
+          $<%= number_with_precision(ingresos, precision: 0, delimiter: ',') %>
+        </span>
+        <span class="text-[10px] text-slate-500 font-semibold block mt-1">Pagos recibidos</span>
+      </div>
+    </div>
+
+    <!-- KPI Neto, destacado en verde si es positivo -->
+    <% bg_neto = neto >= 0 ? "bg-emerald-500/10 border-emerald-500/30" : "bg-rose-500/10 border-rose-500/30" %>
+    <div class="lg:col-span-2 glass p-4 rounded-2xl border <%= bg_neto %> flex items-center justify-between shadow-xs">
+      <div>
+        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Neto Total</span>
+        <span class="text-xl font-black font-mono mt-0.5 block <%= neto >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
+          <%= neto >= 0 ? '+' : '' %>$<%= number_with_precision(neto, precision: 0, delimiter: ',') %>
+        </span>
+        <span class="text-[10px] font-bold block mt-1 <%= neto >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400' %>"><%= roi_pct %>% ROI</span>
+      </div>
+    </div>
+
+    <!-- ==================== FILA B ==================== -->
+    <%= render 'roi_progression', roi_progression: PropFirms::RoiProgression.call(user: current_user) %>
+
+    <!-- Desglose -->
+    <div class="lg:col-span-4 glass p-5 rounded-2xl border border-slate-200 dark:border-darkBorder flex flex-col">
+       <div class="flex items-center gap-4 mb-4 border-b border-lightBorder dark:border-darkBorder pb-2">
+         <span class="text-xs font-black text-brand border-b-2 border-brand pb-2 -mb-[9px] relative z-10">Por firma</span>
+         <span class="text-xs font-bold text-slate-400 cursor-pointer hover:text-slate-200 transition-colors">Por tamaño</span>
+         <span class="text-xs font-bold text-slate-400 cursor-pointer hover:text-slate-200 transition-colors">Gastos</span>
+       </div>
+
+       <div class="flex items-center gap-6 mt-2 flex-1">
+          <!-- DONA -->
+          <% 
+             # Calcular neto por firma para dona y lista
+             firma_stats = @prop_transactions.group_by(&:company_name).map do |firm, txs|
+               f_gastos = txs.select { |t| t.transaction_type == 'expense' }.sum(&:amount).to_f
+               f_ingresos = txs.select { |t| t.transaction_type == 'payout' }.sum(&:amount).to_f
+               f_neto = f_ingresos - f_gastos
+               { firm: firm, neto: f_neto, gastos: f_gastos, ingresos: f_ingresos }
+             end.sort_by { |s| -s[:neto] }
+             
+             # Para la dona usaremos absolutos (el user pidió esto o no usarlos, limitaremos a valores absolutos)
+             total_pie_value = firma_stats.sum { |f| f[:neto].abs }
+          %>
+          <div class="relative w-[145px] h-[145px] flex-shrink-0">
+             <div id="breakdown-pie-container" class="w-full h-full"></div>
+             <!-- Label central del pie -->
+             <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+               <span class="text-[8px] font-bold text-slate-400 uppercase">Neto por firma</span>
+               <span class="text-lg font-black font-mono <%= neto >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
+                 <%= neto >= 0 ? '+' : '' %>$<%= number_with_precision(neto, precision: 0, delimiter: ',') %>
+               </span>
+             </div>
+          </div>
+
+          <!-- LISTA -->
+          <div class="flex-1 space-y-4">
+             <% if firma_stats.empty? %>
+               <div class="text-xs text-slate-500 text-center">Sin datos de transacciones.</div>
+             <% end %>
+             <% firma_stats.take(4).each_with_index do |stat, index| 
+                colores = ["#8b5cf6", "#ef4444", "#f97316", "#06b6d4", "#eab308"]
+                firm_color = colores[index % colores.size]
+                
+                # Porcentaje progreso visual basado en ingresos frente a los ingresos globales
+                pct = ingresos > 0 ? (stat[:ingresos] / ingresos * 100).round : 0
+             %>
+               <div>
+                  <div class="flex items-center justify-between text-xs font-bold mb-1">
+                    <div class="flex items-center gap-1.5 line-clamp-1 overflow-hidden">
+                      <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background-color: <%= firm_color %>"></span>
+                      <span class="text-slate-800 dark:text-white truncate"><%= stat[:firm] %></span>
+                    </div>
+                    <span class="font-mono flex-shrink-0 ml-2 <%= stat[:neto] >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
+                      <%= stat[:neto] >= 0 ? '+' : '' %>$<%= number_with_precision(stat[:neto], precision: 0, delimiter: ',') %>
+                    </span>
+                  </div>
+                  <div class="w-full h-1.5 bg-slate-100 dark:bg-darkCard rounded-full overflow-hidden mb-1">
+                    <div class="h-full rounded-full" style="width: <%= [pct, 2].max %>%; background-color: <%= firm_color %>"></div>
+                  </div>
+                  <div class="text-[9px] font-bold text-slate-500 uppercase tracking-wider flex justify-between">
+                    <span class="text-rose-500/80">Gastado: $<%= number_with_precision(stat[:gastos], precision: 0, delimiter: ',') %></span>
+                    <span class="text-emerald-500/80">Ganado: $<%= number_with_precision(stat[:ingresos], precision: 0, delimiter: ',') %></span>
+                  </div>
+               </div>
+             <% end %>
+          </div>
+       </div>
+    </div>
+
+    <!-- ==================== FILA C ==================== -->
+    
+    <!-- Tasa de aprobación (HTML/CSS) -->
+    <div class="lg:col-span-5 glass p-5 rounded-2xl border border-slate-200 dark:border-darkBorder">
+      <h3 class="text-sm font-black text-slate-900 dark:text-white">Tasa de aprobación</h3>
+      <p class="text-[11px] text-slate-500 font-semibold mb-3">Cuentas pasadas + intentadas (fondeadas o quemadas)</p>
+
+      <%
+        # Fondeadas + Quemadas
+        completed_accounts = @accounts.select { |a| a.fondeada? || a.quemada? }
+        total_completed = completed_accounts.size
+        total_passed = completed_accounts.select(&:fondeada?).size
+        global_win_rate = total_completed > 0 ? (total_passed.to_f / total_completed * 100).round : 0
+      %>
+
+      <div class="flex items-center gap-3 mb-4">
+        <span class="text-3xl font-black <%= global_win_rate >= 50 ? 'text-emerald-500' : 'text-rose-500' %>"><%= global_win_rate %>%</span>
+        <span class="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-darkCard text-[11px] font-bold text-slate-600 dark:text-slate-400">
+          <%= total_passed %> de <%= total_completed %> cuentas
+        </span>
+      </div>
+
+      <div class="flex items-center gap-2 mb-4 bg-slate-100 dark:bg-[#1a1c29] p-1 rounded-xl w-max">
+        <span class="px-3 py-1 rounded-lg bg-white dark:bg-darkCard text-slate-900 dark:text-white text-xs font-bold shadow-sm">Firma</span>
+        <span class="px-3 py-1 rounded-lg text-slate-500 text-xs font-bold hover:text-slate-300 cursor-pointer transition-colors">Tamaño</span>
+        <span class="px-3 py-1 rounded-lg text-slate-500 text-xs font-bold hover:text-slate-300 cursor-pointer transition-colors">Estrategia</span>
+      </div>
+
+      <div class="space-y-4">
+        <% 
+           completed_accounts.group_by(&:firm_name).each do |firm, group_accs|
+             q_total = group_accs.size
+             q_passed = group_accs.select(&:fondeada?).size
+             f_rate = q_total > 0 ? (q_passed.to_f / q_total * 100).round : 0
+             c_color = f_rate >= 50 ? 'bg-emerald-500' : 'bg-rose-500'
+             t_color = f_rate >= 50 ? 'text-emerald-500' : 'text-rose-500'
+        %>
+          <div>
+            <div class="flex items-center justify-between text-xs font-bold mb-1.5">
+              <span class="text-slate-800 dark:text-white"><%= firm %></span>
+              <div class="flex items-center gap-2 font-mono">
+                <span class="<%= t_color %>"><%= f_rate %>%</span>
+                <span class="text-slate-400 text-[10px]">(<%= q_passed %>/<%= q_total %>)</span>
+              </div>
+            </div>
+            <div class="w-full h-1.5 bg-slate-100 dark:bg-darkCard rounded-full overflow-hidden">
+               <div class="h-full <%= c_color %> rounded-full" style="width: <%= [f_rate, 2].max %>%"></div>
+            </div>
+          </div>
+        <% end %>
+        <% if completed_accounts.empty? %>
+           <div class="text-xs text-slate-500 text-center py-4">No hay cuentas completadas aún.</div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Análisis de quemas -->
+    <div class="lg:col-span-5 glass p-5 rounded-2xl border border-slate-200 dark:border-darkBorder">
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <h3 class="text-sm font-black text-slate-900 dark:text-white">Análisis de quemas</h3>
+          <p class="text-[11px] text-slate-500 font-semibold mb-3">Motivos y patrones de tus cuentas quemadas</p>
+        </div>
+      </div>
+
+      <%
+        quemadas = @accounts.select(&:quemada?)
+        quemadas_eval = quemadas.select { |a| a.phase.present? }
+        quemadas_fond = quemadas.select { |a| a.phase.blank? } # las fondeadas no tienen fase
+
+        # Stats para quemadas
+        burn_reasons = quemadas.group_by(&:burn_reason).map { |r, accs| [r.presence || "Otro", accs.size] }.sort_by { |_, count| -count }
+        
+        # Correlaciones
+        count_quemadas = quemadas.size
+        # Evitar fallos si faltan fechas, asumimos quemada - start o created 
+        avg_days = count_quemadas > 0 ? (quemadas.map { |a| a.burned_at.present? && a.start_date.present? ? (a.burned_at.to_date - a.start_date).to_i : a.days_traded }.sum / count_quemadas.to_f).round : 0
+        avg_pnl = count_quemadas > 0 ? (quemadas.sum { |a| a.pnl_total.to_f } / count_quemadas.to_f).round : 0
+        
+        most_common_size = count_quemadas > 0 ? quemadas.group_by(&:account_size).max_by { |_, set| set.size }.first : 'N/A'
+        
+        # Desempate de firma (si hay empate, toma la de mayor ocurrencia, el max_by la resuelve pero usaremos sort para consistencia alfabética como fallback)
+        most_common_firm = count_quemadas > 0 ? quemadas.group_by(&:firm_name).sort_by { |f, set| [-set.size, f] }.first.first : 'N/A'
+      %>
+
+      <div class="flex items-center gap-2 mb-4 bg-slate-100 dark:bg-[#1a1c29] p-1 rounded-xl w-max">
+        <span class="px-3 py-1 rounded-lg bg-white dark:bg-darkCard text-slate-900 dark:text-white text-xs font-bold shadow-sm">Evaluación (<%= quemadas_eval.size %>)</span>
+        <span class="px-3 py-1 rounded-lg text-slate-500 text-xs font-bold hover:text-slate-300 cursor-pointer transition-colors">Fondeada (<%= quemadas_fond.size %>)</span>
+      </div>
+
+      <div class="mb-5">
+        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block mb-3">Motivos Principales</span>
+        <div class="space-y-2.5">
+          <% if burn_reasons.empty? %>
+            <div class="text-xs text-slate-500 italic">No hay cuentas quemadas registradas.</div>
+          <% end %>
+          <% burn_reasons.each do |reason, qty| 
+             pct = (qty.to_f / count_quemadas * 100).round
+          %>
+            <div class="flex items-center justify-between text-xs font-bold">
+              <div class="flex-1 mr-4">
+                 <div class="text-slate-800 dark:text-slate-200 mb-1 leading-tight"><%= reason %></div>
+                 <div class="w-full h-1.5 bg-slate-100 dark:bg-darkCard rounded-full overflow-hidden">
+                    <div class="h-full bg-rose-500 rounded-full" style="width: <%= [pct, 2].max %>%"></div>
+                 </div>
+              </div>
+              <div class="font-mono text-slate-500"><%= qty %> (<%= pct %>%)</div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div>
+        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Métricas Correlacionadas</span>
+        <div class="grid grid-cols-2 gap-2">
+           <div class="bg-slate-50 dark:bg-[#1a1c29] p-3 rounded-xl border border-slate-200/50 dark:border-darkBorder flex flex-col justify-between">
+             <span class="text-[10px] text-slate-500 font-semibold leading-tight">Días promedio antes de quemar</span>
+             <span class="font-mono text-sm font-black text-slate-800 dark:text-white mt-1"><%= avg_days %>d</span>
+           </div>
+           <div class="bg-slate-50 dark:bg-[#1a1c29] p-3 rounded-xl border border-slate-200/50 dark:border-darkBorder flex flex-col justify-between">
+             <span class="text-[10px] text-slate-500 font-semibold leading-tight">P&L promedio antes de quemar</span>
+             <span class="font-mono text-sm font-black text-rose-500 mt-1"><%= avg_pnl >= 0 ? '+' : '' %>$<%= number_with_precision(avg_pnl, precision: 0, delimiter: ',') %></span>
+           </div>
+           <div class="bg-slate-50 dark:bg-[#1a1c29] p-3 rounded-xl border border-slate-200/50 dark:border-darkBorder flex flex-col justify-between">
+             <span class="text-[10px] text-slate-500 font-semibold leading-tight">Tamaño más común</span>
+             <span class="font-mono text-sm font-black text-slate-800 dark:text-white mt-1"><%= most_common_size %></span>
+           </div>
+           <div class="bg-slate-50 dark:bg-[#1a1c29] p-3 rounded-xl border border-slate-200/50 dark:border-darkBorder flex flex-col justify-between">
+             <span class="text-[10px] text-slate-500 font-semibold leading-tight">Firma más común</span>
+             <span class="font-bold text-[11px] text-slate-800 dark:text-white mt-1 truncate"><%= most_common_firm %></span>
+           </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+</div>
+
+<!-- SCRIPT ECHARTS (REQUERIDO PARA EL PIE CHART DE DESGLOSE) -->
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+
+<script>
+document.addEventListener("turbo:load", function() {
+  initPropDashboardCharts();
+});
+
+function initPropDashboardCharts() {
+  const roiChartNode = document.getElementById('roi-chart-container');
+  const pieChartNode = document.getElementById('breakdown-pie-container');
+  
+  if (!roiChartNode && !pieChartNode) return; // Not in tab
+
+  const isDark = document.documentElement.classList.contains('dark');
+  const textColor = isDark ? '#94a3b8' : '#64748b'; // slate-400 y slate-500
+  const gridColor = isDark ? '#334155' : '#e2e8f0'; // slate-700 y slate-200
+  const tooltipBg = isDark ? '#1e293b' : '#ffffff'; // slate-800 o blanco
+
+  if (roiChartNode) {
+    // Legacy roiChart node was removed. Kept placeholder in case.
+  }
+
+  // ==============================
+  // 2. DATA PIE (Desglose Neto Absoluto)
+  // ==============================
+  const firmaRawData = <%= raw firma_stats.to_json %>;
+  // Para el pie, no podemos tener números negativos. Usamos el valor absoluto del neto 
+  // O podemos mostrar los que son ganadores. Según la captura, MyFundedFutures (-344) NO aparecía en la lista,
+  // y la torta solo mostraba los absolutos positivos y otros segmentos.
+  // Vamos a poner el valor absoluto del neto en la torta.
+  const colores = ["#8b5cf6", "#f43f5e", "#f97316", "#06b6d4", "#eab308", "#10b981"];
+  const pieData = firmaRawData.map((f, i) => {
+    return { value: Math.abs(f.neto), name: f.firm, itemStyle: { color: colores[i % colores.length] } }
+  }).filter(d => d.value > 0);
+
+  if (pieChartNode && pieData.length > 0) {
+    const pieChart = echarts.init(pieChartNode);
+    const optionPie = {
+      tooltip: {
+        trigger: 'item',
+        formatter: "{b}: ${c} ({d}%)",
+        backgroundColor: tooltipBg,
+        borderColor: gridColor,
+        textStyle: { color: isDark ? '#f8fafc' : '#0f172a', fontSize: 11 }
+      },
+      series: [
+        {
+          name: 'Neto',
+          type: 'pie',
+          radius: ['60%', '85%'],
+          center: ['50%', '50%'],
+          avoidLabelOverlap: false,
+          itemStyle: {
+            borderRadius: 4,
+            borderColor: isDark ? '#0f172a' : '#ffffff', // Fondo card
+            borderWidth: 2
+          },
+          label: { show: false },
+          labelLine: { show: false },
+          data: pieData
+        }
+      ]
+    };
+    pieChart.setOption(optionPie);
+  }
+
+  // Responsive event listeners
+  window.addEventListener('resize', function() {
+    if (roiChartNode) echarts.getInstanceByDom(roiChartNode)?.resize();
+    if (pieChartNode) echarts.getInstanceByDom(pieChartNode)?.resize();
+  });
+}
+</script>

@@ -1,0 +1,422 @@
+<div class="space-y-6" data-controller="prop-filter">
+  <!-- BARRA DE CONTROLES: FILTROS Y BUSCADOR -->
+  <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-white dark:bg-[#0B1621] p-3 rounded-2xl border border-slate-200 dark:border-[rgba(255,255,255,0.06)] shadow-xs">
+    
+    <!-- Filtros de estado -->
+    <div class="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 hide-scrollbar">
+      <button type="button" onclick="filterAccounts('all', this)" class="account-filter-btn px-3.5 py-2 rounded-xl text-xs font-bold bg-brand text-white shadow-xs transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5">
+        <span>Todas</span>
+        <span class="px-1.5 py-0.5 rounded-md text-[10px] bg-white/20 text-white font-extrabold"><%= @accounts.count %></span>
+      </button>
+      <button type="button" onclick="filterAccounts('evaluacion', this)" class="account-filter-btn px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-[#111C28] text-slate-600 dark:text-slate-300 hover:text-brand dark:hover:text-white transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5">
+        <span>Evaluación</span>
+        <span class="px-1.5 py-0.5 rounded-md text-[10px] bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-extrabold"><%= @accounts.select(&:evaluacion?).count %></span>
+      </button>
+      <button type="button" onclick="filterAccounts('fondeada', this)" class="account-filter-btn px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-[#111C28] text-slate-600 dark:text-slate-300 hover:text-brand dark:hover:text-white transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5">
+        <span>Fondeadas</span>
+        <span class="px-1.5 py-0.5 rounded-md text-[10px] bg-purple-500/20 text-purple-600 dark:text-purple-400 font-extrabold"><%= @accounts.select(&:fondeada?).count %></span>
+      </button>
+      <button type="button" onclick="filterAccounts('quemada', this)" class="account-filter-btn px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-[#111C28] text-slate-600 dark:text-slate-300 hover:text-brand dark:hover:text-white transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5">
+        <span>Quemadas</span>
+        <span class="px-1.5 py-0.5 rounded-md text-[10px] bg-rose-500/20 text-rose-600 dark:text-rose-400 font-extrabold"><%= @accounts.select(&:quemada?).count %></span>
+      </button>
+      <button type="button" onclick="filterAccounts('cerrada', this)" class="account-filter-btn px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-[#111C28] text-slate-600 dark:text-slate-300 hover:text-brand dark:hover:text-white transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5">
+        <span>Cerradas</span>
+        <span class="px-1.5 py-0.5 rounded-md text-[10px] bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-extrabold"><%= @accounts.select(&:cerrada?).count %></span>
+      </button>
+    </div>
+
+    <!-- Buscador y Selector de Vista -->
+    <div class="flex items-center gap-2">
+      <div class="relative flex-1 md:w-56">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[16px] text-slate-400">search</span>
+        <input type="text" id="prop-account-search" placeholder="Buscar cuenta o firma..." onkeyup="searchAccounts(this.value)" class="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-darkBorder bg-slate-50 dark:bg-darkInput text-slate-900 dark:text-white focus:border-brand outline-none transition-colors">
+      </div>
+      <div class="flex items-center bg-slate-100 dark:bg-[#111C28] rounded-xl p-1 border border-slate-200 dark:border-darkBorder shrink-0">
+        <button type="button" onclick="toggleAccountsView('grid')" id="view-grid-btn" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors" title="Vista Cuadrícula">
+          <span class="material-symbols-outlined text-[18px]">grid_view</span>
+        </button>
+        <button type="button" onclick="toggleAccountsView('list')" id="view-list-btn" class="p-1.5 rounded-lg bg-white dark:bg-[#1A2634] text-brand dark:text-brand shadow-xs transition-colors" title="Vista Lista">
+          <span class="material-symbols-outlined text-[18px]">view_list</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <% if @accounts.empty? %>
+    <div class="text-center py-16 bg-white dark:bg-[#0B1621] rounded-2xl border border-slate-200 dark:border-[rgba(255,255,255,0.06)] shadow-xs">
+      <div class="w-16 h-16 rounded-2xl bg-brand/10 text-brand flex items-center justify-center mx-auto mb-4 border border-brand/20">
+        <span class="material-symbols-outlined text-[32px]">account_tree</span>
+      </div>
+      <h3 class="text-lg font-black text-slate-900 dark:text-white">No hay cuentas registradas</h3>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto">Comienza añadiendo tu primera cuenta de prop firm con el botón "+ Añadir cuenta".</p>
+    </div>
+  <% else %>
+
+    <!-- VISTA CUADRÍCULA (GRID VIEW) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 hidden" id="accounts-grid-view">
+      <% @accounts.each do |acc| %>
+        <% 
+          status_slug = acc.status.to_s.downcase 
+          pnl = acc.pnl_total.to_f
+          target = acc.active_profit_target.to_f
+          progress_pct = target > 0 ? [(pnl / target * 100), 100].min : 0
+          progress_pct = 0 if progress_pct < 0
+
+          dd_max = acc.active_max_drawdown.to_f
+          dd_consumed = [acc.initial_balance - acc.current_balance, 0].max
+          dd_pct = dd_max > 0 ? (dd_consumed / dd_max * 100).round : 0
+
+          logo_file = case acc.firm_name.to_s.downcase
+            when /topstep/ then "compañias/Topstep.png"
+            when /apex/ then "compañias/Apex Trader funding.png"
+            when /myfunded/ then "compañias/My funded futures.png"
+            when /tradeify/ then "compañias/Tradeify.png"
+            when /lucid/ then "compañias/Lucid trading.png"
+            when /alpha/ then "compañias/Alpha futures.png"
+            when /take profit/ then "compañias/take profit trader.png"
+            else nil
+            end
+        %>
+        
+        <div class="account-card-item bg-white dark:bg-[#0B1621] rounded-2xl p-5 border border-slate-200 dark:border-[rgba(255,255,255,0.08)] shadow-sm hover:shadow-md hover:border-brand/60 transition-all flex flex-col justify-between group cursor-pointer" 
+             data-tags="<%= status_slug %>" 
+             data-name="<%= "#{acc.name} #{acc.firm_name}".downcase %>" 
+             onclick="window.location.href='<%= prop_firm_account_path(acc) %>'">
+          
+          <div>
+            <!-- Header de la tarjeta -->
+            <div class="flex items-start justify-between gap-3 pb-3 border-b border-slate-100 dark:border-darkBorder">
+              <div class="flex items-center gap-3">
+                <% if logo_file %>
+                  <div class="w-11 h-11 rounded-xl bg-slate-50 dark:bg-white p-1 border border-slate-200 flex items-center justify-center shadow-xs flex-shrink-0">
+                    <%= image_tag logo_file, class: "max-h-full max-w-full object-contain" %>
+                  </div>
+                <% else %>
+                  <div class="w-11 h-11 rounded-xl bg-brand/10 text-brand flex items-center justify-center flex-shrink-0 font-black text-sm border border-brand/20">
+                    <%= acc.firm_name.to_s.first(2).upcase %>
+                  </div>
+                <% end %>
+                <div>
+                  <h3 class="text-sm font-black text-slate-900 dark:text-white group-hover:text-brand transition-colors line-clamp-1">
+                    <%= acc.name.presence || "Cuenta ##{acc.id}" %>
+                  </h3>
+                  <span class="text-[11px] font-mono text-slate-500 dark:text-slate-400 font-bold">
+                    <%= acc.firm_name %> • $<%= number_with_precision(acc.account_size, precision: 0, delimiter: ',') rescue acc.account_size %>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Badge de Estado -->
+              <% 
+                chip_class = case status_slug
+                  when 'evaluacion' then 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30'
+                  when 'fondeada' then 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30'
+                  when 'quemada' then 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30'
+                  when 'cerrada' then 'bg-slate-500/10 text-slate-500 dark:text-slate-400 border-slate-500/30'
+                  else 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30'
+                  end
+              %>
+              <div class="flex flex-col items-end gap-1 shrink-0">
+                <span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border <%= chip_class %>">
+                  <%= acc.status_label %>
+                </span>
+                <% if acc.phase_label %>
+                  <span class="px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                    <%= acc.phase_label %>
+                  </span>
+                <% end %>
+              </div>
+            </div>
+
+            <!-- Balance principal & Barra de objetivo -->
+            <div class="py-3.5 space-y-2">
+              <div class="flex items-baseline justify-between">
+                <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Balance Actual</span>
+                <span class="text-base font-black font-mono text-slate-900 dark:text-white">
+                  $<%= number_with_precision(acc.current_balance, precision: 2, delimiter: ',') %>
+                </span>
+              </div>
+
+              <!-- Progress bar si hay objetivo -->
+              <% if target > 0 %>
+                <div>
+                  <div class="flex items-center justify-between text-[10px] font-bold text-slate-400 mb-1">
+                    <span>Progreso Objetivo</span>
+                    <span class="<%= pnl >= 0 ? 'text-emerald-500' : 'text-rose-500' %> font-mono font-black">
+                      <%= pnl >= 0 ? '+' : '' %>$<%= number_with_precision(pnl, precision: 0, delimiter: ',') %> / $<%= number_with_precision(target, precision: 0, delimiter: ',') %>
+                    </span>
+                  </div>
+                  <div class="w-full h-1.5 bg-slate-100 dark:bg-darkCardAlt rounded-full overflow-hidden">
+                    <div class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: <%= progress_pct %>%"></div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+
+            <!-- Grilla 2x2 de métricas -->
+            <div class="grid grid-cols-2 gap-2 text-[11px] font-mono">
+              <div class="bg-slate-50 dark:bg-[#111C28] p-2.5 rounded-xl border border-slate-100 dark:border-darkBorder">
+                <span class="text-slate-400 font-sans block text-[9px] uppercase font-bold">PNL Total</span>
+                <span class="font-bold text-xs <%= pnl >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
+                  <%= pnl >= 0 ? '+' : '' %>$<%= number_with_precision(pnl, precision: 2, delimiter: ',') %>
+                </span>
+              </div>
+              <div class="bg-slate-50 dark:bg-[#111C28] p-2.5 rounded-xl border border-slate-100 dark:border-darkBorder">
+                <span class="text-slate-400 font-sans block text-[9px] uppercase font-bold">Máx Drawdown</span>
+                <span class="font-bold text-xs text-rose-500">
+                  $<%= number_with_precision(dd_max, precision: 0, delimiter: ',') rescue 'N/A' %>
+                </span>
+              </div>
+              <div class="bg-slate-50 dark:bg-[#111C28] p-2.5 rounded-xl border border-slate-100 dark:border-darkBorder">
+                <span class="text-slate-400 font-sans block text-[9px] uppercase font-bold">Días Operados</span>
+                <span class="font-bold text-xs text-slate-800 dark:text-slate-200">
+                  <%= acc.days_traded %> <%= acc.active_min_trading_days > 0 ? "/ #{acc.active_min_trading_days}" : 'días' %>
+                </span>
+              </div>
+              <div class="bg-slate-50 dark:bg-[#111C28] p-2.5 rounded-xl border border-slate-100 dark:border-darkBorder">
+                <span class="text-slate-400 font-sans block text-[9px] uppercase font-bold">Cuota Eval.</span>
+                <span class="font-bold text-xs text-slate-800 dark:text-slate-200">
+                  $<%= number_with_precision(acc.eval_fee, precision: 0, delimiter: ',') %>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer con acción -->
+          <div class="mt-4 pt-3 border-t border-slate-100 dark:border-darkBorder flex items-center justify-between">
+            <span class="text-xs font-bold text-brand group-hover:translate-x-1 transition-transform flex items-center gap-1">
+              Ver detalle de cuenta <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+            </span>
+            <span class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-darkCardAlt text-slate-400 flex items-center justify-center group-hover:bg-brand group-hover:text-white transition-colors">
+              <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+            </span>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- VISTA LISTA (FILAS DE TARJETAS INDIVIDUALES) -->
+    <div class="space-y-6" id="accounts-list-view">
+      <% 
+        # Agrupar por firma para el modo lista
+        @accounts.group_by(&:firm_name).each do |firm_name, firm_accounts| 
+          
+          firm_logo = case firm_name.to_s.downcase
+            when /topstep/ then "compañias/Topstep.png"
+            when /apex/ then "compañias/Apex Trader funding.png"
+            when /myfunded/ then "compañias/My funded futures.png"
+            when /tradeify/ then "compañias/Tradeify.png"
+            when /lucid/ then "compañias/Lucid trading.png"
+            when /alpha/ then "compañias/Alpha futures.png"
+            when /take profit/ then "compañias/take profit trader.png"
+            else nil
+            end
+      %>
+        <div>
+          <!-- Cabecera de Firma -->
+          <div class="flex items-center gap-2.5 mb-3 px-1">
+            <% if firm_logo %>
+              <div class="w-7 h-7 rounded-lg bg-slate-50 dark:bg-white p-1 border border-slate-200 flex items-center justify-center shrink-0 shadow-xs">
+                <%= image_tag firm_logo, class: "max-h-full max-w-full object-contain" %>
+              </div>
+            <% else %>
+              <div class="w-7 h-7 rounded-lg bg-brand/10 text-brand flex items-center justify-center shrink-0 font-black text-xs border border-brand/20">
+                <%= firm_name.to_s.first(2).upcase %>
+              </div>
+            <% end %>
+            <h3 class="text-base font-black text-slate-900 dark:text-white"><%= firm_name %></h3>
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-slate-100 dark:bg-[#111C28] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-darkBorder">
+              <%= firm_accounts.size %> <%= firm_accounts.size == 1 ? 'cuenta' : 'cuentas' %>
+            </span>
+          </div>
+
+          <!-- Contenedor de Tarjetas en Fila -->
+          <div class="space-y-3" id="list-group-<%= firm_name.gsub(/[^a-zA-Z0-9]/, '') %>">
+            <% firm_accounts.each do |acc| %>
+              <% 
+                status_slug = acc.status.to_s.downcase 
+                pnl = acc.pnl_total.to_f
+                target = acc.active_profit_target.to_f
+                progress_pct = target > 0 ? [(pnl / target * 100), 100].min : 0
+                progress_pct = 0 if progress_pct < 0
+
+                dd_max = acc.active_max_drawdown.to_f
+                dd_consumed = [acc.initial_balance - acc.current_balance, 0].max
+                dd_pct = dd_max > 0 ? (dd_consumed / dd_max * 100).round : 0
+                
+                consist_res = acc.consistency_check
+              %>
+              
+              <!-- Fila Tarjeta Individual con Bordes Claros y Separación Visual -->
+              <div class="account-card-item bg-white dark:bg-[#0B1621] rounded-2xl p-4 border border-slate-200 dark:border-[rgba(255,255,255,0.08)] shadow-xs hover:shadow-md hover:border-brand/60 transition-all flex flex-col lg:flex-row lg:items-center justify-between gap-4 group cursor-pointer" 
+                   data-tags="<%= status_slug %>" 
+                   data-name="<%= "#{acc.name} #{acc.firm_name}".downcase %>" 
+                   onclick="window.location.href='<%= prop_firm_account_path(acc) %>'">
+                
+                <!-- Columna 1: Nombre y Estado -->
+                <div class="flex items-center gap-3 min-w-[220px]">
+                  <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-darkCardAlt text-slate-600 dark:text-slate-300 flex items-center justify-center font-bold text-sm shrink-0 group-hover:bg-brand group-hover:text-white transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">account_tree</span>
+                  </div>
+                  <div>
+                    <h4 class="text-sm font-black text-slate-900 dark:text-white group-hover:text-brand transition-colors line-clamp-1">
+                      <%= acc.name.presence || "Cuenta ##{acc.id}" %>
+                    </h4>
+                    <div class="flex items-center gap-2 mt-0.5">
+                      <span class="text-[11px] font-mono text-slate-500 dark:text-slate-400 font-bold">
+                        $<%= number_with_precision(acc.account_size, precision: 0, delimiter: ',') rescue acc.account_size %>
+                      </span>
+                      <% 
+                        chip_class = case status_slug
+                          when 'evaluacion' then 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30'
+                          when 'fondeada' then 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30'
+                          when 'quemada' then 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30'
+                          when 'cerrada' then 'bg-slate-500/10 text-slate-500 dark:text-slate-400 border-slate-500/30'
+                          else 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30'
+                          end
+                      %>
+                      <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider border <%= chip_class %>">
+                        <%= acc.status_label %>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Columna 2: Balance Actual -->
+                <div class="min-w-[140px]">
+                  <span class="text-[9px] uppercase font-bold text-slate-400 block tracking-wider">Balance Actual</span>
+                  <span class="text-sm font-black font-mono text-slate-900 dark:text-white">
+                    $<%= number_with_precision(acc.current_balance, precision: 2, delimiter: ',') %>
+                  </span>
+                </div>
+
+                <!-- Columna 3: PNL y Objetivo -->
+                <div class="min-w-[160px]">
+                  <span class="text-[9px] uppercase font-bold text-slate-400 block tracking-wider">PNL Total</span>
+                  <div class="text-sm font-black font-mono <%= pnl >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
+                    <%= pnl >= 0 ? '+' : '' %>$<%= number_with_precision(pnl, precision: 2, delimiter: ',') %>
+                    <% if target > 0 %>
+                      <span class="text-[10px] text-slate-400 font-normal"> / $<%= number_with_precision(target, precision: 0, delimiter: ',') %></span>
+                    <% end %>
+                  </div>
+                  <% if target > 0 && pnl > 0 %>
+                    <div class="w-full h-1 bg-slate-100 dark:bg-darkCardAlt rounded-full mt-1 overflow-hidden">
+                      <div class="h-full bg-emerald-500 rounded-full" style="width: <%= progress_pct %>%"></div>
+                    </div>
+                  <% end %>
+                </div>
+
+                <!-- Columna 4: Drawdown -->
+                <div class="min-w-[150px]">
+                  <span class="text-[9px] uppercase font-bold text-slate-400 block tracking-wider">Drawdown Consumido</span>
+                  <div class="text-xs font-mono font-bold <%= dd_consumed > 0 ? 'text-rose-500' : 'text-slate-500 dark:text-slate-400' %>">
+                    $<%= number_with_precision(dd_consumed, precision: 2, delimiter: ',') %>
+                    <% if dd_max > 0 %>
+                      <span class="text-[10px] text-slate-400 font-normal"> / $<%= number_with_precision(dd_max, precision: 0, delimiter: ',') %></span>
+                    <% end %>
+                  </div>
+                  <% if dd_max > 0 && dd_consumed > 0 %>
+                    <div class="w-full h-1 bg-slate-100 dark:bg-darkCardAlt rounded-full mt-1 overflow-hidden">
+                      <div class="h-full bg-rose-500 rounded-full" style="width: <%= dd_pct %>%"></div>
+                    </div>
+                  <% end %>
+                </div>
+
+                <!-- Columna 5: Días & Consistencia -->
+                <div class="min-w-[100px]">
+                  <span class="text-[9px] uppercase font-bold text-slate-400 block tracking-wider">Días / Consist.</span>
+                  <div class="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">
+                    <%= acc.days_traded %>d <%= acc.active_min_trading_days > 0 ? "/ #{acc.active_min_trading_days}d" : '' %>
+                    <% if consist_res[:pass] && pnl > 0 %>
+                      <span class="text-emerald-500 ml-1">(<%= consist_res[:best_day_pct] %>%)</span>
+                    <% end %>
+                  </div>
+                </div>
+
+                <!-- Columna 6: Botón Ver Detalle -->
+                <div class="flex items-center gap-2 shrink-0">
+                  <span class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-darkCardAlt text-slate-700 dark:text-slate-300 text-xs font-bold group-hover:bg-brand group-hover:text-white transition-colors flex items-center gap-1">
+                    <span>Ver</span>
+                    <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                  </span>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<script>
+window.filterAccounts = function(tag, btn) {
+  // Estilo de botones
+  document.querySelectorAll('.account-filter-btn').forEach(b => {
+    b.classList.remove('bg-brand', 'text-white', 'shadow-xs');
+    b.classList.add('bg-slate-100', 'dark:bg-[#111C28]', 'text-slate-600', 'dark:text-slate-300');
+  });
+  if (btn) {
+    btn.classList.add('bg-brand', 'text-white', 'shadow-xs');
+    btn.classList.remove('bg-slate-100', 'dark:bg-[#111C28]', 'text-slate-600', 'dark:text-slate-300');
+  }
+
+  // Filtrado de items
+  document.querySelectorAll('.account-card-item').forEach(card => {
+    const tags = card.getAttribute('data-tags') || '';
+    const searchInput = document.getElementById('prop-account-search');
+    const term = searchInput ? searchInput.value.toLowerCase() : '';
+    const name = card.getAttribute('data-name') || '';
+    
+    const matchesTag = (tag === 'all' || tags === tag);
+    const matchesSearch = (name.includes(term));
+    
+    if (matchesTag && matchesSearch) {
+      card.style.display = ''; 
+    } else {
+      card.style.display = 'none';
+    }
+  });
+};
+
+window.searchAccounts = function(term) {
+  const activeBtn = document.querySelector('.account-filter-btn.bg-brand');
+  let tag = 'all';
+  if (activeBtn) {
+    const text = activeBtn.textContent.toLowerCase();
+    if (text.includes('evaluación')) tag = 'evaluacion';
+    else if (text.includes('fondeadas')) tag = 'fondeada';
+    else if (text.includes('quemadas')) tag = 'quemada';
+    else if (text.includes('cerradas')) tag = 'cerrada';
+  }
+  filterAccounts(tag, activeBtn);
+};
+
+window.toggleAccountsView = function(view) {
+  const gridView = document.getElementById('accounts-grid-view');
+  const listView = document.getElementById('accounts-list-view');
+  const btnGrid = document.getElementById('view-grid-btn');
+  const btnList = document.getElementById('view-list-btn');
+  
+  if (view === 'grid') {
+    gridView.classList.remove('hidden');
+    listView.classList.add('hidden');
+    
+    btnGrid.classList.add('bg-white', 'dark:bg-[#1A2634]', 'text-brand', 'shadow-xs');
+    btnGrid.classList.remove('text-slate-400', 'hover:text-slate-800', 'dark:hover:text-white');
+    
+    btnList.classList.remove('bg-white', 'dark:bg-[#1A2634]', 'text-brand', 'shadow-xs');
+    btnList.classList.add('text-slate-400', 'hover:text-slate-800', 'dark:hover:text-white');
+  } else {
+    listView.classList.remove('hidden');
+    gridView.classList.add('hidden');
+    
+    btnList.classList.add('bg-white', 'dark:bg-[#1A2634]', 'text-brand', 'shadow-xs');
+    btnList.classList.remove('text-slate-400', 'hover:text-slate-800', 'dark:hover:text-white');
+    
+    btnGrid.classList.remove('bg-white', 'dark:bg-[#1A2634]', 'text-brand', 'shadow-xs');
+    btnGrid.classList.add('text-slate-400', 'hover:text-slate-800', 'dark:hover:text-white');
+  }
+};
+</script>

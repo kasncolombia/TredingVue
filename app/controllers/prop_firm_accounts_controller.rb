@@ -7,6 +7,7 @@ class PropFirmAccountsController < ApplicationController
 
   def index
     @accounts   = current_user.prop_firm_accounts.order(created_at: :desc)
+    @prop_transactions = current_user.prop_transactions.includes(:prop_firm_account).order(transaction_date: :desc, created_at: :desc)
     @strategies = current_user.strategies
   end
 
@@ -31,7 +32,7 @@ class PropFirmAccountsController < ApplicationController
 
 def create
   @account = current_user.prop_firm_accounts.new(account_params)
-  @account.status ||= "activa"
+  @account.status ||= "evaluacion"
 
   strategy_ids = Array(params[:strategy_ids]).reject(&:blank?)
 
@@ -40,6 +41,19 @@ def create
   end
 
   if @account.save
+    # Crear transacción de gasto por cuota de evaluación si eval_fee > 0
+    if @account.eval_fee.to_f > 0
+      current_user.prop_transactions.create!(
+        prop_firm_account: @account,
+        company_name: @account.firm_name,
+        transaction_type: "expense",
+        category: "evaluacion",
+        amount: @account.eval_fee,
+        description: "Cuota de evaluación: #{@account.name}",
+        transaction_date: @account.start_date || Date.current
+      )
+    end
+
     redirect_to prop_firm_account_path(@account),
                 notice: "✅ Cuenta de Fondeo creada exitosamente."
   else

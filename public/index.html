@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Progresión del ROI - Dashboard</title>
+  <style>
+    body {
+      background-color: #070b14;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+    
+    .card {
+      background-color: #0d1320;
+      border: 1px solid #1c2536;
+      border-radius: 14px;
+      padding: 20px;
+      width: 100%;
+      max-width: 900px;
+      box-sizing: border-box;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    .card-header {
+      margin-bottom: 24px;
+    }
+    
+    .card-title {
+      color: #ffffff;
+      font-size: 20px;
+      font-weight: bold;
+      margin: 0 0 4px 0;
+    }
+    
+    .card-subtitle {
+      color: #9aa4b2;
+      font-size: 13px;
+      margin: 0;
+    }
+    
+    .chart-container {
+      position: relative;
+      height: 340px;
+      width: 100%;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title">Progresión del ROI</h2>
+      <p class="card-subtitle">Cómo evoluciona tu retorno neto acumulado</p>
+    </div>
+    
+    <div class="chart-container">
+      <canvas id="roiChart"></canvas>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('load', function() {
+      try {
+        const canvas = document.getElementById('roiChart');
+        const ctx = canvas.getContext('2d');
+
+        // Datos
+        const labels = ["23 feb","02 mar","12 mar","25 mar","14 abr","08 may","12 jun","26 jun","29 jun","01 jul","06 jul","10 jul"];
+        const ingresos = [200, 250, 250, 250, 280, 2300, 3900, 4100, 4050, 4200, 4150, 5400];
+        const gastos = [200, 380, 420, 650, 1050, 900, 820, 1100, 1450, 1550, 1600, 1600];
+        const retornoInversion = [200, 130, 100, -50, -500, 1400, 3100, 3500, 3300, 3400, 3280, 4300];
+
+        // Degradados
+        const gradIngresos = ctx.createLinearGradient(0, 0, 0, 340);
+        gradIngresos.addColorStop(0, 'rgba(34,224,138,0.35)');
+        gradIngresos.addColorStop(1, 'rgba(34,224,138,0)');
+
+        const gradGastos = ctx.createLinearGradient(0, 0, 0, 340);
+        gradGastos.addColorStop(0, 'rgba(244,63,94,0.30)');
+        gradGastos.addColorStop(1, 'rgba(244,63,94,0)');
+
+        const gradRetorno = ctx.createLinearGradient(0, 0, 0, 340);
+        gradRetorno.addColorStop(0, 'rgba(139,124,246,0.35)');
+        gradRetorno.addColorStop(1, 'rgba(139,124,246,0)');
+
+        // Plugin para línea vertical punteada y que el tooltip inicie activo
+        const verticalLinePlugin = {
+          id: 'verticalLinePlugin',
+          afterDraw: (chart) => {
+            if (chart.tooltip?._active && chart.tooltip._active.length) {
+              const activePoint = chart.tooltip._active[0];
+              const ctx = chart.ctx;
+              const topY = chart.scales.y.top;
+              const bottomY = chart.scales.y.bottom;
+              const currentX = activePoint.element.x;
+
+              ctx.save();
+              ctx.beginPath();
+              ctx.moveTo(currentX, topY);
+              ctx.lineTo(currentX, bottomY);
+              ctx.lineWidth = 1;
+              ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+              ctx.setLineDash([4, 4]);
+              ctx.stroke();
+              ctx.restore();
+            }
+          }
+        };
+
+        const config = {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Ingresos',
+                data: ingresos,
+                borderColor: '#22e08a',
+                borderWidth: 2.5,
+                tension: 0.4,
+                fill: 'origin',
+                backgroundColor: gradIngresos,
+                pointBackgroundColor: '#22e08a',
+                pointBorderColor: '#22e08a',
+                pointRadius: 4,
+                pointHoverRadius: 4,
+                order: 1
+              },
+              {
+                label: 'Gastos',
+                data: gastos,
+                borderColor: '#f43f5e',
+                borderWidth: 2.5,
+                tension: 0.4,
+                fill: 'origin',
+                backgroundColor: gradGastos,
+                pointBackgroundColor: '#f43f5e',
+                pointBorderColor: '#f43f5e',
+                pointRadius: 4,
+                pointHoverRadius: 4,
+                order: 2
+              },
+              {
+                label: 'Retorno de inversión',
+                data: retornoInversion,
+                borderColor: '#8b7cf6',
+                borderWidth: 2.5,
+                tension: 0.4,
+                fill: 'origin',
+                backgroundColor: gradRetorno,
+                pointBackgroundColor: '#8b7cf6',
+                pointBorderColor: '#8b7cf6',
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                pointHoverBorderColor: '#ffffff',
+                pointHoverBorderWidth: 2,
+                order: 3
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+              mode: 'index',
+              intersect: false,
+            },
+            animation: {
+              duration: 900,
+              easing: 'easeOutQuart'
+            },
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  usePointStyle: true,
+                  pointStyle: 'line',
+                  color: '#c3cad5',
+                  font: {
+                    size: 12
+                  },
+                  padding: 20
+                }
+              },
+              tooltip: {
+                backgroundColor: 'rgba(17,24,39,0.95)',
+                borderColor: '#1f2a3d',
+                borderWidth: 1,
+                borderRadius: 8,
+                padding: 12,
+                titleColor: '#ffffff',
+                titleFont: {
+                  weight: 'bold',
+                  size: 13
+                },
+                bodySpacing: 4,
+                callbacks: {
+                  label: function(context) {
+                    const label = context.dataset.label || '';
+                    const value = context.parsed.y;
+                    const formattedValue = '$' + value.toLocaleString('en-US');
+                    return `${label}: ${formattedValue}`;
+                  },
+                  labelColor: function(context) {
+                    return {
+                      borderColor: 'transparent',
+                      backgroundColor: 'transparent'
+                    };
+                  },
+                  labelTextColor: function(context) {
+                    if (context.dataset.label === 'Ingresos') return '#22e08a';
+                    if (context.dataset.label === 'Gastos') return '#f43f5e';
+                    if (context.dataset.label === 'Retorno de inversión') return '#8b7cf6';
+                    return '#ffffff';
+                  }
+                },
+                usePointStyle: false,
+                displayColors: false // Remove internal boxes as we color the text itself
+              }
+            },
+            scales: {
+              x: {
+                type: 'category',
+                grid: {
+                  color: 'rgba(255,255,255,0.04)',
+                  drawBorder: false
+                },
+                ticks: {
+                  color: '#8a94a6',
+                  font: {
+                    size: 11
+                  }
+                },
+                border: {
+                  display: false
+                }
+              },
+              y: {
+                min: -2000,
+                max: 6000,
+                stepSize: 2000,
+                grid: {
+                  color: (ctx) => ctx.tick.value === 0 ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.06)',
+                  drawBorder: false
+                },
+                ticks: {
+                  color: '#8a94a6',
+                  font: {
+                    size: 11
+                  },
+                  callback: function(value) {
+                    if (value === 0) return '0';
+                    return (value > 0 ? '' : '-') + Math.abs(value).toLocaleString('en-US');
+                  }
+                },
+                border: {
+                  display: false
+                }
+              }
+            }
+          },
+          plugins: [verticalLinePlugin]
+        };
+
+        const roiChart = new Chart(ctx, config);
+
+        // Pre-activar el índice 7 ("26 jun") para que se vea tooltip y línea vertical por defecto.
+        Chart.defaults.animation = false; // prevenir glitch o animación rara al triggear
+        roiChart.setActiveElements([
+          {datasetIndex: 0, index: 7},
+          {datasetIndex: 1, index: 7},
+          {datasetIndex: 2, index: 7}
+        ]);
+        roiChart.tooltip.setActiveElements([
+          {datasetIndex: 0, index: 7},
+          {datasetIndex: 1, index: 7},
+          {datasetIndex: 2, index: 7}
+        ]);
+        roiChart.update();
+        Chart.defaults.animation = true;
+
+      } catch(e) {
+        console.error("Error al renderizar el gráfico:", e);
+      }
+    });
+  </script>
+</body>
+</html>
