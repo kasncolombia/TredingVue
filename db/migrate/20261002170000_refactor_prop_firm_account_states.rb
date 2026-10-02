@@ -26,7 +26,7 @@ class RefactorPropFirmAccountStates < ActiveRecord::Migration[8.1]
 
       -- Cuentas "activa" con phase "sim" → status "evaluacion", sim = true
       UPDATE prop_firm_accounts
-      SET status = 'evaluacion', sim = 1, phase = NULL
+      SET status = 'evaluacion', sim = TRUE, phase = NULL
       WHERE status = 'activa' AND phase = 'sim';
 
       -- Cuentas "activa" con phase "express" → status "evaluacion", phase NULL
@@ -56,12 +56,12 @@ class RefactorPropFirmAccountStates < ActiveRecord::Migration[8.1]
 
       -- Registrar funded_at para cuentas ya fondeadas (aprox con updated_at)
       UPDATE prop_firm_accounts
-      SET funded_at = DATE(updated_at)
+      SET funded_at = CAST(updated_at AS date)
       WHERE status = 'fondeada' AND funded_at IS NULL;
 
       -- Registrar burned_at para cuentas ya quemadas
       UPDATE prop_firm_accounts
-      SET burned_at = DATE(updated_at)
+      SET burned_at = CAST(updated_at AS date)
       WHERE status = 'quemada' AND burned_at IS NULL;
     SQL
 
