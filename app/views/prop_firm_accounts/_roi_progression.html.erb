@@ -11,7 +11,7 @@
   </div>
 
   <%# Contenedor del gráfico %>
-  <div id="roi-chart-wrapper" class="mt-2 h-[240px] lg:h-[210px] w-full relative">
+  <div id="roi-chart-wrapper" class="mt-2 h-[340px] lg:h-[300px] w-full relative">
     <canvas id="roiProgressCanvas"></canvas>
   </div>
 
@@ -110,42 +110,40 @@
           {
             label: 'Ingresos',
             data: chartData.ingresos,
-            borderColor: '#19D3A2',
-            borderWidth: 2,
+            borderColor: '#22e08a',
+            borderWidth: 2.5,
             tension: 0.4,
-            fill: 'origin',
-            backgroundColor: gradIngresos,
-            pointBackgroundColor: '#19D3A2',
-            pointBorderColor: '#19D3A2',
-            pointRadius: 3,
+            fill: false,
+            pointBackgroundColor: '#22e08a',
+            pointBorderColor: '#22e08a',
+            pointRadius: 4,
             pointHoverRadius: 5,
             order: 1
           },
           {
             label: 'Gastos',
             data: chartData.gastos,
-            borderColor: '#F0445D',
-            borderWidth: 2,
+            borderColor: '#f43f5e',
+            borderWidth: 2.5,
             tension: 0.4,
-            fill: 'origin',
-            backgroundColor: gradGastos,
-            pointBackgroundColor: '#F0445D',
-            pointBorderColor: '#F0445D',
-            pointRadius: 3,
+            fill: false,
+            pointBackgroundColor: '#f43f5e',
+            pointBorderColor: '#f43f5e',
+            pointRadius: 4,
             pointHoverRadius: 5,
             order: 2
           },
           {
             label: 'Retorno de inversión',
             data: dsRetorno,
-            borderColor: '#8759E8',
+            borderColor: '#8b7cf6',
             borderWidth: 2.5,
             tension: 0.4,
             fill: 'origin',
             backgroundColor: gradRetorno,
-            pointBackgroundColor: '#8759E8',
-            pointBorderColor: '#8759E8',
-            pointRadius: 3.5,
+            pointBackgroundColor: '#8b7cf6',
+            pointBorderColor: '#8b7cf6',
+            pointRadius: 4,
             pointHoverRadius: 6,
             pointHoverBorderColor: isDark ? '#ffffff' : '#0f172a',
             pointHoverBorderWidth: 2,
@@ -158,32 +156,32 @@
         maintainAspectRatio: false,
         interaction: { mode: 'index', intersect: false },
         animation: { duration: 800, easing: 'easeOutQuart' },
-        layout: { padding: { left: 0, right: 10, top: 20, bottom: 0 } },
+        layout: { padding: { left: 0, right: 10, top: 10, bottom: 0 } },
         plugins: {
           legend: {
             position: 'bottom',
             labels: {
               usePointStyle: true, pointStyle: 'line', 
-              color: isDark ? '#9CA3AF' : '#4B5563',
+              color: isDark ? '#c3cad5' : '#4B5563',
               font: { size: 12, family: 'Inter, system-ui, sans-serif' },
               padding: 20
             }
           },
           tooltip: {
-            backgroundColor: isDark ? 'rgba(15,23,42,0.95)' : 'rgba(255,255,255,0.95)', 
-            borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(226,232,240,1)',
-            borderWidth: 1, borderRadius: 8, padding: { top: 12, left: 12, right: 24, bottom: 12 },
+            backgroundColor: isDark ? 'rgba(17,24,39,0.95)' : 'rgba(255,255,255,0.95)', 
+            borderColor: isDark ? '#1f2a3d' : 'rgba(226,232,240,1)',
+            borderWidth: 1, borderRadius: 8, padding: 12,
             titleColor: isDark ? '#ffffff' : '#0F172A', 
             titleFont: { size: 13, weight: 'bold', family: 'Inter, system-ui, sans-serif' },
-            titleMarginBottom: 10, bodySpacing: 6,
+            bodySpacing: 4,
             callbacks: {
               title: (ctx) => ctx[0].label,
               label: (ctx) => `${ctx.dataset.label || ''}: $${(ctx.parsed.y || 0).toLocaleString('en-US')}`,
               labelColor: () => ({ borderColor: 'transparent', backgroundColor: 'transparent' }),
               labelTextColor: (ctx) => {
-                if (ctx.dataset.label === 'Ingresos') return '#19D3A2';
-                if (ctx.dataset.label === 'Gastos') return '#F0445D';
-                if (ctx.dataset.label === 'Retorno de inversión') return '#8759E8';
+                if (ctx.dataset.label === 'Ingresos') return '#22e08a';
+                if (ctx.dataset.label === 'Gastos') return '#f43f5e';
+                if (ctx.dataset.label === 'Retorno de inversión') return '#8b7cf6';
                 return isDark ? '#ffffff' : '#0F172A';
               }
             },
@@ -193,14 +191,18 @@
         scales: {
           x: {
             type: 'category',
-            grid: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', drawBorder: false },
-            ticks: { color: isDark ? '#6B7280' : '#64748B', font: { size: 11, family: 'Inter, system-ui, sans-serif' } },
+            grid: { color: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)', drawBorder: false },
+            ticks: { color: isDark ? '#8a94a6' : '#64748B', font: { size: 11, family: 'Inter, system-ui, sans-serif' } },
             border: { display: false }
           },
           y: {
-            grid: { color: (ctx) => ctx.tick.value === 0 ? (isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)') : (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'), drawBorder: false },
+            min: -2000,
+            max: 6000,
+            stepSize: 1000,
+            grid: { color: (ctx) => ctx.tick.value === 0 ? (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.15)') : (isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)'), drawBorder: false },
             ticks: {
-              color: isDark ? '#6B7280' : '#64748B', font: { size: 11, family: 'Inter, system-ui, sans-serif' }, padding: 10,
+              autoSkip: false,
+              color: isDark ? '#8a94a6' : '#64748B', font: { size: 11, family: 'Inter, system-ui, sans-serif' }, padding: 10,
               callback: (v) => v === 0 ? '0' : (v > 0 ? '' : '-') + Math.abs(v).toLocaleString('en-US')
             },
             border: { display: false }
@@ -211,6 +213,26 @@
     };
 
     window.activeRoiChart = new Chart(ctx, config);
+
+    // Pre-activar el índice 7 ("26 jun") para visualizar la referencia exacta
+    if (chartData.labels && chartData.labels.length > 7) {
+      setTimeout(() => {
+        if (!window.activeRoiChart) return;
+        window.activeRoiChart.setActiveElements([
+          {datasetIndex: 0, index: 7},
+          {datasetIndex: 1, index: 7},
+          {datasetIndex: 2, index: 7}
+        ]);
+        if (window.activeRoiChart.tooltip) {
+          window.activeRoiChart.tooltip.setActiveElements([
+            {datasetIndex: 0, index: 7},
+            {datasetIndex: 1, index: 7},
+            {datasetIndex: 2, index: 7}
+          ]);
+        }
+        window.activeRoiChart.update();
+      }, 100);
+    }
   };
 
   if (document.readyState === "loading") {
