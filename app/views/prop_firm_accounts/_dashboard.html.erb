@@ -54,41 +54,41 @@
     <!-- ==================== FILA A: 5 KPIs ==================== -->
     <div class="lg:col-span-2 glass p-4 rounded-2xl border border-slate-200 dark:border-darkBorder flex items-center justify-between shadow-xs">
       <div>
-        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Fondeadas</span>
+        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Fondeadas</span>
         <span class="text-xl font-black text-slate-900 dark:text-white font-mono mt-0.5 block">
           $<%= number_with_precision(cap_fond, precision: 0, delimiter: ',') %>
         </span>
-        <span class="text-[10px] text-slate-500 font-semibold block mt-1"><%= total_fondeadas %> cuentas</span>
+        <span class="text-[11px] text-slate-500 font-semibold block mt-1"><%= total_fondeadas %> cuentas</span>
       </div>
     </div>
     
     <div class="lg:col-span-2 glass p-4 rounded-2xl border border-slate-200 dark:border-darkBorder flex items-center justify-between shadow-xs">
       <div>
-        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Evaluación</span>
+        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Evaluación</span>
         <span class="text-xl font-black text-slate-900 dark:text-white font-mono mt-0.5 block">
           $<%= number_with_precision(cap_eval, precision: 0, delimiter: ',') %>
         </span>
-        <span class="text-[10px] text-slate-500 font-semibold block mt-1"><%= total_eval %> cuentas</span>
+        <span class="text-[11px] text-slate-500 font-semibold block mt-1"><%= total_eval %> cuentas</span>
       </div>
     </div>
 
     <div class="lg:col-span-2 glass p-4 rounded-2xl border border-slate-200 dark:border-darkBorder flex items-center justify-between shadow-xs">
       <div>
-        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Gasto Total</span>
+        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Gasto Total</span>
         <span class="text-xl font-black font-mono mt-0.5 block text-slate-900 dark:text-white">
           $<%= number_with_precision(gastos, precision: 0, delimiter: ',') %>
         </span>
-        <span class="text-[10px] text-slate-500 font-semibold block mt-1">Cuotas de evaluación y resets</span>
+        <span class="text-[11px] text-slate-500 font-semibold block mt-1">Cuotas de evaluación y resets</span>
       </div>
     </div>
 
     <div class="lg:col-span-2 glass p-4 rounded-2xl border border-slate-200 dark:border-darkBorder flex items-center justify-between shadow-xs">
       <div>
-        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Ganado</span>
+        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Total Ganado</span>
         <span class="text-xl font-black font-mono mt-0.5 block text-slate-900 dark:text-white">
           $<%= number_with_precision(ingresos, precision: 0, delimiter: ',') %>
         </span>
-        <span class="text-[10px] text-slate-500 font-semibold block mt-1">Pagos recibidos</span>
+        <span class="text-[11px] text-slate-500 font-semibold block mt-1">Pagos recibidos</span>
       </div>
     </div>
 
@@ -96,11 +96,11 @@
     <% bg_neto = neto >= 0 ? "bg-emerald-500/10 border-emerald-500/30" : "bg-rose-500/10 border-rose-500/30" %>
     <div class="lg:col-span-2 glass p-4 rounded-2xl border <%= bg_neto %> flex items-center justify-between shadow-xs">
       <div>
-        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Neto Total</span>
+        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Neto Total</span>
         <span class="text-xl font-black font-mono mt-0.5 block <%= neto >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
           <%= neto >= 0 ? '+' : '' %>$<%= number_with_precision(neto, precision: 0, delimiter: ',') %>
         </span>
-        <span class="text-[10px] font-bold block mt-1 <%= neto >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400' %>"><%= roi_pct %>% ROI</span>
+        <span class="text-[11px] font-bold block mt-1 <%= neto >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400' %>"><%= roi_pct %>% ROI</span>
       </div>
     </div>
 
@@ -133,7 +133,7 @@
              <div id="breakdown-pie-container" class="w-full h-full"></div>
              <!-- Label central del pie -->
              <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-               <span class="text-[8px] font-bold text-slate-400 uppercase">Neto por firma</span>
+               <span class="text-[11px] font-bold text-slate-400 uppercase">Neto por firma</span>
                <span class="text-lg font-black font-mono <%= neto >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
                  <%= neto >= 0 ? '+' : '' %>$<%= number_with_precision(neto, precision: 0, delimiter: ',') %>
                </span>
@@ -165,7 +165,7 @@
                   <div class="w-full h-1.5 bg-slate-100 dark:bg-darkCard rounded-full overflow-hidden mb-1">
                     <div class="h-full rounded-full" style="width: <%= [pct, 2].max %>%; background-color: <%= firm_color %>"></div>
                   </div>
-                  <div class="text-[9px] font-bold text-slate-500 uppercase tracking-wider flex justify-between">
+                  <div class="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex justify-between">
                     <span class="text-rose-500/80">Gastado: $<%= number_with_precision(stat[:gastos], precision: 0, delimiter: ',') %></span>
                     <span class="text-emerald-500/80">Ganado: $<%= number_with_precision(stat[:ingresos], precision: 0, delimiter: ',') %></span>
                   </div>
@@ -217,7 +217,7 @@
               <span class="text-slate-800 dark:text-white"><%= firm %></span>
               <div class="flex items-center gap-2 font-mono">
                 <span class="<%= t_color %>"><%= f_rate %>%</span>
-                <span class="text-slate-400 text-[10px]">(<%= q_passed %>/<%= q_total %>)</span>
+                <span class="text-slate-400 text-[11px]">(<%= q_passed %>/<%= q_total %>)</span>
               </div>
             </div>
             <div class="w-full h-1.5 bg-slate-100 dark:bg-darkCard rounded-full overflow-hidden">
@@ -266,7 +266,7 @@
       </div>
 
       <div class="mb-5">
-        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block mb-3">Motivos Principales</span>
+        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-3">Motivos Principales</span>
         <div class="space-y-2.5">
           <% if burn_reasons.empty? %>
             <div class="text-xs text-slate-500 italic">No hay cuentas quemadas registradas.</div>
@@ -288,22 +288,22 @@
       </div>
 
       <div>
-        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Métricas Correlacionadas</span>
+        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Métricas Correlacionadas</span>
         <div class="grid grid-cols-2 gap-2">
            <div class="bg-slate-50 dark:bg-[#1a1c29] p-3 rounded-xl border border-slate-200/50 dark:border-darkBorder flex flex-col justify-between">
-             <span class="text-[10px] text-slate-500 font-semibold leading-tight">Días promedio antes de quemar</span>
+             <span class="text-[11px] text-slate-500 font-semibold leading-tight">Días promedio antes de quemar</span>
              <span class="font-mono text-sm font-black text-slate-800 dark:text-white mt-1"><%= avg_days %>d</span>
            </div>
            <div class="bg-slate-50 dark:bg-[#1a1c29] p-3 rounded-xl border border-slate-200/50 dark:border-darkBorder flex flex-col justify-between">
-             <span class="text-[10px] text-slate-500 font-semibold leading-tight">P&L promedio antes de quemar</span>
+             <span class="text-[11px] text-slate-500 font-semibold leading-tight">P&L promedio antes de quemar</span>
              <span class="font-mono text-sm font-black text-rose-500 mt-1"><%= avg_pnl >= 0 ? '+' : '' %>$<%= number_with_precision(avg_pnl, precision: 0, delimiter: ',') %></span>
            </div>
            <div class="bg-slate-50 dark:bg-[#1a1c29] p-3 rounded-xl border border-slate-200/50 dark:border-darkBorder flex flex-col justify-between">
-             <span class="text-[10px] text-slate-500 font-semibold leading-tight">Tamaño más común</span>
+             <span class="text-[11px] text-slate-500 font-semibold leading-tight">Tamaño más común</span>
              <span class="font-mono text-sm font-black text-slate-800 dark:text-white mt-1"><%= most_common_size %></span>
            </div>
            <div class="bg-slate-50 dark:bg-[#1a1c29] p-3 rounded-xl border border-slate-200/50 dark:border-darkBorder flex flex-col justify-between">
-             <span class="text-[10px] text-slate-500 font-semibold leading-tight">Firma más común</span>
+             <span class="text-[11px] text-slate-500 font-semibold leading-tight">Firma más común</span>
              <span class="font-bold text-[11px] text-slate-800 dark:text-white mt-1 truncate"><%= most_common_firm %></span>
            </div>
         </div>

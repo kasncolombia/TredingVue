@@ -6,23 +6,23 @@
     <div class="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 hide-scrollbar">
       <button type="button" onclick="filterAccounts('all', this)" class="account-filter-btn px-3.5 py-2 rounded-xl text-xs font-bold bg-brand text-white shadow-xs transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5">
         <span>Todas</span>
-        <span class="px-1.5 py-0.5 rounded-md text-[10px] bg-white/20 text-white font-extrabold"><%= @accounts.count %></span>
+        <span class="px-1.5 py-0.5 rounded-md text-[11px] bg-white/20 text-white font-extrabold"><%= @accounts.count %></span>
       </button>
       <button type="button" onclick="filterAccounts('evaluacion', this)" class="account-filter-btn px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-[#111C28] text-slate-600 dark:text-slate-300 hover:text-brand dark:hover:text-white transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5">
         <span>Evaluación</span>
-        <span class="px-1.5 py-0.5 rounded-md text-[10px] bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-extrabold"><%= @accounts.select(&:evaluacion?).count %></span>
+        <span class="px-1.5 py-0.5 rounded-md text-[11px] bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-extrabold"><%= @accounts.select(&:evaluacion?).count %></span>
       </button>
       <button type="button" onclick="filterAccounts('fondeada', this)" class="account-filter-btn px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-[#111C28] text-slate-600 dark:text-slate-300 hover:text-brand dark:hover:text-white transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5">
         <span>Fondeadas</span>
-        <span class="px-1.5 py-0.5 rounded-md text-[10px] bg-purple-500/20 text-purple-600 dark:text-purple-400 font-extrabold"><%= @accounts.select(&:fondeada?).count %></span>
+        <span class="px-1.5 py-0.5 rounded-md text-[11px] bg-purple-500/20 text-purple-600 dark:text-purple-400 font-extrabold"><%= @accounts.select(&:fondeada?).count %></span>
       </button>
       <button type="button" onclick="filterAccounts('quemada', this)" class="account-filter-btn px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-[#111C28] text-slate-600 dark:text-slate-300 hover:text-brand dark:hover:text-white transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5">
         <span>Quemadas</span>
-        <span class="px-1.5 py-0.5 rounded-md text-[10px] bg-rose-500/20 text-rose-600 dark:text-rose-400 font-extrabold"><%= @accounts.select(&:quemada?).count %></span>
+        <span class="px-1.5 py-0.5 rounded-md text-[11px] bg-rose-500/20 text-rose-600 dark:text-rose-400 font-extrabold"><%= @accounts.select(&:quemada?).count %></span>
       </button>
       <button type="button" onclick="filterAccounts('cerrada', this)" class="account-filter-btn px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-[#111C28] text-slate-600 dark:text-slate-300 hover:text-brand dark:hover:text-white transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5">
         <span>Cerradas</span>
-        <span class="px-1.5 py-0.5 rounded-md text-[10px] bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-extrabold"><%= @accounts.select(&:cerrada?).count %></span>
+        <span class="px-1.5 py-0.5 rounded-md text-[11px] bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-extrabold"><%= @accounts.select(&:cerrada?).count %></span>
       </button>
     </div>
 
@@ -118,11 +118,11 @@
                   end
               %>
               <div class="flex flex-col items-end gap-1 shrink-0">
-                <span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border <%= chip_class %>">
+                <span class="px-2.5 py-1 rounded-lg text-[11px] font-black uppercase tracking-wider border <%= chip_class %>">
                   <%= acc.status_label %>
                 </span>
                 <% if acc.phase_label %>
-                  <span class="px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                  <span class="px-2 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30">
                     <%= acc.phase_label %>
                   </span>
                 <% end %>
@@ -132,7 +132,7 @@
             <!-- Balance principal & Barra de objetivo -->
             <div class="py-3.5 space-y-2">
               <div class="flex items-baseline justify-between">
-                <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Balance Actual</span>
+                <span class="text-[11px] uppercase font-bold text-slate-400 tracking-wider">Balance Actual</span>
                 <span class="text-base font-black font-mono text-slate-900 dark:text-white">
                   $<%= number_with_precision(acc.current_balance, precision: 2, delimiter: ',') %>
                 </span>
@@ -141,7 +141,7 @@
               <!-- Progress bar si hay objetivo -->
               <% if target > 0 %>
                 <div>
-                  <div class="flex items-center justify-between text-[10px] font-bold text-slate-400 mb-1">
+                  <div class="flex items-center justify-between text-[11px] font-bold text-slate-400 mb-1">
                     <span>Progreso Objetivo</span>
                     <span class="<%= pnl >= 0 ? 'text-emerald-500' : 'text-rose-500' %> font-mono font-black">
                       <%= pnl >= 0 ? '+' : '' %>$<%= number_with_precision(pnl, precision: 0, delimiter: ',') %> / $<%= number_with_precision(target, precision: 0, delimiter: ',') %>
@@ -157,25 +157,25 @@
             <!-- Grilla 2x2 de métricas -->
             <div class="grid grid-cols-2 gap-2 text-[11px] font-mono">
               <div class="bg-slate-50 dark:bg-[#111C28] p-2.5 rounded-xl border border-slate-100 dark:border-darkBorder">
-                <span class="text-slate-400 font-sans block text-[9px] uppercase font-bold">PNL Total</span>
+                <span class="text-slate-400 font-sans block text-[11px] uppercase font-bold">PNL Total</span>
                 <span class="font-bold text-xs <%= pnl >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
                   <%= pnl >= 0 ? '+' : '' %>$<%= number_with_precision(pnl, precision: 2, delimiter: ',') %>
                 </span>
               </div>
               <div class="bg-slate-50 dark:bg-[#111C28] p-2.5 rounded-xl border border-slate-100 dark:border-darkBorder">
-                <span class="text-slate-400 font-sans block text-[9px] uppercase font-bold">Máx Drawdown</span>
+                <span class="text-slate-400 font-sans block text-[11px] uppercase font-bold">Máx Drawdown</span>
                 <span class="font-bold text-xs text-rose-500">
                   $<%= number_with_precision(dd_max, precision: 0, delimiter: ',') rescue 'N/A' %>
                 </span>
               </div>
               <div class="bg-slate-50 dark:bg-[#111C28] p-2.5 rounded-xl border border-slate-100 dark:border-darkBorder">
-                <span class="text-slate-400 font-sans block text-[9px] uppercase font-bold">Días Operados</span>
+                <span class="text-slate-400 font-sans block text-[11px] uppercase font-bold">Días Operados</span>
                 <span class="font-bold text-xs text-slate-800 dark:text-slate-200">
                   <%= acc.days_traded %> <%= acc.active_min_trading_days > 0 ? "/ #{acc.active_min_trading_days}" : 'días' %>
                 </span>
               </div>
               <div class="bg-slate-50 dark:bg-[#111C28] p-2.5 rounded-xl border border-slate-100 dark:border-darkBorder">
-                <span class="text-slate-400 font-sans block text-[9px] uppercase font-bold">Cuota Eval.</span>
+                <span class="text-slate-400 font-sans block text-[11px] uppercase font-bold">Cuota Eval.</span>
                 <span class="font-bold text-xs text-slate-800 dark:text-slate-200">
                   $<%= number_with_precision(acc.eval_fee, precision: 0, delimiter: ',') %>
                 </span>
@@ -276,7 +276,7 @@
                           else 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30'
                           end
                       %>
-                      <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider border <%= chip_class %>">
+                      <span class="px-2 py-0.5 rounded-md text-[11px] font-black uppercase tracking-wider border <%= chip_class %>">
                         <%= acc.status_label %>
                       </span>
                     </div>
@@ -285,7 +285,7 @@
 
                 <!-- Columna 2: Balance Actual -->
                 <div class="min-w-[140px]">
-                  <span class="text-[9px] uppercase font-bold text-slate-400 block tracking-wider">Balance Actual</span>
+                  <span class="text-[11px] uppercase font-bold text-slate-400 block tracking-wider">Balance Actual</span>
                   <span class="text-sm font-black font-mono text-slate-900 dark:text-white">
                     $<%= number_with_precision(acc.current_balance, precision: 2, delimiter: ',') %>
                   </span>
@@ -293,11 +293,11 @@
 
                 <!-- Columna 3: PNL y Objetivo -->
                 <div class="min-w-[160px]">
-                  <span class="text-[9px] uppercase font-bold text-slate-400 block tracking-wider">PNL Total</span>
+                  <span class="text-[11px] uppercase font-bold text-slate-400 block tracking-wider">PNL Total</span>
                   <div class="text-sm font-black font-mono <%= pnl >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
                     <%= pnl >= 0 ? '+' : '' %>$<%= number_with_precision(pnl, precision: 2, delimiter: ',') %>
                     <% if target > 0 %>
-                      <span class="text-[10px] text-slate-400 font-normal"> / $<%= number_with_precision(target, precision: 0, delimiter: ',') %></span>
+                      <span class="text-[11px] text-slate-400 font-normal"> / $<%= number_with_precision(target, precision: 0, delimiter: ',') %></span>
                     <% end %>
                   </div>
                   <% if target > 0 && pnl > 0 %>
@@ -309,11 +309,11 @@
 
                 <!-- Columna 4: Drawdown -->
                 <div class="min-w-[150px]">
-                  <span class="text-[9px] uppercase font-bold text-slate-400 block tracking-wider">Drawdown Consumido</span>
+                  <span class="text-[11px] uppercase font-bold text-slate-400 block tracking-wider">Drawdown Consumido</span>
                   <div class="text-xs font-mono font-bold <%= dd_consumed > 0 ? 'text-rose-500' : 'text-slate-500 dark:text-slate-400' %>">
                     $<%= number_with_precision(dd_consumed, precision: 2, delimiter: ',') %>
                     <% if dd_max > 0 %>
-                      <span class="text-[10px] text-slate-400 font-normal"> / $<%= number_with_precision(dd_max, precision: 0, delimiter: ',') %></span>
+                      <span class="text-[11px] text-slate-400 font-normal"> / $<%= number_with_precision(dd_max, precision: 0, delimiter: ',') %></span>
                     <% end %>
                   </div>
                   <% if dd_max > 0 && dd_consumed > 0 %>
@@ -325,7 +325,7 @@
 
                 <!-- Columna 5: Días & Consistencia -->
                 <div class="min-w-[100px]">
-                  <span class="text-[9px] uppercase font-bold text-slate-400 block tracking-wider">Días / Consist.</span>
+                  <span class="text-[11px] uppercase font-bold text-slate-400 block tracking-wider">Días / Consist.</span>
                   <div class="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">
                     <%= acc.days_traded %>d <%= acc.active_min_trading_days > 0 ? "/ #{acc.active_min_trading_days}d" : '' %>
                     <% if consist_res[:pass] && pnl > 0 %>

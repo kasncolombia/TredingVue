@@ -125,37 +125,37 @@
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 text-xs font-mono">
       <!-- Payouts -->
       <div class="bg-emerald-500/5 dark:bg-emerald-500/10 p-3 rounded-xl border border-emerald-500/20">
-        <span class="text-[10px] font-sans font-bold text-emerald-600 dark:text-emerald-400 block uppercase">Payout (Ingresos)</span>
+        <span class="text-[11px] font-sans font-bold text-emerald-600 dark:text-emerald-400 block uppercase">Payout (Ingresos)</span>
         <span class="font-black text-sm text-emerald-500 block mt-0.5">+$<%= number_with_precision(payout_total, precision: 0, delimiter: ',') %></span>
-        <span class="text-[9px] font-sans text-slate-400 block mt-0.5"><%= payout_count %> payouts cobrados</span>
+        <span class="text-[11px] font-sans text-slate-400 block mt-0.5"><%= payout_count %> payouts cobrados</span>
       </div>
 
       <!-- Evaluación -->
       <div class="bg-rose-500/5 dark:bg-rose-500/10 p-3 rounded-xl border border-rose-500/20">
-        <span class="text-[10px] font-sans font-bold text-rose-600 dark:text-rose-400 block uppercase">Evaluación</span>
+        <span class="text-[11px] font-sans font-bold text-rose-600 dark:text-rose-400 block uppercase">Evaluación</span>
         <span class="font-black text-sm text-rose-500 block mt-0.5">-$<%= number_with_precision(eval_total, precision: 0, delimiter: ',') %></span>
-        <span class="text-[9px] font-sans text-slate-400 block mt-0.5">4 cuotas iniciales</span>
+        <span class="text-[11px] font-sans text-slate-400 block mt-0.5">4 cuotas iniciales</span>
       </div>
 
       <!-- Activación -->
       <div class="bg-slate-50 dark:bg-[#111C28] p-3 rounded-xl border border-slate-200 dark:border-darkBorder">
-        <span class="text-[10px] font-sans font-bold text-slate-500 dark:text-slate-400 block uppercase">Activación</span>
+        <span class="text-[11px] font-sans font-bold text-slate-500 dark:text-slate-400 block uppercase">Activación</span>
         <span class="font-black text-sm text-rose-500 block mt-0.5">-$<%= number_with_precision(act_total, precision: 0, delimiter: ',') %></span>
-        <span class="text-[9px] font-sans text-slate-400 block mt-0.5">1 pago de activación</span>
+        <span class="text-[11px] font-sans text-slate-400 block mt-0.5">1 pago de activación</span>
       </div>
 
       <!-- Mensualidad -->
       <div class="bg-slate-50 dark:bg-[#111C28] p-3 rounded-xl border border-slate-200 dark:border-darkBorder">
-        <span class="text-[10px] font-sans font-bold text-slate-500 dark:text-slate-400 block uppercase">Mensualidad</span>
+        <span class="text-[11px] font-sans font-bold text-slate-500 dark:text-slate-400 block uppercase">Mensualidad</span>
         <span class="font-black text-sm text-rose-500 block mt-0.5">-$<%= number_with_precision(mens_total, precision: 0, delimiter: ',') %></span>
-        <span class="text-[9px] font-sans text-slate-400 block mt-0.5">1 cuota recurrente</span>
+        <span class="text-[11px] font-sans text-slate-400 block mt-0.5">1 cuota recurrente</span>
       </div>
 
       <!-- Reset -->
       <div class="bg-slate-50 dark:bg-[#111C28] p-3 rounded-xl border border-slate-200 dark:border-darkBorder">
-        <span class="text-[10px] font-sans font-bold text-slate-500 dark:text-slate-400 block uppercase">Reset</span>
+        <span class="text-[11px] font-sans font-bold text-slate-500 dark:text-slate-400 block uppercase">Reset</span>
         <span class="font-black text-sm text-rose-500 block mt-0.5">-$<%= number_with_precision(reset_total, precision: 0, delimiter: ',') %></span>
-        <span class="text-[9px] font-sans text-slate-400 block mt-0.5">1 reinicio de cuenta</span>
+        <span class="text-[11px] font-sans text-slate-400 block mt-0.5">1 reinicio de cuenta</span>
       </div>
     </div>
   </div>
