@@ -1,5 +1,8 @@
 <!-- MODAL DE ADMINISTRACIÓN GLOBAL DE CUENTAS (DISEÑO PROFESIONAL SOBRIO) -->
-<div id="manage-accounts-modal" class="fixed inset-0 bg-slate-950/75 backdrop-blur-md z-[100] flex items-center justify-center p-4 hidden">
+<div id="manage-accounts-modal" 
+     data-controller="modal" 
+     data-action="click->modal#closeOnBackdrop"
+     class="fixed inset-0 bg-slate-950/75 backdrop-blur-md z-[100] flex items-center justify-center p-4 hidden">
   <div class="dark:bg-[#11131F] bg-white border border-slate-200 dark:border-slate-800 rounded-2xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
     
     <!-- HEADER DEL MODAL -->
@@ -14,7 +17,7 @@
         </div>
       </div>
 
-      <button type="button" onclick="closeManageAccountsModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+      <button type="button" data-action="click->modal#close" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
         <span class="material-symbols-outlined text-[18px]">close</span>
       </button>
     </div>
@@ -57,7 +60,7 @@
         <% else %>
           <div class="p-3.5 rounded-xl border border-dashed border-slate-300 dark:border-slate-800 text-center space-y-1">
             <p class="text-xs text-slate-400">No hay cuentas personales vinculadas.</p>
-            <button type="button" onclick="closeManageAccountsModal(); openAddAccountWizard();" class="text-[11px] font-bold text-slate-700 dark:text-slate-200 hover:underline inline-flex items-center gap-1">
+            <button type="button" data-action="click->modal#close" onclick="openAddAccountWizard()" class="text-[11px] font-bold text-slate-700 dark:text-slate-200 hover:underline inline-flex items-center gap-1">
               + Vincular Broker
             </button>
           </div>
@@ -118,7 +121,7 @@
         <% end %>
       </div>
 
-      <button type="button" onclick="closeManageAccountsModal(); openAddAccountWizard();" class="w-full sm:w-auto px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm">
+      <button type="button" data-action="click->modal#close" onclick="openAddAccountWizard()" class="w-full sm:w-auto px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm">
         <span class="material-symbols-outlined text-[15px]">add_link</span>
         <span>+ Vincular Nueva Cuenta</span>
       </button>
@@ -126,12 +129,3 @@
 
   </div>
 </div>
-
-<script>
-  function openManageAccountsModal() {
-    document.getElementById('manage-accounts-modal').classList.remove('hidden');
-  }
-  function closeManageAccountsModal() {
-    document.getElementById('manage-accounts-modal').classList.add('hidden');
-  }
-</script>

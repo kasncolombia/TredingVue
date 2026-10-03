@@ -12,7 +12,12 @@
   </div>
 <% end %>
 
-<div class="space-y-6 fade-in">
+<div class="space-y-6 fade-in"
+     data-controller="dashboard-charts"
+     data-dashboard-charts-equity-value="<%= (@equity_data || []).to_json %>"
+     data-dashboard-charts-stats-value="<%= (@stats || {}).to_json %>"
+     data-dashboard-charts-durations-value="<%= (@trade_durations || []).to_json %>"
+     data-dashboard-charts-portfolio-value="<%= raw (@dashboard_strategy_stats || []).to_json %>">
   
   <!-- INTERRUPTOR DE PORTAFOLIO GLOBAL Y CUENTAS MULTIPLES -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -37,18 +42,24 @@
 
     <!-- BOTONES DE CAMBIO DE VISTA Y GRID -->
     <div class="flex items-center gap-1 p-1 bg-slate-200/50 dark:bg-[#1a1a1f] rounded-xl border border-slate-300/50 dark:border-[#2a2a30] shrink-0 self-start sm:self-auto shadow-xs">
-      <button id="btn-layout-3x2" onclick="setDashboardLayout('3x2')" class="py-1.5 px-3 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer bg-white dark:bg-slate-700 text-brand shadow-xs">
+      <button id="btn-layout-3x2" 
+              data-dashboard-charts-target="btnLayout3x2" 
+              data-action="click->dashboard-charts#setLayout3x2" 
+              class="py-1.5 px-3 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer bg-white dark:bg-slate-700 text-brand shadow-xs">
         <span class="material-symbols-outlined text-[16px]">grid_view</span>
         <span>Grid 3x2</span>
       </button>
-      <button id="btn-layout-classic" onclick="setDashboardLayout('classic')" class="py-1.5 px-3 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer text-slate-400 hover:text-slate-700 dark:hover:text-white">
+      <button id="btn-layout-classic" 
+              data-dashboard-charts-target="btnLayoutClassic" 
+              data-action="click->dashboard-charts#setLayoutClassic" 
+              class="py-1.5 px-3 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer text-slate-400 hover:text-slate-700 dark:hover:text-white">
         <span class="material-symbols-outlined text-[16px]">dashboard_customize</span>
         <span>Vista Clásica</span>
       </button>
     </div>
   </div>
 
-  <!-- FILA 1: KPI CARDS TOPBAR INTEGRADA (ESTILO STRATONK EXACTO A IMAGEN) -->
+  <!-- FILA 1: KPI CARDS TOPBAR INTEGRADA -->
   <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
       
     <!-- Balance & P&L -->
@@ -73,117 +84,98 @@
           </div>
         </div>
         <!-- Sparkline mini gráfica Balance P&L -->
-        <div id="sparkline-balance" class="w-[100px] h-[50px]"></div>
+        <div id="sparkline-balance" data-dashboard-charts-target="sparkBalance" class="w-[100px] h-[50px]"></div>
       </div>
     </div>
 
     <!-- Trade Win % -->
-   <!-- Trade Win % -->
-<div class="dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 rounded-2xl p-4 relative overflow-hidden shadow-xs">
-  <div class="grid grid-cols-2 gap-2" style="min-height:110px">
-
-    <!-- Columna izquierda (50%): título + valor + badges -->
-    <div class="flex flex-col min-w-0">
-      <div class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider mb-2 text-slate-800 dark:text-white relative">
-        <span class="w-1 h-3.5 bg-indigo-500 rounded-full shrink-0"></span>
-        <span class="font-bold truncate font-['League_Spartan']">TRADE WIN %</span>
-        <span class="material-symbols-outlined text-[14px] dark:text-[#40453e] text-slate-400 cursor-pointer ml-auto shrink-0" title="Porcentaje de operaciones ganadoras">info</span>
-      </div>
-
-      <div class="flex flex-col justify-center flex-1">
-        <p class="text-[32px] md:text-[36px] font-semibold tracking-[-0.025em] tabular-nums dark:text-white text-slate-900 leading-none font-['League_Spartan']"><%= @stats[:win_rate] %>%</p>
-        <div class="flex items-center gap-1.5 mt-3">
-          <span class="w-6 h-6 rounded-full dark:bg-[#122e24] bg-emerald-50 text-emerald-600 dark:text-emerald-400 border dark:border-emerald-500/30 border-emerald-200 text-[11px] font-bold font-mono flex items-center justify-center" title="Wins"><%= @stats[:winning_trades] %></span>
-          <span class="w-6 h-6 rounded-full dark:bg-[#202030] bg-indigo-50 text-indigo-600 dark:text-indigo-400 text-[11px] font-bold font-mono flex items-center justify-center" title="BE">1</span>
-          <span class="w-6 h-6 rounded-full dark:bg-[#30161c] bg-rose-50 text-rose-600 dark:text-rose-400 border dark:border-rose-500/30 border-rose-200 text-[11px] font-bold font-mono flex items-center justify-center" title="Losses"><%= @stats[:losing_trades] %></span>
+    <div class="dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 rounded-2xl p-4 relative overflow-hidden shadow-xs">
+      <div class="grid grid-cols-2 gap-2" style="min-height:110px">
+        <div class="flex flex-col min-w-0">
+          <div class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider mb-2 text-slate-800 dark:text-white relative">
+            <span class="w-1 h-3.5 bg-indigo-500 rounded-full shrink-0"></span>
+            <span class="font-bold truncate font-['League_Spartan']">TRADE WIN %</span>
+            <span class="material-symbols-outlined text-[14px] dark:text-[#40453e] text-slate-400 cursor-pointer ml-auto shrink-0" title="Porcentaje de operaciones ganadoras">info</span>
+          </div>
+          <div class="flex flex-col justify-center flex-1">
+            <p class="text-[32px] md:text-[36px] font-semibold tracking-[-0.025em] tabular-nums dark:text-white text-slate-900 leading-none font-['League_Spartan']"><%= @stats[:win_rate] %>%</p>
+            <div class="flex items-center gap-1.5 mt-3">
+              <span class="w-6 h-6 rounded-full dark:bg-[#122e24] bg-emerald-50 text-emerald-600 dark:text-emerald-400 border dark:border-emerald-500/30 border-emerald-200 text-[11px] font-bold font-mono flex items-center justify-center" title="Wins"><%= @stats[:winning_trades] %></span>
+              <span class="w-6 h-6 rounded-full dark:bg-[#202030] bg-indigo-50 text-indigo-600 dark:text-indigo-400 text-[11px] font-bold font-mono flex items-center justify-center" title="BE">1</span>
+              <span class="w-6 h-6 rounded-full dark:bg-[#30161c] bg-rose-50 text-rose-600 dark:text-rose-400 border dark:border-rose-500/30 border-rose-200 text-[11px] font-bold font-mono flex items-center justify-center" title="Losses"><%= @stats[:losing_trades] %></span>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center justify-end relative h-full">
+          <div id="sparkline-winrate" data-dashboard-charts-target="sparkWinRate" class="w-[110px] h-[95px]"></div>
         </div>
       </div>
     </div>
 
-    <!-- Columna derecha (50%): gráfico centrado -->
-  <div class="flex items-center justify-center min-w-0 self-stretch">
-  <div id="sparkline-winrate" class="w-full h-full flex items-center justify-center" style="min-height:90px"></div>
-</div>
-
-  </div>
-</div>
-
     <!-- Profit Factor -->
-    <div class="dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 rounded-2xl p-4 relative overflow-hidden shadow-xs">
-      <div class="grid grid-cols-2 gap-2" style="min-height:110px">
-        <!-- Columna izquierda (50%): título + valor -->
-        <div class="flex flex-col min-w-0">
-          <div class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider mb-2 text-slate-800 dark:text-white relative">
-            <span class="w-1 h-3.5 bg-indigo-500 rounded-full shrink-0"></span>
-            <span class="font-bold truncate font-['League_Spartan']">PROFIT FACTOR</span>
-            <span class="material-symbols-outlined text-[14px] dark:text-[#40453e] text-slate-400 cursor-pointer ml-auto shrink-0" title="Ratio Beneficio / Pérdida">info</span>
-          </div>
-          <div class="flex flex-col justify-center flex-1">
-            <p class="text-[32px] md:text-[36px] font-semibold tracking-[-0.025em] tabular-nums dark:text-white text-slate-900 leading-none font-['League_Spartan']"><%= @stats[:profit_factor] %></p>
+    <div class="dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 rounded-2xl p-4 flex flex-col justify-between relative overflow-hidden shadow-xs">
+      <div class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider dark:text-white text-slate-800 z-10 relative">
+        <span class="w-1 h-3.5 bg-brand rounded-full shrink-0"></span>
+        <span class="font-bold">PROFIT FACTOR</span>
+        <span class="material-symbols-outlined text-[14px] dark:text-[#40453e] text-slate-400 cursor-pointer ml-auto" title="Relación Ganancias Totales / Pérdidas Totales">info</span>
+      </div>
+      <div class="z-10 relative flex justify-between items-end mt-4">
+        <div>
+          <p class="text-[32px] md:text-[36px] font-semibold tracking-[-0.025em] leading-none tabular-nums dark:text-white text-slate-900 font-['League_Spartan']">
+            <%= number_with_precision(@stats[:profit_factor], precision: 2) %>
+          </p>
+          <div class="mt-3">
+            <span class="text-xs font-medium text-slate-400">Objetivo &gt; 1.5</span>
           </div>
         </div>
-        <!-- Columna derecha (50%): gráfico centrado -->
-        <div class="flex items-center justify-center min-w-0 self-stretch">
-          <div id="sparkline-pf" class="w-full h-full flex items-center justify-center" style="min-height:90px"></div>
-        </div>
+        <div id="sparkline-pf" data-dashboard-charts-target="sparkPf" class="w-[60px] h-[60px]"></div>
       </div>
     </div>
 
     <!-- Avg Win / Loss -->
-<!-- Avg Win / Loss -->
-<div class="dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 rounded-2xl p-4 relative overflow-hidden shadow-xs">
-  <div class="grid grid-cols-2 gap-2" style="min-height:110px">
-
-    <!-- Columna izquierda (50%): título + valor + promedios -->
-    <div class="flex flex-col min-w-0">
-      <div class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider mb-2 text-slate-800 dark:text-white relative">
-        <span class="w-1 h-3.5 bg-indigo-500 rounded-full shrink-0"></span>
-        <span class="font-bold truncate font-['League_Spartan']">AVG WIN/LOSS</span>
-        <span class="material-symbols-outlined text-[14px] dark:text-[#40453e] text-slate-400 cursor-pointer ml-auto shrink-0" title="Promedio Ganadora vs Perdedora">info</span>
+    <div class="dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 rounded-2xl p-4 flex flex-col justify-between relative overflow-hidden shadow-xs">
+      <div class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider dark:text-white text-slate-800 z-10 relative">
+        <span class="w-1 h-3.5 bg-sky-500 rounded-full shrink-0"></span>
+        <span class="font-bold">AVG WIN / LOSS</span>
+        <span class="material-symbols-outlined text-[14px] dark:text-[#40453e] text-slate-400 cursor-pointer ml-auto" title="Promedio de Ganancia vs Promedio de Pérdida">info</span>
       </div>
-
-      <div class="flex flex-col justify-center flex-1">
-        <p class="text-[32px] md:text-[36px] font-semibold tracking-[-0.025em] tabular-nums dark:text-white text-slate-900 leading-none font-['League_Spartan']"><%= @stats[:rr_ratio] %> R</p>
-        <div class="flex items-center gap-2 text-[10px] font-mono mt-2">
-          <span class="text-emerald-600 dark:text-emerald-400 font-bold">+$<%= number_with_precision(@stats[:avg_win], precision: 0) %></span>
-          <span class="text-rose-600 dark:text-rose-500 font-bold">-$<%= number_with_precision(@stats[:avg_loss], precision: 0) %></span>
+      <div class="z-10 relative flex flex-col justify-end mt-3 space-y-2">
+        <div class="flex items-center justify-between text-xs font-mono font-bold">
+          <span class="text-emerald-500 dark:text-emerald-400">+$<%= number_with_precision(@stats[:avg_win], precision: 2) %></span>
+          <span class="text-rose-500 dark:text-rose-400">-$<%= number_with_precision(@stats[:avg_loss].abs, precision: 2) %></span>
         </div>
+        <div id="sparkline-avg" data-dashboard-charts-target="sparkAvg" class="w-full h-[20px]"></div>
       </div>
     </div>
 
-    <!-- Columna derecha (50%): gráfico centrado -->
-    <div class="flex items-center justify-center min-w-0 self-stretch">
-      <div id="sparkline-avg" class="w-full h-full flex items-center justify-center" style="min-height:90px"></div>
-    </div>
-
-  </div>
-</div>
-
-    <!-- Trade Expectancy -->
-    <div class="dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 rounded-2xl p-4 flex flex-col justify-between shadow-xs">
-      <div class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider dark:text-white text-slate-800 relative z-10">
-        <span class="w-1 h-3.5 bg-emerald-400 rounded-full"></span>
-        <span class="font-bold font-['League_Spartan']">EXPECTANCY</span>
-        <span class="material-symbols-outlined text-[14px] dark:text-[#40453e] text-slate-400 cursor-pointer ml-auto shrink-0" title="Esperanza matemática por trade">info</span>
+    <!-- RR Ratio -->
+    <div class="dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 rounded-2xl p-4 flex flex-col justify-between relative overflow-hidden shadow-xs">
+      <div class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider dark:text-white text-slate-800 z-10 relative">
+        <span class="w-1 h-3.5 bg-amber-500 rounded-full shrink-0"></span>
+        <span class="font-bold">AVG RR RATIO</span>
+        <span class="material-symbols-outlined text-[14px] dark:text-[#40453e] text-slate-400 cursor-pointer ml-auto" title="Ratio Riesgo / Beneficio promedio">info</span>
       </div>
-      <div class="mt-4">
-        <p class="text-[32px] md:text-[36px] font-semibold tracking-[-0.025em] tabular-nums font-['League_Spartan'] leading-none <%= @stats[:expectancy].to_f >= 0 ? 'text-emerald-500 dark:text-emerald-400' : 'text-rose-500 dark:text-rose-400' %>">
-          <%= @stats[:expectancy].to_f >= 0 ? '+' : '' %>$<%= number_with_precision(@stats[:expectancy].to_f, precision: 2) %>
-        </p>
-        <p class="text-[11px] dark:text-[#7a7a85] text-slate-500 mt-2 font-medium">Por operación</p>
+      <div class="z-10 relative flex justify-between items-end mt-4">
+        <div>
+          <p class="text-[32px] md:text-[36px] font-semibold tracking-[-0.025em] leading-none tabular-nums dark:text-white text-slate-900 font-['League_Spartan']">
+            <%= number_with_precision(@stats[:rr_ratio], precision: 2) %>R
+          </p>
+          <div class="mt-3">
+            <span class="text-xs font-medium text-slate-400">Expectativa Positiva</span>
+          </div>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center font-bold text-sm">1:<%= number_with_precision(@stats[:rr_ratio], precision: 1) %></div>
       </div>
     </div>
 
   </div>
 
-  <!-- CONTENEDORES DE LAYOUT DINÁMICO (3x2 vs CLÁSICO) -->
+  <!-- WRAPPER 3X2 (BENTO GRID REORGANIZADO) -->
+  <div id="layout-wrapper-3x2" data-dashboard-charts-target="layoutWrapper3x2">
+    <div id="layout-3x2-container" data-dashboard-charts-target="layout3x2Container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-  <!-- LAYOUT 3x2 (Grid Simétrico) -->
-  <div id="layout-wrapper-3x2" class="w-full">
-    <div id="layout-3x2-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 items-start">
-      
-      <!-- 1. CURVA DE P&L -->
-      <div id="card-equity" class="h-[400px] rounded-[14px] overflow-hidden flex flex-col dark:bg-[#171717] bg-[#ffffff] border dark:border-[#2a2a2a] border-[#e5e7eb] shadow-sm sm:shadow-none p-4">
+      <!-- CARD 1: CURVA DE P&L -->
+      <div id="card-equity" data-dashboard-charts-target="cardEquity" class="h-[400px] rounded-[14px] overflow-hidden flex flex-col dark:bg-[#171717] bg-[#ffffff] border dark:border-[#2a2a2a] border-[#e5e7eb] shadow-sm sm:shadow-none p-4">
         <div class="flex flex-wrap items-center justify-between gap-[12px] pb-3 border-b dark:border-[#262626] border-[#eef0f4] shrink-0">
           <div class="flex items-center gap-[12px]">
             <div class="w-[36px] h-[36px] shrink-0 rounded-[10px] dark:bg-[#222222] bg-[#f5f6fa] border dark:border-[#2f2f2f] border-[#e5e7eb] flex items-center justify-center">
@@ -195,17 +187,17 @@
           <div class="flex items-center gap-2.5">
             <span class="material-symbols-outlined text-[#8b8fa3] cursor-pointer text-[16px]" title="Información del gráfico">info</span>
             <div class="flex items-center p-[3px] dark:bg-[#1c1c1c] bg-[#f3f4f9] border dark:border-[#2f2f2f] border-[#e3e6ee] rounded-[10px]">
-              <button id="btn-pnl-neto" onclick="switchEquityMode('pnl')" class="px-[12px] py-[6px] rounded-[8px] text-[10px] font-bold uppercase tracking-[0.05em] transition-all cursor-pointer shadow-sm sm:shadow-none dark:bg-[#151322] dark:text-[#8b7cf6] bg-[#ffffff] text-[#4f46e5]">P&L NETO</button>
-              <button id="btn-balance" onclick="switchEquityMode('balance')" class="px-[12px] py-[6px] rounded-[8px] text-[10px] font-bold uppercase tracking-[0.05em] transition-all cursor-pointer shadow-none dark:text-[#6b7088] text-[#8b93a7] bg-transparent hover:dark:text-slate-200 hover:text-slate-700">BALANCE</button>
-              <button id="btn-winrate" onclick="switchEquityMode('winrate')" class="px-[12px] py-[6px] rounded-[8px] text-[10px] font-bold uppercase tracking-[0.05em] transition-all cursor-pointer shadow-none dark:text-[#6b7088] text-[#8b93a7] bg-transparent hover:dark:text-slate-200 hover:text-slate-700">WIN RATE</button>
+              <button id="btn-pnl-neto" data-dashboard-charts-target="btnPnlNeto" data-action="click->dashboard-charts#switchEquityMode" data-mode="pnl" class="px-[12px] py-[6px] rounded-[8px] text-[10px] font-bold uppercase tracking-[0.05em] transition-all cursor-pointer shadow-sm sm:shadow-none dark:bg-[#151322] dark:text-[#8b7cf6] bg-[#ffffff] text-[#4f46e5]">P&L NETO</button>
+              <button id="btn-balance" data-dashboard-charts-target="btnBalance" data-action="click->dashboard-charts#switchEquityMode" data-mode="balance" class="px-[12px] py-[6px] rounded-[8px] text-[10px] font-bold uppercase tracking-[0.05em] transition-all cursor-pointer shadow-none dark:text-[#6b7088] text-[#8b93a7] bg-transparent hover:dark:text-slate-200 hover:text-slate-700">BALANCE</button>
+              <button id="btn-winrate" data-dashboard-charts-target="btnWinrate" data-action="click->dashboard-charts#switchEquityMode" data-mode="winrate" class="px-[12px] py-[6px] rounded-[8px] text-[10px] font-bold uppercase tracking-[0.05em] transition-all cursor-pointer shadow-none dark:text-[#6b7088] text-[#8b93a7] bg-transparent hover:dark:text-slate-200 hover:text-slate-700">WIN RATE</button>
             </div>
           </div>
         </div>
-        <div id="echarts-equity-container" class="w-full grow mt-2" style="min-height:0;"></div>
+        <div id="echarts-equity-container" data-dashboard-charts-target="equityChart" class="w-full grow mt-2" style="min-height:0;"></div>
       </div>
 
-      <!-- 2. DAILY P&L -->
-      <div id="card-daily-pnl" class="h-[400px] rounded-[14px] overflow-visible flex flex-col dark:bg-[#171717] bg-[#ffffff] border dark:border-[#2a2a2a] border-[#e5e7eb] px-[20px] py-4 shadow-sm sm:shadow-none relative font-sans">
+      <!-- CARD 2: DAILY PNL -->
+      <div id="card-daily-pnl" data-dashboard-charts-target="cardDailyPnl" class="h-[400px] rounded-[14px] overflow-visible flex flex-col dark:bg-[#171717] bg-[#ffffff] border dark:border-[#2a2a2a] border-[#e5e7eb] px-[20px] py-4 shadow-sm sm:shadow-none relative font-sans">
         <div class="flex items-center justify-between h-[50px] shrink-0 border-b dark:border-[#262626] border-[#eef0f4]">
           <div class="flex items-center gap-[10px]">
             <div class="w-[34px] h-[34px] shrink-0 rounded-[10px] dark:bg-[#222222] bg-[#f5f6fa] border dark:border-[#2f2f2f] border-[#e5e7eb] flex items-center justify-center">
@@ -214,49 +206,52 @@
             <h3 class="text-[17px] font-[700] dark:text-[#ffffff] text-[#111827]">Daily P&L</h3>
           </div>
           <div class="flex items-center gap-[12px] relative z-50">
-            <!-- Boton Dropdown -->
-            <button id="btn-daily-window" onclick="toggleDailyWindowMenu()" class="h-[22px] flex items-center gap-[5px] px-[8px] rounded-[8px] border dark:border-[#4b4f8f] border-[#c7cbf5] dark:bg-[rgba(99,102,241,0.10)] bg-[#eef0ff] dark:text-[#a5b4fc] text-[#4f46e5] cursor-pointer transition-colors">
+            <button id="btn-daily-window" 
+                    data-action="click->dashboard-charts#toggleDailyWindowMenu" 
+                    class="h-[22px] flex items-center gap-[5px] px-[8px] rounded-[8px] border dark:border-[#4b4f8f] border-[#c7cbf5] dark:bg-[rgba(99,102,241,0.10)] bg-[#eef0ff] dark:text-[#a5b4fc] text-[#4f46e5] cursor-pointer transition-colors">
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
-              <span id="daily-window-label" class="text-[11px] font-[700] pt-[1px]">30D</span>
+              <span id="daily-window-label" data-dashboard-charts-target="dailyWindowLabel" class="text-[11px] font-[700] pt-[1px]">30D</span>
             </button>
-            
-            <!-- Dropdown Menu -->
-            <div id="daily-window-menu" class="hidden absolute top-[30px] right-[26px] w-[220px] rounded-[12px] p-[8px] z-50 dark:bg-[#14172e] bg-[#ffffff] border dark:border-[#2b2f58] border-[#e3e6ee] shadow-[0_10px_28px_rgba(15,23,42,0.12)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.55),0_0_0_1px_rgba(99,102,241,0.08)]">
+            <div id="daily-window-menu" data-dashboard-charts-target="dailyWindowMenu" class="hidden absolute top-[30px] right-[26px] w-[220px] rounded-[12px] p-[8px] z-50 dark:bg-[#14172e] bg-[#ffffff] border dark:border-[#2b2f58] border-[#e3e6ee] shadow-[0_10px_28px_rgba(15,23,42,0.12)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.55),0_0_0_1px_rgba(99,102,241,0.08)]">
               <div class="text-[10px] font-[700] tracking-[0.10em] dark:text-[#9aa3e6] text-[#6b72a8] px-[8px] pt-[6px] pb-[8px] uppercase">VENTANA TEMPORAL</div>
               <ul class="flex flex-col space-y-1" role="menu">
-                <li onclick="selectDailyWindow('30D', this)" class="daily-window-opt flex items-center justify-between h-[28px] px-[8px] rounded-[8px] text-[13px] font-[700] cursor-pointer dark:bg-[#20244d] bg-[#eef0ff] dark:text-[#a5b4fc] text-[#4f46e5]">
-                  <span>Últimos 30 días operados</span><svg class="check-icon lucide lucide-check" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                <li data-dashboard-charts-target="dailyWindowOpt" data-action="click->dashboard-charts#selectDailyWindow" data-value="30D" class="daily-window-opt flex items-center justify-between h-[28px] px-[8px] rounded-[8px] text-[13px] font-[700] cursor-pointer dark:bg-[#20244d] bg-[#eef0ff] dark:text-[#a5b4fc] text-[#4f46e5]">
+                  <span>Últimos 30 días operados</span>
+                  <svg class="check-icon lucide lucide-check" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                 </li>
-                <li onclick="selectDailyWindow('60D', this)" class="daily-window-opt flex items-center justify-between h-[28px] px-[8px] rounded-[8px] text-[13px] font-[500] cursor-pointer hover:dark:bg-[rgba(255,255,255,0.05)] hover:bg-[#f5f6fa] dark:text-[#e5e7eb] text-[#1f2937]">
-                  <span>Últimos 60 días operados</span><svg class="check-icon hidden lucide lucide-check" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                <li data-dashboard-charts-target="dailyWindowOpt" data-action="click->dashboard-charts#selectDailyWindow" data-value="60D" class="daily-window-opt flex items-center justify-between h-[28px] px-[8px] rounded-[8px] text-[13px] font-[500] cursor-pointer hover:dark:bg-[rgba(255,255,255,0.05)] hover:bg-[#f5f6fa] dark:text-[#e5e7eb] text-[#1f2937]">
+                  <span>Últimos 60 días operados</span>
+                  <svg class="check-icon hidden lucide lucide-check" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                 </li>
-                <li onclick="selectDailyWindow('90D', this)" class="daily-window-opt flex items-center justify-between h-[28px] px-[8px] rounded-[8px] text-[13px] font-[500] cursor-pointer hover:dark:bg-[rgba(255,255,255,0.05)] hover:bg-[#f5f6fa] dark:text-[#e5e7eb] text-[#1f2937]">
-                  <span>Últimos 90 días operados</span><svg class="check-icon hidden lucide lucide-check" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                <li data-dashboard-charts-target="dailyWindowOpt" data-action="click->dashboard-charts#selectDailyWindow" data-value="90D" class="daily-window-opt flex items-center justify-between h-[28px] px-[8px] rounded-[8px] text-[13px] font-[500] cursor-pointer hover:dark:bg-[rgba(255,255,255,0.05)] hover:bg-[#f5f6fa] dark:text-[#e5e7eb] text-[#1f2937]">
+                  <span>Últimos 90 días operados</span>
+                  <svg class="check-icon hidden lucide lucide-check" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                 </li>
-                <li onclick="selectDailyWindow('MES', this)" class="daily-window-opt flex items-center justify-between h-[28px] px-[8px] rounded-[8px] text-[13px] font-[500] cursor-pointer hover:dark:bg-[rgba(255,255,255,0.05)] hover:bg-[#f5f6fa] dark:text-[#e5e7eb] text-[#1f2937]">
-                  <span>Este mes</span><svg class="check-icon hidden lucide lucide-check" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                <li data-dashboard-charts-target="dailyWindowOpt" data-action="click->dashboard-charts#selectDailyWindow" data-value="MES" class="daily-window-opt flex items-center justify-between h-[28px] px-[8px] rounded-[8px] text-[13px] font-[500] cursor-pointer hover:dark:bg-[rgba(255,255,255,0.05)] hover:bg-[#f5f6fa] dark:text-[#e5e7eb] text-[#1f2937]">
+                  <span>Este mes</span>
+                  <svg class="check-icon hidden lucide lucide-check" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                 </li>
-                <li onclick="selectDailyWindow('TODO', this)" class="daily-window-opt flex items-center justify-between h-[28px] px-[8px] rounded-[8px] text-[13px] font-[500] cursor-pointer hover:dark:bg-[rgba(255,255,255,0.05)] hover:bg-[#f5f6fa] dark:text-[#e5e7eb] text-[#1f2937]">
-                  <span>Todo el histórico</span><svg class="check-icon hidden lucide lucide-check" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                <li data-dashboard-charts-target="dailyWindowOpt" data-action="click->dashboard-charts#selectDailyWindow" data-value="TODO" class="daily-window-opt flex items-center justify-between h-[28px] px-[8px] rounded-[8px] text-[13px] font-[500] cursor-pointer hover:dark:bg-[rgba(255,255,255,0.05)] hover:bg-[#f5f6fa] dark:text-[#e5e7eb] text-[#1f2937]">
+                  <span>Todo el histórico</span>
+                  <svg class="check-icon hidden lucide lucide-check" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                 </li>
               </ul>
             </div>
-
             <span class="material-symbols-outlined text-[#8b8fa3] text-[14px] cursor-help" title="P&L neto por día operado">info</span>
           </div>
         </div>
-        <div id="echarts-bar-day-container" class="w-full grow mt-2" style="min-height:0;"></div>
+        <div id="echarts-bar-day-container" data-dashboard-charts-target="dailyPnlChart" class="w-full grow mt-2" style="min-height:0;"></div>
       </div>
 
-      <!-- 3. TRADETRES SCORE -->
-      <div id="card-radar" class="h-[400px] rounded-[14px] overflow-hidden p-4 flex flex-col justify-between dark:bg-[#181818] bg-white border dark:border-[#2a2a2a] border-[#e5e7eb] shadow-sm sm:shadow-none">
+      <!-- CARD 3: TRADETRES SCORE -->
+      <div id="card-radar" data-dashboard-charts-target="cardRadar" class="h-[400px] rounded-[14px] overflow-hidden p-4 flex flex-col justify-between dark:bg-[#181818] bg-white border dark:border-[#2a2a2a] border-[#e5e7eb] shadow-sm sm:shadow-none">
         <div class="flex items-center justify-between shrink-0 pb-2 border-b dark:border-[#262626] border-[#eef0f4]">
           <h3 class="text-sm font-bold dark:text-white text-slate-900 flex items-center gap-2">
             <span class="material-symbols-outlined text-purple-500 dark:text-purple-400 text-[18px]">radar</span> TRADETRES SCORE
           </h3>
           <span class="text-[10px] px-2 py-0.5 rounded bg-purple-500/15 text-purple-600 dark:text-purple-300 font-bold border border-purple-500/30">Diagnóstico</span>
         </div>
-        <div id="echarts-radar-container" class="w-full grow min-h-[170px]"></div>
+        <div id="echarts-radar-container" data-dashboard-charts-target="radarChart" class="w-full grow min-h-[170px]"></div>
         <div class="mt-2 pt-2 border-t dark:border-[#262626] border-[#eef0f4] space-y-1.5 shrink-0">
           <div class="flex items-center justify-between text-xs font-bold">
             <span class="dark:text-[#9a9aa5] text-slate-500">SCORE GLOBAL</span>
@@ -274,8 +269,8 @@
         </div>
       </div>
 
-      <!-- 4. DRAWDOWN -->
-      <div id="card-drawdown" class="h-[400px] rounded-[14px] overflow-hidden flex flex-col dark:bg-[#171717] bg-[#ffffff] border dark:border-[#2a2a2a] border-[#e5e7eb] p-4 shadow-sm sm:shadow-none">
+      <!-- CARD 4: DRAWDOWN -->
+      <div id="card-drawdown" data-dashboard-charts-target="cardDrawdown" class="h-[400px] rounded-[14px] overflow-hidden flex flex-col dark:bg-[#171717] bg-[#ffffff] border dark:border-[#2a2a2a] border-[#e5e7eb] p-4 shadow-sm sm:shadow-none">
         <div class="flex flex-wrap items-center justify-between gap-[12px] pb-3 border-b dark:border-[#262626] border-[#eef0f4] shrink-0">
           <div class="flex items-center gap-[12px]">
             <div class="w-[36px] h-[36px] shrink-0 rounded-[10px] dark:bg-[#222222] bg-[#f5f6fa] border dark:border-[#2f2f2f] border-[#e5e7eb] flex items-center justify-center">
@@ -287,20 +282,20 @@
             <span class="material-symbols-outlined text-[#8b8fa3] cursor-pointer text-[16px]" title="Configuración">settings</span>
             <span class="material-symbols-outlined text-[#8b8fa3] cursor-pointer text-[16px]" title="Información">info</span>
             <div class="flex items-center p-[3px] dark:bg-[#1c1c1c] bg-[#f3f4f9] border dark:border-[#2f2f2f] border-[#e3e6ee] rounded-[10px]">
-              <button id="btn-trailing" onclick="switchDrawdownMode('trailing')" class="px-2.5 py-1.5 rounded-[8px] text-[10px] font-bold uppercase tracking-[0.05em] dark:bg-[#151322] dark:text-[#8b7cf6] bg-[#ffffff] text-[#f0426a] shadow-sm sm:shadow-none transition-all cursor-pointer flex items-center gap-1">
+              <button id="btn-trailing" data-dashboard-charts-target="btnTrailing" data-action="click->dashboard-charts#switchDrawdownMode" data-mode="trailing" class="px-2.5 py-1.5 rounded-[8px] text-[10px] font-bold uppercase tracking-[0.05em] dark:bg-[#151322] dark:text-[#8b7cf6] bg-[#ffffff] text-[#f0426a] shadow-sm sm:shadow-none transition-all cursor-pointer flex items-center gap-1">
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-down"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg> TRAILING
               </button>
-              <button id="btn-inversion" onclick="switchDrawdownMode('inversion')" class="px-2.5 py-1.5 rounded-[8px] text-[10px] font-bold uppercase tracking-[0.05em] dark:text-[#6b7088] text-[#8b93a7] bg-transparent shadow-none transition-all cursor-pointer flex items-center gap-1">
+              <button id="btn-inversion" data-dashboard-charts-target="btnInversion" data-action="click->dashboard-charts#switchDrawdownMode" data-mode="inversion" class="px-2.5 py-1.5 rounded-[8px] text-[10px] font-bold uppercase tracking-[0.05em] dark:text-[#6b7088] text-[#8b93a7] bg-transparent shadow-none transition-all cursor-pointer flex items-center gap-1">
                 $ INVERSIÓN
               </button>
             </div>
           </div>
         </div>
-        <div id="echarts-drawdown-container" class="w-full grow mt-2" style="min-height:0"></div>
+        <div id="echarts-drawdown-container" data-dashboard-charts-target="drawdownChart" class="w-full grow mt-2" style="min-height:0"></div>
       </div>
 
-      <!-- 5. DURACIÓN VS RESULT (MIN) -->
-      <div id="card-scatter" class="h-[400px] rounded-[14px] overflow-hidden flex flex-col dark:bg-[#171717] bg-white border dark:border-[#2a2a2a] border-[#e5e7eb] shadow-sm sm:shadow-none p-4 md:p-5">
+      <!-- CARD 5: DURACIÓN VS RESULT -->
+      <div id="card-scatter" data-dashboard-charts-target="cardScatter" class="h-[400px] rounded-[14px] overflow-hidden flex flex-col dark:bg-[#171717] bg-white border dark:border-[#2a2a2a] border-[#e5e7eb] shadow-sm sm:shadow-none p-4 md:p-5">
         <div class="flex items-center justify-between pb-3 border-b dark:border-[#262626] border-[#eef0f4] shrink-0">
           <div class="flex items-center gap-[10px]">
             <div class="w-[34px] h-[34px] shrink-0 rounded-[10px] dark:bg-[#222222] bg-[#f5f6fa] border dark:border-[#2f2f2f] border-[#e5e7eb] flex items-center justify-center">
@@ -309,11 +304,11 @@
             <h3 class="text-[17px] font-[700] dark:text-[#ffffff] text-[#111827]">Duración vs Result (Min)</h3>
           </div>
         </div>
-        <div id="echarts-scatter-container" class="w-full grow mt-2" style="min-height:0"></div>
+        <div id="echarts-scatter-container" data-dashboard-charts-target="scatterChart" class="w-full grow mt-2" style="min-height:0"></div>
       </div>
 
-      <!-- 6. ÚLTIMOS TRADES -->
-      <div id="card-trades" class="h-[400px] rounded-[14px] overflow-hidden flex flex-col dark:bg-[#171717] bg-white border dark:border-[#2a2a2a] border-[#e5e7eb] shadow-sm sm:shadow-none p-4 md:p-5">
+      <!-- CARD 6: ÚLTIMOS TRADES -->
+      <div id="card-trades" data-dashboard-charts-target="cardTrades" class="h-[400px] rounded-[14px] overflow-hidden flex flex-col dark:bg-[#171717] bg-white border dark:border-[#2a2a2a] border-[#e5e7eb] shadow-sm sm:shadow-none p-4 md:p-5">
         <div class="flex items-center justify-between pb-3 border-b dark:border-[#262626] border-[#eef0f4] shrink-0">
           <div class="flex items-center gap-[10px]">
             <div class="w-[34px] h-[34px] shrink-0 rounded-[10px] dark:bg-[#222222] bg-[#f5f6fa] border dark:border-[#2f2f2f] border-[#e5e7eb] flex items-center justify-center">
@@ -330,7 +325,7 @@
             <% @recent_trades.each do |t| %>
               <%= link_to trade_path(t), class: "flex items-center justify-between p-3 rounded-2xl dark:bg-[#1e1e1e] bg-slate-50/80 hover:bg-slate-100/90 dark:hover:bg-[#20202a] transition-all duration-200 border dark:border-[#1d1d1d] border-slate-200/80 hover:shadow-xs group" do %>
                 <div class="flex items-center gap-3.5">
-                  <%= asset_logo_tag(t.symbol, size_cls: "w-11 h-11") %>
+                  <%= asset_logo_tag(t.symbol, size_cls: "w-11 h-11") rescue content_tag(:div, t.symbol[0..1], class: "w-11 h-11 rounded-xl bg-brand/10 text-brand flex items-center justify-center font-bold") %>
                   <div>
                     <div class="flex items-center gap-2">
                       <span class="text-sm font-bold dark:text-white text-slate-900 group-hover:text-brand transition-colors"><%= t.symbol %></span>
@@ -365,24 +360,19 @@
     </div>
   </div>
 
-  <!-- LAYOUT CLÁSICO (2/3 + 1/3 + 50/50) -->
-  <div id="layout-wrapper-classic" class="w-full hidden space-y-4 sm:space-y-6">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 items-start">
-      <!-- Columna Izquierda (2/3) -->
-      <div id="classic-col-left" class="lg:col-span-2 flex flex-col gap-4 sm:gap-6"></div>
-      <!-- Columna Derecha (1/3) -->
-      <div id="classic-col-right" class="lg:col-span-1 flex flex-col gap-4 sm:gap-6"></div>
+  <!-- VISTA CLÁSICA (CONTENEDORES OCULTOS POR DEFECTO PARA ALTERNAR) -->
+  <div id="layout-wrapper-classic" data-dashboard-charts-target="layoutWrapperClassic" class="hidden space-y-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div id="classic-col-left" data-dashboard-charts-target="classicColLeft" class="lg:col-span-2 space-y-6"></div>
+      <div id="classic-col-right" data-dashboard-charts-target="classicColRight" class="space-y-6"></div>
     </div>
-    <!-- Fila Inferior (50/50) -->
-    <div id="classic-row-bottom" class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-start"></div>
+    <div id="classic-row-bottom" data-dashboard-charts-target="classicRowBottom" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
   </div>
 
   <!-- FILA 4: CALENDARIO DE TRADING BENTO GRID -->
   <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
-    <!-- Bento Grid Calendario Mensual -->
     <div class="lg:col-span-3 dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 rounded-3xl p-4 md:p-6 flex flex-col justify-between shadow-sm dark:shadow-2xl">
       <div class="flex items-center justify-between mb-4">
-        <!-- Izquierda: mes, año -->
         <div class="flex items-center gap-2 md:gap-3">
           <button class="dark:text-white text-slate-700 hover:text-slate-900 dark:hover:text-gray-300 transition-colors"><span class="material-symbols-outlined text-[20px]">chevron_left</span></button>
           <h2 class="text-[18px] md:text-[20px] font-bold dark:text-white text-slate-900 capitalize"><%= l(Date.current, format: "%B") rescue Date.current.strftime("%B") %></h2>
@@ -393,7 +383,6 @@
           <button class="dark:text-white text-slate-700 hover:text-slate-900 dark:hover:text-gray-300 transition-colors"><span class="material-symbols-outlined text-[20px]">chevron_right</span></button>
         </div>
 
-        <!-- Centro-derecha / Extremo derecho -->
         <div class="flex items-center gap-2 md:gap-3">
           <div class="flex items-center gap-1.5 md:gap-2">
             <button class="px-[12px] md:px-[14px] py-[6px] bg-slate-100 dark:bg-[#1e1e24] hover:bg-slate-200 dark:hover:bg-[#2a2a30] rounded-full text-slate-700 dark:text-[#e5e5e5] text-xs font-bold transition-colors">HOY</button>
@@ -415,12 +404,10 @@
         </div>
       </div>
 
-      <!-- HEADER DIAS SEMANA (7 DÍAS: DOM A SÁB + ESPACIO TOTALES) -->
       <div class="grid grid-cols-8 gap-1.5 text-center text-[10px] md:text-[11px] font-bold text-slate-400 dark:text-[#6b6b75] uppercase tracking-[1px] mb-2">
         <div class="py-1">DOM</div><div class="py-1">LUN</div><div class="py-1">MAR</div><div class="py-1">MIÉ</div><div class="py-1">JUE</div><div class="py-1">VIE</div><div class="py-1">SÁB</div><div class="py-1"></div>
       </div>
-      
-      <!-- GRID DE SEMANAS Y DÍAS (DOMINGO A SÁBADO + WEEK 1..5 EN 8VA COLUMNA) -->
+
       <div class="space-y-1.5">
         <% 
           curr_d = Date.current
@@ -441,13 +428,10 @@
                 is_current_m = date.month == curr_d.month
                 
                 if !is_current_m || !has_trades
-                  # CELDA VACÍA (sin trades o fuera de mes)
                   card_class = "dark:bg-[#16161b] bg-slate-100/70 border dark:border-[#1e1e24] border-slate-200 dark:text-[#5a5a64] text-slate-400"
                 elsif pnl > 0
-                  # CELDA CON GANANCIA
                   card_class = "dark:bg-[#0d2e27] bg-emerald-50 border dark:border-[#1a4d3e] border-emerald-200 text-emerald-950 dark:text-white shadow-xs"
                 elsif pnl < 0
-                  # CELDA CON PÉRDIDA
                   card_class = "dark:bg-[#2e0d18] bg-rose-50 border dark:border-[#4d1a28] border-rose-200 text-rose-950 dark:text-white shadow-xs"
                 else
                   card_class = "dark:bg-[#16161b] bg-slate-100 border dark:border-[#1e1e24] border-slate-200 dark:text-white text-slate-800"
@@ -470,7 +454,6 @@
               <% end %>
             <% end %>
 
-            <!-- COLUMNA "WEEK N" (resumen semanal) -->
             <div class="h-[100px] md:h-[120px] p-2 rounded-[8px] md:rounded-[10px] dark:bg-[#1a1a1f] bg-slate-100 border dark:border-transparent border-slate-200 flex flex-col items-center justify-between shadow-xs">
               <span class="text-[9px] md:text-[10px] dark:text-[#5a5a64] text-slate-500 font-bold w-full text-center">Week <%= w_idx + 1 %></span>
               <div class="my-auto w-full text-center overflow-hidden">
@@ -489,7 +472,7 @@
       </div>
     </div>
 
-    <!-- Rachas y Estadísticas Rápidas -->
+    <!-- Rachas y AI Coach -->
     <div class="flex flex-col gap-4 justify-start">
       <div class="glass rounded-2xl p-4 flex flex-col gap-3 shadow-xs border dark:border-[#1d1d1d] border-slate-200 dark:bg-[#181818] bg-white">
         <div class="flex items-center justify-between mb-2">
@@ -508,17 +491,16 @@
         </div>
         <div class="grid grid-cols-2 gap-2 pt-3 border-t dark:border-darkBorder border-slate-200 text-center">
           <div>
-            <p class="text-[9px] text-slate-400 uppercase font-bold">Máx Racha V</p>
+            <p class="text-[9px] text-slate-400 uppercase font-bold">MÁX RACHA V</p>
             <p class="text-sm font-black text-emerald-500 font-mono"><%= @stats[:max_win_streak] %></p>
           </div>
           <div>
-            <p class="text-[9px] text-slate-400 uppercase font-bold">Máx Racha R</p>
+            <p class="text-[9px] text-slate-400 uppercase font-bold">MÁX RACHA R</p>
             <p class="text-sm font-black text-rose-500 font-mono"><%= @stats[:max_loss_streak] %></p>
           </div>
         </div>
       </div>
 
-      <!-- Quick AI Diagnostic -->
       <div class="glass rounded-2xl p-4 flex flex-col gap-2 bg-brand/5 border border-brand/20 shadow-xs">
         <div class="flex items-center gap-1.5 text-brand">
           <span class="material-symbols-outlined text-[16px]">smart_toy</span>
@@ -534,22 +516,9 @@
     </div>
   </div>
 
-  <!-- FILA 5: ANALYTICS PREMIUM (P&L Diario, Day of Week, y Portfolio Strategies) -->
+  <!-- FILA 5: ANALYTICS PREMIUM -->
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-    
     <% 
-      # 1. Preparar Datos P&L por Día (Últimos 5 días activos) para la primera columna
-      recent_daily_pnl = current_user.trades.where.not(entry_at: nil).group("DATE(entry_at)").sum(:pnl).sort_by{|d,p| d}.last(5).reverse
-      if @stats[:is_demo] && recent_daily_pnl.empty?
-        # Mock si es demo sin datos
-        recent_daily_pnl = [
-          [Date.today, -150], [Date.today - 1.day, 420], [Date.today - 2.days, 110], [Date.today - 3.days, -50], [Date.today - 4.days, 300]
-        ]
-      end
-      max_daily = recent_daily_pnl.map { |d, p| p.abs }.max || 1
-      max_daily = 1 if max_daily == 0
-
-      # 2. Preparar Datos Day of Week para la segunda columna
       dow_stats = {
         "Lun" => { pnl: 0, trades: 0 },
         "Mar" => { pnl: 0, trades: 0 },
@@ -575,14 +544,12 @@
       max_dow = dow_stats.values.map { |s| s[:pnl].abs }.max || 1
       max_dow = 1 if max_dow == 0
 
-      # 3. Preparar Datos Portafolio Estrategias
-      @dashboard_strategy_stats = current_user.trades.includes(:strategy).group_by { |t| t.strategy&.name || "Price Action" }.map do |name, trades|
+      @dashboard_strategy_stats ||= current_user.trades.includes(:strategy).group_by { |t| t.strategy&.name || "Price Action" }.map do |name, trades|
         t_pnl = trades.sum(&:pnl).to_f
-        # Solo tomaremos ganancias brutas o valores absolutos para que el donut sea en base al volumen de ganancia
         { name: name, value: t_pnl >= 0 ? t_pnl : (t_pnl.abs/2), actual_pnl: t_pnl, count: trades.size }
       end.sort_by { |s| -s[:value] }.first(4)
-      
-      if @stats[:is_demo] && @dashboard_strategy_stats.empty?
+
+      if @stats[:is_demo] && (@dashboard_strategy_stats.nil? || @dashboard_strategy_stats.empty?)
         @dashboard_strategy_stats = [
           { name: "Breakout NV", value: 5000, actual_pnl: 5000, count: 24 },
           { name: "Reversión SM", value: 3800, actual_pnl: 3800, count: 18 },
@@ -605,7 +572,7 @@
       <div id="echarts-daily-pnl-premium" class="w-full flex-1" style="min-height:200px"></div>
     </div>
 
-    <!-- 2. Day of Week Performance (Igual a imagen 1) -->
+    <!-- 2. Day of Week Performance -->
     <div class="glass dark:bg-[#18181a] rounded-[20px] p-5 border border-slate-200 dark:border-[#1d1d1d] flex flex-col justify-between relative overflow-hidden shadow-sm">
       <div class="flex items-center gap-2 mb-4">
         <div class="w-7 h-7 rounded-lg dark:bg-[#1e1e26] bg-slate-100 dark:text-slate-300 text-slate-600 flex items-center justify-center">
@@ -669,7 +636,7 @@
       %>
       <!-- Donut Chart -->
       <div class="relative w-full flex items-center justify-center mt-2">
-        <div id="echarts-portfolio-doughnut" class="w-full" style="min-height:180px;height:180px"></div>
+        <div id="echarts-portfolio-doughnut" data-dashboard-charts-target="portfolioChart" class="w-full" style="min-height:180px;height:180px"></div>
         <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mb-1">
           <span class="font-['League_Spartan'] font-[900] text-[18px] tracking-tight dark:text-white text-[#0f172a]"><%= formatted_total %></span>
           <span class="text-[12px] font-[600] dark:text-[#a0a0ab] text-[#64748b]">All Portfolio</span>
@@ -679,12 +646,11 @@
       <!-- Leyenda Grid -->
       <div class="grid grid-cols-2 gap-x-3 gap-y-3 mt-3 pt-3 border-t dark:border-[#2f2e42] border-slate-100">
         <%
-          colors = ['#8B5CF6', '#34D399', '#FB7185', '#FBBF24']
           circles = [ 'bg-[#8B5CF6]', 'bg-[#34D399]', 'bg-[#FB7185]', 'bg-[#FBBF24]' ]
         %>
         <% @dashboard_strategy_stats.each_with_index do |strat, idx| %>
           <div class="flex items-center gap-2.5">
-            <div class="w-2.5 h-2.5 rounded-full <%= circles[idx] %> shrink-0"></div>
+            <div class="w-2.5 h-2.5 rounded-full <%= circles[idx % circles.length] %> shrink-0"></div>
             <div class="flex flex-col min-w-0">
               <span class="text-sm font-bold dark:text-white text-slate-800 leading-tight truncate" title="<%= strat[:name] %>"><%= strat[:name] %></span>
               <span class="text-xs font-mono dark:text-slate-400 text-slate-500"><%= ((strat[:value] / total_portfolio) * 100).round %>% · <%= strat[:count] %> trades</span>
@@ -696,7 +662,7 @@
 
   </div>
 
-  <!-- FILA 6: CALENDARIO ANUAL DE RENDIMIENTO (EXACTO A IMAGEN DE REFERENCIA 3) -->
+  <!-- FILA 6: CALENDARIO ANUAL DE RENDIMIENTO -->
   <div class="dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 rounded-[12px] p-4 md:p-5 shadow-sm dark:shadow-2xl overflow-x-auto">
     <!-- Header del Calendario Anual -->
     <div class="flex items-center justify-between mb-4 min-w-[750px]">
@@ -710,1243 +676,52 @@
         </h3>
       </div>
       
-      <!-- Derecha: Grupo de 3 toggles/pills en fila con gap 4px -->
+      <!-- Derecha: Grupo de 3 toggles/pills -->
       <div class="flex items-center gap-[4px] h-[30px]">
         <button class="px-[10px] py-[6px] bg-slate-100 dark:bg-[#1e1e24] hover:bg-slate-200 dark:hover:bg-[#2a2a30] text-slate-600 dark:text-[#8a8a94] text-xs font-semibold rounded-[6px] transition-colors">%</button>
         <button class="px-[10px] py-[6px] bg-[#8b5cf6] text-white font-bold text-xs rounded-[6px] transition-colors shadow-xs">P&L</button>
         <button class="px-[10px] py-[6px] bg-slate-100 dark:bg-[#1e1e24] hover:bg-slate-200 dark:hover:bg-[#2a2a30] text-slate-600 dark:text-[#8a8a94] text-xs font-semibold rounded-[6px] transition-colors">Win rate</button>
       </div>
     </div>
-    
-    <!-- GRID DE 14 COLUMNAS (YEAR, JAN..DEC, TOTAL) -->
-    <div class="min-w-[750px] space-y-[4px]">
-      <!-- Header de Columnas -->
-      <div class="grid grid-cols-[repeat(14,minmax(0,1fr))] gap-[4px] text-center text-[10px] font-semibold dark:text-[#6b6b75] text-slate-500 uppercase tracking-[0.5px] pb-2 border-b dark:border-[#1d1d1d] border-slate-200">
-        <div>YEAR</div>
-        <div>JAN</div>
-        <div>FEB</div>
-        <div>MAR</div>
-        <div>APR</div>
-        <div>MAY</div>
-        <div>JUN</div>
-        <div>JUL</div>
-        <div>AUG</div>
-        <div>SEP</div>
-        <div>OCT</div>
-        <div>NOV</div>
-        <div>DEC</div>
-        <div>TOTAL</div>
-      </div>
 
-      <!-- Fila de Celdas -->
-      <div class="grid grid-cols-[repeat(14,minmax(0,1fr))] gap-[4px] text-center pt-1">
-        <!-- Columna 1: AÑO -->
-        <div class="h-[55px] rounded-[6px] dark:bg-[#18181d] bg-slate-100 border dark:border-[#1d1d1d] border-slate-200 dark:text-white text-slate-900 font-bold text-[13px] flex items-center justify-center">
-          <%= Time.current.year %>
-        </div>
-
-        <!-- Columnas 2 a 13: ENE a DIC -->
-        <% 
-          months_abbr = %w[JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC]
-          @annual_stats.each_with_index do |pnl, m_idx| 
-            m_trades = current_user.trades.select { |t| t.entry_at&.year == Time.current.year && t.entry_at&.month == (m_idx + 1) }
-            m_count = m_trades.size
-        %>
-          <% if m_count == 0 %>
-            <!-- CELDA VACÍA -->
-            <div class="h-[55px] rounded-[6px] dark:bg-[#18181d] bg-slate-50 border dark:border-[#1d1d1d] border-slate-200 dark:text-[#4a4a54] text-slate-400 font-normal text-[13px] flex items-center justify-center">
-              --
-            </div>
-          <% elsif pnl < 0 %>
-            <!-- CELDA CON PÉRDIDA -->
-            <div class="h-[55px] p-1.5 rounded-[6px] dark:bg-[#2e1018] bg-rose-50 border dark:border-[#5c2030] border-rose-200 flex flex-col items-center justify-center">
-              <span class="text-[14px] font-bold dark:text-[#f87171] text-rose-600">$-<%= pnl.abs >= 1000 ? "#{(pnl.abs/1000.0).round(1)}K" : pnl.abs.round %></span>
-              <span class="text-[10px] dark:text-[#a06070] text-rose-500/80 font-normal"><%= m_count %> trades</span>
-            </div>
-          <% else %>
-            <!-- CELDA CON GANANCIA -->
-            <div class="h-[55px] p-1.5 rounded-[6px] dark:bg-[#0e2a22] bg-emerald-50 border dark:border-[#1f5c45] border-emerald-200 flex flex-col items-center justify-center">
-              <span class="text-[14px] font-bold dark:text-[#34d399] text-emerald-600">+$<%= pnl >= 1000 ? "#{(pnl/1000.0).round(1)}K" : pnl.round %></span>
-              <span class="text-[10px] dark:text-[#6a9a8a] text-emerald-600/80 font-normal"><%= m_count %> trades</span>
-            </div>
+    <table class="w-full text-center text-xs border-collapse min-w-[700px]">
+      <thead>
+        <tr class="border-b dark:border-[#262626] border-slate-200 text-slate-400 text-[10px] uppercase tracking-wider font-bold">
+          <th class="py-2 text-left">AÑO</th>
+          <th>ENE</th><th>FEB</th><th>MAR</th><th>ABR</th><th>MAY</th><th>JUN</th>
+          <th>JUL</th><th>AGO</th><th>SEP</th><th>OCT</th><th>NOV</th><th>DIC</th>
+          <th class="text-right">TOTAL</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y dark:divide-[#202028] divide-slate-100 font-mono font-bold text-[11px]">
+        <tr class="hover:bg-slate-50 dark:hover:bg-[#1f1f28] transition-colors">
+          <td class="py-3 text-left font-sans dark:text-white text-slate-800 font-bold"><%= Date.current.year %></td>
+          <% (1..12).each do |m| %>
+            <% 
+              m_trades = current_user.trades.select { |t| t.entry_at && t.entry_at.year == Date.current.year && t.entry_at.month == m }
+              m_pnl = m_trades.sum(&:pnl)
+              m_count = m_trades.size
+            %>
+            <td class="py-3">
+              <% if m_count > 0 %>
+                <span class="<%= m_pnl >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
+                  <%= m_pnl >= 0 ? '+' : '' %>$<%= number_with_precision(m_pnl, precision: 0) %>
+                </span>
+              <% else %>
+                <span class="text-slate-500 font-normal">—</span>
+              <% end %>
+            </td>
           <% end %>
-        <% end %>
-
-        <!-- Columna 14: CELDA TOTAL -->
-        <% if @annual_total < 0 %>
-          <div class="h-[55px] p-1.5 rounded-[6px] dark:bg-[#38121d] bg-rose-100 border dark:border-[#78283c] border-rose-300 flex flex-col items-center justify-center">
-            <span class="text-[15px] font-black dark:text-[#f87171] text-rose-700">-$<%= (@annual_total.abs >= 1000 ? "#{(@annual_total.abs/1000.0).round(1)}K" : @annual_total.abs.round) %></span>
-            <span class="text-[10px] dark:text-[#a06070] text-rose-600 font-normal"><%= @annual_trades_count %> trades</span>
-          </div>
-        <% else %>
-          <div class="h-[55px] p-1.5 rounded-[6px] dark:bg-[#0f3328] bg-emerald-100 border dark:border-[#22c55e]/30 border-emerald-300 flex flex-col items-center justify-center">
-            <span class="text-[15px] font-black dark:text-[#34d399] text-emerald-700">+$<%= (@annual_total >= 1000 ? "#{(@annual_total/1000.0).round(1)}K" : @annual_total.round) %></span>
-            <span class="text-[10px] dark:text-[#6a9a8a] text-emerald-600 font-normal"><%= @annual_trades_count %> trades</span>
-          </div>
-        <% end %>
-      </div>
-    </div>
+          <td class="py-3 text-right text-sm">
+            <% total_yr_pnl = current_user.trades.select { |t| t.entry_at && t.entry_at.year == Date.current.year }.sum(&:pnl) %>
+            <span class="<%= total_yr_pnl >= 0 ? 'text-emerald-500' : 'text-rose-500' %> font-black">
+              <%= total_yr_pnl >= 0 ? '+' : '' %>$<%= number_with_precision(total_yr_pnl, precision: 0) %>
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
 </div>
-
-<!-- INITIALIZATION OF ECHARTS -->
-<script>
-(function() {
-  function safeRenderEcharts() {
-    const htmlRoot = document.documentElement || document.getElementById("html-root");
-    const isDark = htmlRoot ? htmlRoot.classList.contains("dark") : true;
-    const textColor = isDark ? "#9DA3B4" : "#475569";
-    const borderColor = isDark ? "#23263A" : "#E2E8F0";
-    const tooltipBg = isDark ? "#1a1a1f" : "#ffffff";
-    const tooltipText = isDark ? "#e5e5e5" : "#0f172a";
-
-    // --- DATOS GLOBALES DEL BACKEND (Saneamiento) ---
-    let rawEquityData = <%= (@equity_data || []).to_json.html_safe %> || [];
-    
-    // Dataset de demo de 40 puntos (spec de referencia: 4 feb – 30 abr)
-    // Dataset basado estrictamente en el análisis manual del usuario (Rango 6 feb - 30 abr)
-    const DEMO_CHART_DATA = [
-      { date:'2026-02-06', pnl_day:0,    pnl_cum:0,     drawdown:0 },
-      { date:'2026-02-11', pnl_day:-600, pnl_cum:-600,  drawdown:-600 },
-      { date:'2026-02-16', pnl_day:1100, pnl_cum:500,   drawdown:0 },
-      { date:'2026-02-20', pnl_day:400,  pnl_cum:900,   drawdown:0 },
-      { date:'2026-02-27', pnl_day:-1500,pnl_cum:-600,  drawdown:-1500 },
-      { date:'2026-03-05', pnl_day:-100, pnl_cum:-700,  drawdown:-1600 },
-      { date:'2026-03-10', pnl_day:815,  pnl_cum:115,   drawdown:-785 },
-      { date:'2026-03-18', pnl_day:285,  pnl_cum:400,   drawdown:-500 },
-      { date:'2026-03-25', pnl_day:100,  pnl_cum:500,   drawdown:-400 },
-      { date:'2026-04-01', pnl_day:700,  pnl_cum:1200,  drawdown:0 },
-      { date:'2026-04-06', pnl_day:200,  pnl_cum:1400,  drawdown:0 },
-      { date:'2026-04-15', pnl_day:600,  pnl_cum:2000,  drawdown:0 },
-      { date:'2026-04-24', pnl_day:-600, pnl_cum:1400,  drawdown:-600 },
-      { date:'2026-04-30', pnl_day:1500, pnl_cum:2900,  drawdown:0 }
-    ];
-
-    // Normalizar datos del backend al formato unificado {date, pnl_day, pnl_cum, drawdown}
-    if (!Array.isArray(rawEquityData) || rawEquityData.length === 0) {
-      rawEquityData = DEMO_CHART_DATA;
-    } else {
-      // Adaptar formato legacy { date, value, pnl } al nuevo
-      let peak = 0;
-      rawEquityData = rawEquityData.map((d, i) => {
-        const cum = Number(d.pnl_cum ?? d.value) || 0;
-        if (cum > peak) peak = cum;
-        const dd = d.drawdown !== undefined ? Number(d.drawdown) : (cum - peak);
-        return {
-          date: d.date,
-          pnl_day: Number(d.pnl_day ?? d.pnl) || 0,
-          pnl_cum: cum,
-          drawdown: dd
-        };
-      });
-    }
-    
-    const statsWinRate = Number(<%= @stats[:win_rate] || 0 %>) || 0;
-    const statsProfitFactor = Number(<%= @stats[:profit_factor] || 0 %>) || 0;
-    const statsAvgWin = Number(<%= @stats[:avg_win] || 0 %>) || 0;
-    const statsAvgLoss = Number(<%= @stats[:avg_loss] || 0 %>) || 0;
-    const statsRrRatio = Number(<%= @stats[:rr_ratio] || 0 %>) || 0;
-
-  // --- niceCeil: redondea al siguiente valor de {1,2,5}×10^n ---
-  function niceCeil(v) {
-    if (v <= 0) return 1;
-    const exp = Math.floor(Math.log10(v));
-    const base = Math.pow(10, exp);
-    const frac = v / base;
-    let nice;
-    if (frac <= 1) nice = 1;
-    else if (frac <= 2) nice = 2;
-    else if (frac <= 5) nice = 5;
-    else nice = 10;
-    return nice * base;
-  }
-
-  // --- FORMATEADOR DE FECHAS EN ESPAÑOL (Eje X: "6 feb", "1 abr") ---
-  function formatSpanishDate(dateStr, idx) {
-    if (!dateStr) return `T${idx + 1}`;
-    const str = String(dateStr);
-    const months = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
-    // Formato dd/mm
-    if (str.includes('/')) {
-      const parts = str.split('/');
-      const day = parseInt(parts[0], 10);
-      const mIdx = parseInt(parts[1], 10) - 1;
-      if (!isNaN(day) && mIdx >= 0 && mIdx < 12) {
-        return `${day} ${months[mIdx]}`;
-      }
-    }
-    // Formato ISO yyyy-mm-dd
-    if (str.includes('-') && str.length >= 10) {
-      const datePart = str.split('T')[0];
-      const parts = datePart.split('-');
-      if (parts.length >= 3) {
-        const day = parseInt(parts[2], 10);
-        const mIdx = parseInt(parts[1], 10) - 1;
-        if (!isNaN(day) && mIdx >= 0 && mIdx < 12) {
-          return `${day} ${months[mIdx]}`;
-        }
-      }
-    }
-    return str;
-  }
-
-  const formattedDates = rawEquityData.map((d, i) => formatSpanishDate(d.date, i));
-  console.log('[CoachTrading] Equity data points:', rawEquityData.length, 'Labels:', formattedDates.length);
-
-  // --- 1. CURVA DE P&L — ESTILO REFERENCIA PREMIUM ---
-  let currentEquityChart = null;
-  let currentEquityMode = 'pnl';
-
-  // Colores fieles a la referencia
-  const C_GREEN      = '#10b981';
-  const C_RED        = '#ef4444';
-  const C_PURPLE     = '#8B7EFA';
-  const C_AXIS_LINE  = '#3a3d4a';
-  const C_AXIS_TEXT  = isDark ? '#5b6078' : '#94A3B8';
-  const C_ZERO_LINE  = isDark ? 'rgba(138,141,154,0.6)' : 'rgba(100,116,139,0.40)';
-  const C_GRID       = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.05)';
-
-  // Tooltip premium oscuro fiel a referencia
-  function buildTradingTooltipFormatter(mode) {
-    return function(params) {
-      if (!params || !params.length) return '';
-      const p = params.find(s => s.seriesName === 'main') || params[0];
-      const val = p.value;
-      const label = p.name || p.axisValue || '';
-      let color, displayVal;
-
-      if (mode === 'winrate') {
-        color = val >= 50 ? C_GREEN : C_RED;
-        displayVal = `${val}%`;
-      } else {
-        color = val >= 0 ? C_GREEN : C_RED;
-        const sign = val >= 0 ? '' : '-';
-        const absV = Math.abs(val);
-        displayVal = `${sign}$${absV.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-      }
-
-      return `
-        <div style="font-family:'Inter',system-ui,sans-serif;min-width:100px;padding:2px">
-          <div style="font-size:11px;color:#999;margin-bottom:4px;font-weight:600">${label}</div>
-          <div style="font-size:15px;font-weight:800;color:${color};letter-spacing:-0.3px">${displayVal}</div>
-        </div>`;
-    };
-  }
-
-  // Construye opciones para modo win rate
-  function buildWinRateOption(labels, values) {
-    return {
-      backgroundColor: 'transparent',
-      animationDuration: 600,
-      grid: { left: 56, right: 12, top: 16, bottom: 34 },
-      tooltip: {
-        trigger: 'axis',
-        backgroundColor: isDark ? '#1d1d21' : '#ffffff',
-        borderColor: isDark ? '#2f2f35' : '#e2e8f0',
-        borderWidth: 1, padding: [10, 14],
-        extraCssText: 'border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.4)',
-        formatter: buildTradingTooltipFormatter('winrate'),
-        axisPointer: { lineStyle: { color: isDark ? '#555' : '#ccc', type: 'dashed' } }
-      },
-      xAxis: {
-        type: 'category', data: labels, boundaryGap: false,
-        axisLine: { lineStyle: { color: C_AXIS_LINE } },
-        axisTick: { show: true, length: 4, lineStyle: { color: C_AXIS_LINE } },
-        axisLabel: { color: C_AXIS_TEXT, fontSize: 10, margin: 10 },
-        splitLine: { show: false }
-      },
-      yAxis: {
-        type: 'value',
-        axisLine: { show: true, lineStyle: { color: C_AXIS_LINE } },
-        axisTick: { show: false },
-        axisLabel: { color: C_AXIS_TEXT, fontSize: 10, formatter: v => `${v}%` },
-        splitLine: { show: false },
-        splitNumber: 4
-      },
-      series: [{
-        name: 'main',
-        type: 'line', data: values, smooth: 0.4,
-        symbol: 'none',
-        lineStyle: { width: 2, color: C_PURPLE },
-        itemStyle: { color: C_PURPLE },
-        areaStyle: {
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: 'rgba(139,126,250,0.25)' },
-            { offset: 1, color: 'rgba(139,126,250,0.01)' }
-          ])
-        }
-      }]
-    };
-  }
-
-  // P&L / Balance — curva estricta con PNL_POINTS y lógica visual exacta
-  function buildPnlCurveOption(mode) {
-    const isDarkGlobal = isDark;
-    const cGreen = isDarkGlobal ? '#19b57a' : '#10a56d';
-    const cRed = isDarkGlobal ? '#ef4b55' : '#e5365c';
-    const cAxisLine = isDarkGlobal ? '#3a3f55' : '#cfd4e0';
-    const cAxisText = isDarkGlobal ? '#5f657c' : '#8b93a7';
-    const cZeroLine = isDarkGlobal ? '#6b7280' : '#b8bdca';
-    const gridLineColor = isDarkGlobal ? 'rgba(255,255,255,0.04)' : 'rgba(15,23,42,0.06)';
-
-    // Dataset manual solicitado 1 a 1: [x_fraction, usd_value]
-    const PNL_POINTS = [
-      [0.000,    0], [0.026,  195], [0.042,  325], [0.051,  357], [0.058,  195],
-      [0.067, -260], [0.076, -455], [0.090, -390], [0.106, -227], [0.119,  130],
-      [0.129,  292], [0.140,  195], [0.153,  130], [0.167,  260], [0.181,  357],
-      [0.199,  617], [0.217,  812], [0.231,  909], [0.245,  844], [0.263,  682],
-      [0.286,  520], [0.309,  390], [0.318,  -32], [0.327, -455], [0.336, -585],
-      [0.363, -617], [0.384, -617], [0.405, -455], [0.418, -520], [0.437, -585],
-      [0.446, -357], [0.455,  -97], [0.473,   32], [0.491,  130], [0.505,  325],
-      [0.523,  390], [0.546,  390], [0.583,  455], [0.596,  390], [0.612,  260],
-      [0.619,  292], [0.637,  487], [0.665,  585], [0.694,  585], [0.706,  942],
-      [0.720, 1266], [0.738, 1396], [0.770, 1494], [0.779, 1656], [0.793, 1916],
-      [0.806, 1850], [0.820, 1786], [0.838, 2110], [0.866, 2110], [0.893, 2078],
-      [0.920, 2175], [0.948, 2110], [0.957, 2175], [0.975, 2468], [1.000, 2792]
-    ];
-
-    const xLabelsConf = [
-      { v: 0.051, t: '6 feb' }, { v: 0.102, t: '11 feb' }, { v: 0.174, t: '16 feb' },
-      { v: 0.257, t: '20 feb' }, { v: 0.329, t: '27 feb' }, { v: 0.408, t: '5 mar' },
-      { v: 0.487, t: '10 mar' }, { v: 0.563, t: '18 mar' }, { v: 0.640, t: '25 mar' },
-      { v: 0.716, t: '1 abr' }, { v: 0.768, t: '6 abr' }, { v: 0.846, t: '15 abr' },
-      { v: 0.929, t: '24 abr' }, { v: 1.000, t: '30 abr' }
-    ];
-
-    // Modificadores de data según toggle
-    let finalData = PNL_POINTS;
-    let yLabelsFn = (v) => v === 0 ? "$0" : `${v > 0 ? '$' : '$-'}${Math.abs(v)}`;
-    let minBound = -5000;
-    let maxBound = 5000;
-
-    if (mode === 'balance') {
-      const initB = 100000;
-      finalData = PNL_POINTS.map(p => [p[0], initB + p[1]]);
-      minBound = 95000; maxBound = 105000;
-      yLabelsFn = (v) => `$${v.toLocaleString()}`;
-    } else if (mode === 'winrate') {
-      // Data simulada sencilla para winrate basada en los mismos puntos X
-      finalData = PNL_POINTS.map(p => [p[0], 50 + (p[1]/100)]);
-      minBound = 0; maxBound = 100;
-      yLabelsFn = (v) => `${v}%`;
-    }
-
-    // Series separadas para rellenar (con mask de <=0 o >=0)
-    const posValues = finalData.map(p => [p[0], p[1] >= (mode==='balance'?100000:0) ? p[1] : (mode==='balance'?100000:0)]);
-    const negValues = finalData.map(p => [p[0], p[1] <= (mode==='balance'?100000:0) ? p[1] : (mode==='balance'?100000:0)]);
-
-    const areaColorPos = isDarkGlobal ? 'rgba(25,181,122,0.75)' : 'rgba(16,165,109,0.60)';
-    const areaColorNeg = isDarkGlobal ? 'rgba(239,75,85,0.75)' : 'rgba(229,54,92,0.60)';
-
-    const tooltipFmt = params => {
-      if (!params || !params.length) return '';
-      // Buscar el point original
-      const p = params.find(item => item.seriesIndex === 2);
-      if (!p) return '';
-      const usdVal = p.data[1];
-      
-      let xDate = "Día -";
-      let closestXDist = 999;
-      xLabelsConf.forEach(xl => {
-        const dist = Math.abs(xl.v - p.data[0]);
-        if (dist < closestXDist) {
-          closestXDist = dist;
-          xDate = xl.t;
-        }
-      });
-
-      const isPos = mode === 'balance' ? usdVal >= 100000 : usdVal >= 0;
-      const color = isPos ? cGreen : cRed;
-      
-      let displayVal;
-      if (mode === 'balance') displayVal = `$${usdVal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}`;
-      else if (mode === 'winrate') displayVal = `${usdVal.toFixed(1)}%`;
-      else {
-        displayVal = usdVal >= 0 
-           ? `+$${usdVal.toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2})}` 
-           : `-$${Math.abs(usdVal).toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2})}`;
-      }
-
-      return `
-        <div style="font-family:'Inter',system-ui,sans-serif;min-width:110px;padding:2px">
-          <div style="font-size:11px;color:#999;margin-bottom:4px;font-weight:600">${xDate}</div>
-          <div style="font-size:15px;font-weight:800;color:${color};letter-spacing:-0.3px">
-            <span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:${color};margin-right:4px;vertical-align:middle;"></span>
-            ${displayVal}
-          </div>
-        </div>`;
-    };
-
-    return {
-      backgroundColor: 'transparent',
-      animationDuration: 600,
-      grid: { left: 56, right: 12, top: 16, bottom: 34 },
-      tooltip: {
-        trigger: 'axis',
-        backgroundColor: isDarkGlobal ? '#222222' : '#ffffff',
-        borderColor: isDarkGlobal ? '#333333' : '#e3e6ee',
-        borderWidth: 1, padding: [10, 14],
-        textStyle: { color: isDarkGlobal ? '#ffffff' : '#111827', fontSize: 12 },
-        extraCssText: isDarkGlobal ? 'border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.6)' : 'border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.08)',
-        formatter: tooltipFmt,
-        axisPointer: { lineStyle: { color: isDarkGlobal ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)', type: 'solid', width: 1 } }
-      },
-      xAxis: {
-        type: 'value', min: 0, max: 1, boundaryGap: false,
-        axisLine: { onZero: false, lineStyle: { color: cAxisLine, width: 1 } },
-        axisTick: { show: true, length: 4, lineStyle: { color: cAxisLine } },
-        axisLabel: {
-          color: cAxisText, fontSize: 11, fontFamily: 'sans-serif', margin: 10,
-          formatter: (v) => {
-            const match = xLabelsConf.find(l => Math.abs(l.v - v) < 0.01);
-            return match ? match.t : "";
-          }
-        },
-        splitLine: { show: false }
-      },
-      yAxis: {
-        type: 'value', min: minBound, max: maxBound, interval: mode==='winrate'?25:(maxBound-minBound)/4,
-        axisLine: { show: true, lineStyle: { color: cAxisLine, width: 1 } },
-        axisTick: { show: false },
-        axisLabel: { 
-          color: cAxisText, fontSize: 11, fontFamily: 'sans-serif', margin: 6,
-          formatter: yLabelsFn, inside: false
-        },
-        splitLine: { show: true, lineStyle: { color: gridLineColor, type: 'dashed' } }
-      },
-      visualMap: {
-        show: false, type: 'piecewise', seriesIndex: 2, dimension: 1,
-        pieces: [
-          { max: (mode==='balance'?100000:0) - 0.001, color: cRed }, // Estrictamente menor que 0
-          { min: (mode==='balance'?100000:0), color: cGreen } // Mayor o igual que 0
-        ],
-        outOfRange: { color: cGreen }
-      },
-      series: [
-        {
-          name: 'pos', type: 'line', data: posValues, smooth: 0.4,
-          showSymbol: false, lineStyle: { width: 0 },
-          areaStyle: {
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              { offset: 0, color: areaColorPos },
-              { offset: 1, color: isDarkGlobal ? 'rgba(25,181,122,0.05)' : 'rgba(16,165,109,0.05)' }
-            ])
-          },
-          silent: true, z: 1
-        },
-        {
-          name: 'neg', type: 'line', data: negValues, smooth: 0.4,
-          showSymbol: false, lineStyle: { width: 0 },
-          areaStyle: {
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              { offset: 0, color: isDarkGlobal ? 'rgba(239,75,85,0.05)' : 'rgba(229,54,92,0.05)' },
-              { offset: 1, color: areaColorNeg }
-            ])
-          },
-          silent: true, z: 1
-        },
-        {
-          name: 'main', type: 'line', data: finalData, smooth: 0.4,
-          showSymbol: false,
-          itemStyle: { color: cGreen },
-          lineStyle: { 
-            width: 3, // Grosor elevado para destacar idénticamente a Drawdown
-            shadowColor: isDarkGlobal ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.2)',
-            shadowBlur: 8,
-            shadowOffsetY: 2
-          },
-          z: 3,
-          markLine: {
-            silent: true, symbol: 'none',
-            lineStyle: { color: cZeroLine, type: 'dashed', width: 1 },
-            label: { show: false },
-            data: [{ yAxis: mode==='balance'?100000:0 }]
-          }
-        }
-      ]
-    };
-  }
-
-  function renderEquityChart(mode) {
-    const eqCont = document.getElementById("echarts-equity-container");
-    if (!eqCont) return;
-
-    try {
-      if (!currentEquityChart) {
-        const existing = echarts.getInstanceByDom(eqCont);
-        if (existing) existing.dispose();
-        currentEquityChart = echarts.init(eqCont);
-        window.addEventListener('resize', () => currentEquityChart && currentEquityChart.resize());
-      }
-      currentEquityChart.setOption(buildPnlCurveOption(mode), true);
-    } catch(e) { console.error('Error in Equity Chart render', e); }
-  }
-
-  window.switchEquityMode = function(mode) {
-    currentEquityMode = mode;
-    const btnClsBase = 'px-[12px] py-[6px] rounded-[8px] text-[10px] font-bold uppercase tracking-[0.05em] transition-all cursor-pointer';
-    const clsActive = `${btnClsBase} shadow-sm sm:shadow-none dark:bg-[#151322] dark:text-[#8b7cf6] bg-[#ffffff] text-[#4f46e5]`;
-    const clsInactive = `${btnClsBase} shadow-none dark:text-[#6b7088] text-[#8b93a7] bg-transparent hover:dark:text-slate-200 hover:text-slate-700`;
-    
-    document.getElementById('btn-pnl-neto').className = (mode === 'pnl') ? clsActive : clsInactive;
-    document.getElementById('btn-balance').className = (mode === 'balance') ? clsActive : clsInactive;
-    document.getElementById('btn-winrate').className = (mode === 'winrate') ? clsActive : clsInactive;
-    
-    renderEquityChart(mode);
-  };
-
-  renderEquityChart('pnl');
-
-  // --- 2. DRAWDOWN — ESTILO REFERENCIA PREMIUM ---
-  let currentDdChart = null;
-  let currentDdMode = 'trailing'; // 'trailing' | 'inversion'
-
-  const C_DD_LINE = '#f43f5e';
-
-  function buildDrawdownOption() {
-    const isDarkGlobal = isDark;
-    const C_DD_LINE = '#f0426a';
-    const textColor = isDarkGlobal ? '#5f657c' : '#8b93a7';
-    const axisColor = isDarkGlobal ? '#3a3f55' : '#cfd4e0';
-    const gridLineColor = isDarkGlobal ? 'rgba(255, 255, 255, 0.06)' : 'rgba(15, 23, 42, 0.06)';
-
-    // Dataset manual solicitado 1 a 1: [x_fraction, usd_value]
-    const DRAWDOWN_POINTS = [
-      [0.000,    0], [0.052,    0], [0.066, -350], [0.077, -746], [0.090, -700],
-      [0.106, -580], [0.127, -206], [0.156, -180], [0.178,    0], [0.232,    0],
-      [0.255, -155], [0.282, -257], [0.304, -425], [0.323, -900], [0.333,-1500],
-      [0.363,-1515], [0.386,-1525], [0.408,-1229], [0.417,-1229], [0.437,-1400],
-      [0.449,-1014], [0.462, -852], [0.485, -785], [0.507, -502], [0.543, -502],
-      [0.566, -470], [0.588, -444], [0.602, -470], [0.615, -573], [0.642, -335],
-      [0.665, -283], [0.696, -283], [0.714,  -25], [0.742, -150], [0.768, -110],
-      [0.794,    0], [0.820, -135], [0.845,    0], [0.868, -240], [0.899, -283],
-      [0.922, -425], [0.949, -240], [0.972,    0], [1.000,    0]
-    ];
-
-    // Escala lineal por tramos T(value) donde $0 y y=284 (top), y el fondo es y=0 (bottom)
-    function T(val) {
-      if (val >= 0) return 284;
-      if (val >= -785) return 284 - (Math.abs(val) / 785) * (284 - 162);
-      if (val >= -1000) return 162 - ((Math.abs(val) - 785) / 215) * (162 - 91);
-      if (val >= -2000) return 91 - ((Math.abs(val) - 1000) / 1000) * (91 - 21);
-      if (val >= -2300) return 21 - ((Math.abs(val) - 2000) / 300) * (21 - 0);
-      return 0;
-    }
-
-    // data de la serie ECharts: [x_frac, T(val_usd), val_usd]
-    const seriesData = DRAWDOWN_POINTS.map(p => [p[0], T(p[1]), p[1]]);
-
-    // Etiquetas X personalizadas
-    const xLabelsConf = [
-      { v: 0.05, t: '6 feb' }, { v: 0.10, t: '11 feb' }, { v: 0.18, t: '16 feb' },
-      { v: 0.26, t: '20 feb' }, { v: 0.33, t: '27 feb' }, { v: 0.41, t: '5 mar' },
-      { v: 0.49, t: '10 mar' }, { v: 0.56, t: '18 mar' }, { v: 0.64, t: '25 mar' },
-      { v: 0.72, t: '1 abr' }, { v: 0.76, t: '6 abr' }, { v: 0.84, t: '15 abr' },
-      { v: 0.92, t: '24 abr' }, { v: 1.00, t: '30 abr' }
-    ];
-
-    // Puntos fijos en Y para formato
-    const yTickVirtuals = [T(-2000), T(-1000), T(-785), T(0)];
-    function yLabelFormat(val) {
-      const rd = Math.round(val);
-      if (Math.abs(rd - Math.round(T(0))) <= 1) return "$0";
-      if (Math.abs(rd - Math.round(T(-785))) <= 1) return "-$785";
-      if (Math.abs(rd - Math.round(T(-1000))) <= 1) return "-$1K";
-      if (Math.abs(rd - Math.round(T(-2000))) <= 1) return "-$2K";
-      return "";
-    }
-
-    const ddTooltipFmt = params => {
-      if (!params || !params.length) return '';
-      const p = params[0];
-      const usdVal = p.data[2]; // Extraemos valor real
-      
-      // Intentar encontrar la fecha aproximada basándonos en la fracción x
-      let xDate = "Día O.";
-      let closestXDist = 999;
-      xLabelsConf.forEach(xl => {
-        const dist = Math.abs(xl.v - p.data[0]);
-        if (dist < closestXDist) {
-          closestXDist = dist;
-          xDate = xl.t;
-        }
-      });
-
-      const displayVal = Math.abs(usdVal) >= 1000
-        ? `-$${(Math.abs(usdVal)/1000).toLocaleString('es-MX', {minimumFractionDigits:1, maximumFractionDigits:2})}K`
-        : `-$${Math.abs(usdVal).toLocaleString('es-MX', {minimumFractionDigits:2, maximumFractionDigits:2})}`;
-
-      return `
-        <div style="font-family:'Inter',system-ui,sans-serif;min-width:100px;padding:2px">
-          <div style="font-size:11px;color:#999;margin-bottom:4px;font-weight:600">${xDate}</div>
-          <div style="font-size:15px;font-weight:800;color:${C_DD_LINE};letter-spacing:-0.3px">${usdVal === 0 ? '$0.00' : displayVal}</div>
-        </div>`;
-    };
-
-    return {
-      backgroundColor: 'transparent',
-      animationDuration: 600,
-      grid: { left: 56, right: 12, top: 16, bottom: 34 },
-      tooltip: {
-        trigger: 'axis',
-        backgroundColor: isDarkGlobal ? '#222222' : '#ffffff',
-        borderColor: isDarkGlobal ? '#333333' : '#e3e6ee',
-        borderWidth: 1, padding: [10, 14],
-        textStyle: { color: isDarkGlobal ? '#ffffff' : '#111827', fontSize: 12 },
-        extraCssText: isDarkGlobal ? 'border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.6)' : 'border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.08)',
-        formatter: ddTooltipFmt,
-        axisPointer: { lineStyle: { color: isDarkGlobal ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)', type: 'dashed' } }
-      },
-      xAxis: {
-        type: 'value', min: 0, max: 1, splitNumber: 20, boundaryGap: false,
-        axisLine: { onZero: false, lineStyle: { color: axisColor, width: 1 } },
-        axisTick: { show: true, length: 4, lineStyle: { color: axisColor } },
-        axisLabel: {
-          color: textColor, fontSize: 11, fontFamily: 'sans-serif', margin: 10,
-          formatter: (v) => {
-            const match = xLabelsConf.find(l => Math.abs(l.v - v) < 0.01);
-            return match ? match.t : "";
-          }
-        },
-        splitLine: { show: false }
-      },
-      yAxis: {
-        type: 'value', min: 0, max: 285,
-        axisLine: { show: true, lineStyle: { color: axisColor, width: 1 } },
-        axisTick: { show: false },
-        axisLabel: { 
-          color: textColor, fontSize: 11, fontFamily: 'sans-serif', margin: 6,
-          formatter: yLabelFormat,
-          inside: false
-        },
-        splitLine: { show: false }
-      },
-      series: [{
-        name: 'drawdown', type: 'line', data: seriesData,
-        smooth: 0.4, // Cubic interpolation (monotone aproxima muy bien con 0.4)
-        showSymbol: false,
-        lineStyle: { width: 2, color: C_DD_LINE, shadowBlur: 0 },
-        itemStyle: { color: C_DD_LINE },
-        areaStyle: {
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: 'rgba(240,66,106,0.0)' },
-            { offset: 1, color: 'rgba(240,66,106,0.30)' }
-          ])
-        },
-        markLine: {
-          silent: true, symbol: 'none',
-          lineStyle: { type: 'dashed', width: 1 },
-          label: { show: false },
-          data: [
-            { yAxis: T(0), lineStyle: { color: '#6b7280', type: 'dashed' } },
-            { yAxis: T(-785), lineStyle: { color: gridLineColor } },
-            { yAxis: T(-1000), lineStyle: { color: gridLineColor } },
-            { yAxis: T(-2000), lineStyle: { color: gridLineColor } }
-          ]
-        }
-      }]
-    };
-  }
-
-  function renderDrawdownChart() {
-    const ddCont = document.getElementById("echarts-drawdown-container");
-    if (!ddCont) return;
-
-    try {
-      if (!currentDdChart) {
-        const existing = echarts.getInstanceByDom(ddCont);
-        if (existing) existing.dispose();
-        currentDdChart = echarts.init(ddCont);
-        window.addEventListener('resize', () => currentDdChart && currentDdChart.resize());
-      }
-      currentDdChart.setOption(buildDrawdownOption(), true);
-    } catch(e) { console.error('Error Drawdown Chart', e); }
-  }
-
-  window.switchDrawdownMode = function(mode) {
-    currentDdMode = mode;
-    const btnClsBase = 'px-2.5 py-1.5 rounded-[8px] text-[10px] font-bold uppercase tracking-[0.05em] transition-all cursor-pointer flex items-center gap-1';
-    const CLS_ACTIVE = `${btnClsBase} dark:bg-[#151322] dark:text-[#8b7cf6] bg-[#ffffff] text-[#f0426a] shadow-sm sm:shadow-none`;
-    const CLS_INACTIVE = `${btnClsBase} dark:text-[#6b7088] text-[#8b93a7] bg-transparent shadow-none hover:dark:text-slate-200 hover:text-slate-700`;
-    const btnT = document.getElementById('btn-trailing');
-    const btnI = document.getElementById('btn-inversion');
-    
-    // Si pasamos a inversion, el icono de trailing se pierde, pero para simplificar solo manejamos CSS general de Tailwind/estilos en vivo
-    // Para inyectar el icono lucide si queremos que solo esté visible cuando está activo, mantenemos innerHTML con o sin icono.
-    const iconHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-down"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>`;
-    
-    if (btnT) {
-      btnT.className = (mode === 'trailing') ? CLS_ACTIVE : CLS_INACTIVE;
-      btnT.innerHTML = (mode === 'trailing') ? `${iconHTML} TRAILING` : 'TRAILING';
-    }
-    if (btnI) {
-      btnI.className = (mode === 'inversion') ? CLS_ACTIVE : CLS_INACTIVE;
-      btnI.innerHTML = (mode === 'inversion') ? `${iconHTML} $ INVERSIÓN` : '$ INVERSIÓN';
-    }
-    renderDrawdownChart();
-  };
-
-  renderDrawdownChart();
-
-  // --- 3. TRADETRES SCORE RADAR ---
-  const radarCont = document.getElementById("echarts-radar-container");
-  if (radarCont) {
-    try {
-      const existing = echarts.getInstanceByDom(radarCont);
-      if (existing) existing.dispose();
-      const rChart = echarts.init(radarCont);
-
-      const safeWin = Math.min(Math.max(statsWinRate, 0), 100) || 0;
-      const safePf = Math.min(Math.max(statsProfitFactor, 0), 5) || 0;
-      const safeRr = Math.min(Math.max(statsRrRatio, 0), 5) || 0;
-
-      rChart.setOption({
-        backgroundColor: 'transparent',
-        radar: {
-          indicator: [
-            { name: 'Win %', max: 100 },
-            { name: 'Profit factor', max: 5 },
-            { name: 'Avg win/loss', max: 5 },
-            { name: 'Recovery factor', max: 5 },
-            { name: 'Max drawdown', max: 20 },
-            { name: 'Consistency', max: 100 }
-          ],
-          shape: 'polygon',
-          splitNumber: 4,
-          radius: '55%',
-          center: ['50%', '50%'],
-          axisName: { color: textColor, fontSize: 10, padding: [-4, -4] },
-          splitLine: { lineStyle: { color: borderColor } },
-          splitArea: { show: false },
-          axisLine: { lineStyle: { color: borderColor } }
-        },
-        series: [{
-          type: 'radar',
-          data: [{
-            value: [
-              safeWin,
-              safePf,
-              safeRr,
-              3.2,
-              12,
-              88
-            ],
-            lineStyle: { color: '#8b5cf6', width: 2 },
-            areaStyle: { color: 'rgba(139,92,246,0.35)' },
-            itemStyle: { color: '#8b5cf6' }
-          }]
-        }]
-      }, true);
-      window.addEventListener('resize', () => rChart && rChart.resize());
-    } catch(e) { console.error('Error Radar Chart', e); }
-  }
-
-  // --- 4. TOP KPI CARDS CHARTS ---
-
-  // Sparkline Balance & P&L Mini Graph
-  const sparkBalCont = document.getElementById("sparkline-balance");
-  if (sparkBalCont) {
-    try {
-      const existing = echarts.getInstanceByDom(sparkBalCont);
-      if (existing) existing.dispose();
-      const balChart = echarts.init(sparkBalCont);
-
-      const balValues = Array.isArray(rawEquityData) && rawEquityData.length
-        ? rawEquityData.map(d => Number(d.value) || 0)
-        : [0, 100, 250, 180, 420, 600];
-
-      balChart.setOption({
-        backgroundColor: 'transparent',
-        grid: { left: 0, right: 0, top: 5, bottom: 5 },
-        xAxis: { type: 'category', show: false },
-        yAxis: { type: 'value', show: false },
-        series: [{
-          type: 'line',
-          data: balValues,
-          smooth: true,
-          symbol: 'none',
-          lineStyle: { width: 2, color: '#009DFA' },
-          areaStyle: {
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              { offset: 0, color: 'rgba(0,157,250,0.35)' },
-              { offset: 1, color: 'rgba(0,157,250,0.0)' }
-            ])
-          }
-        }]
-      }, true);
-      window.addEventListener('resize', () => balChart && balChart.resize());
-    } catch (e) { console.error('Error Balance Sparkline', e); }
-  }
-
-  // A) Semi-circular Win Rate Gauge
-  const sparkWrCont = document.getElementById("sparkline-winrate");
-  if (sparkWrCont) {
-    try {
-      const existing = echarts.getInstanceByDom(sparkWrCont);
-      if (existing) existing.dispose();
-      const wrChart = echarts.init(sparkWrCont);
-
-      const winVal = Math.min(Math.max(statsWinRate, 0), 100);
-      const lossVal = Math.max(0, 100 - winVal - 3);
-
-      wrChart.setOption({
-        backgroundColor: 'transparent',
-        series: [{
-          type: 'pie',
-          radius: ['70%', '98%'],
-          center: ['50%', '85%'],
-          startAngle: 180,
-          endAngle: 0,
-          avoidLabelOverlap: false,
-          itemStyle: { borderRadius: 4 },
-          label: { show: false },
-          data: [
-            { value: winVal, itemStyle: { color: '#10b981' } },  // Verde
-            { value: 3, itemStyle: { color: '#6366f1' } },       // Indigo (BE)
-            { value: Math.max(lossVal, 0), itemStyle: { color: '#f43f5e' } }, // Rojo
-            { value: winVal + 3 + Math.max(lossVal, 0), itemStyle: { color: 'none' }, label: { show: false } }
-          ]
-        }]
-      }, true);
-      window.addEventListener('resize', () => wrChart && wrChart.resize());
-    } catch(e) { console.error('Error WinRate Spark', e); }
-  }
-
-  // B) Profit Factor Donut Chart
-  const sparkPfCont = document.getElementById("sparkline-pf");
-  if (sparkPfCont) {
-    try {
-      const existing = echarts.getInstanceByDom(sparkPfCont);
-      if (existing) existing.dispose();
-      const pfChart = echarts.init(sparkPfCont);
-
-      const pfVal = Math.min(Math.max(statsProfitFactor, 0), 5);
-      const winRatio = (pfVal / (pfVal + 1)) * 100;
-      const lossRatio = 100 - winRatio;
-
-      pfChart.setOption({
-        backgroundColor: 'transparent',
-        series: [{
-          type: 'pie',
-          radius: ['68%', '92%'],
-          center: ['50%', '50%'],
-          avoidLabelOverlap: false,
-          itemStyle: { borderRadius: 2 },
-          label: { show: false },
-          data: [
-            { value: Math.max(winRatio, 0), itemStyle: { color: '#10b981' } }, // Verde
-            { value: Math.max(lossRatio, 0), itemStyle: { color: '#f43f5e' } } // Rojo
-          ]
-        }]
-      }, true);
-      window.addEventListener('resize', () => pfChart && pfChart.resize());
-    } catch(e) { console.error('Error ProfitFactor Spark', e); }
-  }
-
-  // C) Avg Win / Loss Dual Bar Chart
-  const sparkAvgCont = document.getElementById("sparkline-avg");
-  if (sparkAvgCont) {
-    try {
-      const existing = echarts.getInstanceByDom(sparkAvgCont);
-      if (existing) existing.dispose();
-      const avgChart = echarts.init(sparkAvgCont);
-
-      const winAmt = Math.abs(statsAvgWin);
-      const lossAmt = Math.abs(statsAvgLoss);
-
-      avgChart.setOption({
-        backgroundColor: 'transparent',
-        grid: { left: 0, right: 0, top: 'center', bottom: 'center', height: 16 },
-        xAxis: { type: 'value', show: false },
-        yAxis: { type: 'category', show: false, data: ['Avg'] },
-        series: [
-          {
-            type: 'bar',
-            stack: 'total',
-            barWidth: 14,
-            itemStyle: { color: '#10b981', borderRadius: [4, 0, 0, 4] },
-            data: [winAmt]
-          },
-          {
-            type: 'bar',
-            stack: 'total',
-            barWidth: 14,
-            itemStyle: { color: '#ef4444', borderRadius: [0, 4, 4, 0] },
-            data: [lossAmt]
-          }
-        ]
-      }, true);
-      window.addEventListener('resize', () => avgChart && avgChart.resize());
-    } catch (e) { console.error('Error Avg Spark', e); }
-  }
-
-  // --- 5. Daily P&L Bar Chart (Últimos 30 días operados) ---
-  const DAILY_PNL = [
-    { n: 1,  date: "2/24", pnl:  -153 },
-    { n: 2,  date: "2/25", pnl:  -119 },
-    { n: 3,  date: "2/26", pnl:  -211 },
-    { n: 4,  date: "2/27", pnl:  -976 },
-    { n: 5,  date: "3/2",  pnl:   -10 },
-    { n: 6,  date: "3/3",  pnl:     0 },
-    { n: 7,  date: "3/5",  pnl:   170 },
-    { n: 8,  date: "3/6",  pnl:  -115 },
-    { n: 9,  date: "3/9",  pnl:   480 },
-    { n: 10, date: "3/10", pnl:   167 },
-    { n: 11, date: "3/12", pnl:   265 },
-    { n: 12, date: "3/16", pnl:    -7 },
-    { n: 13, date: "3/18", pnl:    35 },
-    { n: 14, date: "3/19", pnl:    20 },
-    { n: 15, date: "3/23", pnl:  -125 },
-    { n: 16, date: "3/25", pnl:   224 },
-    { n: 17, date: "3/27", pnl:    60 },
-    { n: 18, date: "3/31", pnl:    -1 },
-    { n: 19, date: "4/1",  pnl:   670 },
-    { n: 20, date: "4/2",  pnl:   130 },
-    { n: 21, date: "4/7",  pnl:    50 },
-    { n: 22, date: "4/8",  pnl:   466 },
-    { n: 23, date: "4/10", pnl:  -133 },
-    { n: 24, date: "4/15", pnl:   364 },
-    { n: 25, date: "4/20", pnl:   -37 },
-    { n: 26, date: "4/22", pnl:   -27 },
-    { n: 27, date: "4/24", pnl:   102 },
-    { n: 28, date: "4/27", pnl:   -71 },
-    { n: 29, date: "4/29", pnl:   354 },
-    { n: 30, date: "4/30", pnl:   327 }
-  ];
-
-  window.toggleDailyWindowMenu = function() {
-    const menu = document.getElementById('daily-window-menu');
-    if (menu) menu.classList.toggle('hidden');
-  }
-
-  document.addEventListener('click', function(e) {
-    const btn = document.getElementById('btn-daily-window');
-    const menu = document.getElementById('daily-window-menu');
-    if (menu && btn && !btn.contains(e.target) && !menu.contains(e.target)) {
-      menu.classList.add('hidden');
-    }
-  });
-
-  let currentDailyWindow = '30D';
-  const labelMap = { '30D': '30D', '60D': '60D', '90D': '90D', 'MES': 'MES', 'TODO': 'TODO' };
-
-  window.selectDailyWindow = function(val, el) {
-    currentDailyWindow = val;
-    document.getElementById('daily-window-label').innerText = labelMap[val] || val;
-    document.getElementById('daily-window-menu').classList.add('hidden');
-    
-    // Update checks
-    document.querySelectorAll('.daily-window-opt').forEach(li => {
-      li.classList.remove('dark:bg-[#20244d]', 'bg-[#eef0ff]', 'dark:text-[#a5b4fc]', 'text-[#4f46e5]', 'font-[700]');
-      li.classList.add('dark:text-[#e5e7eb]', 'text-[#1f2937]', 'font-[500]');
-      li.querySelector('.check-icon').classList.add('hidden');
-    });
-    
-    el.classList.remove('dark:text-[#e5e7eb]', 'text-[#1f2937]', 'font-[500]');
-    el.classList.add('dark:bg-[#20244d]', 'bg-[#eef0ff]', 'dark:text-[#a5b4fc]', 'text-[#4f46e5]', 'font-[700]');
-    el.querySelector('.check-icon').classList.remove('hidden');
-
-    renderDailyPnlPremium();
-  }
-
-  function getDailyPnlSeries() {
-    if (currentDailyWindow === '30D') {
-      return {
-        labels: DAILY_PNL.map(d => d.date),
-        values: DAILY_PNL.map(d => d.pnl)
-      };
-    }
-    
-    let dataSlice = [];
-    if (Array.isArray(rawEquityData) && rawEquityData.length > 0) {
-      if (currentDailyWindow === '60D') dataSlice = rawEquityData.slice(-60);
-      else if (currentDailyWindow === '90D') dataSlice = rawEquityData.slice(-90);
-      else if (currentDailyWindow === 'MES') {
-        const currentMonth = new Date().getMonth();
-        dataSlice = rawEquityData.filter(d => d.date && new Date(d.date).getMonth() === currentMonth);
-      }
-      else if (currentDailyWindow === 'TODO') dataSlice = rawEquityData;
-    }
-
-    if (dataSlice.length === 0 && currentDailyWindow !== '30D') {
-        // Fallback simulation empty
-        return { labels: ['N/A'], values: [0] };
-    }
-
-    return {
-      labels: dataSlice.map(d => {
-        if (!d.date) return '';
-        const parts = d.date.split('T')[0].split('-');
-        if (parts.length === 3) return `${parseInt(parts[1], 10)}/${parseInt(parts[2], 10)}`;
-        return d.date;
-      }),
-      values: dataSlice.map(d => Number(d.pnl_day) || 0)
-    };
-  }
-
-  function renderDailyPnlPremium() {
-    const els = [document.getElementById('echarts-daily-pnl-premium'), document.getElementById('echarts-bar-day-container')].filter(Boolean);
-    if (!els.length) return;
-    
-    try {
-      const { labels, values } = getDailyPnlSeries();
-      const nBarras = values.length || 1;
-
-      let maxAbs = Math.max(...values.map(Math.abs));
-      let limit = Math.ceil(maxAbs / 500) * 500;
-      if (limit === 0) limit = 1000;
-      const interval = limit / 2;
-
-      const isDarkGlobal = isDark;
-      const cGreen = isDarkGlobal ? '#12a56f' : '#10a56d';
-      const cRed = isDarkGlobal ? '#d93a58' : '#e5365c';
-      const cAxisText = isDarkGlobal ? '#8b8fa3' : '#8b93a7';
-      const cZeroLine = isDarkGlobal ? 'rgba(255,255,255,0.20)' : '#cfd4e0';
-      const gridLineColor = isDarkGlobal ? 'rgba(255,255,255,0.08)' : 'rgba(15,23,42,0.08)';
-
-      const option = {
-        backgroundColor: 'transparent',
-        animationDuration: 600,
-        grid: { left: 70, right: 28, top: 23, bottom: 42, containLabel: false },
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: { type: 'shadow', shadowStyle: { color: 'rgba(0,0,0,0.04)' } },
-          backgroundColor: isDarkGlobal ? '#222222' : '#ffffff',
-          borderColor: isDarkGlobal ? '#333333' : '#e3e6ee',
-          borderWidth: 1, padding: [8, 10],
-          textStyle: { color: isDarkGlobal ? '#ffffff' : '#111827', fontSize: 12 },
-          extraCssText: isDarkGlobal ? 'border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.6)' : 'border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.08)',
-          formatter: params => {
-            if (!params || !params.length) return '';
-            const p = params[0];
-            const val = p.value;
-            const sign = val < 0 ? '-' : '';
-            const color = val >= 0 ? cGreen : cRed;
-            return `
-              <div style="font-family:'Outfit',system-ui,sans-serif;min-width:90px;padding:2px">
-                <div style="font-size:11px;color:#999;margin-bottom:4px;font-weight:600">Día ${p.name}</div>
-                <div style="font-size:15px;font-weight:800;color:${color}">${sign}$${Math.abs(val).toLocaleString('en-US', {minimumFractionDigits: 2})}</div>
-              </div>`;
-          }
-        },
-        xAxis: {
-          type: 'category',
-          data: labels,
-          axisLine: { show: false }, 
-          axisTick: { show: false }, 
-          axisLabel: {
-            color: cAxisText, fontSize: 11, fontFamily: 'Outfit, sans-serif', margin: 20,
-            interval: function(idx) {
-               const step = Math.ceil(nBarras / 15) || 1;
-               return ((nBarras - 1) - idx) % step === 0;
-            }
-          },
-          splitLine: { show: false }
-        },
-        yAxis: {
-          type: 'value',
-          min: -limit,
-          max: limit,
-          interval: interval,
-          axisLine: { show: false },
-          axisTick: { show: false },
-          axisLabel: { 
-            color: cAxisText, fontSize: 11, fontFamily: 'Outfit, sans-serif', margin: 12,
-            formatter: v => v === 0 ? '$0' : (v > 0 ? `$${v}` : `$-${Math.abs(v)}`)
-          },
-          splitLine: { 
-            show: true, 
-            lineStyle: { color: gridLineColor, type: 'dashed' } 
-          }
-        },
-        series: [{
-          type: 'bar',
-          barCategoryGap: '19%',
-          barMinHeight: 1,
-          itemStyle: {
-            borderRadius: 4, 
-            color: p => {
-               const val = p.value || 0;
-               return val >= 0 ? cGreen : cRed;
-            }
-          },
-          emphasis: {
-            itemStyle: { opacity: 0.92 }
-          },
-          data: values.map(v => ({ value: v, itemStyle: { color: v >= 0 ? cGreen : cRed } })),
-          markLine: {
-            silent: true, symbol: 'none',
-            lineStyle: { color: cZeroLine, type: 'solid', width: 1 },
-            label: { show: false },
-            data: [{ yAxis: 0 }]
-          }
-        }]
-      };
-
-      els.forEach(el => {
-        const old = echarts.getInstanceByDom(el);
-        if (old) old.dispose();
-        const chart = echarts.init(el);
-        chart.setOption(option, true);
-        window.addEventListener('resize', () => chart && chart.resize());
-      });
-      
-    } catch (e) { console.error('Error renderDailyPnlPremium', e); }
-  }
-
-  renderDailyPnlPremium();
-
-  // --- 6. Scatter Plot Durations ---
-  const scatterCont = document.getElementById("echarts-scatter-container");
-  if (scatterCont) {
-    try {
-      const scChart = echarts.init(scatterCont);
-      const scData = <%= (@trade_durations || []).to_json.html_safe %>;
-      const wins = Array.isArray(scData) ? scData.filter(d => d && d.result == 'win').map(d => [Number(d.duration)||0, Number(d.pnl)||0]) : [];
-      const loss = Array.isArray(scData) ? scData.filter(d => d && d.result == 'loss').map(d => [Number(d.duration)||0, Number(d.pnl)||0]) : [];
-      scChart.setOption({
-        tooltip: { trigger: 'item', formatter: (p) => (p.value[0]||0) + ' mins <br> P&L: $' + (p.value[1]||0), backgroundColor: tooltipBg, borderColor: borderColor, textStyle: { color: tooltipText } },
-        grid: { left: '3%', right: '3%', bottom: '3%', top: '8%', containLabel: true },
-        xAxis: { type: 'value', name: 'min', splitLine: { show: false }, axisLabel: { color: textColor, fontSize: 9 } },
-        yAxis: { type: 'value', splitLine: { lineStyle: { color: borderColor, type: 'dashed' } }, axisLabel: { color: textColor, fontSize: 9 } },
-        series: [
-          { type: 'scatter', symbolSize: 7, itemStyle: { color: '#10B981' }, data: wins.length ? wins : [[0,0]] },
-      { type: 'scatter', symbolSize: 7, itemStyle: { color: '#F43F5E' }, data: loss.length ? loss : [[0,0]] }
-        ]
-      }, true);
-      window.addEventListener('resize', () => scChart && scChart.resize());
-    } catch(e) { console.error('Error Scatter Chart', e); }
-  }
-
-  // --- 7. Portfolio Overview Donut Chart ---
-  const portCont = document.getElementById("echarts-portfolio-doughnut");
-  if (portCont) {
-    try {
-      const portChart = echarts.init(portCont);
-      const portData = <%= raw (@dashboard_strategy_stats || []).to_json %>;
-      const totalPnl = portData.reduce((acc, curr) => acc + (Number(curr.actual_pnl) || 0), 0);
-      const totalStr = totalPnl >= 0 ? "+$" + totalPnl.toLocaleString('en-US',{minimumFractionDigits:2}) : "-$" + Math.abs(totalPnl).toLocaleString('en-US',{minimumFractionDigits:2});
-      
-      const pColors = ['#8B5CF6', '#34D399', '#FB7185', '#FBBF24'];
-      const finalData = portData.map((d, i) => {
-        return { value: d.value, name: d.name, itemStyle: { color: pColors[i] } };
-      });
-
-      if (finalData.length === 0) {
-        finalData.push({ value: 1, name: 'Sin datos', itemStyle: { color: '#475569' } });
-      }
-
-      portChart.setOption({
-        tooltip: { show: false },
-        series: [{
-          type: 'pie',
-          radius: ['65%', '80%'], // Donut grueso
-          center: ['50%', '50%'],
-          avoidLabelOverlap: false,
-          label: { show: false },
-          itemStyle: {
-            borderRadius: 14 // Cap roundness a la perfección como en la imagen
-          },
-          data: finalData
-        }]
-      }, true);
-      window.addEventListener('resize', () => portChart && portChart.resize());
-    } catch(e) { console.error('Error Portfolio Chart', e); }
-  }
-
-  } // end safeRenderEcharts
-
-  if (typeof requestAnimationFrame !== 'undefined') {
-    requestAnimationFrame(safeRenderEcharts);
-  } else {
-    setTimeout(safeRenderEcharts, 50);
-  }
-  
-  // Turbo integration
-  document.addEventListener("turbo:load", safeRenderEcharts, { once: true });
-})();
-</script>
-
-<script>
-function setDashboardLayout(mode) {
-  try {
-    localStorage.setItem('coachtrading_layout_mode', mode);
-    
-    var container3x2 = document.getElementById('layout-3x2-container');
-    var classicColLeft = document.getElementById('classic-col-left');
-    var classicColRight = document.getElementById('classic-col-right');
-    var classicRowBottom = document.getElementById('classic-row-bottom');
-
-    var layoutWrapper3x2 = document.getElementById('layout-wrapper-3x2');
-    var layoutWrapperClassic = document.getElementById('layout-wrapper-classic');
-
-    var btn3x2 = document.getElementById('btn-layout-3x2');
-    var btnClassic = document.getElementById('btn-layout-classic');
-
-    var cardEquity = document.getElementById('card-equity');
-    var cardDailyPnl = document.getElementById('card-daily-pnl');
-    var cardRadar = document.getElementById('card-radar');
-    var cardDrawdown = document.getElementById('card-drawdown');
-    var cardScatter = document.getElementById('card-scatter');
-    var cardTrades = document.getElementById('card-trades');
-
-    if (!cardEquity || !container3x2 || !classicColLeft) return;
-
-    if (mode === 'classic') {
-      layoutWrapper3x2.classList.add('hidden');
-      layoutWrapperClassic.classList.remove('hidden');
-
-      classicColLeft.appendChild(cardEquity);
-      classicColLeft.appendChild(cardDrawdown);
-      
-      classicColRight.appendChild(cardRadar);
-      classicColRight.appendChild(cardTrades);
-
-      classicRowBottom.appendChild(cardDailyPnl);
-      classicRowBottom.appendChild(cardScatter);
-
-      if (btnClassic && btn3x2) {
-        btnClassic.className = "py-1.5 px-3 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer bg-white dark:bg-slate-700 text-brand shadow-xs";
-        btn3x2.className = "py-1.5 px-3 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer text-slate-400 hover:text-slate-700 dark:hover:text-white";
-      }
-    } else {
-      layoutWrapperClassic.classList.add('hidden');
-      layoutWrapper3x2.classList.remove('hidden');
-
-      container3x2.appendChild(cardEquity);
-      container3x2.appendChild(cardDailyPnl);
-      container3x2.appendChild(cardRadar);
-      container3x2.appendChild(cardDrawdown);
-      container3x2.appendChild(cardScatter);
-      container3x2.appendChild(cardTrades);
-
-      if (btnClassic && btn3x2) {
-        btn3x2.className = "py-1.5 px-3 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer bg-white dark:bg-slate-700 text-brand shadow-xs";
-        btnClassic.className = "py-1.5 px-3 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer text-slate-400 hover:text-slate-700 dark:hover:text-white";
-      }
-    }
-
-    setTimeout(function() {
-      window.dispatchEvent(new Event('resize'));
-    }, 60);
-  } catch(e) {
-    console.error("Layout switch error:", e);
-  }
-}
-
-// Auto load layout preference on page load and turbo load
-(function() {
-  function applyLayout() {
-    var savedMode = localStorage.getItem('coachtrading_layout_mode') || '3x2';
-    setDashboardLayout(savedMode);
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', applyLayout);
-  } else {
-    applyLayout();
-  }
-  document.addEventListener('turbo:load', applyLayout);
-})();
-</script>
 

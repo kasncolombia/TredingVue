@@ -1,7 +1,7 @@
 <%# _form.html.erb — partial compartido por new y edit %>
 <% content_for :page_title, @trade.new_record? ? "Nueva Operación" : "Editar #{@trade.symbol}" %>
 
-<div class="fade-in pb-10">
+<div class="fade-in pb-10" data-controller="trade-form">
   <!-- BREADCRUMB Y BOTONERA SUPERIOR DERECHA -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
     <div class="flex items-center gap-2 text-xs text-slate-400">
@@ -13,12 +13,12 @@
     <div class="flex items-center gap-3">
       <!-- UI: TABS MODO PRINCIPIANTE / EXPERTO -->
       <div class="flex p-1 bg-slate-200/50 dark:bg-darkBorder/50 rounded-xl w-56 border border-slate-300/50 dark:border-darkBorder relative">
-        <div id="mode-slider" class="absolute top-1 left-1 bottom-1 w-[calc(50%-4px)] bg-white dark:bg-slate-700 rounded-lg shadow-sm transition-transform duration-300 ease-out z-0"></div>
+        <div data-trade-form-target="modeSlider" class="absolute top-1 left-1 bottom-1 w-[calc(50%-4px)] bg-white dark:bg-slate-700 rounded-lg shadow-sm transition-transform duration-300 ease-out z-0"></div>
         
-        <button type="button" id="btn-beginner" onclick="setMode('beginner')" class="relative z-10 flex-1 py-1.5 text-xs font-bold rounded-lg text-brand transition-colors flex items-center justify-center gap-1.5 focus:outline-none">
+        <button type="button" data-trade-form-target="btnBeginner" data-action="click->trade-form#setBeginnerMode" class="relative z-10 flex-1 py-1.5 text-xs font-bold rounded-lg text-brand transition-colors flex items-center justify-center gap-1.5 focus:outline-none">
           <span class="material-symbols-outlined text-[16px]">school</span> Principiante
         </button>
-        <button type="button" id="btn-expert" onclick="setMode('expert')" class="relative z-10 flex-1 py-1.5 text-xs font-bold rounded-lg text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors flex items-center justify-center gap-1.5 focus:outline-none">
+        <button type="button" data-trade-form-target="btnExpert" data-action="click->trade-form#setExpertMode" class="relative z-10 flex-1 py-1.5 text-xs font-bold rounded-lg text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors flex items-center justify-center gap-1.5 focus:outline-none">
           <span class="material-symbols-outlined text-[16px]">psychology_alt</span> PRO / Experto
         </button>
       </div>
@@ -60,19 +60,19 @@
             </label>
             <div class="flex gap-2 text-xs font-bold w-full overflow-x-auto snap-x hide-scrollbar">
               <label class="flex-1 cursor-pointer min-w-[95px] snap-center">
-                <%= f.radio_button :portfolio_mode, "real_account", class: "sr-only peer pm-radio", checked: (trade.portfolio_mode == 'real_account' || trade.portfolio_mode.nil?), onchange: "togglePropFirmSelector()" %>
+                <%= f.radio_button :portfolio_mode, "real_account", class: "sr-only peer pm-radio", checked: (trade.portfolio_mode == 'real_account' || trade.portfolio_mode.nil?), data: { action: "change->trade-form#togglePropFirmSelector" } %>
                 <div class="peer-checked:bg-emerald-500/15 peer-checked:border-emerald-500 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 input-field border py-2.5 rounded-xl text-center transition-all cursor-pointer flex flex-col md:flex-row items-center justify-center gap-1.5 shadow-sm">
                   <span class="material-symbols-outlined text-[18px]">account_balance_wallet</span> Real
                 </div>
               </label>
               <label class="flex-1 cursor-pointer min-w-[95px] snap-center">
-                <%= f.radio_button :portfolio_mode, "prop_firm", class: "sr-only peer pm-radio", checked: trade.portfolio_mode == 'prop_firm', onchange: "togglePropFirmSelector()" %>
+                <%= f.radio_button :portfolio_mode, "prop_firm", class: "sr-only peer pm-radio", checked: trade.portfolio_mode == 'prop_firm', data: { action: "change->trade-form#togglePropFirmSelector" } %>
                 <div class="peer-checked:bg-brand/15 peer-checked:border-brand peer-checked:text-brand dark:peer-checked:text-brand-light input-field border py-2.5 rounded-xl text-center transition-all cursor-pointer flex flex-col md:flex-row items-center justify-center gap-1.5 shadow-sm">
                   <span class="material-symbols-outlined text-[18px]">verified</span> Fondeo
                 </div>
               </label>
               <label class="flex-1 cursor-pointer min-w-[95px] snap-center">
-                <%= f.radio_button :portfolio_mode, "backtest", class: "sr-only peer pm-radio", checked: trade.portfolio_mode == 'backtest', onchange: "togglePropFirmSelector()" %>
+                <%= f.radio_button :portfolio_mode, "backtest", class: "sr-only peer pm-radio", checked: trade.portfolio_mode == 'backtest', data: { action: "change->trade-form#togglePropFirmSelector" } %>
                 <div class="peer-checked:bg-slate-200 dark:peer-checked:bg-slate-700 peer-checked:border-slate-400 dark:peer-checked:border-slate-500 peer-checked:text-slate-800 dark:peer-checked:text-white input-field border py-2.5 rounded-xl text-center transition-all cursor-pointer flex flex-col md:flex-row items-center justify-center gap-1.5 shadow-sm">
                   <span class="material-symbols-outlined text-[18px]">history</span> Backtest
                 </div>
@@ -80,7 +80,7 @@
             </div>
 
             <!-- SELECTOR VISUAL DE COMPAÑÍAS DE FONDEO -->
-            <div id="prop-firm-company-container" class="mt-4 pt-4 border-t dark:border-darkBorder border-slate-200 hidden fade-in space-y-3">
+            <div data-trade-form-target="propFirmContainer" class="mt-4 pt-4 border-t dark:border-darkBorder border-slate-200 hidden fade-in space-y-3">
               <div>
                 <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Vincular a Cuenta de Fondeo Específica</label>
                 <%= f.collection_select :prop_firm_account_id, current_user.prop_firm_accounts.order(created_at: :desc), :id, ->(acc) { "#{acc.name} (#{acc.firm_name} - #{acc.account_size})" }, { prompt: "Seleccionar cuenta activa..." }, class: "input-field w-full px-3 py-2 rounded-xl text-xs font-bold focus:outline-none focus:border-brand" %>
@@ -101,7 +101,9 @@
                   { name: "Take Profit Trader", logo: "compañias/take profit trader.png" }
                 ].each do |firm| %>
                   <button type="button" 
-                          onclick="selectTradePropFirm('<%= firm[:name] %>', this)"
+                          data-trade-form-target="propFirmChip"
+                          data-action="click->trade-form#selectPropFirm"
+                          data-firm-name="<%= firm[:name] %>"
                           class="prop-firm-chip p-2 rounded-xl border dark:border-darkBorder border-slate-200 hover:border-brand dark:hover:border-brand flex flex-col items-center justify-center text-center gap-1.5 transition-all bg-slate-50 dark:bg-darkCard cursor-pointer">
                     <div class="w-8 h-8 rounded-lg bg-white p-1 flex items-center justify-center border border-slate-200 shadow-xs">
                       <%= image_tag firm[:logo], class: "max-h-full max-w-full object-contain", alt: firm[:name] %>
@@ -110,7 +112,7 @@
                   </button>
                 <% end %>
               </div>
-              <%= f.hidden_field :setup, id: "selected_prop_firm_input" %>
+              <%= f.hidden_field :setup, data: { trade_form_target: "selectedPropFirmInput" } %>
             </div>
           </div>
 
@@ -126,7 +128,8 @@
                 </div>
               </label>
 
-              <%= f.text_field :symbol, placeholder: "Escribe o elige un activo (Ej: NQ1!, BTCUSD)", required: true, id: "trade_symbol_input", list: "popular-symbols-list",
+              <%= f.text_field :symbol, placeholder: "Escribe o elige un activo (Ej: NQ1!, BTCUSD)", required: true, list: "popular-symbols-list",
+                  data: { trade_form_target: "symbolInput" },
                   class: "input-field w-full px-4 py-2.5 rounded-xl text-sm font-bold focus:outline-none transition-all uppercase relative z-10" %>
 
               <datalist id="popular-symbols-list">
@@ -147,7 +150,10 @@
               <!-- QUICK SELECTION CHIPS -->
               <div class="flex flex-wrap gap-1.5 mt-2">
                 <% %w[NQ1! ES1! BTCUSD ETHUSD EURUSD AAPL NVDA].each do |chip| %>
-                  <button type="button" onclick="selectSymbol('<%= chip %>')" class="px-2 py-0.5 text-[10.5px] font-bold rounded-lg dark:bg-darkCard bg-slate-100 dark:text-slate-300 text-slate-700 border dark:border-darkBorder border-slate-200 hover:border-brand hover:text-brand dark:hover:text-brand-light transition-all cursor-pointer">
+                  <button type="button" 
+                          data-action="click->trade-form#selectSymbol"
+                          data-symbol="<%= chip %>"
+                          class="px-2 py-0.5 text-[10.5px] font-bold rounded-lg dark:bg-darkCard bg-slate-100 dark:text-slate-300 text-slate-700 border dark:border-darkBorder border-slate-200 hover:border-brand hover:text-brand dark:hover:text-brand-light transition-all cursor-pointer">
                     <%= chip %>
                   </button>
                 <% end %>
@@ -166,13 +172,13 @@
               </label>
               <div class="flex gap-2">
                 <label class="flex-1 cursor-pointer">
-                  <input type="radio" name="trade[direction]" value="LONG" class="sr-only peer dir-radio" <%= trade.direction == 'LONG' ? 'checked' : (trade.new_record? ? 'checked' : '') %>>
+                  <input type="radio" name="trade[direction]" value="LONG" class="sr-only peer dir-radio" <%= trade.direction == 'LONG' ? 'checked' : (trade.new_record? ? 'checked' : '') %> data-action="change->trade-form#calculate">
                   <div class="peer-checked:bg-emerald-500/20 peer-checked:border-emerald-500 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 input-field border py-2.5 rounded-xl text-xs font-black text-center transition-all cursor-pointer flex items-center justify-center gap-1">
                     <span class="material-symbols-outlined text-[16px]">trending_up</span> LONG
                   </div>
                 </label>
                 <label class="flex-1 cursor-pointer">
-                  <input type="radio" name="trade[direction]" value="SHORT" class="sr-only peer dir-radio" <%= trade.direction == 'SHORT' ? 'checked' : '' %>>
+                  <input type="radio" name="trade[direction]" value="SHORT" class="sr-only peer dir-radio" <%= trade.direction == 'SHORT' ? 'checked' : '' %> data-action="change->trade-form#calculate">
                   <div class="peer-checked:bg-rose-500/20 peer-checked:border-rose-500 peer-checked:text-rose-600 dark:peer-checked:text-rose-400 input-field border py-2.5 rounded-xl text-xs font-black text-center transition-all cursor-pointer flex items-center justify-center gap-1">
                     <span class="material-symbols-outlined text-[16px]">trending_down</span> SHORT
                   </div>
@@ -181,7 +187,7 @@
             </div>
 
             <!-- EXCLUSIVO EXPERTO -->
-            <div class="expert-only hidden">
+            <div data-trade-form-target="expertOnly" class="expert-only hidden">
               <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
                 <span>Estrategia</span>
                 <div class="relative group cursor-help flex items-center justify-center text-slate-400 hover:text-brand transition-colors">
@@ -196,7 +202,7 @@
                   class: "input-field w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-all" %>
             </div>
             
-            <div class="expert-only hidden">
+            <div data-trade-form-target="expertOnly" class="expert-only hidden">
               <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
                 <span>Resultado Manual</span>
                 <div class="relative group cursor-help flex items-center justify-center text-slate-400 hover:text-brand transition-colors">
@@ -211,7 +217,7 @@
                   class: "input-field w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-all" %>
             </div>
 
-            <div class="expert-only hidden">
+            <div data-trade-form-target="expertOnly" class="expert-only hidden">
               <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
                 <span>Fecha Entrada</span>
                 <div class="relative group cursor-help flex items-center justify-center text-slate-400 hover:text-brand transition-colors">
@@ -225,7 +231,7 @@
                   class: "input-field w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-all" %>
             </div>
             
-            <div class="expert-only hidden">
+            <div data-trade-form-target="expertOnly" class="expert-only hidden">
               <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
                 <span>Fecha Salida</span>
               </label>
@@ -242,7 +248,7 @@
             <div class="w-8 h-8 rounded-xl bg-violet-500/15 text-violet-600 dark:text-violet-400 flex items-center justify-center text-sm font-black flex-shrink-0">2</div>
             <div>
               <h2 class="text-sm font-bold text-slate-800 dark:text-white">Ejecución y Resultados</h2>
-              <p id="hint-execution" class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Ingresa a qué precio compraste y vendiste.</p>
+              <p data-trade-form-target="hintExecution" class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Ingresa a qué precio compraste y vendiste.</p>
             </div>
           </div>
 
@@ -257,7 +263,8 @@
                   </div>
                 </div>
               </label>
-              <%= f.number_field :entry_price, step: "any", placeholder: "0.00", id: "entry_price", required: true,
+              <%= f.number_field :entry_price, step: "any", placeholder: "0.00", required: true,
+                  data: { trade_form_target: "entryPrice", action: "input->trade-form#calculate" },
                   class: "input-field w-full px-4 py-2.5 rounded-xl font-mono text-sm focus:outline-none transition-all" %>
             </div>
             <div>
@@ -270,12 +277,13 @@
                   </div>
                 </div>
               </label>
-              <%= f.number_field :exit_price, step: "any", placeholder: "0.00", id: "exit_price", required: true,
+              <%= f.number_field :exit_price, step: "any", placeholder: "0.00", required: true,
+                  data: { trade_form_target: "exitPrice", action: "input->trade-form#calculate" },
                   class: "input-field w-full px-4 py-2.5 rounded-xl font-mono text-sm focus:outline-none transition-all" %>
             </div>
             
             <!-- EXCLUSIVO EXPERTO -->
-            <div class="expert-only hidden">
+            <div data-trade-form-target="expertOnly" class="expert-only hidden">
               <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
                 <span>Tamaño/Lots</span>
                 <div class="relative group cursor-help flex items-center justify-center text-slate-400 hover:text-violet-500 transition-colors">
@@ -285,11 +293,12 @@
                   </div>
                 </div>
               </label>
-              <%= f.number_field :position_size, step: "any", placeholder: "1", id: "position_size", value: trade.position_size || 1,
+              <%= f.number_field :position_size, step: "any", placeholder: "1", value: trade.position_size || 1,
+                  data: { trade_form_target: "positionSize", action: "input->trade-form#calculate" },
                   class: "input-field w-full px-4 py-2.5 rounded-xl font-mono text-sm focus:outline-none transition-all" %>
             </div>
             
-            <div class="expert-only hidden">
+            <div data-trade-form-target="expertOnly" class="expert-only hidden">
               <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
                 <span>Stop Loss</span>
                 <div class="relative group cursor-help flex items-center justify-center text-slate-400 hover:text-violet-500 transition-colors">
@@ -299,11 +308,12 @@
                   </div>
                 </div>
               </label>
-              <%= f.number_field :stop_loss, step: "any", placeholder: "0.00", id: "stop_loss",
+              <%= f.number_field :stop_loss, step: "any", placeholder: "0.00",
+                  data: { trade_form_target: "stopLoss", action: "input->trade-form#calculate" },
                   class: "input-field w-full px-4 py-2.5 rounded-xl font-mono text-sm focus:outline-none transition-all" %>
             </div>
             
-            <div class="expert-only hidden">
+            <div data-trade-form-target="expertOnly" class="expert-only hidden">
               <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
                 <span>Take Profit</span>
                 <div class="relative group cursor-help flex items-center justify-center text-slate-400 hover:text-violet-500 transition-colors">
@@ -317,7 +327,7 @@
                   class: "input-field w-full px-4 py-2.5 rounded-xl font-mono text-sm focus:outline-none transition-all" %>
             </div>
             
-            <div class="expert-only hidden">
+            <div data-trade-form-target="expertOnly" class="expert-only hidden">
               <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
                 <span>Comisión ($)</span>
               </label>
@@ -331,20 +341,20 @@
             <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 text-center">
               <div>
                 <p class="text-[10px] font-bold text-slate-500 mb-1">P&L Estimado</p>
-                <p id="calc-pnl" class="text-xl font-black text-slate-800 dark:text-white font-mono transition-all">—</p>
+                <p data-trade-form-target="calcPnl" class="text-xl font-black text-slate-800 dark:text-white font-mono transition-all">—</p>
               </div>
-              <div class="expert-only hidden">
+              <div data-trade-form-target="expertOnly" class="expert-only hidden">
                 <p class="text-[10px] font-bold text-slate-500 mb-1">R-Multiple (<span title="Risk Reward" class="cursor-help border-b border-dashed border-slate-400 pb-0.5">RR</span>)</p>
-                <p id="calc-r" class="text-xl font-black text-slate-800 dark:text-white font-mono transition-all">—</p>
+                <p data-trade-form-target="calcR" class="text-xl font-black text-slate-800 dark:text-white font-mono transition-all">—</p>
               </div>
               <div>
                 <p class="text-[10px] font-bold text-slate-500 mb-1">Diferencial Pts.</p>
-                <p id="calc-pct" class="text-xl font-black text-slate-800 dark:text-white font-mono transition-all">—</p>
+                <p data-trade-form-target="calcPct" class="text-xl font-black text-slate-800 dark:text-white font-mono transition-all">—</p>
               </div>
             </div>
           </div>
           
-          <div class="mt-4 pt-4 expert-only hidden border-t dark:border-darkBorder border-lightBorder relative z-10">
+          <div data-trade-form-target="expertOnly" class="mt-4 pt-4 expert-only hidden border-t dark:border-darkBorder border-lightBorder relative z-10">
             <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
               <span class="flex items-center gap-1.5">
                 P&L Final Neto <span class="text-rose-500">*</span>
@@ -356,7 +366,8 @@
                 </div>
               </span>
             </label>
-            <%= f.number_field :pnl, step: "any", id: "actual_pnl", required: true,
+            <%= f.number_field :pnl, step: "any", required: true,
+                data: { trade_form_target: "actualPnl" },
                 class: "input-field w-full md:w-1/3 px-4 py-2.5 rounded-xl font-mono text-sm focus:outline-none transition-all font-black text-brand", placeholder: "Calculado o manual" %>
           </div>
         </div>
@@ -389,7 +400,7 @@
                   class: "input-field w-full px-4 py-2.5 rounded-xl text-sm font-bold focus:outline-none transition-all relative z-10" %>
             </div>
             
-            <div class="expert-only hidden">
+            <div data-trade-form-target="expertOnly" class="expert-only hidden">
               <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
                 <span>Tags (Contexto extra)</span>
                 <div class="relative group cursor-help flex items-center justify-center text-slate-400 hover:text-amber-500 transition-colors">
@@ -413,7 +424,7 @@
           </div>
         </div>
 
-        <!-- ERRORS DE VALIDACIÓN -->
+        <!-- ERRORES DE VALIDACIÓN -->
         <% if trade.errors.any? %>
         <div class="rounded-2xl p-4 border border-rose-500/30 bg-rose-500/10 mt-6">
           <p class="text-xs font-bold text-rose-500 mb-2 flex items-center gap-1">
@@ -448,12 +459,12 @@
         </div>
         <div>
           <h3 class="text-sm font-black dark:text-white text-slate-900">Coach en Línea</h3>
-          <p id="coach-panel-title" class="text-[10px] text-brand font-bold uppercase tracking-widest transition-all">Modo Básico Activo</p>
+          <p data-trade-form-target="coachTitle" class="text-[10px] text-brand font-bold uppercase tracking-widest transition-all">Modo Básico Activo</p>
         </div>
       </div>
       
       <!-- CONTENIDO PRINCIPIANTE -->
-      <div id="coach-content-beginner" class="space-y-4 text-xs dark:text-slate-300 text-slate-600 leading-relaxed fade-in">
+      <div data-trade-form-target="coachBeginner" class="space-y-4 text-xs dark:text-slate-300 text-slate-600 leading-relaxed fade-in">
         <p>¡Bienvenido al modo principiante! Aquí las cosas son simples para que ganes el <strong class="dark:text-white text-slate-900 border-b border-dashed border-brand/50">hábito de registrar</strong> todo lo que haces.</p>
         
         <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 font-medium">
@@ -468,12 +479,12 @@
         </div>
         
         <p class="text-[11px] italic text-slate-400 mt-2">
-          Cuando te sientas confiado en calcular lotajes, stop losses o R-Multiples, cambia al <strong class="text-brand font-bold cursor-pointer hover:underline" onclick="setMode('expert')">Modo PRO 🔬</strong> en la parte superior.
+          Cuando te sientas confiado en calcular lotajes, stop losses o R-Multiples, cambia al <strong class="text-brand font-bold cursor-pointer hover:underline" data-action="click->trade-form#setExpertMode">Modo PRO 🔬</strong> en la parte superior.
         </p>
       </div>
 
       <!-- CONTENIDO EXPERTO -->
-      <div id="coach-content-expert" class="space-y-4 text-xs dark:text-slate-300 text-slate-600 leading-relaxed hidden fade-in">
+      <div data-trade-form-target="coachExpert" class="space-y-4 text-xs dark:text-slate-300 text-slate-600 leading-relaxed hidden fade-in">
         <p>¡Estás en la trinchera avanzada! Entregarme más datos me permite hacer diagnósticos hiper-precisos sobre tu <strong class="text-rose-500 dark:text-rose-400">riesgo de ruina</strong>.</p>
         
         <div class="p-3 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-600 dark:text-violet-400 font-medium overflow-hidden relative">
@@ -508,162 +519,3 @@
 /* Utilities extra para evitar cortes de z-index / overflow al hacer hover en el tooltip */
 .overflow-visible { overflow: visible !important; }
 </style>
-
-<script>
-// ---------- UI TOGGLE TAB PRINCIPIANTE / EXPERTO ----------
-let currentMode = 'beginner';
-
-window.setMode = function(targetMode) {
-  currentMode = targetMode;
-  const slider = document.getElementById('mode-slider');
-  const btnB = document.getElementById('btn-beginner');
-  const btnE = document.getElementById('btn-expert');
-  const coachTitle = document.getElementById('coach-panel-title');
-  const coachB = document.getElementById('coach-content-beginner');
-  const coachE = document.getElementById('coach-content-expert');
-  const hintExe = document.getElementById('hint-execution');
-
-  // Mover el background slider toggle (tabs)
-  if (targetMode === 'beginner') {
-    slider.style.transform = 'translateX(0)';
-    btnB.classList.add('text-brand');
-    btnB.classList.remove('text-slate-500', 'dark:text-slate-400');
-    btnE.classList.add('text-slate-500', 'dark:text-slate-400');
-    btnE.classList.remove('text-brand');
-    
-    // UI Panel asistenten
-    coachTitle.textContent = "MODO BÁSICO ACTIVO";
-    coachB.classList.remove('hidden');
-    coachE.classList.add('hidden');
-    
-    hintExe.textContent = "Ingresa a qué precio compraste y vendiste.";
-  } else {
-    slider.style.transform = 'translateX(100%)';
-    btnE.classList.add('text-brand');
-    btnE.classList.remove('text-slate-500', 'dark:text-slate-400');
-    btnB.classList.add('text-slate-500', 'dark:text-slate-400');
-    btnB.classList.remove('text-brand');
-
-    coachTitle.innerHTML = "MODO EXPERTO ACTIVO <span class='animate-pulse inline-block'>🔬</span>";
-    coachE.classList.remove('hidden');
-    coachB.classList.add('hidden');
-    
-    hintExe.textContent = "El sistema gestionará tamaño de contratos, fees y RR ratio matemáticamente.";
-  }
-
-  // Ocultar / Mostrar los divs con clase "expert-only"
-  const expertElements = document.querySelectorAll('.expert-only');
-  expertElements.forEach(el => {
-    if (targetMode === 'beginner') {
-      el.classList.add('hidden');
-    } else {
-      el.classList.remove('hidden');
-    }
-  });
-  
-  // Limpiar campos que se ocultan (Stop Loss, Size, TP, si estamos en beginner)
-  if (targetMode === 'beginner') {
-    document.getElementById('position_size').value = 1;
-    document.getElementById('stop_loss').value = "";
-    // PNL input oculto en beginner debe seguir el simulador forzosamente
-  }
-  
-  // Trigger calc forzoso
-  if(window.triggerCalc) window.triggerCalc();
-};
-
-// ---------- CALCULADORA EN VIVO ----------
-document.addEventListener("DOMContentLoaded", function() {
-  
-  window.triggerCalc = function() {
-    const entry = parseFloat(document.getElementById('entry_price')?.value) || 0;
-    const exit  = parseFloat(document.getElementById('exit_price')?.value) || 0;
-    const size  = parseFloat(document.getElementById('position_size')?.value) || 1;
-    const sl    = parseFloat(document.getElementById('stop_loss')?.value) || 0;
-    const pnlOutput = document.getElementById('actual_pnl');
-    
-    const directionEl = document.querySelector('input[name="trade[direction]"]:checked');
-    const isLong = directionEl && directionEl.value === 'LONG';
-
-    if (entry <= 0 || exit <= 0) return;
-    
-    const pointsCaptured = isLong ? (exit - entry) : (entry - exit);
-    const pnl = pointsCaptured * size;
-    
-    let riskPoints = 0;
-    if (sl > 0) {
-       riskPoints = isLong ? (entry - sl) : (sl - entry);
-    }
-    const riskDollar = riskPoints * size;
-    const r = (riskDollar > 0) ? (pnl / riskDollar).toFixed(2) + 'R' : '—';
-    
-    const g = 'text-emerald-500', rd = 'text-rose-500', w = 'text-slate-800 dark:text-white';
-    
-    const pEl = document.getElementById('calc-pnl');
-    const rEl = document.getElementById('calc-r');
-    const pct2 = document.getElementById('calc-pct');
-    
-    pEl.textContent = (pnl >= 0 ? '+' : '') + '$' + pnl.toFixed(2);
-    pEl.className   = 'text-xl font-black font-mono transition-all ' + (pnl >= 0 ? g : rd);
-    
-    pct2.textContent = (pointsCaptured >= 0 ? '+' : '') + pointsCaptured.toFixed(2) + ' pts';
-    pct2.className  = 'text-xl font-black font-mono transition-all ' + (pointsCaptured >= 0 ? g : rd);
-    
-    if(rEl) {
-      rEl.textContent = r;
-      rEl.className   = 'text-xl font-black font-mono transition-all ' + w;
-    }
-
-    // El input del form real siempre recibe el calculo
-    if (pnlOutput && document.activeElement.id !== 'actual_pnl') {
-      pnlOutput.value = pnl.toFixed(2);
-    }
-  };
-
-  ['entry_price','exit_price','position_size','stop_loss'].forEach(id => {
-    document.getElementById(id)?.addEventListener('input', window.triggerCalc);
-  });
-  
-  document.querySelectorAll('.dir-radio').forEach(el => {
-    el.addEventListener('change', window.triggerCalc);
-  });
-  
-  // Set default mode on mount (Beginner by default)
-  setMode('beginner');
-});
-
-window.selectSymbol = function(sym) {
-  const input = document.getElementById('trade_symbol_input');
-  if (input) {
-    input.value = sym;
-    input.dispatchEvent(new Event('input', { bubbles: true }));
-  }
-};
-
-window.togglePropFirmSelector = function() {
-  const container = document.getElementById('prop-firm-company-container');
-  const propRadio = document.querySelector('input[name="trade[portfolio_mode]"][value="prop_firm"]');
-  if (container && propRadio) {
-    if (propRadio.checked) {
-      container.classList.remove('hidden');
-    } else {
-      container.classList.add('hidden');
-    }
-  }
-};
-
-window.selectTradePropFirm = function(name, btn) {
-  const input = document.getElementById('selected_prop_firm_input');
-  if (input) input.value = name;
-  document.querySelectorAll('.prop-firm-chip').forEach(c => {
-    c.classList.remove('ring-2', 'ring-brand', 'border-brand', 'bg-brand/10');
-  });
-  if (btn) {
-    btn.classList.add('ring-2', 'ring-brand', 'border-brand', 'bg-brand/10');
-  }
-};
-
-document.addEventListener("DOMContentLoaded", function() {
-  togglePropFirmSelector();
-});
-</script>
