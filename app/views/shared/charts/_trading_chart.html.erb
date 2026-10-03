@@ -12,8 +12,8 @@
 <div id="tc-wrapper-<%= chart_id %>" class="tc-wrapper flex flex-col w-full bg-lightCard dark:bg-darkCard border border-lightBorder dark:border-darkBorder rounded-2xl overflow-hidden shadow-sm h-full min-h-[380px] sm:min-h-[500px] lg:min-h-[600px] relative transition-colors">
   
   <!-- ==================== TOP TOOLBAR ==================== -->
-  <div class="tc-toolbar flex items-center justify-between px-2 sm:px-4 py-2 border-b border-lightBorder dark:border-darkBorder bg-lightBg dark:bg-[#11121C]">
-    <div class="flex items-center gap-1 sm:gap-3 overflow-x-auto no-scrollbar tc-toolbar-left">
+  <div class="tc-toolbar flex-wrap flex items-center justify-between px-2 sm:px-4 py-2 border-b border-lightBorder dark:border-darkBorder bg-lightBg dark:bg-[#11121C] relative z-50">
+    <div class="flex items-center gap-1 sm:gap-3 flex-wrap tc-toolbar-left">
       
       <!-- Symbol Info -->
       <div class="flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-slate-200/50 dark:hover:bg-darkHover cursor-pointer transition-colors" title="Change Symbol">
@@ -32,24 +32,66 @@
       
       <div class="h-4 w-px bg-slate-200 dark:bg-slate-700 hidden sm:block shrink-0"></div>
 
-      <!-- Chart Types (Mock) -->
-      <div class="flex items-center gap-1 text-slate-500">
-        <button class="w-7 h-7 rounded-md hover:bg-slate-200 dark:hover:bg-darkHover flex items-center justify-center text-brand bg-brand/5 border border-brand/10 transition-colors" title="Candlesticks">
-          <span class="material-symbols-outlined text-[16px]">candlestick_chart</span>
+      <!-- Chart Types Toggle (Mini Modal) -->
+      <div class="relative flex items-center" id="tc-chart-type-<%= chart_id %>">
+        <!-- Main Trigger -->
+        <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover flex items-center justify-center text-slate-500 transition-colors tc-dropdown-trigger" title="Opciones de Gráfico">
+          <span class="material-symbols-outlined text-[20px]" id="tc-current-chart-icon-<%= chart_id %>">candlestick_chart</span>
         </button>
-        <button class="w-7 h-7 rounded-md hover:bg-slate-200 dark:hover:bg-darkHover flex items-center justify-center transition-colors" title="Line Chart">
-          <span class="material-symbols-outlined text-[16px]">show_chart</span>
-        </button>
+
+        <!-- The Modal -->
+        <div class="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-[#1C1C28] rounded-xl shadow-2xl border border-slate-200 dark:border-darkBorder p-4 z-[999] hidden flex-col tc-dropdown-menu">
+          <h4 class="text-caption text-slate-500 font-bold mb-3">Tipo de gráfico</h4>
+          
+          <div class="grid grid-cols-4 gap-2 mb-3">
+             <button class="tc-type-btn flex flex-col items-center justify-center gap-1 p-2 rounded-xl border border-slate-200 dark:border-darkBorder bg-brand/5 border-brand/20 text-brand transition-all" data-type="candle" data-icon="candlestick_chart">
+                <span class="material-symbols-outlined text-[24px]">candlestick_chart</span>
+                <span class="text-[10px] font-bold">Velas</span>
+             </button>
+             <button class="tc-type-btn flex flex-col items-center justify-center gap-1 p-2 rounded-xl border border-slate-200 dark:border-darkBorder hover:bg-slate-50 dark:hover:bg-darkHover/50 text-slate-500 transition-all" data-type="hollow" data-icon="candlestick_chart">
+                <span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 0;">candlestick_chart</span>
+                <span class="text-[10px] font-bold">Huecas</span>
+             </button>
+             <button class="tc-type-btn flex flex-col items-center justify-center gap-1 p-2 rounded-xl border border-slate-200 dark:border-darkBorder hover:bg-slate-50 dark:hover:bg-darkHover/50 text-slate-500 transition-all" data-type="bar" data-icon="waterfall_chart">
+                <span class="material-symbols-outlined text-[24px]">waterfall_chart</span>
+                <span class="text-[10px] font-bold">OHLC</span>
+             </button>
+             <button class="tc-type-btn flex flex-col items-center justify-center gap-1 p-2 rounded-xl border border-slate-200 dark:border-darkBorder hover:bg-slate-50 dark:hover:bg-darkHover/50 text-slate-500 transition-all" data-type="area" data-icon="area_chart">
+                <span class="material-symbols-outlined text-[24px]">area_chart</span>
+                <span class="text-[10px] font-bold">Área</span>
+             </button>
+          </div>
+
+          <div class="h-px bg-slate-200 dark:bg-darkBorder my-2 w-full"></div>
+
+          <div class="flex items-center justify-between mb-3 mt-1">
+             <h4 class="text-caption text-slate-500 font-bold">Color</h4>
+             <button class="text-[10px] text-slate-400 font-medium flex items-center hover:text-slate-600 dark:hover:text-slate-300"><span class="material-symbols-outlined text-[13px] mr-1">edit</span> Editar</button>
+          </div>
+
+          <div class="flex items-center gap-2">
+             <!-- Classic Palette -->
+             <button class="tc-color-btn flex items-center p-2 rounded-lg border border-brand/20 bg-brand/5 gap-1 transition-all" data-palette="classic">
+                <div class="w-4 h-4 rounded bg-[#089981]"></div>
+                <div class="w-4 h-4 rounded bg-[#F23645]"></div>
+             </button>
+             <!-- Vibe Palette -->
+             <button class="tc-color-btn flex items-center p-2 rounded-lg border border-slate-200 dark:border-darkBorder hover:bg-slate-50 dark:hover:bg-darkHover/50 gap-1 transition-all" data-palette="vibe">
+                <div class="w-4 h-4 rounded bg-[#8B5CF6]"></div>
+                <div class="w-4 h-4 rounded bg-[#3B82F6]"></div>
+             </button>
+          </div>
+        </div>
       </div>
 
       <div class="h-4 w-px bg-slate-200 dark:bg-slate-700 hidden lg:block shrink-0"></div>
       
-      <!-- Compare / Indicators Modals Toggles (Mock) -->
+      <!-- Compare / Indicators Modals Toggles -->
       <div class="hidden lg:flex items-center gap-2">
-        <button class="px-2.5 py-1.5 flex items-center gap-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-xs font-bold text-slate-600 dark:text-slate-300 transition-colors">
+        <button class="tc-compare-btn px-2.5 py-1.5 flex items-center gap-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-xs font-bold text-slate-600 dark:text-slate-300 transition-colors">
           <span class="material-symbols-outlined text-[16px]">add</span> Compare
         </button>
-        <button class="px-2.5 py-1.5 flex items-center gap-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-xs font-bold text-slate-600 dark:text-slate-300 transition-colors">
+        <button class="tc-indicators-btn px-2.5 py-1.5 flex items-center gap-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-xs font-bold text-slate-600 dark:text-slate-300 transition-colors">
           <span class="material-symbols-outlined text-[16px]">monitoring</span> Indicators
         </button>
       </div>
@@ -63,31 +105,31 @@
         <span class="material-symbols-outlined animate-spin text-[18px]">sync</span>
       </div>
       
-      <!-- MOCKS -->
-      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover flex items-center justify-center text-slate-400 dark:text-slate-500 transition-colors hidden xl:flex" title="Undo">
+      <!-- Actions -->
+      <button class="tc-undo-btn w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover flex items-center justify-center text-slate-400 dark:text-slate-500 transition-colors hidden xl:flex" title="Undo">
         <span class="material-symbols-outlined text-[18px]">undo</span>
       </button>
-      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover flex items-center justify-center text-slate-400 dark:text-slate-500 transition-colors hidden xl:flex" title="Redo">
+      <button class="tc-redo-btn w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover flex items-center justify-center text-slate-400 dark:text-slate-500 transition-colors hidden xl:flex" title="Redo">
         <span class="material-symbols-outlined text-[18px]">redo</span>
       </button>
 
       <div class="h-4 w-px bg-slate-200 dark:bg-slate-700 hidden lg:block shrink-0 mx-1"></div>
       
-      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover flex items-center justify-center text-slate-400 dark:text-slate-400 transition-colors" title="Chart Properties">
+      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover flex items-center justify-center text-slate-400 dark:text-slate-400 transition-colors tc-settings-btn" title="Activar/Desactivar Cuadrícula">
         <span class="material-symbols-outlined text-[18px]">settings</span>
       </button>
-      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover flex items-center justify-center text-slate-400 dark:text-slate-400 transition-colors tc-screenshot-btn" title="Take a snapshot">
+      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover flex items-center justify-center text-slate-400 dark:text-slate-400 transition-colors tc-screenshot-btn" title="Tomar Foto a la Gráfica">
         <span class="material-symbols-outlined text-[18px]">photo_camera</span>
       </button>
       
       <!-- Templates Mock & Fullscreen & Replay -->
-      <button class="px-2.5 py-1.5 flex items-center gap-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-xs font-bold text-slate-600 dark:text-slate-300 transition-colors hidden md:flex" title="Templates">
+      <button class="tc-templates-btn px-2.5 py-1.5 flex items-center gap-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-xs font-bold text-slate-600 dark:text-slate-300 transition-colors hidden md:flex" title="Templates">
         <span class="material-symbols-outlined text-[16px]">grid_view</span>
       </button>
-      <button class="px-2.5 py-1.5 flex items-center gap-1 text-blue-600 dark:text-blue-400 bg-blue-500/10 hover:bg-blue-500/20 rounded-lg text-xs font-bold transition-colors shadow-sm hidden md:flex border border-blue-500/20" title="Bar Replay / Backtesting">
+      <button class="tc-replay-btn px-2.5 py-1.5 flex items-center gap-1 text-blue-600 dark:text-blue-400 bg-blue-500/10 hover:bg-blue-500/20 rounded-lg text-xs font-bold transition-colors shadow-sm hidden md:flex border border-blue-500/20" title="Simular Estrategia (Replay)">
         <span class="material-symbols-outlined text-[16px]">fast_rewind</span> Replay
       </button>
-      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover flex items-center justify-center text-slate-400 dark:text-slate-400 transition-colors tc-fullscreen-btn" title="Fullscreen">
+      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover flex items-center justify-center text-slate-400 dark:text-slate-400 transition-colors tc-fullscreen-btn" title="Pantalla Completa">
         <span class="material-symbols-outlined text-[20px]">fullscreen</span>
       </button>
     </div>
@@ -96,16 +138,35 @@
   <!-- ==================== BODY ==================== -->
   <div class="relative flex-1 flex w-full h-full bg-white dark:bg-[#090A10]">
     
-    <!-- MOCK DRAWING TOOLS SIDEBAR -->
-    <div class="hidden sm:flex flex-col w-12 border-r border-lightBorder dark:border-darkBorder bg-lightBg dark:bg-darkCardAlt items-center py-2 space-y-2 shrink-0">
-      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-slate-400 flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">near_me</span></button>
-      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-slate-400 flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">horizontal_rule</span></button>
-      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-slate-400 flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">ssid_chart</span></button>
-      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-slate-400 flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">brush</span></button>
-      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-slate-400 flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">title</span></button>
+    <!-- FASE 4: DRAWING TOOLS SIDEBAR (12 Tools) -->
+    <div class="hidden sm:flex flex-col w-12 border-r border-lightBorder dark:border-darkBorder bg-lightBg dark:bg-darkCardAlt items-center py-2 space-y-1.5 shrink-0">
+      <!-- 1. Cursor -->
+      <button class="tc-draw-btn w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-slate-400 flex items-center justify-center transition-colors text-brand bg-brand/10 border border-brand/20" title="Cursor en cruz"><span class="material-symbols-outlined text-[18px]">my_location</span></button>
+      <!-- 2. Línea de tendencia -->
+      <button class="tc-draw-btn w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-slate-400 flex items-center justify-center transition-colors" title="Línea de Tendencia"><span class="material-symbols-outlined text-[18px]">show_chart</span></button>
+      <!-- 3. Líneas horizontales -->
+      <button class="tc-draw-btn w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-slate-400 flex items-center justify-center transition-colors" title="Niveles / Horizontal"><span class="material-symbols-outlined text-[18px]">horizontal_rule</span></button>
+      <!-- 4. Patrones -->
+      <button class="tc-draw-btn w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-slate-400 flex items-center justify-center transition-colors" title="Figuras de Patrón"><span class="material-symbols-outlined text-[18px]">polyline</span></button>
+      <!-- 5. Rectángulo -->
+      <button class="tc-draw-btn w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-slate-400 flex items-center justify-center transition-colors" title="Rectángulo / Zona"><span class="material-symbols-outlined text-[18px]">crop_square</span></button>
+      <!-- 6. Posición Larga -->
+      <button class="tc-draw-btn w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-slate-400 flex items-center justify-center transition-colors" title="Posición Larga"><span class="material-symbols-outlined text-[18px]">trending_up</span></button>
+      <!-- 7. Posición Corta -->
+      <button class="tc-draw-btn w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-slate-400 flex items-center justify-center transition-colors" title="Posición Corta"><span class="material-symbols-outlined text-[18px]">trending_down</span></button>
+      <!-- 8. Regla -->
+      <button class="tc-draw-btn w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-slate-400 flex items-center justify-center transition-colors" title="Regla / Medir"><span class="material-symbols-outlined text-[18px]">square_foot</span></button>
+      <!-- 9. Texto -->
+      <button class="tc-draw-btn w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-slate-400 flex items-center justify-center transition-colors" title="Texto"><span class="material-symbols-outlined text-[18px]">title</span></button>
+      
       <div class="w-6 h-px bg-slate-200 dark:bg-slate-700 my-1"></div>
-      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-slate-400 flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">zoom_in</span></button>
-      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-slate-400 flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+      
+      <!-- 10. Ocultar -->
+      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-slate-400 flex items-center justify-center transition-colors" title="Mostrar/Ocultar Dibujos"><span class="material-symbols-outlined text-[18px]">visibility</span></button>
+      <!-- 11. Candado -->
+      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-slate-400 flex items-center justify-center transition-colors" title="Bloquear Dibujos"><span class="material-symbols-outlined text-[18px]">lock</span></button>
+      <!-- 12. Papelera -->
+      <button class="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover text-slate-400/80 hover:text-rose-500 flex items-center justify-center transition-colors" title="Borrar Todo"><span class="material-symbols-outlined text-[18px]">delete</span></button>
     </div>
 
     <!-- MAIN CHART AREA -->
@@ -115,11 +176,14 @@
       <div class="absolute top-2 left-4 z-10 flex flex-col pointer-events-none">
         
         <!-- Valores OHLC -->
-        <div id="tc-legend-<%= chart_id %>" class="hidden sm:flex items-center gap-3 text-[11px] font-mono whitespace-nowrap px-1 py-0.5 rounded backdrop-blur-[2px]">
-          <span class="text-slate-500 dark:text-slate-400">O<span id="tc-val-o-<%= chart_id %>" class="text-slate-700 dark:text-slate-300 ml-1">---</span></span>
-          <span class="text-slate-500 dark:text-slate-400">H<span id="tc-val-h-<%= chart_id %>" class="text-slate-700 dark:text-slate-300 ml-1">---</span></span>
-          <span class="text-slate-500 dark:text-slate-400">L<span id="tc-val-l-<%= chart_id %>" class="text-slate-700 dark:text-slate-300 ml-1">---</span></span>
-          <span class="text-slate-500 dark:text-slate-400">C<span id="tc-val-c-<%= chart_id %>" class="text-slate-700 dark:text-slate-300 ml-1">---</span></span>
+        <div id="tc-legend-<%= chart_id %>" class="hidden sm:flex items-center gap-3 text-caption font-mono whitespace-nowrap px-2 py-1 rounded bg-slate-100/80 dark:bg-[#11121C]/80 backdrop-blur-md shadow-sm border border-slate-200 dark:border-darkBorder tc-legend-container">
+          <span class="font-bold text-slate-800 dark:text-white" id="tc-val-time-<%= chart_id %>">----</span>
+          <div class="h-3 w-px bg-slate-300 dark:bg-slate-700"></div>
+          <span class="text-slate-500 dark:text-slate-400">Open <span id="tc-val-o-<%= chart_id %>" class="text-slate-700 dark:text-slate-300 font-bold ml-1">---</span></span>
+          <span class="text-slate-500 dark:text-slate-400">High <span id="tc-val-h-<%= chart_id %>" class="text-slate-700 dark:text-slate-300 font-bold ml-1">---</span></span>
+          <span class="text-slate-500 dark:text-slate-400">Low <span id="tc-val-l-<%= chart_id %>" class="text-slate-700 dark:text-slate-300 font-bold ml-1">---</span></span>
+          <span class="text-slate-500 dark:text-slate-400">Close <span id="tc-val-c-<%= chart_id %>" class="text-slate-700 dark:text-slate-300 font-bold ml-1">---</span></span>
+          <span class="text-slate-500 dark:text-slate-400">Vol <span id="tc-val-vol-<%= chart_id %>" class="text-slate-700 dark:text-slate-300 font-bold ml-1">---</span></span>
         </div>
 
         <!-- Toggle Indicadores -->
@@ -176,12 +240,13 @@
         // Elementos UI
         this.ui = {
           loader: document.getElementById(`tc-loader-${chartId}`),
-          tooltip: document.getElementById(`tc-tooltip-${chartId}`),
           legendOHLC: {
+            time: document.getElementById(`tc-val-time-${chartId}`),
             o: document.getElementById(`tc-val-o-${chartId}`),
             h: document.getElementById(`tc-val-h-${chartId}`),
             l: document.getElementById(`tc-val-l-${chartId}`),
             c: document.getElementById(`tc-val-c-${chartId}`),
+            vol: document.getElementById(`tc-val-vol-${chartId}`),
           }
         };
 
@@ -205,6 +270,14 @@
             textColor: txt,
             fontFamily: "JetBrains Mono, Manrope, sans-serif"
           },
+          watermark: {
+            color: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.06)',
+            visible: true,
+            text: '<%= symbol %>',
+            fontSize: 120,
+            horzAlign: 'center',
+            vertAlign: 'center',
+          },
           grid: {
             vertLines: { color: grid },
             horzLines: { color: grid }
@@ -227,19 +300,24 @@
           rightPriceScale: {
             borderColor: border,
             autoScale: true,
-            scaleMargins: {
-              top: 0.15,
-              bottom: 0.20
-            }
+            scaleMargins: { top: 0.1, bottom: 0.25 },
           },
           timeScale: {
             borderColor: border,
             timeVisible: true,
             secondsVisible: false,
-            fixLeftEdge: false,
-            fixRightEdge: false,
-            barSpacing: 16,
-            rightOffset: 25
+            fixLeftEdge: true,
+            fixRightEdge: true,
+            rightOffset: 15,
+            barSpacing: 20,
+            tickMarkFormatter: (time, tickMarkType, locale) => {
+              const d = new Date(time * 1000);
+              // Si cambia de día, mostrar MM-DD en negrita/destacado (el framework textStyle soporta strings)
+              if (tickMarkType === LightweightCharts.TickMarkType.TimeMap || tickMarkType === 3) {
+                 return `${String(d.getMonth() + 1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+              }
+              return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+            },
           }
         });
 
@@ -261,6 +339,33 @@
           borderDownColor: "#F23645",
           wickUpColor: "#089981",
           wickDownColor: "#F23645",
+          priceFormat: { type: 'price', precision: 2, minMove: 0.01 },
+        });
+
+        // Pre-create the line series but hidden by default
+        this.series.line = this.chart.addLineSeries({
+          color: '#2962FF',
+          lineWidth: 2,
+          visible: false,
+          crosshairMarkerVisible: true,
+          priceFormat: { type: 'price', precision: 2, minMove: 0.01 },
+        });
+
+        // Pre-create Area Series
+        this.series.area = this.chart.addAreaSeries({
+          lineColor: '#2962FF',
+          topColor: 'rgba(41, 98, 255, 0.28)',
+          bottomColor: 'rgba(41, 98, 255, 0.05)',
+          lineWidth: 2,
+          visible: false,
+          priceFormat: { type: 'price', precision: 2, minMove: 0.01 },
+        });
+        
+        // Pre-create Bar Series
+        this.series.bar = this.chart.addBarSeries({
+          upColor: "#089981",          
+          downColor: "#F23645",   
+          visible: false,
           priceFormat: { type: 'price', precision: 2, minMove: 0.01 },
         });
 
@@ -293,8 +398,14 @@
       }
 
       bindEvents() {
+        // Mover overlays custom de etiquetas de entrada/salida (FASE 2)
+        this.chart.timeScale().subscribeVisibleTimeRangeChange(() => this.updateOverlays());
+        
         // Crosshair move for tooltip and legend
-        this.chart.subscribeCrosshairMove(param => this.handleCrosshair(param));
+        this.chart.subscribeCrosshairMove(param => {
+          this.handleCrosshair(param);
+          this.updateOverlays(); // Sincroniza overlays
+        });
 
         // Fullscreen toggle
         const fsBtn = document.querySelector(`#tc-wrapper-${chartId} .tc-fullscreen-btn`);
@@ -350,6 +461,175 @@
             console.log("Switch Timeframe to", btn.dataset.tf);
           });
         });
+
+        // Dropdown Toggle Logic
+        const wrapper = document.getElementById(`tc-wrapper-${chartId}`);
+        const dropdownTrigger = wrapper.querySelector('.tc-dropdown-trigger');
+        const dropdownMenu = wrapper.querySelector('.tc-dropdown-menu');
+        
+        if (dropdownTrigger && dropdownMenu) {
+           dropdownTrigger.addEventListener('click', (e) => {
+              e.stopPropagation();
+              dropdownMenu.classList.toggle('hidden');
+              dropdownMenu.classList.toggle('flex');
+           });
+           
+           document.addEventListener('click', (e) => {
+              if (!dropdownMenu.contains(e.target) && !dropdownTrigger.contains(e.target)) {
+                 dropdownMenu.classList.add('hidden');
+                 dropdownMenu.classList.remove('flex');
+              }
+           });
+        }
+
+        // Color Palettes Setup
+        const palettes = {
+           classic: { up: "#089981", down: "#F23645", borderUp: "#089981", borderDown: "#F23645" },
+           vibe: { up: "#8B5CF6", down: "#3B82F6", borderUp: "#8B5CF6", borderDown: "#3B82F6" }
+        };
+        let currentPalette = 'classic';
+        let currentType = 'candle';
+        
+        // Helper to apply colors based on palette and type (candle vs hollow)
+        const applyColors = () => {
+           let colors = palettes[currentPalette];
+           
+           // If hollow, body is transparent, borders are colored
+           const isHollow = currentType === 'hollow';
+           
+           this.series.candles.applyOptions({
+              upColor: isHollow ? 'transparent' : colors.up,
+              downColor: isHollow ? 'transparent' : colors.down,
+              borderColor: colors.borderUp,
+              borderUpColor: colors.borderUp,
+              borderDownColor: colors.borderDown,
+              wickUpColor: colors.borderUp,
+              wickDownColor: colors.borderDown,
+           });
+           
+           this.series.bar.applyOptions({
+              upColor: colors.up,
+              downColor: colors.down
+           });
+        };
+
+        // Chart Types Toggle Logic
+        const typeBtns = wrapper.querySelectorAll('.tc-type-btn');
+        typeBtns.forEach(btn => {
+           btn.addEventListener('click', () => {
+              // Update Classes
+              typeBtns.forEach(b => {
+                 b.classList.remove('text-brand', 'bg-brand/5', 'border-brand/20');
+                 b.classList.add('text-slate-500');
+              });
+              btn.classList.add('text-brand', 'bg-brand/5', 'border-brand/20');
+              btn.classList.remove('text-slate-500');
+
+              currentType = btn.dataset.type;
+              
+              // Change outer icon
+              const iconBox = document.getElementById(`tc-current-chart-icon-${chartId}`);
+              if (iconBox) iconBox.innerText = btn.dataset.icon;
+              if (currentType === 'hollow') iconBox.style.fontVariationSettings = "'FILL' 0";
+              else iconBox.style.fontVariationSettings = "'FILL' 1";
+
+              // Activate correct series
+              this.series.candles.applyOptions({ visible: currentType === 'candle' || currentType === 'hollow' });
+              this.series.line.applyOptions({ visible: currentType === 'line' });
+              this.series.area.applyOptions({ visible: currentType === 'area' });
+              this.series.bar.applyOptions({ visible: currentType === 'bar' });
+              
+              // Apply colors to handle hollow transparency transition
+              applyColors();
+           });
+        });
+        
+        // Palette Toggle Logic
+        const colorBtns = wrapper.querySelectorAll('.tc-color-btn');
+        colorBtns.forEach(btn => {
+           btn.addEventListener('click', () => {
+              colorBtns.forEach(b => {
+                 b.classList.remove('bg-brand/5', 'border-brand/20');
+              });
+              btn.classList.add('bg-brand/5', 'border-brand/20');
+              
+              currentPalette = btn.dataset.palette;
+              applyColors();
+           });
+        });
+        
+        const wrap = document.getElementById(`tc-wrapper-${chartId}`);
+        // Fullscreen action
+        const fullBtn = wrap.querySelector('.tc-fullscreen-btn');
+        if (fullBtn) fullBtn.addEventListener('click', () => {
+           if (!document.fullscreenElement) {
+              wrap.requestFullscreen().catch(err => console.log(err));
+           } else {
+              document.exitFullscreen();
+           }
+        });
+        
+        // Screenshot action
+        const picBtn = wrap.querySelector('.tc-screenshot-btn');
+        if (picBtn) picBtn.addEventListener('click', () => {
+           const url = this.chart.takeScreenshot().toDataURL();
+           const a = document.createElement("a");
+           a.href = url;
+           a.download = `coachtrading-chart-<%= symbol %>-${Date.now()}.png`;
+           a.click();
+        });
+
+        // Settings (Toggle Grid Lines) action
+        let gridVisible = true;
+        const setBtn = wrap.querySelector('.tc-settings-btn');
+        if (setBtn) setBtn.addEventListener('click', () => {
+           gridVisible = !gridVisible;
+           this.chart.applyOptions({
+              grid: {
+                  vertLines: { visible: gridVisible, color: isDark ? '#2B2B43' : '#e2e8f0' },
+                  horzLines: { visible: gridVisible, color: isDark ? '#2B2B43' : '#e2e8f0' }
+              }
+           });
+        });
+        
+        // Premium feature Mock Alerts
+        const mockAlertClasses = ['.tc-compare-btn', '.tc-indicators-btn', '.tc-undo-btn', '.tc-redo-btn', '.tc-templates-btn', '.tc-replay-btn'];
+        mockAlertClasses.forEach(cls => {
+           const b = wrap.querySelector(cls);
+           if (b) b.addEventListener('click', () => {
+              if (cls === '.tc-replay-btn') {
+                 window.location = "/backtesting";
+              } else {
+                 alert("Esta funcionalidad se encuentra en desarrollo o requiere un módulo premium vinculado a TradingView UI de pago.");
+              }
+           });
+        });
+
+        // Top Toolbar Mocks
+        const toolbarGroups = document.querySelectorAll(`#tc-wrapper-${chartId} .tc-toolbar-left .flex.items-center`);
+        toolbarGroups.forEach(group => {
+           if(group.classList.contains('tc-timeframes') || group.classList.contains('cursor-pointer')) return;
+           const btns = group.querySelectorAll('button:not(.tc-tf-btn)');
+           btns.forEach(btn => {
+              btn.addEventListener('click', () => {
+                 btns.forEach(b => { 
+                   b.classList.remove('text-brand', 'bg-brand/5', 'border', 'border-brand/10');
+                   b.classList.add('text-slate-500');
+                 });
+                 btn.classList.add('text-brand', 'bg-brand/5', 'border', 'border-brand/10');
+                 btn.classList.remove('text-slate-500');
+              });
+           });
+        });
+
+        // Left Drawing Toolbar Toggles
+        const drawBtns = document.querySelectorAll(`#tc-wrapper-${chartId} .tc-draw-btn`);
+        drawBtns.forEach(btn => {
+           btn.addEventListener('click', () => {
+              drawBtns.forEach(b => b.classList.remove('text-brand', 'bg-brand/10', 'border', 'border-brand/20'));
+              btn.classList.add('text-brand', 'bg-brand/10', 'border', 'border-brand/20');
+           });
+        });
       }
 
       async loadData() {
@@ -389,6 +669,13 @@
 
         // Fill Data
         this.series.candles.setData(data.candles);
+        
+        // Populate alternative series with close/ohlc values
+        const closeValues = data.candles.map(c => ({ time: c.time, value: c.close }));
+        this.series.line.setData(closeValues);
+        this.series.area.setData(closeValues);
+        this.series.bar.setData(data.candles); // Bar and Candle share same OHLC data format
+
         if (data.volume) {
           const coloredVolume = data.volume.map((v, i) => {
             const candle = data.candles.find(c => c.time === v.time) || data.candles[i];
@@ -423,36 +710,105 @@
           });
         }
 
-        // Auto-Zoom out to avoid massive candles if there is little data
-        if (data.candles.length > 50) {
-          this.chart.timeScale().fitContent();
-        } else {
-          // Centrar un poco dando más offset
-          this.chart.timeScale().scrollToPosition(0, false);
-          this.chart.timeScale().applyOptions({ rightOffset: Math.max(10, 50 - data.candles.length) });
-        }      }
+        // Autoencuadre masivo (FASE 1)
+        this.chart.timeScale().fitContent();
 
-      handleCrosshair(param) {
-        if (
-          param.point === undefined ||
-          !param.time ||
-          param.point.x < 0 ||
-          param.point.x > this.container.clientWidth ||
-          param.point.y < 0 ||
-          param.point.y > this.container.clientHeight
-        ) {
-          this.ui.legendOHLC.o.innerText = '---';
-          this.ui.legendOHLC.h.innerText = '---';
-          this.ui.legendOHLC.l.innerText = '---';
-          this.ui.legendOHLC.c.innerText = '---';
-          this.ui.legendOHLC.c.className = "text-slate-700 dark:text-slate-300 ml-1";
-          this.ui.tooltip.style.display = 'none';
-          return;
+        // Inicializamos los marcadores HTML (FASE 2)
+        this.createTradeOverlays(data);
+        
+        // Actualizamos leyenda con la última vela disponible por defecto
+        if (data.candles.length > 0) {
+          const lastC = data.candles[data.candles.length - 1];
+          const lastV = data.volume && data.volume.length > 0 ? data.volume[data.volume.length - 1] : {value: 0};
+          this.updateLegend(lastC, lastV.value, lastC.time);
         }
+      }
 
-        const price = param.seriesData.get(this.series.candles);
-        if (price) {
-          // Legend
+      createTradeOverlays(data) {
+        if(!data || !data.markers || data.markers.length === 0) return;
+        
+        this.overlays = [];
+        const wrap = document.getElementById(`tc-root-${chartId}`);
+        const cSeries = this.series.candles;
+        
+        // Extraemos entry y exit
+        const entry = data.markers.find(m => (m.text||'').includes('ENTRY') || (m.id||'').includes('entry'));
+        const exit = data.markers.find(m => (m.text||'').includes('EXIT') || (m.id||'').includes('exit'));
+        
+        // Color Rojo para Entrada y Azul para Salida según requisito FASE 2
+        
+        // Crear elemento linea vertical gruesa entre puntos si ambos existen
+        if (entry && exit) {
+            const line = document.createElement('div');
+            line.className = 'absolute bg-rose-500 opacity-50 z-[5] pointer-events-none transform -translate-x-1/2';
+            line.style.width = '3px';
+            wrap.appendChild(line);
+            this.overlays.push({ el: line, type: 'line', entry: entry, exit: exit });
+        }
+        
+        // Función util para armar badge HTML
+        const createBadge = (marker, isEntry) => {
+           const badge = document.createElement('div');
+           badge.className = `absolute z-10 font-sans font-bold text-[11px] text-white px-2 py-0.5 rounded shadow-sm flex items-center gap-1 cursor-default select-none pointer-events-none transform -translate-x-1/2 break-none whitespace-nowrap ${isEntry ? 'bg-rose-500' : 'bg-blue-600'}`;
+           // Parse "qty @ price" from text or default
+           let price = "0.00";
+           let qty = null;
+           let mText = marker.text || "";
+           let pts = mText.split(' ');
+           if(pts.length > 2) { qty = pts[0]; price = pts[pts.length-1]; } 
+           else { price = mText.replace(/[^0-9.]/g, '') || marker.price.toFixed(this.precision) || '0.00'; }
+           
+           badge.innerText = qty ? `${qty} @ ${price}` : `@ ${price}`;
+           wrap.appendChild(badge);
+           this.overlays.push({ el: badge, type: 'badge', marker: marker, isEntry: isEntry });
+        };
+        
+        if (entry) createBadge(entry, true);
+        if (exit) createBadge(exit, false);
+      }
+
+      updateOverlays() {
+        if(!this.overlays || this.overlays.length === 0) return;
+        const ts = this.chart.timeScale();
+        const ps = this.series.candles.priceScale();
+        
+        this.overlays.forEach(ov => {
+           if (ov.type === 'badge') {
+              const x = ts.timeToCoordinate(ov.marker.time);
+              const y = ps.priceToCoordinate(ov.marker.price);
+              if(x && y) {
+                 ov.el.style.left = x + 'px';
+                 // Desplazar verticalmente para no pisar la vela directamente
+                 ov.el.style.top = (ov.isEntry ? (y + 15) : (y - 30)) + 'px';
+                 ov.el.style.display = 'flex';
+              } else {
+                 ov.el.style.display = 'none';
+              }
+           } else if (ov.type === 'line') {
+              const x1 = ts.timeToCoordinate(ov.entry.time);
+              const x2 = ts.timeToCoordinate(ov.exit.time);
+              const y1 = ps.priceToCoordinate(ov.entry.price);
+              const y2 = ps.priceToCoordinate(ov.exit.price);
+              
+              if(x1 && x2 && y1 && y2) {
+                 const length = Math.sqrt(Math.pow(x2-x1, 2) + Math.pow(y2-y1, 2));
+                 const angle = Math.atan2(y2-y1, x2-x1) * 180 / Math.PI;
+                 
+                 ov.el.style.left = x1 + 'px';
+                 ov.el.style.top = y1 + 'px';
+                 ov.el.style.height = '3px';
+                 ov.el.style.width = length + 'px';
+                 ov.el.style.transformOrigin = '0 0';
+                 ov.el.style.transform = `rotate(${angle}deg) translate(0, -50%)`;
+                 ov.el.style.display = 'block';
+              } else {
+                 ov.el.style.display = 'none';
+              }
+           }
+        });
+      }
+
+      updateLegend(price, volume, time) {
           this.ui.legendOHLC.o.innerText = price.open.toFixed(this.precision);
           this.ui.legendOHLC.h.innerText = price.high.toFixed(this.precision);
           this.ui.legendOHLC.l.innerText = price.low.toFixed(this.precision);
@@ -460,36 +816,30 @@
           
           let colorClass = price.close >= price.open ? 'text-emerald-500' : 'text-rose-500';
           this.ui.legendOHLC.c.className = `ml-1 font-bold ${colorClass}`;
-          
-          // Tooltip
-          const dateStr = new Date(param.time * 1000).toLocaleString(undefined, {
-            month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-          });
 
-          let html = `
-            <div class="font-bold mb-1.5 border-b border-slate-700 pb-1.5 text-[11px] text-slate-300">${dateStr}</div>
-            <div class="grid grid-cols-2 gap-x-2 gap-y-1 font-mono text-[10px]">
-              <div><span class="text-slate-500">O:</span> <span class="font-bold">${price.open.toFixed(this.precision)}</span></div>
-              <div><span class="text-slate-500">H:</span> <span class="font-bold">${price.high.toFixed(this.precision)}</span></div>
-              <div><span class="text-slate-500">L:</span> <span class="font-bold">${price.low.toFixed(this.precision)}</span></div>
-              <div><span class="text-slate-500">C:</span> <span class="font-bold ${colorClass}">${price.close.toFixed(this.precision)}</span></div>
-            </div>
-          `;
-          
-          const volData = param.seriesData.get(this.series.volume);
-          if (volData) {
-            html += `<div class="mt-1.5 pt-1.5 border-t border-slate-700/80 font-mono text-[10px]"><span class="text-slate-500">Vol:</span> <span class="font-bold text-slate-200">${volData.value}</span></div>`;
+          if(volume !== undefined) {
+             let fVol = volume >= 1000000 ? (volume/1000000).toFixed(1) + 'M' : (volume >= 1000 ? (volume/1000).toFixed(1) + 'K' : volume);
+             this.ui.legendOHLC.vol.innerText = fVol;
           }
 
-          this.ui.tooltip.innerHTML = html;
-          this.ui.tooltip.style.display = 'block';
-          
-          // Position Tooltip
-          const ttW = 160;
-          let left = param.point.x;
-          if (left > this.container.clientWidth - ttW) left = param.point.x - ttW; // avoid right overflow
-          this.ui.tooltip.style.left = left + 'px';
-          this.ui.tooltip.style.top = (param.point.y - 15) + 'px';
+          if (time) {
+            const dateObj = new Date(time * 1000);
+            this.ui.legendOHLC.time.innerText = dateObj.toLocaleString('en-CA', { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', hour12: false}).replace(',','');
+          }
+      }
+
+      handleCrosshair(param) {
+        if (!param.point || !param.time) {
+          // Restore to null / --- is handled implicitly, but wait, criteria says "siempre con datos (defecto ultima)". 
+          // We won't clear it, we keep last data.
+          return;
+        }
+
+        const price = param.seriesData.get(this.series.candles);
+        const volData = param.seriesData.get(this.series.volume);
+        
+        if (price) {
+          this.updateLegend(price, volData ? volData.value : 0, param.time);
         }
       }
 

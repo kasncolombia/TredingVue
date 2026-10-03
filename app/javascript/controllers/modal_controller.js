@@ -10,8 +10,13 @@ export default class extends Controller {
     // Asignar funciones globales para compatibilidad retroactiva si algún botón usa onclick inline
     if (this.element.id) {
       const modalId = this.element.id
+      const camelCaseId = modalId.replace(/-([a-z])/g, (_, g) => g.toUpperCase())
+      const pascalCaseId = camelCaseId.charAt(0).toUpperCase() + camelCaseId.slice(1)
+
       window[`open_${modalId}`] = () => this.open()
       window[`close_${modalId}`] = () => this.close()
+      window[`open${pascalCaseId}`] = () => this.open()
+      window[`close${pascalCaseId}`] = () => this.close()
     }
   }
 

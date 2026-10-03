@@ -59,14 +59,14 @@
     </div>
   </div>
 
-  <!-- FILA 1: KPI CARDS TOPBAR INTEGRADA -->
+  <!-- FILA 1: KPI CARDS TOPBAR INTEGRADA (ESTILO STRATONK EXACTO A IMAGEN) -->
   <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
       
     <!-- Balance & P&L -->
     <div class="dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 rounded-2xl p-4 flex flex-col justify-between relative overflow-hidden shadow-xs">
       <div class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider dark:text-white text-slate-800 z-10 relative">
         <span class="w-1 h-3.5 bg-emerald-400 rounded-full shrink-0"></span>
-        <span class="dark:text-white text-slate-800 font-bold">BALANCE & P&L</span>
+        <span class="dark:text-white text-slate-800 font-bold font-['League_Spartan']">BALANCE & P&L</span>
         <span class="material-symbols-outlined text-[14px] dark:text-[#40453e] text-slate-400 cursor-pointer ml-auto" title="Información sobre Balance y P&L">info</span>
       </div>
       <div class="z-10 relative flex justify-between items-end mt-4">
@@ -91,12 +91,14 @@
     <!-- Trade Win % -->
     <div class="dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 rounded-2xl p-4 relative overflow-hidden shadow-xs">
       <div class="grid grid-cols-2 gap-2" style="min-height:110px">
+        <!-- Columna izquierda (50%): título + valor + badges -->
         <div class="flex flex-col min-w-0">
           <div class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider mb-2 text-slate-800 dark:text-white relative">
             <span class="w-1 h-3.5 bg-indigo-500 rounded-full shrink-0"></span>
             <span class="font-bold truncate font-['League_Spartan']">TRADE WIN %</span>
             <span class="material-symbols-outlined text-[14px] dark:text-[#40453e] text-slate-400 cursor-pointer ml-auto shrink-0" title="Porcentaje de operaciones ganadoras">info</span>
           </div>
+
           <div class="flex flex-col justify-center flex-1">
             <p class="text-[32px] md:text-[36px] font-semibold tracking-[-0.025em] tabular-nums dark:text-white text-slate-900 leading-none font-['League_Spartan']"><%= @stats[:win_rate] %>%</p>
             <div class="flex items-center gap-1.5 mt-3">
@@ -106,69 +108,79 @@
             </div>
           </div>
         </div>
-        <div class="flex items-center justify-end relative h-full">
-          <div id="sparkline-winrate" data-dashboard-charts-target="sparkWinRate" class="w-[110px] h-[95px]"></div>
+
+        <!-- Columna derecha (50%): gráfico centrado -->
+        <div class="flex items-center justify-center min-w-0 self-stretch">
+          <div id="sparkline-winrate" data-dashboard-charts-target="sparkWinRate" class="w-full h-full flex items-center justify-center" style="min-height:90px"></div>
         </div>
       </div>
     </div>
 
     <!-- Profit Factor -->
-    <div class="dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 rounded-2xl p-4 flex flex-col justify-between relative overflow-hidden shadow-xs">
-      <div class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider dark:text-white text-slate-800 z-10 relative">
-        <span class="w-1 h-3.5 bg-brand rounded-full shrink-0"></span>
-        <span class="font-bold">PROFIT FACTOR</span>
-        <span class="material-symbols-outlined text-[14px] dark:text-[#40453e] text-slate-400 cursor-pointer ml-auto" title="Relación Ganancias Totales / Pérdidas Totales">info</span>
-      </div>
-      <div class="z-10 relative flex justify-between items-end mt-4">
-        <div>
-          <p class="text-[32px] md:text-[36px] font-semibold tracking-[-0.025em] leading-none tabular-nums dark:text-white text-slate-900 font-['League_Spartan']">
-            <%= number_with_precision(@stats[:profit_factor], precision: 2) %>
-          </p>
-          <div class="mt-3">
-            <span class="text-xs font-medium text-slate-400">Objetivo &gt; 1.5</span>
+    <div class="dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 rounded-2xl p-4 relative overflow-hidden shadow-xs">
+      <div class="grid grid-cols-2 gap-2" style="min-height:110px">
+        <!-- Columna izquierda (50%): título + valor -->
+        <div class="flex flex-col min-w-0">
+          <div class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider mb-2 text-slate-800 dark:text-white relative">
+            <span class="w-1 h-3.5 bg-indigo-500 rounded-full shrink-0"></span>
+            <span class="font-bold truncate font-['League_Spartan']">PROFIT FACTOR</span>
+            <span class="material-symbols-outlined text-[14px] dark:text-[#40453e] text-slate-400 cursor-pointer ml-auto shrink-0" title="Ratio Beneficio / Pérdida">info</span>
+          </div>
+          <div class="flex flex-col justify-center flex-1">
+            <p class="text-[32px] md:text-[36px] font-semibold tracking-[-0.025em] tabular-nums dark:text-white text-slate-900 leading-none font-['League_Spartan']"><%= number_with_precision(@stats[:profit_factor], precision: 2) %></p>
           </div>
         </div>
-        <div id="sparkline-pf" data-dashboard-charts-target="sparkPf" class="w-[60px] h-[60px]"></div>
+        <!-- Columna derecha (50%): gráfico centrado -->
+        <div class="flex items-center justify-center min-w-0 self-stretch">
+          <div id="sparkline-pf" data-dashboard-charts-target="sparkPf" class="w-full h-full flex items-center justify-center" style="min-height:90px"></div>
+        </div>
       </div>
     </div>
 
     <!-- Avg Win / Loss -->
-    <div class="dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 rounded-2xl p-4 flex flex-col justify-between relative overflow-hidden shadow-xs">
-      <div class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider dark:text-white text-slate-800 z-10 relative">
-        <span class="w-1 h-3.5 bg-sky-500 rounded-full shrink-0"></span>
-        <span class="font-bold">AVG WIN / LOSS</span>
-        <span class="material-symbols-outlined text-[14px] dark:text-[#40453e] text-slate-400 cursor-pointer ml-auto" title="Promedio de Ganancia vs Promedio de Pérdida">info</span>
-      </div>
-      <div class="z-10 relative flex flex-col justify-end mt-3 space-y-2">
-        <div class="flex items-center justify-between text-xs font-mono font-bold">
-          <span class="text-emerald-500 dark:text-emerald-400">+$<%= number_with_precision(@stats[:avg_win], precision: 2) %></span>
-          <span class="text-rose-500 dark:text-rose-400">-$<%= number_with_precision(@stats[:avg_loss].abs, precision: 2) %></span>
+    <div class="dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 rounded-2xl p-4 relative overflow-hidden shadow-xs">
+      <div class="grid grid-cols-2 gap-2" style="min-height:110px">
+        <!-- Columna izquierda (50%): título + valor + promedios -->
+        <div class="flex flex-col min-w-0">
+          <div class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider mb-2 text-slate-800 dark:text-white relative">
+            <span class="w-1 h-3.5 bg-indigo-500 rounded-full shrink-0"></span>
+            <span class="font-bold truncate font-['League_Spartan']">AVG WIN/LOSS</span>
+            <span class="material-symbols-outlined text-[14px] dark:text-[#40453e] text-slate-400 cursor-pointer ml-auto shrink-0" title="Promedio Ganadora vs Perdedora">info</span>
+          </div>
+
+          <div class="flex flex-col justify-center flex-1">
+            <p class="text-[32px] md:text-[36px] font-semibold tracking-[-0.025em] tabular-nums dark:text-white text-slate-900 leading-none font-['League_Spartan']"><%= number_with_precision(@stats[:rr_ratio], precision: 2) %> R</p>
+            <div class="flex items-center gap-2 text-[10px] font-mono mt-2">
+              <span class="text-emerald-600 dark:text-emerald-400 font-bold">+$<%= number_with_precision(@stats[:avg_win], precision: 0) %></span>
+              <span class="text-rose-600 dark:text-rose-500 font-bold">-$<%= number_with_precision(@stats[:avg_loss].to_f.abs, precision: 0) %></span>
+            </div>
+          </div>
         </div>
-        <div id="sparkline-avg" data-dashboard-charts-target="sparkAvg" class="w-full h-[20px]"></div>
+
+        <!-- Columna derecha (50%): gráfico centrado -->
+        <div class="flex items-center justify-center min-w-0 self-stretch">
+          <div id="sparkline-avg" data-dashboard-charts-target="sparkAvg" class="w-full h-full flex items-center justify-center" style="min-height:90px"></div>
+        </div>
       </div>
     </div>
 
-    <!-- RR Ratio -->
-    <div class="dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 rounded-2xl p-4 flex flex-col justify-between relative overflow-hidden shadow-xs">
-      <div class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider dark:text-white text-slate-800 z-10 relative">
-        <span class="w-1 h-3.5 bg-amber-500 rounded-full shrink-0"></span>
-        <span class="font-bold">AVG RR RATIO</span>
-        <span class="material-symbols-outlined text-[14px] dark:text-[#40453e] text-slate-400 cursor-pointer ml-auto" title="Ratio Riesgo / Beneficio promedio">info</span>
+    <!-- Trade Expectancy -->
+    <div class="dark:bg-[#181818] bg-white border dark:border-[#1d1d1d] border-slate-200 rounded-2xl p-4 flex flex-col justify-between shadow-xs">
+      <div class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider dark:text-white text-slate-800 relative z-10">
+        <span class="w-1 h-3.5 bg-emerald-400 rounded-full"></span>
+        <span class="font-bold font-['League_Spartan']">EXPECTANCY</span>
+        <span class="material-symbols-outlined text-[14px] dark:text-[#40453e] text-slate-400 cursor-pointer ml-auto shrink-0" title="Esperanza matemática por trade">info</span>
       </div>
-      <div class="z-10 relative flex justify-between items-end mt-4">
-        <div>
-          <p class="text-[32px] md:text-[36px] font-semibold tracking-[-0.025em] leading-none tabular-nums dark:text-white text-slate-900 font-['League_Spartan']">
-            <%= number_with_precision(@stats[:rr_ratio], precision: 2) %>R
-          </p>
-          <div class="mt-3">
-            <span class="text-xs font-medium text-slate-400">Expectativa Positiva</span>
-          </div>
-        </div>
-        <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center font-bold text-sm">1:<%= number_with_precision(@stats[:rr_ratio], precision: 1) %></div>
+      <div class="mt-4">
+        <p class="text-[32px] md:text-[36px] font-semibold tracking-[-0.025em] tabular-nums font-['League_Spartan'] leading-none <%= @stats[:expectancy].to_f >= 0 ? 'text-emerald-500 dark:text-emerald-400' : 'text-rose-500 dark:text-rose-400' %>">
+          <%= @stats[:expectancy].to_f >= 0 ? '+' : '' %>$<%= number_with_precision(@stats[:expectancy].to_f, precision: 2) %>
+        </p>
+        <p class="text-[11px] dark:text-[#7a7a85] text-slate-500 mt-2 font-medium">Por operación</p>
       </div>
     </div>
 
   </div>
+
 
   <!-- WRAPPER 3X2 (BENTO GRID REORGANIZADO) -->
   <div id="layout-wrapper-3x2" data-dashboard-charts-target="layoutWrapper3x2">

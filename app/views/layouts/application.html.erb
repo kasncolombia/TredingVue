@@ -66,6 +66,20 @@
           sans:    ["'League Spartan'", "sans-serif"],
           mono:    ["JetBrains Mono", "monospace"],
           heading: ["'League Spartan'", "sans-serif"]
+        },
+        fontSize: {
+          'xs': ['13px', '18px'],
+          'sm': ['14px', '20px'],
+          'base': ['16px', '24px'],
+          'lg': ['18px', '28px'],
+          'xl': ['20px', '28px'],
+          '2xl': ['24px', '32px'],
+          "label":   ["12px", { lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "700" }],
+          "caption": ["14px", "20px"],
+          "body":    ["16px", "24px"],
+          "body-lg": ["18px", "28px"],
+          "title":   ["28px", { lineHeight: "36px", fontWeight: "800" }],
+          "kpi":     ["32px", { lineHeight: "38px", fontWeight: "800" }]
         }
       }}
     }
@@ -192,9 +206,9 @@
        SIDEBAR NAV ITEM
     ────────────────────────────────────────── */
     .nav-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 9px 12px; border-radius: 12px;
-      font-size: 13px; font-weight: 500;
+      display: flex; align-items: center; gap: 12px;
+      padding: 0 12px; height: 40px; border-radius: 12px;
+      font-size: 14px; font-weight: 500;
       transition: all .2s ease; text-decoration: none;
     }
     .nav-item .material-symbols-outlined { font-size: 18px; }
@@ -345,7 +359,7 @@
             <span class="material-symbols-outlined flex-shrink-0" style="font-size:18px"><%= item[:icon] %></span>
             <span class="flex-1 truncate"><%= item[:label] %></span>
             <% if item[:count] %>
-              <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold <%= active ? 'bg-white/20 text-white' : 'bg-brand/15 text-brand dark:text-brand-light' %>"><%= item[:count] %></span>
+              <span class="text-label px-2 py-0.5 rounded-full font-bold <%= active ? 'bg-white/20 text-white' : 'bg-brand/15 text-brand dark:text-brand-light' %>"><%= item[:count] %></span>
             <% end %>
           </a>
         <% end %>
@@ -514,7 +528,7 @@
     </div>
 
     <!-- TRIGGER BUTTON -->
-    <button onclick="toggleFloatingCoach()" class="px-3.5 py-2.5 rounded-2xl bg-brand text-white shadow-xl glow-brand hover:scale-105 active:scale-95 transition-all duration-200 flex items-center gap-2 font-bold text-xs group border border-brand-light/20">
+    <button onclick="toggleFloatingCoach()" class="px-4 h-10 rounded-2xl bg-brand text-white shadow-xl glow-brand hover:scale-105 active:scale-95 transition-all duration-200 flex items-center gap-2 font-bold text-body group border border-brand-light/20">
       <span class="material-symbols-outlined text-[18px] group-hover:rotate-12 transition-transform">smart_toy</span>
       <span class="hidden sm:inline font-semibold">AI Coach</span>
       <span class="w-2 h-2 rounded-full bg-accent-green animate-pulse"></span>

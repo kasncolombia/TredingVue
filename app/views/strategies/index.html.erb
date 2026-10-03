@@ -6,14 +6,14 @@
   <div class="glass rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
     <div>
       <div class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-brand text-[22px]">strategy</span>
-        <h2 class="text-lg font-black dark:text-white text-slate-800">Catálogo de Estrategias y Setups</h2>
+        <span class="material-symbols-outlined text-brand text-[28px]">strategy</span>
+        <h2 class="text-title font-black dark:text-white text-slate-800">Catálogo de Estrategias y Setups</h2>
       </div>
-      <p class="text-xs text-slate-400 mt-0.5">Analiza la rentabilidad individual de tus reglas de entrada</p>
+      <p class="text-body text-slate-400 mt-0.5">Analiza la rentabilidad individual de tus reglas de entrada</p>
     </div>
 
-    <%= link_to new_strategy_path, class: "px-4 py-2 bg-brand hover:bg-brand-hover text-white text-xs font-bold rounded-xl glow-brand transition-all flex items-center gap-1.5 shrink-0" do %>
-      <span class="material-symbols-outlined text-[16px]">add</span>
+    <%= link_to new_strategy_path, class: "px-4 h-10 bg-brand hover:bg-brand-hover text-white text-body font-bold rounded-xl glow-brand transition-all flex items-center justify-center gap-1.5 shrink-0" do %>
+      <span class="material-symbols-outlined text-[18px]">add</span>
       <span>Nueva Estrategia</span>
     <% end %>
   </div>
@@ -26,35 +26,35 @@
           <span class="material-symbols-outlined text-[20px]">menu_book</span>
         </div>
         <div>
-          <h3 class="text-sm font-bold dark:text-white text-slate-800">Glosario Formativo para Nuevos Traders</h3>
-          <p class="text-[11px] text-slate-500">Expande esto si necesitas inspiración para categorizar tus estrategias.</p>
+        <h3 class="text-title font-bold dark:text-white text-slate-800">Glosario Formativo para Nuevos Traders</h3>
+          <p class="text-body text-slate-500 mt-0.5">Expande esto si necesitas inspiración para categorizar tus estrategias.</p>
         </div>
       </div>
       <div class="w-8 h-8 rounded-full bg-slate-200/50 dark:bg-darkInput flex items-center justify-center text-slate-500 transition-transform duration-300 group-open:rotate-180 shrink-0">
-        <span class="material-symbols-outlined text-[18px]">keyboard_arrow_down</span>
+        <span class="material-symbols-outlined text-[20px]">keyboard_arrow_down</span>
       </div>
     </summary>
     
     <div class="p-6 pt-2 border-t dark:border-darkBorder border-lightBorder mt-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 bg-slate-50/50 dark:bg-[#101221]/50">
       <div>
-        <h4 class="text-[13px] font-black text-brand mb-1.5 flex items-center gap-1.5"><span class="text-[14px]">🚀</span> Breakout (Ruptura)</h4>
-        <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">El estilo agresivo. Buscas entrar justo en la explosión de precio (con alto volumen) cuando el mercado logra escapar de un rectángulo pasivo o rango de consolidación.</p>
+        <h4 class="text-body-lg font-black text-brand mb-1.5 flex items-center gap-1.5"><span class="text-[18px]">🚀</span> Breakout (Ruptura)</h4>
+        <p class="text-body text-slate-500 dark:text-slate-400 leading-relaxed">El estilo agresivo. Buscas entrar justo en la explosión de precio (con alto volumen) cuando el mercado logra escapar de un rectángulo pasivo o rango de consolidación.</p>
       </div>
       <div>
-        <h4 class="text-[13px] font-black text-indigo-500 mb-1.5 flex items-center gap-1.5"><span class="text-[14px]">🎯</span> ICT Silver Bullet</h4>
-        <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Institucional moderno. Operas solo en ventanas precisas de tiempo (Ej: 10am NY), cazando pisadas de algoritmos institucionales y huecos "Fair Value Gaps".</p>
+        <h4 class="text-body-lg font-black text-indigo-500 mb-1.5 flex items-center gap-1.5"><span class="text-[18px]">🎯</span> ICT Silver Bullet</h4>
+        <p class="text-body text-slate-500 dark:text-slate-400 leading-relaxed">Institucional moderno. Operas solo en ventanas precisas de tiempo (Ej: 10am NY), cazando pisadas de algoritmos institucionales y huecos "Fair Value Gaps".</p>
       </div>
       <div>
-        <h4 class="text-[13px] font-black text-rose-500 mb-1.5 flex items-center gap-1.5"><span class="text-[14px]">🪃</span> Reversal / Sweeps</h4>
-        <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Dejas que el mercado engañe a la mayoría barriendo la liquidez de altos o bajos muy obvios, y entras a favor de la trampa en reversión.</p>
+        <h4 class="text-body-lg font-black text-rose-500 mb-1.5 flex items-center gap-1.5"><span class="text-[18px]">🪃</span> Reversal / Sweeps</h4>
+        <p class="text-body text-slate-500 dark:text-slate-400 leading-relaxed">Dejas que el mercado engañe a la mayoría barriendo la liquidez de altos o bajos muy obvios, y entras a favor de la trampa en reversión.</p>
       </div>
       <div>
-        <h4 class="text-[13px] font-black text-amber-500 mb-1.5 flex items-center gap-1.5"><span class="text-[14px]">⏱️</span> Scalping Corto (5m)</h4>
-        <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Velocidad pura. Entrar y salir en cuestión de minutos, llevándote rasguños de ganancia con alta frecuencia. ¡Cuidado con el overtrading psicológico!</p>
+        <h4 class="text-body-lg font-black text-amber-500 mb-1.5 flex items-center gap-1.5"><span class="text-[18px]">⏱️</span> Scalping Corto (5m)</h4>
+        <p class="text-body text-slate-500 dark:text-slate-400 leading-relaxed">Velocidad pura. Entrar y salir en cuestión de minutos, llevándote rasguños de ganancia con alta frecuencia. ¡Cuidado con el overtrading psicológico!</p>
       </div>
       <div class="md:col-span-2 lg:col-span-1">
-        <h4 class="text-[13px] font-black text-emerald-500 mb-1.5 flex items-center gap-1.5"><span class="text-[14px]">🌊</span> Trend Following</h4>
-        <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">La tendencia es tu amiga. Ignoras el ruido, te amparas en medias móviles (EMAs) y surfeas la dirección general y obvia sin pelear contra el mercado a contracorriente.</p>
+        <h4 class="text-body-lg font-black text-emerald-500 mb-1.5 flex items-center gap-1.5"><span class="text-[18px]">🌊</span> Trend Following</h4>
+        <p class="text-body text-slate-500 dark:text-slate-400 leading-relaxed">La tendencia es tu amiga. Ignoras el ruido, te amparas en medias móviles (EMAs) y surfeas la dirección general y obvia sin pelear contra el mercado a contracorriente.</p>
       </div>
     </div>
   </details>
@@ -76,41 +76,41 @@
         %>
         <div class="glass rounded-3xl p-6 space-y-4 flex flex-col justify-between border hover:border-brand/40 transition-all group">
           <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-brand/10 text-brand border border-brand/20">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-label px-2.5 py-1 rounded-full bg-brand/10 text-brand border border-brand/20">
                 <%= st.market.presence || "Cualquier Mercado" %>
               </span>
-              <span class="text-xs font-bold font-mono px-2.5 py-1 rounded-full <%= st_pnl >= 0 ? 'bg-accent-green/10 text-accent-green border border-accent-green/20' : 'bg-loss/10 text-loss border border-loss/20' %>">
+              <span class="text-label font-mono px-2.5 py-1 rounded-full <%= st_pnl >= 0 ? 'bg-accent-green/10 text-accent-green border border-accent-green/20' : 'bg-loss/10 text-loss border border-loss/20' %>">
                 <%= st_pnl >= 0 ? '+' : '' %>$<%= number_with_precision(st_pnl, precision: 2) %>
               </span>
             </div>
 
-            <h3 class="text-base font-extrabold dark:text-white text-slate-900 group-hover:text-brand transition-colors"><%= st.name %></h3>
-            <p class="text-xs text-slate-400 mt-1 line-clamp-2 min-h-[2.5rem]"><%= st.description.presence || "Sin descripción de setup." %></p>
+            <h3 class="text-title font-extrabold dark:text-white text-slate-900 group-hover:text-brand transition-colors"><%= st.name %></h3>
+            <p class="text-body text-slate-400 mt-1 line-clamp-2 min-h-[2.5rem]"><%= st.description.presence || "Sin descripción de setup." %></p>
           </div>
 
           <!-- ANALYTICS MINI-DASHBOARD -->
-          <div class="grid grid-cols-2 gap-2 text-center text-xs pt-3 border-t dark:border-darkBorder border-lightBorder relative">
+          <div class="grid grid-cols-2 gap-2 text-center text-body pt-3 border-t dark:border-darkBorder border-lightBorder relative">
             <div class="p-2.5 rounded-xl dark:bg-darkInput bg-slate-50 flex flex-col justify-between">
-              <p class="text-[10px] text-slate-400 mb-1">Win Rate</p>
-              <p class="font-black text-brand text-sm font-mono"><%= st_wr %>%</p>
+              <p class="text-label text-slate-400 mb-1">Win Rate</p>
+              <p class="font-black text-brand text-title font-mono"><%= st_wr %>%</p>
             </div>
             <div class="p-2.5 rounded-xl dark:bg-darkInput bg-slate-50 flex flex-col justify-between">
-              <p class="text-[10px] text-slate-400 mb-1">Profit Factor</p>
-              <p class="font-black font-mono text-sm <%= st_pf >= 1.5 ? 'text-accent-green' : (st_pf >= 1.0 ? 'text-amber-500' : 'text-loss') %>">
+              <p class="text-label text-slate-400 mb-1">Profit Factor</p>
+              <p class="font-black font-mono text-title <%= st_pf >= 1.5 ? 'text-accent-green' : (st_pf >= 1.0 ? 'text-amber-500' : 'text-loss') %>">
                 <%= st_pf %>
               </p>
             </div>
             <div class="col-span-2 p-2 rounded-xl border border-dashed dark:border-darkBorder border-slate-200 text-slate-500 dark:text-slate-400 flex items-center justify-center gap-2">
-              <span class="material-symbols-outlined text-[14px]">timeline</span>
-              <span class="font-bold"><%= st_total %> Operaciones Testeadas</span>
+              <span class="material-symbols-outlined text-[18px]">timeline</span>
+              <span class="font-bold text-body"><%= st_total %> Operaciones Testeadas</span>
             </div>
           </div>
 
           <!-- ACTIONS BAR -->
           <div class="flex items-center justify-between pt-2 border-t dark:border-darkBorder/50 border-lightBorder/50 mt-2">
-            <%= link_to trades_path(strategy_id: st.id), class: "text-[11px] font-bold text-brand hover:text-white hover:bg-brand px-3 py-1.5 rounded-xl border border-brand/20 transition-all flex items-center gap-1.5" do %>
-              <span class="material-symbols-outlined text-[15px]">filter_alt</span> Filtrar Trades
+            <%= link_to trades_path(strategy_id: st.id), class: "text-label font-bold text-brand hover:text-white hover:bg-brand px-3 py-1.5 rounded-xl border border-brand/20 transition-all flex items-center gap-1.5" do %>
+              <span class="material-symbols-outlined text-[16px]">filter_alt</span> Filtrar Trades
             <% end %>
             <div class="flex items-center gap-1">
               <%= link_to edit_strategy_path(st), class: "p-1.5 rounded-lg dark:text-slate-400 text-slate-600 hover:text-brand hover:bg-brand/10 transition-all", title: "Editar" do %>

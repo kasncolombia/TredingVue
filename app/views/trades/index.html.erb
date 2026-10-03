@@ -3,7 +3,12 @@
   <span class="px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-brand/10 text-brand border border-brand/20"><%= @trades.size %> trades</span>
 <% end %>
 
-<div class="space-y-5 fade-in">
+<div class="space-y-5 fade-in w-full max-w-none">
+  <!-- TÍTULO DE PÁGINA -->
+  <div class="flex items-center justify-between mb-4 mt-2">
+    <h1 class="text-title text-slate-900 dark:text-white">Trades</h1>
+  </div>
+
 
   <!-- MINI-KPIs (MOBILE SLIDER) -->
   <div class="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 scrollbar-hide sm:grid sm:grid-cols-2 md:grid-cols-4 sm:gap-4 sm:overflow-visible sm:pb-0">
@@ -13,23 +18,23 @@
       { label: "Profit Factor", tooltip: "Factor de Beneficio: Monto ganado por cada dólar perdido. Todo valor superior a 1 implica que la cuenta crece.", value: @stats[:profit_factor].to_s, color: 'dark:text-white text-slate-800', icon: "balance" },
       { label: "Resultados W/L", tooltip: "Distribución exacta de victorias (W: Wins) frente a bates fallidos/derrotas (L: Losses)", value: "#{@stats[:wins_count]}W / #{@stats[:losses_count]}L", color: 'dark:text-white text-slate-800', icon: "equalizer" },
     ].each do |kpi| %>
-      <div class="stat-card rounded-2xl px-4 py-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 min-w-[160px] sm:min-w-0 snap-start flex-shrink-0 sm:flex-shrink">
-        <div>
-          <div class="flex items-center gap-1 mb-0.5">
-            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider"><%= kpi[:label] %></p>
+      <div class="stat-card rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 min-w-[160px] sm:min-w-0 snap-start flex-shrink-0 sm:flex-shrink" style="min-height: 112px;">
+        <div class="flex flex-col justify-between h-full">
+          <div class="flex items-center gap-1 mb-2">
+            <p class="text-label text-slate-400 font-bold uppercase tracking-wider"><%= kpi[:label] %></p>
             <div class="relative group flex items-center">
               <span class="material-symbols-outlined text-[14px] text-slate-400 cursor-help group-hover:text-brand transition-colors">info</span>
               
               <!-- Custom Tooltip -->
-              <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2.5 dark:bg-[#1A1D2D] bg-slate-800 border dark:border-[#2A2E45] border-slate-700 rounded-xl text-white text-[11px] font-normal normal-case leading-snug opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100] shadow-2xl text-center pointer-events-none">
+              <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2.5 dark:bg-[#1A1D2D] bg-slate-800 border dark:border-[#2A2E45] border-slate-700 rounded-xl text-white text-caption font-normal normal-case leading-snug opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100] shadow-2xl text-center pointer-events-none">
                 <%= kpi[:tooltip] %>
                 <div class="absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent dark:border-t-[#1A1D2D] border-t-slate-900 drop-shadow-md"></div>
               </div>
             </div>
           </div>
-          <p class="text-lg font-black font-mono <%= kpi[:color] %>"><%= kpi[:value] %></p>
+          <p class="text-kpi font-black font-mono <%= kpi[:color] %> mt-auto"><%= kpi[:value] %></p>
         </div>
-        <div class="w-8 h-8 rounded-xl bg-brand/10 text-brand flex items-center justify-center">
+        <div class="w-9 h-9 shrink-0 rounded-xl bg-brand/10 text-brand flex items-center justify-center self-start sm:self-auto">
           <span class="material-symbols-outlined text-[18px]"><%= kpi[:icon] %></span>
         </div>
       </div>
@@ -45,15 +50,15 @@
         
         <!-- ZONA DE INPUTS SCROLLABLE -->
         <div class="flex overflow-x-auto snap-x snap-mandatory gap-2 pb-1 sm:pb-0 w-full scrollbar-hide">
-          <%= f.text_field :symbol, placeholder: "Símbolo (BTC)", value: params[:symbol], class: "input-field px-4 py-2.5 rounded-xl text-xs focus:outline-none min-w-[120px] snap-start shrink-0 h-10" %>
-          <%= f.select :direction, [["Dirección", ""], ["LONG", "LONG"], ["SHORT", "SHORT"]], { selected: params[:direction] }, class: "input-field px-4 py-2.5 rounded-xl text-xs focus:outline-none min-w-[110px] snap-start shrink-0 h-10" %>
-          <%= f.select :result, [["Resultado", ""], ["WIN", "WIN"], ["LOSS", "LOSS"], ["BREAKEVEN", "BREAKEVEN"]], { selected: params[:result] }, class: "input-field px-4 py-2.5 rounded-xl text-xs focus:outline-none min-w-[110px] snap-start shrink-0 h-10" %>
-          <%= f.collection_select :strategy_id, current_user.strategies, :id, :name, { prompt: "Estrategia", selected: params[:strategy_id] }, class: "input-field px-4 py-2.5 rounded-xl text-xs focus:outline-none min-w-[130px] snap-start shrink-0 h-10" %>
+          <%= f.text_field :symbol, placeholder: "Símbolo (BTC)", value: params[:symbol], class: "input-field px-4 rounded-xl text-[13px] md:text-body focus:outline-none min-w-[120px] snap-start shrink-0 h-10" %>
+          <%= f.select :direction, [["Dirección", ""], ["LONG", "LONG"], ["SHORT", "SHORT"]], { selected: params[:direction] }, class: "input-field px-4 rounded-xl text-[13px] md:text-body focus:outline-none min-w-[110px] snap-start shrink-0 h-10" %>
+          <%= f.select :result, [["Resultado", ""], ["WIN", "WIN"], ["LOSS", "LOSS"], ["BREAKEVEN", "BREAKEVEN"]], { selected: params[:result] }, class: "input-field px-4 rounded-xl text-[13px] md:text-body focus:outline-none min-w-[110px] snap-start shrink-0 h-10" %>
+          <%= f.collection_select :strategy_id, current_user.strategies, :id, :name, { prompt: "Estrategia", selected: params[:strategy_id] }, class: "input-field px-4 rounded-xl text-[13px] md:text-body focus:outline-none min-w-[130px] snap-start shrink-0 h-10" %>
         </div>
 
         <!-- BOTONES DE FILTRADO -->
         <div class="flex items-center gap-2 w-full sm:w-auto shrink-0 justify-end sm:justify-start">
-          <%= f.button type: :submit, class: "flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-5 h-10 bg-brand/15 hover:bg-brand/25 text-brand dark:text-brand-light text-xs font-bold rounded-xl transition-all" do %>
+          <%= f.button type: :submit, class: "flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-5 h-10 bg-brand/15 hover:bg-brand/25 text-brand dark:text-brand-light text-body font-bold rounded-xl transition-all" do %>
             <span class="material-symbols-outlined text-[16px]">search</span>
             <span>Filtrar</span>
           <% end %>
@@ -65,12 +70,12 @@
 
       <!-- ACTIONS ROW (NUEVA OPERACION Y CSV) -->
       <div class="flex items-center gap-2 w-full lg:w-auto shrink-0 pt-3 lg:pt-0 border-t lg:border-none dark:border-darkBorder border-lightBorder">
-        <%= link_to import_trades_path, class: "flex-1 lg:flex-none flex items-center justify-center gap-1.5 px-4 h-10 dark:bg-darkInput bg-slate-100 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl border dark:border-darkBorder transition-all hover:text-brand shadow-sm" do %>
+        <%= link_to import_trades_path, class: "flex-1 lg:flex-none flex items-center justify-center gap-1.5 px-4 h-10 dark:bg-darkInput bg-slate-100 text-slate-700 dark:text-slate-300 text-body font-bold rounded-xl border dark:border-darkBorder transition-all hover:text-brand shadow-sm" do %>
           <span class="material-symbols-outlined text-[16px]">upload_file</span>
           <span>CSV</span>
         <% end %>
         
-        <%= link_to new_trade_path, class: "flex-[2] lg:flex-none flex items-center justify-center gap-1.5 px-5 h-10 bg-brand hover:bg-brand-hover text-white text-xs font-extrabold rounded-xl glow-brand shadow-md transition-all" do %>
+        <%= link_to new_trade_path, class: "flex-[2] lg:flex-none flex items-center justify-center gap-1.5 px-5 h-10 bg-brand hover:bg-brand-hover text-white text-body font-extrabold rounded-xl glow-brand shadow-md transition-all" do %>
           <span class="material-symbols-outlined text-[16px]">add</span>
           <span>Nueva Operación</span>
         <% end %>
@@ -82,82 +87,92 @@
   <!-- TABLA DE TRADES -->
   <div class="glass rounded-2xl overflow-hidden">
     <div class="overflow-x-auto">
-      <table class="w-full text-xs">
-        <thead class="table-header">
-          <tr class="border-b dark:border-darkBorder border-lightBorder">
-            <th class="py-3 px-4 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">Fecha</th>
-            <th class="py-3 px-4 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">Activo</th>
-            <th class="py-3 px-4 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">Dirección</th>
-            <th class="py-3 px-4 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">Estrategia</th>
-            <th class="py-3 px-4 text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider">Entrada</th>
-            <th class="py-3 px-4 text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider">Salida</th>
-            <th class="py-3 px-4 text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+      <table class="w-full text-left border-collapse min-w-[900px]">
+          <tr class="border-b dark:border-darkBorder border-lightBorder h-11">
+            <th class="px-4 text-label text-slate-400">Trade</th>
+            <% if @trades.any? { |t| t.strategy_id.present? } %>
+              <th class="px-4 text-label text-slate-400">Estrategia</th>
+            <% end %>
+            <th class="px-4 text-label text-slate-400 text-right">Entrada</th>
+            <th class="px-4 text-label text-slate-400 text-right">Salida</th>
+            <th class="px-4 text-label text-slate-400 text-right">
               <div class="flex justify-end items-center gap-1">
                 <span>P&L Neto</span>
                 <div class="relative group flex items-center">
                   <span class="material-symbols-outlined text-[14px] cursor-help opacity-70 group-hover:text-brand transition-colors">info</span>
-                  <div class="absolute bottom-full right-1 mb-2 w-48 p-2.5 dark:bg-[#1A1D2D] bg-slate-800 border dark:border-[#2A2E45] border-slate-700 rounded-xl text-white text-[11px] font-normal normal-case leading-snug opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100] shadow-2xl text-center pointer-events-none">
+                  <div class="absolute bottom-full right-1 mb-2 w-48 p-2.5 dark:bg-[#1A1D2D] bg-slate-800 border dark:border-[#2A2E45] border-slate-700 rounded-xl text-white text-caption font-normal normal-case leading-snug opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100] shadow-2xl text-center pointer-events-none">
                     Ganancias y Pérdidas Netas acumuladas/realizadas.
                     <div class="absolute top-full right-2 border-[5px] border-transparent dark:border-t-[#1A1D2D] border-t-slate-800 drop-shadow-md"></div>
                   </div>
                 </div>
               </div>
             </th>
-            <th class="py-3 px-4 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-              <div class="flex justify-center items-center gap-1">
-                <span>R Multiple</span>
-                <div class="relative group flex items-center">
-                  <span class="material-symbols-outlined text-[14px] cursor-help opacity-70 group-hover:text-brand transition-colors">info</span>
-                  <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 p-2.5 dark:bg-[#1A1D2D] bg-slate-800 border dark:border-[#2A2E45] border-slate-700 rounded-xl text-white text-[11px] font-normal normal-case leading-snug opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100] shadow-2xl text-center pointer-events-none">
-                    <strong class="text-brand block mb-1 tracking-widest text-[9px] uppercase">Riesgo / Recompensa</strong>
-                    Si ganaste 2.0R, significa que ganaste el doble de lo que pusiste inicialmente en riesgo.
-                    <div class="absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent dark:border-t-[#1A1D2D] border-t-slate-800 drop-shadow-md"></div>
+            <% if @trades.any? { |t| t.r_multiple.present? } %>
+              <th class="px-4 text-label text-slate-400 text-center">
+                <div class="flex justify-center items-center gap-1">
+                  <span>R Multiple</span>
+                  <div class="relative group flex items-center">
+                    <span class="material-symbols-outlined text-[14px] cursor-help opacity-70 group-hover:text-brand transition-colors">info</span>
+                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 p-2.5 dark:bg-[#1A1D2D] bg-slate-800 border dark:border-[#2A2E45] border-slate-700 rounded-xl text-white text-caption font-normal normal-case leading-snug opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100] shadow-2xl text-center pointer-events-none">
+                      <strong class="text-brand block mb-1 tracking-widest text-label">Riesgo / Recompensa</strong>
+                      Si ganaste 2.0R, significa que ganaste el doble de lo que pusiste inicialmente en riesgo.
+                      <div class="absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent dark:border-t-[#1A1D2D] border-t-slate-800 drop-shadow-md"></div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </th>
-            <th class="py-3 px-4 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider">Resultado</th>
-            <th class="py-3 px-4 text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider">Acciones</th>
+              </th>
+            <% end %>
+            <th class="px-4 text-label text-slate-400 text-center">Resultado</th>
+            <th class="px-4 text-label text-slate-400 text-right">Acciones</th>
           </tr>
         </thead>
         <tbody class="divide-y dark:divide-darkBorder divide-lightBorder">
           <% @trades.each do |trade| %>
-          <tr class="table-row-hover transition-colors cursor-pointer group" onclick="window.location.href='<%= trade_path(trade) %>'">
-            <td class="py-3.5 px-4 text-slate-400 font-mono whitespace-nowrap"><%= (trade.entry_at || trade.created_at)&.strftime("%d/%m/%Y %H:%M") %></td>
-            <td class="py-3.5 px-4 font-black dark:text-white text-slate-900 font-mono">
-              <div class="flex items-center gap-2.5">
-                <%= asset_logo_tag(trade.symbol, size_cls: "w-6 h-6") %>
-                <span><%= trade.symbol %></span>
+          <tr class="table-row-hover transition-colors cursor-pointer group h-[72px]" onclick="window.location.href='<%= trade_path(trade) %>'">
+            <td class="px-4 py-2">
+              <div class="flex items-center gap-3.5">
+                <%= asset_logo_tag(trade.symbol, size_cls: "w-11 h-11") rescue content_tag(:div, trade.symbol[0..1], class: "w-11 h-11 rounded-xl bg-brand/10 text-brand flex items-center justify-center font-bold text-body-lg") %>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-body-lg font-bold dark:text-white text-slate-900 group-hover:text-brand transition-colors"><%= trade.symbol %></span>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full font-mono font-bold tracking-wider <%= trade.direction == 'LONG' ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/20' %>">
+                      <%= trade.direction %>
+                    </span>
+                  </div>
+                  <p class="text-[11px] dark:text-[#8a8a98] text-slate-500 font-medium flex items-center gap-1 mt-0.5">
+                    <span class="material-symbols-outlined text-[13px] opacity-70 relative top-[1px]">schedule</span>
+                    <%= (trade.entry_at || trade.created_at)&.strftime("%d/%m/%Y %H:%M") %>
+                  </p>
+                </div>
               </div>
             </td>
-            <td class="py-3.5 px-4">
-              <span class="px-2.5 py-0.5 rounded text-[10px] font-extrabold <%= trade.direction == 'LONG' ? 'badge-long' : 'badge-short' %>">
-                <%= trade.direction %>
-              </span>
-            </td>
-            <td class="py-3.5 px-4 text-slate-600 dark:text-slate-300 font-medium"><%= trade.strategy&.name || "—" %></td>
-            <td class="py-3.5 px-4 text-right font-mono text-slate-600 dark:text-slate-300"><% if trade.entry_price %>$<%= trade.entry_price %><% else %>—<% end %></td>
-            <td class="py-3.5 px-4 text-right font-mono text-slate-600 dark:text-slate-300"><% if trade.exit_price %>$<%= trade.exit_price %><% else %>—<% end %></td>
-            <td class="py-3.5 px-4 text-right font-black font-mono <%= pnl_class(trade.pnl) %>">
+            <% if @trades.any? { |t| t.strategy_id.present? } %>
+              <td class="px-4 text-body text-slate-600 dark:text-slate-300 font-medium whitespace-nowrap"><%= trade.strategy&.name || "—" %></td>
+            <% end %>
+            <td class="px-4 text-right font-mono font-semibold text-body tabular-nums text-slate-700 dark:text-slate-300"><% if trade.entry_price %>$<%= trade.entry_price %><% else %>—<% end %></td>
+            <td class="px-4 text-right font-mono font-semibold text-body tabular-nums text-slate-700 dark:text-slate-300"><% if trade.exit_price %>$<%= trade.exit_price %><% else %>—<% end %></td>
+            <td class="px-4 text-right font-semibold font-mono text-body tabular-nums <%= pnl_class(trade.pnl) %>">
               <%= trade.pnl >= 0 ? "+" : "" %>$<%= number_with_precision(trade.pnl, precision: 2) %>
             </td>
-            <td class="py-3.5 px-4 text-center font-mono font-bold <%= trade.r_multiple.to_f >= 0 ? 'text-accent-green' : 'text-loss' %>">
-              <%= trade.r_multiple ? "#{trade.r_multiple}R" : "—" %>
-            </td>
-            <td class="py-3.5 px-4 text-center">
-              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold <%= trade.pnl >= 0 ? 'badge-win' : 'badge-loss' %>">
+            <% if @trades.any? { |t| t.r_multiple.present? } %>
+              <td class="px-4 text-center font-mono font-semibold text-body tabular-nums <%= trade.r_multiple.to_f >= 0 ? 'text-accent-green' : 'text-loss' %>">
+                <%= trade.r_multiple ? "#{trade.r_multiple}R" : "—" %>
+              </td>
+            <% end %>
+            <td class="px-4 text-center">
+              <span class="px-2.5 py-1 rounded-md text-label <%= trade.pnl >= 0 ? 'badge-win' : 'badge-loss' %>">
                 <%= trade.result || (trade.pnl >= 0 ? 'WIN' : 'LOSS') %>
               </span>
             </td>
-            <td class="py-3.5 px-4 text-right">
+            <td class="px-4 text-right">
               <div class="flex justify-end gap-1.5" onclick="event.stopPropagation()">
-                <%= link_to trade, class: "p-1.5 text-slate-400 hover:text-brand rounded-lg hover:bg-brand/10 transition-all" do %>
+                <%= link_to trade, class: "w-8 h-8 flex items-center justify-center text-slate-400 hover:text-brand rounded-lg hover:bg-brand/10 transition-all" do %>
                   <span class="material-symbols-outlined text-[18px]">visibility</span>
                 <% end %>
-                <%= link_to edit_trade_path(trade), class: "p-1.5 text-slate-400 hover:text-amber-500 rounded-lg hover:bg-amber-500/10 transition-all" do %>
+                <%= link_to edit_trade_path(trade), class: "w-8 h-8 flex items-center justify-center text-slate-400 hover:text-amber-500 rounded-lg hover:bg-amber-500/10 transition-all" do %>
                   <span class="material-symbols-outlined text-[18px]">edit</span>
                 <% end %>
-                <%= link_to trade, data: { "turbo-method": :delete, "turbo-confirm": "¿Eliminar esta operación?" }, class: "p-1.5 text-slate-400 hover:text-loss rounded-lg hover:bg-loss/10 transition-all" do %>
+                <%= link_to trade, data: { "turbo-method": :delete, "turbo-confirm": "¿Eliminar esta operación?" }, class: "w-8 h-8 flex items-center justify-center text-slate-400 hover:text-loss rounded-lg hover:bg-loss/10 transition-all" do %>
                   <span class="material-symbols-outlined text-[18px]">delete</span>
                 <% end %>
               </div>

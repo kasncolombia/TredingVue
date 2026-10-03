@@ -129,3 +129,16 @@
 
   </div>
 </div>
+
+<script>
+  window.openManageAccountsModal = function() {
+    const modal = document.getElementById('manage-accounts-modal');
+    if (modal) modal.classList.remove('hidden');
+  };
+
+  window.closeManageAccountsModal = function() {
+    const modal = document.getElementById('manage-accounts-modal');
+    if (modal) modal.classList.add('hidden');
+  };
+</script>
+

@@ -560,7 +560,7 @@ export default class extends Controller {
       }, true)
     }
 
-    // WinRate Sparkline
+    // WinRate Sparkline (Half Donut Gauge)
     if (this.hasSparkWinRateTarget) {
       let existing = window.echarts.getInstanceByDom(this.sparkWinRateTarget)
       if (existing) existing.dispose()
@@ -571,7 +571,7 @@ export default class extends Controller {
       chart.setOption({
         backgroundColor: 'transparent',
         series: [{
-          type: 'pie', radius: ['70%', '98%'], center: ['50%', '85%'], startAngle: 180, endAngle: 0,
+          type: 'pie', radius: ['65%', '95%'], center: ['50%', '75%'], startAngle: 180, endAngle: 0,
           avoidLabelOverlap: false, itemStyle: { borderRadius: 4 }, label: { show: false },
           data: [
             { value: winVal, itemStyle: { color: '#10b981' } },
@@ -583,20 +583,20 @@ export default class extends Controller {
       }, true)
     }
 
-    // ProfitFactor Sparkline
+    // ProfitFactor Sparkline (Full Donut Ring Chart)
     if (this.hasSparkPfTarget) {
       let existing = window.echarts.getInstanceByDom(this.sparkPfTarget)
       if (existing) existing.dispose()
       const chart = window.echarts.init(this.sparkPfTarget)
       this.charts.push(chart)
-      const pfVal = Math.min(Math.max(statsProfitFactor, 0), 5)
-      const winRatio = (pfVal / (pfVal + 1)) * 100
+      const pfVal = Math.min(Math.max(statsProfitFactor, 0), 20)
+      const winRatio = pfVal > 0 ? (pfVal / (pfVal + 1)) * 100 : 50
       const lossRatio = 100 - winRatio
       chart.setOption({
         backgroundColor: 'transparent',
         series: [{
-          type: 'pie', radius: ['68%', '92%'], center: ['50%', '50%'], avoidLabelOverlap: false,
-          itemStyle: { borderRadius: 2 }, label: { show: false },
+          type: 'pie', radius: ['60%', '90%'], center: ['50%', '50%'], avoidLabelOverlap: false,
+          itemStyle: { borderRadius: 4 }, label: { show: false },
           data: [
             { value: Math.max(winRatio, 0), itemStyle: { color: '#10b981' } },
             { value: Math.max(lossRatio, 0), itemStyle: { color: '#f43f5e' } }
@@ -605,23 +605,26 @@ export default class extends Controller {
       }, true)
     }
 
-    // Avg Win / Loss Sparkline
+    // Avg Win / Loss Sparkline (Horizontal Stacked Bar Chart)
     if (this.hasSparkAvgTarget) {
       let existing = window.echarts.getInstanceByDom(this.sparkAvgTarget)
       if (existing) existing.dispose()
       const chart = window.echarts.init(this.sparkAvgTarget)
       this.charts.push(chart)
+      const winVal = Math.abs(statsAvgWin) || 100
+      const lossVal = Math.abs(statsAvgLoss) || 50
       chart.setOption({
         backgroundColor: 'transparent',
-        grid: { left: 0, right: 0, top: 'center', bottom: 'center', height: 16 },
+        grid: { left: '0%', right: '0%', top: 'center', bottom: 'center', height: 18 },
         xAxis: { type: 'value', show: false },
         yAxis: { type: 'category', show: false, data: ['Avg'] },
         series: [
-          { type: 'bar', stack: 'total', barWidth: 14, itemStyle: { color: '#10b981', borderRadius: [4, 0, 0, 4] }, data: [Math.abs(statsAvgWin)] },
-          { type: 'bar', stack: 'total', barWidth: 14, itemStyle: { color: '#ef4444', borderRadius: [0, 4, 4, 0] }, data: [Math.abs(statsAvgLoss)] }
+          { type: 'bar', stack: 'total', barWidth: 16, itemStyle: { color: '#10b981', borderRadius: [8, 0, 0, 8] }, data: [winVal] },
+          { type: 'bar', stack: 'total', barWidth: 16, itemStyle: { color: '#ef4444', borderRadius: [0, 8, 8, 0] }, data: [lossVal] }
         ]
       }, true)
     }
+
   }
 
   // --- 5. DAILY PNL BAR CHART ---
