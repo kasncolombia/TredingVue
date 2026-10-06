@@ -39,6 +39,9 @@ resources :prop_transactions, path: 'prop-firms/transacciones', only: [:index, :
 
 namespace :backtesting do
   root to: 'dashboard#index'
+  get :intro, to: 'dashboard#intro', as: :intro_root
+
+
   resources :sessions, only: [:new, :create, :show] do
     member do
       get :replay
@@ -57,6 +60,7 @@ end
   resources :prop_firm_accounts do
     collection do
       get :templates_json
+      get :intro
     end
     member do
       patch :mark_burned

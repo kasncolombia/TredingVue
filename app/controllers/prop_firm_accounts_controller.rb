@@ -6,10 +6,18 @@ class PropFirmAccountsController < ApplicationController
   ]
 
   def index
+    if current_user.prop_firm_accounts.none? && params[:skip_intro].blank?
+      return redirect_to intro_prop_firm_accounts_path
+    end
+
     @accounts   = current_user.prop_firm_accounts.order(created_at: :desc)
     @prop_transactions = current_user.prop_transactions.includes(:prop_firm_account).order(transaction_date: :desc, created_at: :desc)
     @strategies = current_user.strategies
   end
+
+  def intro
+  end
+
 
   def show
     @trades      = @account.trades.recent.limit(20)

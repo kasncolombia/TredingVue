@@ -4,7 +4,13 @@ module Backtesting
 
     def index
       @sessions = current_user.try(:backtest_sessions) || BacktestSession.all
-      # We could calculate aggregate KPIs across sessions here for the dashboard
+      
+      if @sessions.empty? && params[:skip_intro].blank?
+        return redirect_to backtesting_intro_root_path
+      end
+    end
+
+    def intro
     end
   end
 end
