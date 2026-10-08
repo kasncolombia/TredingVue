@@ -94,42 +94,6 @@
       </div>
     </div>
 
-    <!-- OHLC HEADER LAYER (Superimposed over chart) -->
-    <div class="absolute top-[56px] left-0 right-0 z-10 px-4 py-3 pointer-events-none flex flex-col gap-1.5">
-       <div class="flex items-center justify-between">
-         <div class="flex items-center gap-3">
-           <span class="flex items-center gap-2 text-xs font-black text-slate-800 dark:text-gray-200">
-             <% if @session.state == 'playing' %>
-               <span class="w-2 h-2 rounded-full bg-brand animate-pulse shadow-[0_0_10px_rgba(155,135,245,0.8)]"></span>
-             <% else %>
-               <span class="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]"></span>
-             <% end %>
-             <%= asset_logo_tag(@session.symbol, size_cls: "w-5 h-5") %>
-             <span data-backtest-replayer-target="headerSymbol"><%= @session.symbol %></span> 
-           </span>
-         </div>
-         
-         <!-- Progress Scrubber -->
-         <div class="flex items-center gap-2 pointer-events-auto bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-700/50 shadow-lg">
-           <span data-backtest-replayer-target="headerTime" class="text-[10px] font-mono font-bold text-white mr-2">Calculando...</span>
-           <div class="w-24 bg-slate-800 rounded-full h-1.5 overflow-hidden">
-             <div data-backtest-replayer-target="progressBar" class="bg-brand h-full w-0 transition-all duration-150"></div>
-           </div>
-           <span data-backtest-replayer-target="progressText" class="text-[10px] font-mono font-bold text-brand">0%</span>
-         </div>
-       </div>
-
-       <div class="flex items-center gap-3 text-caption font-mono whitespace-nowrap px-2 py-1 rounded bg-slate-100/80 dark:bg-[#11121C]/80 backdrop-blur-md shadow-sm border border-slate-200 dark:border-darkBorder max-w-max pointer-events-auto mt-2">
-         <span class="text-slate-500 font-bold dark:text-white" data-backtest-replayer-target="headerTimeframe"><%= @session.timeframe || 'M1' %></span>
-         <div class="h-3 w-px bg-slate-300 dark:bg-slate-700"></div>
-         <span class="text-slate-500 dark:text-slate-400">Open <span data-backtest-replayer-target="legendO" class="text-slate-700 dark:text-slate-300 ml-1 font-bold">—</span></span>
-         <span class="text-slate-500 dark:text-slate-400">High <span data-backtest-replayer-target="legendH" class="text-slate-700 dark:text-slate-300 ml-1 font-bold">—</span></span>
-         <span class="text-slate-500 dark:text-slate-400">Low <span data-backtest-replayer-target="legendL" class="text-slate-700 dark:text-slate-300 ml-1 font-bold">—</span></span>
-         <span class="text-slate-500 dark:text-slate-400">Close <span data-backtest-replayer-target="legendC" class="text-slate-700 dark:text-slate-300 ml-1 font-bold">—</span></span>
-         <span class="text-slate-500 dark:text-slate-400">Vol <span data-backtest-replayer-target="legendV" class="text-slate-400 ml-1 font-bold">—</span></span>
-       </div>
-    </div>
-
     <!-- CHART AREA (Lightweight Charts) con Toolbar de Dibujo -->
     <div class="flex-1 w-full relative z-0 mt-2 px-2 pb-2 md:px-4 md:pb-4 flex flex-col bg-[#FAFAFA] dark:bg-[#0B0F19]">
       <div class="w-full h-full border border-slate-200 dark:border-darkBorder rounded-2xl shadow-xl bg-white dark:bg-darkCard relative flex flex-row overflow-hidden">
@@ -152,8 +116,39 @@
         </div>
 
         <div data-backtest-replayer-target="chartContainer" class="flex-1 w-full h-full relative z-0">
+          
+          <!-- LEYENDA Y OHLC FLOTANTE (TradingView style inset) -->
+          <div class="absolute top-3 left-3 z-10 pointer-events-auto flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/90 dark:bg-[#11121C]/90 backdrop-blur-md border border-slate-200/80 dark:border-darkBorder shadow-md text-xs font-mono text-slate-700 dark:text-gray-200">
+            <span class="flex items-center gap-1.5 font-black">
+              <% if @session.state == 'playing' %>
+                <span class="w-2 h-2 rounded-full bg-brand animate-pulse shadow-[0_0_8px_rgba(155,135,245,0.8)]"></span>
+              <% else %>
+                <span class="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]"></span>
+              <% end %>
+              <%= asset_logo_tag(@session.symbol, size_cls: "w-4 h-4") %>
+              <span data-backtest-replayer-target="headerSymbol" class="text-slate-900 dark:text-white font-bold"><%= @session.symbol %></span>
+            </span>
+            <div class="h-3 w-px bg-slate-300 dark:bg-slate-700"></div>
+            <span class="text-slate-500 font-bold dark:text-slate-400" data-backtest-replayer-target="headerTimeframe"><%= @session.timeframe || 'M1' %></span>
+            <div class="h-3 w-px bg-slate-300 dark:bg-slate-700"></div>
+            <span class="text-slate-500 dark:text-slate-400 hidden sm:inline">Open <span data-backtest-replayer-target="legendO" class="text-slate-800 dark:text-slate-200 font-bold">—</span></span>
+            <span class="text-slate-500 dark:text-slate-400 hidden sm:inline">High <span data-backtest-replayer-target="legendH" class="text-slate-800 dark:text-slate-200 font-bold">—</span></span>
+            <span class="text-slate-500 dark:text-slate-400 hidden sm:inline">Low <span data-backtest-replayer-target="legendL" class="text-slate-800 dark:text-slate-200 font-bold">—</span></span>
+            <span class="text-slate-500 dark:text-slate-400">Close <span data-backtest-replayer-target="legendC" class="text-slate-800 dark:text-slate-200 font-bold">—</span></span>
+            <span class="text-slate-500 dark:text-slate-400 hidden md:inline">Vol <span data-backtest-replayer-target="legendV" class="text-slate-400 font-bold">—</span></span>
+          </div>
+
+          <!-- PROGRESS SCRUBBER FLOTANTE (Top Right) -->
+          <div class="absolute top-3 right-3 z-10 pointer-events-auto flex items-center gap-2.5 bg-slate-900/85 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-slate-700/60 shadow-lg">
+            <span data-backtest-replayer-target="headerTime" class="text-[10px] font-mono font-bold text-slate-200">Calculando...</span>
+            <div class="w-20 bg-slate-800 rounded-full h-1.5 overflow-hidden border border-slate-700/50">
+              <div data-backtest-replayer-target="progressBar" class="bg-brand h-full w-0 transition-all duration-150"></div>
+            </div>
+            <span data-backtest-replayer-target="progressText" class="text-[10px] font-mono font-bold text-brand">0%</span>
+          </div>
+
           <!-- Loading overlay -->
-          <div data-backtest-replayer-target="loadingOverlay" class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-white/90 dark:bg-darkCard/90 backdrop-blur-sm rounded-r-2xl">
+          <div data-backtest-replayer-target="loadingOverlay" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/90 dark:bg-darkCard/90 backdrop-blur-sm rounded-r-2xl">
              <span class="material-symbols-outlined animate-spin text-brand text-4xl mb-3">sync</span>
              <p class="text-sm font-bold text-slate-500 animate-pulse">Cargando datos históricos de <%= @session.symbol %>...</p>
           </div>

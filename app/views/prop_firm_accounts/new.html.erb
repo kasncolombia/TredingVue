@@ -1,125 +1,153 @@
 <% content_for :page_title, "Onboarding de Cuentas de Fondeo" %>
 
-<div class="max-w-4xl mx-auto space-y-6 fade-in pb-12">
-  
-  <!-- BREADCRUMB -->
-  <div class="flex items-center justify-between">
-    <div class="flex items-center gap-2 text-xs text-slate-400">
-      <%= link_to "Control de Fondeo", prop_ledger_index_path, class: "hover:text-brand transition-colors" %>
-      <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-      <span class="dark:text-white text-slate-800 font-bold">Onboarding & Registro de Cuenta de Fondeo</span>
-    </div>
-  </div>
+<%
+  # Clases reutilizadas (para editar el estilo en un solo lugar)
+  input_cls   = "input-field w-full px-4 py-3 rounded-xl text-sm font-medium focus:outline-none focus:border-brand"
+  label_cls   = "block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5"
+  mini_input  = "input-field w-full px-3.5 py-2.5 rounded-xl text-sm font-mono focus:outline-none focus:border-brand"
+  mini_label  = "block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1.5"
+  unit_cls    = "input-field w-20 px-2 py-2.5 rounded-xl text-sm font-mono text-center focus:outline-none focus:border-brand"
+  primary_btn = "px-7 py-3 bg-brand hover:brightness-110 text-white font-bold text-sm rounded-xl shadow-lg glow-brand transition-all flex items-center justify-center gap-2 cursor-pointer focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2"
+  ghost_btn   = "px-5 py-3 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white rounded-xl border border-slate-200 dark:border-darkBorder hover:bg-slate-50 dark:hover:bg-darkHover transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+  select_btn  = "py-3 px-2 rounded-xl border dark:border-darkBorder border-slate-200 text-sm font-semibold text-center dark:text-white text-slate-800 transition-all cursor-pointer"
+  on_state    = "ring-2 ring-emerald-500 border-emerald-500 bg-emerald-500/10 text-emerald-500"
+  tile_cls    = "flex items-center gap-3 rounded-xl border border-slate-200 dark:border-darkBorder bg-white/70 dark:bg-darkHover/40 p-3.5"
+%>
+           <style>
+  /* Check de selección en las firmas (se activa con la clase ring-brand que tu JS ya alterna) */
+  .firm-selector-btn .firm-check { opacity: 0; transform: scale(.7); transition: opacity .15s ease, transform .15s ease; }
+  .firm-selector-btn.ring-brand .firm-check { opacity: 1; transform: scale(1); }
+  @media (prefers-reduced-motion: reduce) { .firm-selector-btn .firm-check { transition: none; } }
+</style>
 
-  <!-- STEPPER PROGRESS BAR -->
-  <div class="glass rounded-2xl p-4 border border-slate-200 dark:border-darkBorder shadow-sm">
-    <div class="flex items-center justify-between max-w-2xl mx-auto relative">
-      
-      <div class="absolute top-1/2 left-8 right-8 h-1 bg-slate-200 dark:bg-darkBorder -translate-y-1/2 -z-0">
-        <div id="stepper-progress-bar" class="h-full bg-brand transition-all duration-500 ease-out" style="width: 0%;"></div>
+<style>
+  /* Indicador de selección en las tarjetas del paso 1 (usa la clase .active que ya alterna tu JS) */
+  .account-mode-card .mode-check { opacity: 0; transform: scale(.7); transition: opacity .15s ease, transform .15s ease; }
+  .account-mode-card.active .mode-check { opacity: 1; transform: scale(1); }
+  @media (prefers-reduced-motion: reduce) { .account-mode-card .mode-check { transition: none; } }
+</style>
+
+<div class="max-w-5xl mx-auto space-y-6 pb-12">
+
+  <!-- BREADCRUMB -->
+  <nav class="fade-in flex items-center gap-2 text-sm text-slate-400" aria-label="Breadcrumb">
+    <%= link_to "Control de Fondeo", prop_ledger_index_path, class: "hover:text-brand transition-colors" %>
+    <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+    <span class="font-semibold text-slate-800 dark:text-white">Registro de cuenta de fondeo</span>
+  </nav>
+
+  <!-- STEPPER -->
+  <div class="fade-in glass rounded-2xl px-4 py-5 sm:px-8 border border-slate-200 dark:border-darkBorder shadow-sm">
+    <div class="flex items-start justify-between max-w-3xl mx-auto relative">
+
+      <div class="absolute top-5 left-10 right-10 h-1 rounded-full bg-slate-200 dark:bg-darkBorder -translate-y-1/2 -z-0">
+        <div id="stepper-progress-bar" class="h-full rounded-full bg-brand transition-all duration-500 ease-out" style="width: 0%;"></div>
       </div>
 
-      <button type="button" onclick="goToStep(1)" class="stepper-node flex flex-col items-center gap-1.5 relative z-10 group cursor-pointer">
+      <button type="button" onclick="goToStep(1)" class="stepper-node flex flex-col items-center gap-2 relative z-10 group cursor-pointer">
         <div id="step-node-1" class="w-10 h-10 rounded-full bg-brand text-white font-extrabold text-sm flex items-center justify-center shadow-md ring-4 ring-brand/20 transition-all">1</div>
-        <span id="step-label-1" class="text-[11px] font-bold text-brand transition-colors">Tipo de cuenta</span>
+        <span id="step-label-1" class="text-xs sm:text-sm font-bold text-brand transition-colors">Tipo de cuenta</span>
       </button>
 
-      <button type="button" onclick="goToStep(2)" class="stepper-node flex flex-col items-center gap-1.5 relative z-10 group cursor-pointer">
+      <button type="button" onclick="goToStep(2)" class="stepper-node flex flex-col items-center gap-2 relative z-10 group cursor-pointer">
         <div id="step-node-2" class="w-10 h-10 rounded-full bg-slate-200 dark:bg-darkBorder text-slate-500 font-extrabold text-sm flex items-center justify-center transition-all">2</div>
-        <span id="step-label-2" class="text-[11px] font-bold text-slate-400 transition-colors">Firma & Reglas</span>
+        <span id="step-label-2" class="text-xs sm:text-sm font-bold text-slate-400 transition-colors">Firma & Reglas</span>
       </button>
 
-      <button type="button" onclick="goToStep(3)" class="stepper-node flex flex-col items-center gap-1.5 relative z-10 group cursor-pointer">
+      <button type="button" onclick="goToStep(3)" class="stepper-node flex flex-col items-center gap-2 relative z-10 group cursor-pointer">
         <div id="step-node-3" class="w-10 h-10 rounded-full bg-slate-200 dark:bg-darkBorder text-slate-500 font-extrabold text-sm flex items-center justify-center transition-all">3</div>
-        <span id="step-label-3" class="text-[11px] font-bold text-slate-400 transition-colors">Detalles & Guardar</span>
+        <span id="step-label-3" class="text-xs sm:text-sm font-bold text-slate-400 transition-colors">Detalles & Guardar</span>
       </button>
 
     </div>
   </div>
 
   <%= form_with model: @account, url: prop_firm_accounts_path, id: "onboarding-wizard-form", multipart: true, class: "space-y-6", data: { controller: "prop-wizard", "has-form-errors": @account.errors.any? } do |f| %>
-    
-    <div id="wizard-steps-container" data-current-step="1" class="relative min-h-[480px] space-y-6">
-      
+
+    <div id="wizard-steps-container" data-current-step="1" class="fade-in relative min-h-[480px] space-y-6">
+
       <!-- ================= PASO 1 ================= -->
       <div id="wizard-step-1" class="wizard-step-panel space-y-6">
-        
-        <div class="glass rounded-3xl p-6 md:p-8 border border-brand/20 bg-gradient-to-r from-brand/10 via-slate-900/40 to-emerald-500/10 shadow-xl space-y-4">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand/20 text-brand text-xs font-bold uppercase tracking-wider border border-brand/30">
-            <span class="material-symbols-outlined text-[14px]">domain</span> Onboarding de Cuentas de Fondeo
-          </div>
-          <div>
-            <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-              Configura tu cuenta de fondeo 💼
-            </h1>
-            <p class="text-xs md:text-sm text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
-              Selecciona el tipo de cuenta para registrar tu evaluación o cuenta financiada:
-            </p>
-          </div>
+
+        <div class="space-y-1.5 pt-2">
+          <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Configura tu cuenta de fondeo</h1>
+          <p class="text-sm md:text-base text-slate-500 dark:text-slate-400">Elige cómo quieres registrar tu evaluación o cuenta financiada.</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-          
-          <div onclick="selectPropAccountMode('preset', this)" 
-               class="account-mode-card active p-6 rounded-3xl bg-white dark:bg-darkCard border-2 border-brand shadow-lg ring-4 ring-brand/10 flex flex-col justify-between space-y-4 cursor-pointer hover:scale-[1.02] transition-all group">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 items-stretch">
+
+          <!-- Catálogo -->
+          <div onclick="selectPropAccountMode('preset', this)"
+               class="account-mode-card active relative p-6 rounded-3xl bg-white dark:bg-darkCard border-2 border-brand shadow-lg ring-4 ring-brand/10 flex flex-col justify-between gap-5 cursor-pointer transition-all group">
+            <span class="mode-check absolute -top-2 -right-2 w-7 h-7 rounded-full bg-brand text-white flex items-center justify-center shadow-md">
+              <span class="material-symbols-outlined text-[18px]">check</span>
+            </span>
             <div class="flex items-center justify-between">
               <div class="w-12 h-12 rounded-2xl bg-brand/10 text-brand border border-brand/20 flex items-center justify-center">
                 <span class="material-symbols-outlined text-[26px]">verified</span>
               </div>
-              <span class="type-badge text-[10px] font-black uppercase px-2.5 py-1 rounded-full bg-brand text-white">Recomendado</span>
+              <span class="type-badge text-xs font-bold px-2.5 py-1 rounded-full bg-brand text-white">Recomendado</span>
             </div>
-            <div>
-              <h3 class="text-base font-extrabold text-slate-900 dark:text-white group-hover:text-brand transition-colors">Firma Catálogo</h3>
-              <p class="text-xs text-slate-500 mt-1">Selecciona firmas conocidas (Topstep, Apex, Funding Pips, etc.) con reglas precargadas.</p>
+            <div class="space-y-1.5">
+              <h3 class="text-lg font-extrabold text-slate-900 dark:text-white group-hover:text-brand transition-colors">Firma catálogo</h3>
+              <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">Elige una firma conocida (Topstep, Apex, Funding Pips…) y carga sus reglas automáticamente.</p>
             </div>
-            <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-brand">
-              <span>Elegir Firma y Reglas</span>
-              <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+            <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-sm font-bold text-brand">
+              <span>Elegir firma y reglas</span>
+              <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
             </div>
           </div>
 
-          <div onclick="selectPropAccountMode('manual', this)" 
-               class="account-mode-card p-6 rounded-3xl bg-white dark:bg-darkCard border-2 border-slate-200 dark:border-darkBorder hover:border-brand/40 shadow-sm flex flex-col justify-between space-y-4 cursor-pointer hover:scale-[1.02] transition-all group">
+          <!-- Manual -->
+          <div onclick="selectPropAccountMode('manual', this)"
+               class="account-mode-card relative p-6 rounded-3xl bg-white dark:bg-darkCard border-2 border-slate-200 dark:border-darkBorder hover:border-brand/40 shadow-sm flex flex-col justify-between gap-5 cursor-pointer transition-all group">
+            <span class="mode-check absolute -top-2 -right-2 w-7 h-7 rounded-full bg-brand text-white flex items-center justify-center shadow-md">
+              <span class="material-symbols-outlined text-[18px]">check</span>
+            </span>
             <div class="flex items-center justify-between">
               <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 group-hover:text-brand border border-slate-200 dark:border-darkBorder flex items-center justify-center transition-colors">
                 <span class="material-symbols-outlined text-[26px]">edit_square</span>
               </div>
-              <span class="type-badge text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400">Personalizada</span>
+              <span class="type-badge text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400">Personalizada</span>
             </div>
-            <div>
-              <h3 class="text-base font-extrabold text-slate-900 dark:text-white group-hover:text-brand transition-colors">Cuenta Manual</h3>
-              <p class="text-xs text-slate-500 mt-1">Configura firma propia, balance inicial y reglas de fondeo a medida.</p>
+            <div class="space-y-1.5">
+              <h3 class="text-lg font-extrabold text-slate-900 dark:text-white group-hover:text-brand transition-colors">Cuenta manual</h3>
+              <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">Escribe el nombre de tu firma, el balance inicial y define las reglas a tu medida.</p>
             </div>
-            <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-slate-400 group-hover:text-brand transition-colors">
-              <span>Definir Reglas a Mano</span>
-              <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+            <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-sm font-bold text-slate-400 group-hover:text-brand transition-colors">
+              <span>Definir reglas a mano</span>
+              <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
             </div>
           </div>
 
-          <div onclick="selectPropAccountMode('csv', this)" 
-               class="account-mode-card p-6 rounded-3xl bg-white dark:bg-darkCard border-2 border-slate-200 dark:border-darkBorder hover:border-emerald-500/40 shadow-sm flex flex-col justify-between space-y-4 cursor-pointer hover:scale-[1.02] transition-all group">
+          <!-- CSV -->
+          <div onclick="selectPropAccountMode('csv', this)"
+               class="account-mode-card relative p-6 rounded-3xl bg-white dark:bg-darkCard border-2 border-slate-200 dark:border-darkBorder hover:border-emerald-500/40 shadow-sm flex flex-col justify-between gap-5 cursor-pointer transition-all group">
+            <span class="mode-check absolute -top-2 -right-2 w-7 h-7 rounded-full bg-brand text-white flex items-center justify-center shadow-md">
+              <span class="material-symbols-outlined text-[18px]">check</span>
+            </span>
             <div class="flex items-center justify-between">
               <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 flex items-center justify-center">
                 <span class="material-symbols-outlined text-[26px]">upload_file</span>
               </div>
-              <span class="type-badge text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400">Masivo</span>
+              <span class="type-badge text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400">Masivo</span>
             </div>
-            <div>
-              <h3 class="text-base font-extrabold text-slate-900 dark:text-white group-hover:text-emerald-500 transition-colors">Importar CSV</h3>
-              <p class="text-xs text-slate-500 mt-1">Vincular cuenta de fondeo adjuntando archivo CSV de ejecuciones.</p>
+            <div class="space-y-1.5">
+              <h3 class="text-lg font-extrabold text-slate-900 dark:text-white group-hover:text-emerald-500 transition-colors">Importar CSV</h3>
+              <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">Vincula la cuenta subiendo el archivo CSV con tus ejecuciones.</p>
             </div>
-            <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-slate-400 group-hover:text-emerald-500 transition-colors">
-              <span>Cargar Extracto CSV</span>
-              <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+            <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-sm font-bold text-slate-400 group-hover:text-emerald-500 transition-colors">
+              <span>Cargar extracto CSV</span>
+              <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
             </div>
           </div>
 
         </div>
 
-        <div class="flex justify-end pt-4 border-t dark:border-darkBorder border-slate-200">
-          <button type="button" onclick="goToStep(2)" class="px-8 py-3 bg-brand hover:scale-[1.02] text-white font-extrabold text-xs rounded-xl shadow-lg glow-brand transition-all flex items-center gap-2 cursor-pointer">
-            Continuar al Paso 2
-            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+        <div class="flex justify-end pt-5 border-t dark:border-darkBorder border-slate-200">
+          <button type="button" onclick="goToStep(2)" class="<%= primary_btn %> w-full sm:w-auto">
+            Continuar
+            <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
           </button>
         </div>
 
@@ -128,206 +156,236 @@
       <!-- ================= PASO 2 ================= -->
       <div id="wizard-step-2" data-mode="preset" class="wizard-step-panel space-y-6" style="display: none;">
 
-        <!-- SUB-PANEL 2A: PRESET -->
-        <div id="mode-panel-preset" class="mode-sub-panel glass rounded-2xl p-5 md:p-6 border-l-4 border-brand space-y-5">
-          <div class="flex items-center justify-between pb-3 border-b dark:border-darkBorder border-slate-200">
-            <div>
-              <h3 class="text-base font-black dark:text-white text-slate-800 flex items-center gap-2">
-                <span class="material-symbols-outlined text-brand text-[20px]">account_tree</span>
-                2. Empresa, Plan & Reglas del Challenge
-              </h3>
-              <p class="text-xs text-slate-400 mt-0.5">Elige la firma de fondeo y el tamaño de cuenta para precargar las reglas de auditoría.</p>
-            </div>
-            <button type="button" onclick="toggleCustomRulesModal()" class="text-xs font-bold text-brand hover:underline flex items-center gap-1">
-              <span class="material-symbols-outlined text-[14px]">edit_note</span>
-              Editar reglas
-            </button>
-          </div>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          
+          <!-- COLUMNA IZQUIERDA (7 cols): SELECCIÓN DE FIRMA, PLAN Y TAMAÑO -->
+          <div class="lg:col-span-7 space-y-6">
 
-          <div class="space-y-4">
-            
-            <div>
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-                Firma de Fondeo <span class="text-rose-500">*</span>
-              </label>
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                <% [
-                  { name: "Topstep", logo: "compañias/Topstep.png" },
-                  { name: "Apex Trader Funding", logo: "compañias/Apex Trader funding.png" },
-                  { name: "Funding Pips", logo: "compañias/My funded futures.png" },
-                  { name: "MyFundedFutures", logo: "compañias/My funded futures.png" },
-                  { name: "Tradeify", logo: "compañias/Tradeify.png" },
-                  { name: "Lucid Trading", logo: "compañias/Lucid trading.png" },
-                  { name: "Alpha Futures", logo: "compañias/Alpha futures.png" },
-                  { name: "Take Profit Trader", logo: "compañias/take profit trader.png" }
-                ].each_with_index do |firm, idx| %>
-                  <button type="button" 
-                          onclick="selectFirmConfig('<%= firm[:name] %>', this)"
-                          class="firm-selector-btn p-2.5 rounded-2xl border dark:border-darkBorder border-slate-200 hover:border-brand flex flex-col items-center justify-center text-center gap-1.5 transition-all bg-slate-50 dark:bg-darkCard cursor-pointer <%= idx == 0 ? 'ring-2 ring-brand border-brand bg-brand/10' : '' %>">
-                    <div class="w-9 h-9 rounded-xl bg-white p-1 flex items-center justify-center border border-slate-200 shadow-xs font-black text-xs text-brand">
-                      <% logo_src = (image_path(firm[:logo]) rescue nil) %>
-                      <% if logo_src %>
-                        <img src="<%= logo_src %>" class="max-h-full max-w-full object-contain" alt="<%= firm[:name] %>" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
-                        <span style="display:none;"><%= firm[:name].first(2).upcase %></span>
-                      <% else %>
-                        <span><%= firm[:name].first(2).upcase %></span>
+            <!-- SUB-PANEL 2A: CATÁLOGO -->
+            <div id="mode-panel-preset" class="mode-sub-panel glass rounded-2xl p-5 md:p-6 border border-slate-200 dark:border-darkBorder space-y-6">
+              <div class="flex items-center gap-3 pb-4 border-b dark:border-darkBorder border-slate-200">
+                <div class="w-10 h-10 shrink-0 rounded-xl bg-brand/10 text-brand border border-brand/20 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[22px]">account_tree</span>
+                </div>
+                <div>
+                  <h3 class="text-base font-bold text-slate-900 dark:text-white">Firma, plan y tamaño</h3>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">Selecciona para cargar automáticamente las reglas de auditoría.</p>
+                </div>
+              </div>
+
+              <div class="space-y-6">
+                <div>
+                  <label class="<%= label_cls %> !mb-0">Firma de fondeo <span class="text-rose-500">*</span></label>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 mb-3">Elige una para cargar sus reglas automáticamente.</p>
+
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <% [
+                      { name: "Topstep", logo: "compañias/Topstep.png" },
+                      { name: "Apex Trader Funding", logo: "compañias/Apex Trader funding.png" },
+                      { name: "Funding Pips", logo: "compañias/Funding Pips.png" },
+                      { name: "MyFundedFutures", logo: "compañias/My funded futures.png" },
+                      { name: "Tradeify", logo: "compañias/Tradeify.png" },
+                      { name: "Lucid Trading", logo: "compañias/Lucid trading.png" },
+                      { name: "Alpha Futures", logo: "compañias/Alpha futures.png" },
+                      { name: "Take Profit Trader", logo: "compañias/take profit trader.png" }
+                    ].each_with_index do |firm, idx| %>
+                      <button type="button"
+                              onclick="selectFirmConfig('<%= firm[:name] %>', this)"
+                              aria-label="Seleccionar <%= firm[:name] %>"
+                              title="<%= firm[:name] %>"
+                              class="firm-selector-btn group relative p-3 rounded-xl border border-slate-200 dark:border-darkBorder bg-slate-50 dark:bg-darkCard hover:border-brand hover:shadow-md hover:-translate-y-0.5 flex flex-col items-center justify-center text-center gap-2 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 <%= idx == 0 ? 'ring-2 ring-brand border-brand bg-brand/10' : '' %>">
+
+                        <span class="firm-check absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-brand text-white flex items-center justify-center shadow-xs">
+                          <span class="material-symbols-outlined text-[13px]">check</span>
+                        </span>
+
+                        <div class="w-12 h-12 rounded-xl bg-white p-1.5 flex items-center justify-center border border-slate-200 shadow-xs font-black text-sm text-brand">
+                          <% logo_src = (image_path(firm[:logo]) rescue nil) %>
+                          <% if logo_src %>
+                            <img src="<%= logo_src %>" class="max-h-full max-w-full object-contain" alt="<%= firm[:name] %>" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                            <span style="display:none;"><%= firm[:name].first(2).upcase %></span>
+                          <% else %>
+                            <span><%= firm[:name].first(2).upcase %></span>
+                          <% end %>
                         </div>
+
+                        <span class="text-xs font-semibold leading-tight text-slate-800 dark:text-slate-200 line-clamp-1 flex items-center"><%= firm[:name] %></span>
+                      </button>
+                    <% end %>
+                  </div>
+
+                  <%= f.hidden_field :firm_name, id: "prop_firm_name_field", value: "Topstep" %>
+                </div>
+
+                <div class="space-y-4 pt-5 border-t dark:border-darkBorder border-slate-200">
+                  <span class="block text-xs font-bold uppercase tracking-wider text-slate-400" id="firm-plan-label">Plan de Topstep</span>
+
+                  <div>
+                    <p class="<%= label_cls %> text-xs">Tipo de plan</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <button type="button" onclick="setPlanType('Estándar', this)" class="plan-type-btn py-2.5 px-3 rounded-xl border dark:border-darkBorder border-slate-200 text-xs font-semibold dark:text-white text-slate-800 ring-2 ring-brand border-brand bg-brand/10 transition-all cursor-pointer">
+                        Estándar
+                      </button>
+                      <button type="button" onclick="setPlanType('Sin cuota de activación', this)" class="plan-type-btn py-2.5 px-3 rounded-xl border dark:border-darkBorder border-slate-200 text-xs font-semibold dark:text-white text-slate-800 hover:border-brand transition-all cursor-pointer">
+                        Sin cuota de activación
+                      </button>
+                    </div>
+                    <%= f.hidden_field :plan_name, id: "prop_plan_name_field", value: "Estándar" %>
+                  </div>
+
+                  <div>
+                    <p class="<%= label_cls %> text-xs">Balance de la cuenta</p>
+                    <div class="grid grid-cols-4 sm:grid-cols-7 gap-1.5">
+                      <% %w[10K 25K 50K 100K 150K 200K 250K].each do |size| %>
+                        <button type="button" onclick="setAccountSize('<%= size %>', this)" class="size-btn py-2 px-1.5 rounded-xl border dark:border-darkBorder border-slate-200 text-xs font-mono font-bold text-center dark:text-white text-slate-800 hover:border-brand transition-all cursor-pointer <%= size == '50K' ? 'ring-2 ring-brand border-brand bg-brand/10' : '' %>">
+                          <%= size %>
+                        </button>
                       <% end %>
                     </div>
-                    <span class="text-[10px] font-bold dark:text-slate-200 text-slate-800 line-clamp-1"><%= firm[:name] %></span>
-                  </button>
-                <% end %>
-              </div>
-              <%= f.hidden_field :firm_name, id: "prop_firm_name_field", value: "Topstep" %>
-            </div>
-
-            <div class="space-y-3 pt-2">
-              <span class="block text-[11px] font-bold dark:text-slate-300 text-slate-700" id="firm-plan-label">2 - CONFIGURACIÓN DE PLAN DE TOPSTEP</span>
-              
-              <div>
-                <p class="text-[10px] font-semibold text-slate-400 mb-1.5">Tipo de Plan</p>
-                <div class="flex gap-2">
-                  <button type="button" onclick="setPlanType('Estándar', this)" class="plan-type-btn flex-1 py-2.5 px-3 rounded-xl border dark:border-darkBorder border-slate-200 text-xs font-bold dark:text-white text-slate-800 ring-2 ring-brand border-brand bg-brand/10 transition-all cursor-pointer">
-                    Estándar
-                  </button>
-                  <button type="button" onclick="setPlanType('Sin cuota de activación', this)" class="plan-type-btn flex-1 py-2.5 px-3 rounded-xl border dark:border-darkBorder border-slate-200 text-xs font-bold dark:text-white text-slate-800 hover:border-brand transition-all cursor-pointer">
-                    Sin cuota de activación
-                  </button>
+                    <%= f.hidden_field :account_size, id: "prop_account_size_field", value: "50K" %>
+                  </div>
                 </div>
-                <%= f.hidden_field :plan_name, id: "prop_plan_name_field", value: "Estándar" %>
-              </div>
 
-              <div>
-                <p class="text-[10px] font-semibold text-slate-400 mb-1.5">Balance / Tamaño de Cuenta</p>
-                <div class="grid grid-cols-4 sm:grid-cols-7 gap-1.5">
-                  <% %w[10K 25K 50K 100K 150K 200K 250K].each do |size| %>
-                    <button type="button" onclick="setAccountSize('<%= size %>', this)" class="size-btn py-2 px-2 rounded-xl border dark:border-darkBorder border-slate-200 text-xs font-mono font-bold text-center dark:text-white text-slate-800 transition-all cursor-pointer <%= size == '50K' ? 'ring-2 ring-brand border-brand bg-brand/10' : '' %>">
-                      <%= size %>
-                    </button>
-                  <% end %>
-                </div>
-                <%= f.hidden_field :account_size, id: "prop_account_size_field", value: "50K" %>
               </div>
             </div>
 
-            <div class="rounded-2xl border dark:border-darkBorder border-slate-200 bg-slate-50 dark:bg-darkCard p-4 space-y-3">
-              <div class="flex items-center justify-between border-b dark:border-darkBorder border-slate-200 pb-2">
-                <span class="text-xs font-bold text-slate-700 dark:text-slate-200" id="rules-box-title">3 - REGLAS: TOPSTEP (50K)</span>
-                
-                <div class="flex p-0.5 bg-slate-200 dark:bg-darkBorder rounded-lg text-[10px] font-bold">
-                  <button type="button" onclick="switchRuleTab('step1', this)" class="rule-tab-btn px-2.5 py-1 rounded-md bg-white dark:bg-slate-700 text-brand shadow-xs">
-                    Paso 1
-                  </button>
-                  <button type="button" onclick="switchRuleTab('step2', this)" class="rule-tab-btn px-2.5 py-1 rounded-md text-slate-400 hover:text-slate-200">
-                    Paso 2
-                  </button>
-                  <button type="button" onclick="switchRuleTab('funded', this)" class="rule-tab-btn px-2.5 py-1 rounded-md text-slate-400 hover:text-slate-200">
-                    Fondeada
-                  </button>
+            <!-- SUB-PANEL 2B: MANUAL -->
+            <div id="mode-panel-manual" class="mode-sub-panel glass rounded-2xl p-5 md:p-6 border border-slate-200 dark:border-darkBorder space-y-5" style="display: none;">
+              <div class="flex items-center gap-3 pb-4 border-b dark:border-darkBorder border-slate-200">
+                <div class="w-10 h-10 shrink-0 rounded-xl bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[22px]">edit_square</span>
+                </div>
+                <div>
+                  <h3 class="text-base font-bold text-slate-900 dark:text-white">Firma y balance</h3>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">Ingresa los datos de tu firma personalizada.</p>
                 </div>
               </div>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
-                <div class="flex justify-between items-center py-1.5 border-b dark:border-darkBorder/50 border-slate-200/50">
-                  <span class="text-slate-400 font-sans">Objetivo de profit:</span>
-                  <span class="font-bold text-emerald-500" id="rule-target">$3,000</span>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="<%= label_cls %> text-xs">Nombre de la firma <span class="text-rose-500">*</span></label>
+                  <input type="text" id="manual-firm-input" oninput="syncManualFirm(this.value)" placeholder="Ej: FTMO, FundedNext, mi firma…" class="<%= input_cls %> text-xs font-bold">
                 </div>
-                <div class="flex justify-between items-center py-1.5 border-b dark:border-darkBorder/50 border-slate-200/50">
-                  <span class="text-slate-400 font-sans">Max Drawdown (Tipo):</span>
-                  <span class="font-bold text-rose-500" id="rule-max-dd">$2,000 (EOD al cierre)</span>
-                </div>
-                <div class="flex justify-between items-center py-1.5 border-b dark:border-darkBorder/50 border-slate-200/50">
-                  <span class="text-slate-400 font-sans">Pérdida diaria máx:</span>
-                  <span class="font-bold text-slate-400 font-sans" id="rule-daily-loss">No aplica / $1,000</span>
-                </div>
-                <div class="flex justify-between items-center py-1.5 border-b dark:border-darkBorder/50 border-slate-200/50">
-                  <span class="text-slate-400 font-sans">Consistencia (% mejor día):</span>
-                  <span class="font-bold text-amber-400" id="rule-consistency">50% máx</span>
+
+                <div>
+                  <label class="<%= label_cls %> text-xs">Balance inicial (USD) <span class="text-rose-500">*</span></label>
+                  <input type="text" id="manual-size-input" oninput="syncManualSize(this.value)" placeholder="Ej: 50K o 100000" class="<%= input_cls %> text-xs font-mono font-bold">
                 </div>
               </div>
+            </div>
+
+            <!-- SUB-PANEL 2C: CSV -->
+            <div id="mode-panel-csv" class="mode-sub-panel glass rounded-2xl p-5 md:p-6 border border-slate-200 dark:border-darkBorder space-y-5" style="display: none;">
+              <div class="flex items-center gap-3 pb-4 border-b dark:border-darkBorder border-slate-200">
+                <div class="w-10 h-10 shrink-0 rounded-xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[22px]">upload_file</span>
+                </div>
+                <div>
+                  <h3 class="text-base font-bold text-slate-900 dark:text-white">Importar ejecuciones <span class="text-xs font-medium text-slate-400">(opcional)</span></h3>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">Sube el CSV exportado de tu plataforma.</p>
+                </div>
+              </div>
+
+              <label for="csv-file-input" class="block cursor-pointer border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-8 text-center hover:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/40 transition-colors bg-slate-50/50 dark:bg-slate-900/40 space-y-2">
+                <span class="material-symbols-outlined text-[38px] text-emerald-500">cloud_upload</span>
+                <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Haz clic para seleccionar tu archivo CSV</p>
+                <p id="csv-file-name" class="text-xs text-slate-500 dark:text-slate-400">Ningún archivo seleccionado</p>
+                <input id="csv-file-input" type="file" name="csv_file" accept=".csv" class="sr-only"
+                       onchange="document.getElementById('csv-file-name').textContent = this.files.length ? this.files[0].name : 'Ningún archivo seleccionado'" />
+              </label>
             </div>
 
           </div>
-        </div>
 
-        <!-- SUB-PANEL 2B: MANUAL -->
-        <div id="mode-panel-manual" class="mode-sub-panel glass rounded-2xl p-5 md:p-6 border-l-4 border-amber-500 space-y-5" style="display: none;">
-          <div class="pb-3 border-b dark:border-darkBorder border-slate-200">
-            <h3 class="text-base font-black dark:text-white text-slate-800 flex items-center gap-2">
-              <span class="material-symbols-outlined text-amber-500 text-[20px]">edit_square</span>
-              2. Configuración Manual de Firma & Balance
-            </h3>
-            <p class="text-xs text-slate-400 mt-0.5">Ingresa los datos de tu empresa de fondeo personalizada y define sus parámetros de auditoría.</p>
-          </div>
+          <!-- COLUMNA DERECHA (5 cols): TARJETA RESUMEN DE REGLAS -->
+          <div class="lg:col-span-5 sticky top-6">
+            <div id="rules-summary-container" class="glass rounded-2xl border border-slate-200 dark:border-darkBorder p-5 space-y-4">
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Nombre de la Firma / Empresa *</label>
-              <input type="text" id="manual-firm-input" oninput="syncManualFirm(this.value)" placeholder="Ej: Custom Funding Firm, FTMO, FundedNext..." class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-bold focus:outline-none focus:border-brand">
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">Balance Inicial ($ USD) *</label>
-              <input type="text" id="manual-size-input" oninput="syncManualSize(this.value)" placeholder="Ej: 50K, 100000" class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-brand">
-            </div>
-          </div>
-
-          <div class="p-4 rounded-2xl border dark:border-darkBorder border-slate-200 bg-slate-50 dark:bg-darkCard space-y-3">
-            <h4 class="text-xs font-extrabold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-              <span class="material-symbols-outlined text-brand text-[16px]">tune</span> Parámetros de Auditoría Manual
-            </h4>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-              <div>
-                <label class="block text-[10px] font-bold text-slate-400 mb-1">Profit Target ($)</label>
-                <input type="number" name="prop_firm_account[custom_profit_target]" placeholder="3000" class="input-field w-full px-3 py-2 rounded-xl text-xs font-mono">
+              <div class="flex items-center justify-between gap-3 pb-3 border-b dark:border-darkBorder border-slate-200">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <div class="w-9 h-9 shrink-0 rounded-xl bg-purple-500/10 text-purple-500 border border-purple-500/20 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[20px]">rule</span>
+                  </div>
+                  <div class="min-w-0">
+                    <h3 class="text-sm font-bold text-slate-900 dark:text-white truncate" id="rules-box-title">Reglas de auditoría</h3>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Parámetros de auditoría</p>
+                  </div>
+                </div>
+                <button type="button" onclick="toggleCustomRulesModal()" class="px-3 py-1.5 rounded-lg bg-brand/10 hover:bg-brand/20 text-brand text-xs font-bold flex items-center gap-1.5 transition-all border border-brand/30 shrink-0 cursor-pointer">
+                  <span class="material-symbols-outlined text-[16px]">settings</span>
+                  Editar reglas
+                </button>
               </div>
-              <div>
-                <label class="block text-[10px] font-bold text-slate-400 mb-1">Max Drawdown ($)</label>
-                <input type="number" name="prop_firm_account[custom_max_drawdown]" placeholder="2000" class="input-field w-full px-3 py-2 rounded-xl text-xs font-mono">
+
+              <div class="inline-flex p-1 gap-1 bg-slate-100 dark:bg-darkBorder/60 rounded-xl text-xs font-bold w-full justify-center">
+                <button type="button" onclick="switchRuleTab('step1', this)" id="rule-tab-step1" class="rule-tab-btn flex-1 py-1.5 rounded-lg bg-white dark:bg-slate-700 text-brand shadow-xs text-center">
+                  Paso 1
+                </button>
+                <button type="button" onclick="switchRuleTab('step2', this)" id="rule-tab-step2" class="rule-tab-btn flex-1 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hidden text-center">
+                  Paso 2
+                </button>
+                <button type="button" onclick="switchRuleTab('funded', this)" id="rule-tab-funded" class="rule-tab-btn flex-1 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 text-center">
+                  Fondeada
+                </button>
               </div>
-              <div>
-                <label class="block text-[10px] font-bold text-slate-400 mb-1">Tipo de Drawdown</label>
-                <select name="prop_firm_account[custom_drawdown_type]" class="input-field w-full px-3 py-2 rounded-xl text-xs">
-                  <option value="eod">End of Day (EOD)</option>
-                  <option value="trailing">Intradía / Trailing</option>
-                  <option value="static">Estático</option>
-                  <option value="floor">Piso del Drawdown</option>
-                </select>
+
+              <div class="space-y-2.5">
+                <div class="<%= tile_cls %>">
+                  <div class="w-8 h-8 shrink-0 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">ads_click</span></div>
+                  <div class="min-w-0 flex-1">
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Objetivo de profit</p>
+                    <p class="text-xs font-bold font-mono text-emerald-600 dark:text-emerald-400 truncate" id="rule-target">$3,000</p>
+                  </div>
+                </div>
+
+                <div class="<%= tile_cls %>">
+                  <div class="w-8 h-8 shrink-0 rounded-lg bg-rose-500/10 text-rose-500 flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">trending_down</span></div>
+                  <div class="min-w-0 flex-1">
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Max drawdown (tipo / piso)</p>
+                    <p class="text-xs font-bold font-mono text-rose-600 dark:text-rose-400 truncate" id="rule-max-dd">$2,000 (EOD - Balance inicial)</p>
+                  </div>
+                </div>
+
+                <div class="<%= tile_cls %>">
+                  <div class="w-8 h-8 shrink-0 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">event_busy</span></div>
+                  <div class="min-w-0 flex-1">
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Pérdida diaria máx.</p>
+                    <p class="text-xs font-bold font-mono text-amber-600 dark:text-amber-400 truncate" id="rule-daily-loss">$1,000</p>
+                  </div>
+                </div>
+
+                <div class="<%= tile_cls %>">
+                  <div class="w-8 h-8 shrink-0 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">equalizer</span></div>
+                  <div class="min-w-0 flex-1">
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Consistencia (% mejor día)</p>
+                    <p class="text-xs font-bold font-mono text-blue-600 dark:text-blue-400 truncate" id="rule-consistency">50% máx</p>
+                  </div>
+                </div>
+
+                <div class="<%= tile_cls %>">
+                  <div class="w-8 h-8 shrink-0 rounded-lg bg-purple-500/10 text-purple-500 flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">calendar_month</span></div>
+                  <div class="min-w-0 flex-1">
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Días mínimos y límite de tiempo</p>
+                    <p class="text-xs font-bold font-mono text-purple-600 dark:text-purple-400 truncate" id="rule-min-days">2 días (Sin límite de tiempo)</p>
+                  </div>
+                </div>
               </div>
+
             </div>
           </div>
-        </div>
 
-        <!-- SUB-PANEL 2C: CSV -->
-        <div id="mode-panel-csv" class="mode-sub-panel glass rounded-2xl p-5 md:p-6 border-l-4 border-emerald-500 space-y-5" style="display: none;">
-          <div class="pb-3 border-b dark:border-darkBorder border-slate-200">
-            <h3 class="text-base font-black dark:text-white text-slate-800 flex items-center gap-2">
-              <span class="material-symbols-outlined text-emerald-500 text-[20px]">upload_file</span>
-              2. Adjuntar Extracto de Ejecuciones CSV (Opcional)
-            </h3>
-            <p class="text-xs text-slate-400 mt-0.5">Sube opcionalmente el archivo CSV exportado si deseas importar tus ejecuciones. No es obligatorio para crear la cuenta.</p>
-          </div>
-
-          <div class="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-8 text-center hover:border-emerald-500 transition-colors bg-slate-50/50 dark:bg-slate-900/40 space-y-2">
-            <span class="material-symbols-outlined text-[42px] text-emerald-500">cloud_upload</span>
-            <p class="text-xs font-extrabold text-slate-800 dark:text-slate-200">Selecciona el archivo CSV de la cuenta (Opcional)</p>
-            <p class="text-[10px] text-slate-400 max-w-sm mx-auto">El sistema extraerá automáticamente las operaciones para auditar las reglas de la cuenta de fondeo.</p>
-            <div class="pt-2">
-              <input type="file" name="csv_file" accept=".csv" class="inline-block text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-600 file:text-white hover:file:bg-emerald-700 cursor-pointer" />
-            </div>
-          </div>
         </div>
 
         <!-- NAVEGACIÓN PASO 2 -->
-        <div class="flex items-center justify-between pt-4 border-t dark:border-darkBorder border-slate-200">
-          <button type="button" onclick="goToStep(1)" class="px-5 py-2.5 text-xs font-bold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white rounded-xl border dark:border-darkBorder border-slate-200 transition-all flex items-center gap-1.5 cursor-pointer">
-            <span class="material-symbols-outlined text-[18px]">arrow_back</span>
-            Paso Anterior
+        <div class="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between pt-5 border-t dark:border-darkBorder border-slate-200">
+          <button type="button" onclick="goToStep(1)" class="<%= ghost_btn %>">
+            <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+            Atrás
           </button>
 
-          <button type="button" onclick="nextStep()" class="px-8 py-3 bg-brand hover:scale-[1.02] text-white font-extrabold text-xs rounded-xl shadow-lg glow-brand transition-all flex items-center gap-2 cursor-pointer">
-            Continuar al Paso 3
-            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+          <button type="button" onclick="nextStep()" class="<%= primary_btn %>">
+            Continuar
+            <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
           </button>
         </div>
 
@@ -335,237 +393,389 @@
 
       <!-- ================= PASO 3 ================= -->
       <div id="wizard-step-3" class="wizard-step-panel space-y-6" style="display: none;">
-        
-        <div class="glass rounded-2xl p-5 md:p-6 border-l-4 border-emerald-500 space-y-5">
-          <div class="pb-3 border-b dark:border-darkBorder border-slate-200">
-            <h3 class="text-base font-black dark:text-white text-slate-800 flex items-center gap-2">
-              <span class="material-symbols-outlined text-emerald-500 text-[20px]">tune</span>
-              3. Detalles Operativos & Registro Final
-            </h3>
-            <p class="text-xs text-slate-400 mt-0.5">Asigna un nombre a la cuenta de fondeo, configura su fase actual, estado y fechas clave.</p>
-          </div>
 
-          <div>
-            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">
-              Nombre de la cuenta de fondeo <span class="text-rose-500">*</span>
-            </label>
-            <%= f.text_field :name, required: true, placeholder: "Ej. Topstep 50K Express #1", class: "input-field w-full px-3.5 py-2.5 rounded-xl text-sm font-bold focus:outline-none focus:border-brand" %>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-2">
-              Fase Actual de la Cuenta <span class="text-rose-500">*</span>
-            </label>
-            <div class="grid grid-cols-3 sm:grid-cols-5 gap-1.5">
-              <% [
-                { id: "paso_1", label: "Paso 1 (Eval)" },
-                { id: "paso_2", label: "Paso 2 (Eval)" },
-                { id: "fondeada", label: "Fondeada / Live" },
-                { id: "express", label: "Express" },
-                { id: "sim", label: "Simulación" }
-              ].each_with_index do |phase, idx| %>
-                <button type="button" onclick="setAccountPhase('<%= phase[:id] %>', this)" class="phase-btn py-2.5 px-1.5 rounded-xl border dark:border-darkBorder border-slate-200 text-xs font-bold text-center dark:text-white text-slate-800 transition-all cursor-pointer <%= idx == 0 ? 'ring-2 ring-emerald-500 border-emerald-500 bg-emerald-500/10 text-emerald-500' : '' %>">
-                  <%= phase[:label] %>
-                </button>
-              <% end %>
-            </div>
-            <%= f.hidden_field :phase, id: "prop_phase_field", value: "paso_1" %>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-2">
-              Estado de la Cuenta <span class="text-rose-500">*</span>
-            </label>
-            <div class="grid grid-cols-3 sm:grid-cols-5 gap-1.5">
-              <% [
-                { id: "activa", label: "Activa" },
-                { id: "fondeada", label: "Fondeada" },
-                { id: "quemada", label: "Quemada" },
-                { id: "reseteada", label: "Reseteada" },
-                { id: "pausada", label: "Pausada" }
-              ].each_with_index do |st, idx| %>
-                <button type="button" onclick="setAccountStatus('<%= st[:id] %>', this)" class="status-btn py-2.5 px-1.5 rounded-xl border dark:border-darkBorder border-slate-200 text-xs font-bold text-center dark:text-white text-slate-800 transition-all cursor-pointer <%= idx == 0 ? 'ring-2 ring-emerald-500 border-emerald-500 bg-emerald-500/10 text-emerald-500' : '' %>">
-                  <%= st[:label] %>
-                </button>
-              <% end %>
-            </div>
-            <%= f.hidden_field :status, id: "prop_status_field", value: "activa" %>
-          </div>
-
-          <div id="burn-reason-container" class="space-y-1.5 transition-all">
-            <label class="block text-xs font-bold text-rose-500 flex items-center gap-1">
-              <span class="material-symbols-outlined text-[14px]">warning</span> Motivo de Quema / Breach Reason
-            </label>
-            <%= f.select :burn_reason, [
-              "Pérdida diaria superada",
-              "Drawdown máximo superado",
-              "Días límite / Inactividad",
-              "Operar en noticias restringidas",
-              "Falta de gestión de riesgo / Overtrading",
-              "Error técnico / Plataforma",
-              "Otro"
-            ], { include_blank: "-- Seleccionar si aplica --" }, class: "input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-bold focus:outline-none focus:border-rose-500" %>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-            <div>
-              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">
-                Fecha de inicio del Challenge
-              </label>
-              <%= f.date_field :start_date, value: Date.today, class: "input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-brand" %>
-            </div>
-            <div>
-              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">
-                Fecha de cuota / renovación
-              </label>
-              <%= f.date_field :billing_date, value: 30.days.from_now.to_date, class: "input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-brand" %>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">
-                Cuota de evaluación ($)
-              </label>
-              <div class="relative">
-                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold font-mono text-slate-400">$</span>
-                <%= f.number_field :eval_fee, value: 49, min: 0, step: "any", class: "input-field w-full pl-8 pr-3 py-2.5 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-brand" %>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          
+          <!-- COLUMNA IZQUIERDA (7 cols): Identificación, Fase y Estado -->
+          <div class="lg:col-span-7 space-y-6">
+            <div class="glass rounded-2xl p-5 md:p-6 border border-slate-200 dark:border-darkBorder space-y-6">
+              <div class="flex items-center gap-3 pb-4 border-b dark:border-darkBorder border-slate-200">
+                <div class="w-10 h-10 shrink-0 rounded-xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[22px]">tune</span>
+                </div>
+                <div>
+                  <h3 class="text-base font-bold text-slate-900 dark:text-white">Identificación y Estado</h3>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">Ponle nombre a tu cuenta e indica su fase y estado actual.</p>
+                </div>
               </div>
-            </div>
 
-            <div>
-              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700 mb-1.5">
-                Cuota de activación ($)
-              </label>
-              <div class="relative">
-                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold font-mono text-slate-400">$</span>
-                <%= f.number_field :activation_fee, value: 149, min: 0, step: "any", class: "input-field w-full pl-8 pr-3 py-2.5 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-brand" %>
+              <!-- Identificación -->
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="sm:col-span-2">
+                  <label class="<%= label_cls %> text-xs">Nombre de la cuenta <span class="text-rose-500">*</span></label>
+                  <%= f.text_field :name, required: true, placeholder: "Ej. Topstep 50K Express #1", class: "#{input_cls} text-xs font-bold" %>
+                </div>
+
+                <div>
+                  <label class="<%= label_cls %> text-xs">Cantidad <span class="text-[11px] font-medium text-slate-400">(máx. 20)</span></label>
+                  <input type="number" name="quantity" value="1" min="1" max="20" class="<%= input_cls %> text-xs font-mono font-bold">
+                </div>
               </div>
+
+              <!-- Fase y estado -->
+              <div class="space-y-5 pt-5 border-t dark:border-darkBorder border-slate-200">
+                <div>
+                  <label class="<%= label_cls %> text-xs mb-2">Fase actual <span class="text-rose-500">*</span></label>
+                  <div class="grid grid-cols-2 sm:grid-cols-5 gap-2" id="phase-buttons-container">
+                    <% [["paso_1", "Paso 1 (Eval)"], ["paso_2", "Paso 2 (Eval)"], ["fondeada", "Fondeada / Live"], ["express", "Express"], ["sim", "Simulación"]].each do |pid, plabel| %>
+                      <button type="button" onclick="setAccountPhase('<%= pid %>', this)" id="phase-btn-<%= pid %>" class="phase-btn <%= select_btn %> hover:border-emerald-500/50 text-xs <%= pid == 'paso_1' ? on_state : '' %> <%= pid == 'paso_2' ? 'hidden' : '' %>"><%= plabel %></button>
+                    <% end %>
+                  </div>
+                  <%= f.hidden_field :phase, id: "prop_phase_field", value: "paso_1" %>
+                </div>
+
+                <div>
+                  <label class="<%= label_cls %> text-xs mb-2">Estado <span class="text-rose-500">*</span></label>
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <% [
+                      { id: "activa", label: "Activa" },
+                      { id: "quemada", label: "Quemada" },
+                      { id: "reseteada", label: "Reseteada" },
+                      { id: "pausada", label: "Pausada" }
+                    ].each_with_index do |st, idx| %>
+                      <button type="button" onclick="setAccountStatus('<%= st[:id] %>', this)" class="status-btn <%= select_btn %> hover:border-emerald-500/50 text-xs <%= idx == 0 ? on_state : '' %>">
+                        <%= st[:label] %>
+                      </button>
+                    <% end %>
+                  </div>
+                  <%= f.hidden_field :status, id: "prop_status_field", value: "activa" %>
+                </div>
+
+                <div id="burn-reason-container" class="rounded-xl border border-rose-500/30 bg-rose-500/5 p-3.5 space-y-1.5 transition-all hidden">
+                  <label class="text-xs font-semibold text-rose-600 dark:text-rose-400 flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-[16px]">warning</span> Motivo de quema <span class="text-rose-500">*</span>
+                  </label>
+                  <%= f.select :burn_reason, [
+                    "Pérdida diaria superada",
+                    "Drawdown máximo superado",
+                    "Días límite / Inactividad",
+                    "Operar en noticias restringidas",
+                    "Falta de gestión de riesgo / Overtrading",
+                    "Error técnico / Plataforma",
+                    "Otro"
+                  ], { include_blank: "Selecciona un motivo…" }, id: "burn_reason_select", class: "#{input_cls} text-xs font-semibold focus:border-rose-500" %>
+                </div>
+              </div>
+
             </div>
           </div>
 
-          <div>
-            <div class="flex items-center justify-between mb-1.5">
-              <label class="block text-xs font-bold dark:text-slate-300 text-slate-700">Estrategias Asignadas</label>
-              <%= link_to "+ Crear estrategia", new_strategy_path, target: "_blank", class: "text-[11px] font-bold text-brand hover:underline" %>
+          <!-- COLUMNA DERECHA (5 cols): Fechas, Cuotas y Estrategias -->
+          <div class="lg:col-span-5 space-y-6">
+            <div class="glass rounded-2xl p-5 md:p-6 border border-slate-200 dark:border-darkBorder space-y-5">
+              
+              <div class="flex items-center gap-3 pb-4 border-b dark:border-darkBorder border-slate-200">
+                <div class="w-10 h-10 shrink-0 rounded-xl bg-purple-500/10 text-purple-500 border border-purple-500/20 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[22px]">calendar_today</span>
+                </div>
+                <div>
+                  <h3 class="text-base font-bold text-slate-900 dark:text-white">Fechas, Cuotas & Estrategias</h3>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">Registra renovaciones, costos y vincula tu estrategia.</p>
+                </div>
+              </div>
+
+              <!-- Fechas -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="<%= label_cls %> text-xs">Inicio del challenge</label>
+                  <%= f.date_field :start_date, value: Date.today, class: "#{input_cls} text-xs font-mono font-bold" %>
+                </div>
+                <div>
+                  <label class="<%= label_cls %> text-xs">Renovación / Cuota</label>
+                  <%= f.date_field :billing_date, value: 30.days.from_now.to_date, class: "#{input_cls} text-xs font-mono font-bold" %>
+                </div>
+              </div>
+
+              <!-- Cuotas -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t dark:border-darkBorder border-slate-200">
+                <div>
+                  <label class="<%= label_cls %> text-xs">Cuota evaluación <span class="text-rose-500">*</span></label>
+                  <div class="relative">
+                    <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold font-mono text-slate-400">$</span>
+                    <%= f.number_field :eval_fee, value: 49, required: true, min: 0, step: "any", class: "input-field w-full pl-8 pr-3 py-2.5 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-brand" %>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="<%= label_cls %> text-xs">Cuota activación <span class="text-rose-500">*</span></label>
+                  <div class="relative">
+                    <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold font-mono text-slate-400">$</span>
+                    <%= f.number_field :activation_fee, value: 149, required: true, min: 0, step: "any", class: "input-field w-full pl-8 pr-3 py-2.5 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-brand" %>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Estrategias -->
+              <div class="pt-4 border-t dark:border-darkBorder border-slate-200">
+                <div class="flex items-center justify-between mb-1.5">
+                  <label class="text-xs font-semibold text-slate-700 dark:text-slate-200">Estrategias asignadas</label>
+                  <%= link_to "+ Crear estrategia", new_strategy_path, target: "_blank", class: "text-xs font-bold text-brand hover:underline" %>
+                </div>
+
+                <details class="group relative">
+                  <summary class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-medium flex items-center justify-between cursor-pointer select-none">
+                    <span id="strategies-selected-summary" class="text-slate-400">Seleccionar estrategias…</span>
+                    <span class="material-symbols-outlined text-[18px] group-open:rotate-180 transition-transform">expand_more</span>
+                  </summary>
+                  <div class="absolute left-0 right-0 top-full mt-1.5 z-50 bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-xl p-2 shadow-xl max-h-48 overflow-y-auto">
+                    <% if @strategies.any? %>
+                      <% @strategies.each do |strat| %>
+                        <label class="flex items-center gap-2.5 text-xs text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-darkHover px-2.5 py-2 rounded-lg cursor-pointer">
+                          <input type="checkbox" name="strategy_ids[]" value="<%= strat.id %>" onchange="updateStrategiesSummary()" class="strategy-checkbox w-3.5 h-3.5 rounded text-brand focus:ring-brand">
+                          <span><%= strat.name %></span>
+                        </label>
+                      <% end %>
+                    <% else %>
+                      <p class="text-xs text-slate-400 p-2.5">Aún no tienes estrategias registradas.</p>
+                    <% end %>
+                  </div>
+                </details>
+              </div>
+
             </div>
-            
-            <select name="strategy_ids[]" multiple class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand h-20">
-              <option value="" disabled selected>Selecciona estrategias...</option>
-              <% @strategies.each do |strat| %>
-                <option value="<%= strat.id %>"><%= strat.name %></option>
-              <% end %>
-            </select>
           </div>
 
         </div>
 
-        <div class="flex items-center justify-between pt-4 border-t dark:border-darkBorder border-slate-200">
-          <button type="button" onclick="prevStep()" class="px-5 py-2.5 text-xs font-bold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white rounded-xl border dark:border-darkBorder border-slate-200 transition-all flex items-center gap-1.5 cursor-pointer">
-            <span class="material-symbols-outlined text-[18px]">arrow_back</span>
-            Paso Anterior
-          </button>
+        <div class="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between pt-5 border-t dark:border-darkBorder border-slate-200">
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="prevStep()" class="<%= ghost_btn %> flex-1 sm:flex-none">
+              <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+              Atrás
+            </button>
+            <%= link_to "Cancelar", prop_firm_accounts_path, class: "px-4 py-3 text-sm font-semibold text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white rounded-xl transition-colors" %>
+          </div>
 
-          <button type="submit" class="px-9 py-3.5 bg-brand hover:scale-[1.02] text-white font-extrabold text-xs rounded-xl shadow-lg glow-brand transition-all flex items-center gap-2 cursor-pointer">
-            <span class="material-symbols-outlined text-[18px]">save</span>
-            🚀 Guardar Cuenta & Finalizar
+          <button type="submit" class="<%= primary_btn %> sm:px-9">
+            <span class="material-symbols-outlined text-[20px]">save</span>
+            Crear cuenta
           </button>
         </div>
 
       </div>
 
+    </div>
+
+    <!-- ================= MODAL EDITAR REGLAS (dentro del form, fuera del contenedor animado) ================= -->
+    <div id="custom-rules-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      <div class="bg-white dark:bg-darkCard rounded-2xl w-full max-w-3xl max-h-[calc(100vh-2rem)] flex flex-col shadow-2xl border dark:border-darkBorder border-slate-200 text-slate-800 dark:text-white" role="dialog" aria-modal="true" aria-labelledby="rules-modal-title">
+
+        <!-- Header fijo -->
+        <div class="shrink-0 flex items-center justify-between gap-4 px-6 py-4 border-b dark:border-darkBorder border-slate-200">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 shrink-0 rounded-xl bg-brand/10 text-brand border border-brand/20 flex items-center justify-center">
+              <span class="material-symbols-outlined text-[22px]">settings</span>
+            </div>
+            <div>
+              <h3 id="rules-modal-title" class="text-lg font-bold">Editar reglas</h3>
+              <p class="text-sm text-slate-500 dark:text-slate-400">Drawdown, límites de pérdida, objetivo y días requeridos.</p>
+            </div>
+          </div>
+          <button type="button" onclick="toggleCustomRulesModal()" aria-label="Cerrar" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-darkHover transition-all cursor-pointer">
+            <span class="material-symbols-outlined text-slate-400 text-[22px]">close</span>
+          </button>
+        </div>
+
+        <!-- Contenido con scroll -->
+        <div class="flex-1 overflow-y-auto px-6 py-5 space-y-5">
+
+          <!-- Plantilla y balance -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 bg-slate-50 dark:bg-darkHover/40 p-4 rounded-xl border border-slate-200 dark:border-darkBorder">
+            <div>
+              <label class="<%= mini_label %>">Plantilla</label>
+              <select id="modal-template-select" onchange="applyTemplateToModal(this.value)" class="input-field w-full px-3.5 py-2.5 rounded-xl text-sm font-semibold focus:outline-none focus:border-brand">
+                <option value="Topstep_50K_1Step">Topstep · 50K · 1-Step · Estándar</option>
+                <option value="Topstep_100K_1Step">Topstep · 100K · 1-Step · Estándar</option>
+                <option value="Apex_50K_1Step">Apex · 50K · 1-Step · Trailing</option>
+                <option value="FTMO_50K_2Step">FTMO · 50K · 2-Step · Estándar</option>
+                <option value="Custom_Manual">Personalizada / Manual</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="<%= mini_label %>">Balance de la cuenta ($)</label>
+              <input type="number" id="modal-account-size-input" oninput="syncModalAccountSize(this.value)" value="50000" class="<%= mini_input %> font-bold">
+              <div class="flex flex-wrap gap-1.5 mt-2">
+                <% %w[10K 25K 50K 100K 150K 200K 250K].each do |s| %>
+                  <button type="button" onclick="selectModalSizeChip('<%= s %>', this)" class="modal-size-chip text-xs font-mono font-semibold px-2.5 py-1 rounded-lg border border-slate-200 dark:border-darkBorder bg-white dark:bg-darkHover hover:border-brand transition-all cursor-pointer"><%= s %></button>
+                <% end %>
+              </div>
+            </div>
+          </div>
+
+          <!-- PASO 1 -->
+          <details open id="details-step1" class="group border border-slate-200 dark:border-darkBorder rounded-xl bg-slate-50/60 dark:bg-darkHover/30">
+            <summary class="flex items-center justify-between cursor-pointer select-none px-4 py-3 text-sm font-bold text-brand">
+              <span class="flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">filter_1</span> Paso 1 · Evaluación</span>
+              <span class="material-symbols-outlined text-[20px] group-open:rotate-180 transition-transform">expand_more</span>
+            </summary>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 px-4 pb-5 pt-2">
+              <div>
+                <label class="<%= mini_label %>">Días mínimos de trading</label>
+                <input type="number" name="prop_firm_account[rules_config][step1][min_trading_days]" id="step1_min_days" value="2" min="0" class="<%= mini_input %>">
+              </div>
+
+              <div>
+                <label class="<%= mini_label %>">Fin del periodo (días)</label>
+                <div class="flex items-center gap-3">
+                  <input type="number" name="prop_firm_account[rules_config][step1][period_days]" id="step1_period_days" placeholder="30" class="<%= mini_input %> flex-1">
+                  <label class="flex items-center gap-1.5 text-sm font-medium text-slate-500 dark:text-slate-400 cursor-pointer whitespace-nowrap">
+                    <input type="checkbox" name="prop_firm_account[rules_config][step1][unlimited_period]" value="1" id="step1_unlimited" onchange="toggleUnlimited('step1')" checked class="w-4 h-4 rounded text-brand"> Ilimitado
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <label class="<%= mini_label %>">Objetivo de profit</label>
+                <div class="flex gap-2">
+                  <input type="number" name="prop_firm_account[rules_config][step1][profit_target][value]" id="step1_profit_val" value="3000" class="<%= mini_input %> flex-1">
+                  <select name="prop_firm_account[rules_config][step1][profit_target][unit]" id="step1_profit_unit" class="<%= unit_cls %>">
+                    <option value="amount">$</option>
+                    <option value="percent">%</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <label class="text-sm font-semibold text-slate-600 dark:text-slate-300">Pérdida diaria máx.</label>
+                  <label class="flex items-center gap-1.5 text-sm font-medium text-slate-500 dark:text-slate-400 cursor-pointer">
+                    <input type="checkbox" name="prop_firm_account[rules_config][step1][daily_loss][enabled]" value="1" id="step1_daily_enabled" onchange="toggleDailyLoss('step1')" checked class="w-4 h-4 rounded text-brand"> Activa
+                  </label>
+                </div>
+                <div class="flex gap-2">
+                  <input type="number" name="prop_firm_account[rules_config][step1][daily_loss][value]" id="step1_daily_val" value="1000" class="<%= mini_input %> flex-1">
+                  <select name="prop_firm_account[rules_config][step1][daily_loss][unit]" id="step1_daily_unit" class="<%= unit_cls %>">
+                    <option value="amount">$</option>
+                    <option value="percent">%</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label class="<%= mini_label %>">Max drawdown</label>
+                <div class="space-y-2">
+                  <select name="prop_firm_account[rules_config][step1][max_drawdown][type]" id="step1_dd_type" class="input-field w-full px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:border-brand">
+                    <option value="eod">EOD (al cierre diario)</option>
+                    <option value="intraday">Intradía (trailing al tick)</option>
+                    <option value="static">Estático</option>
+                  </select>
+                  <div class="flex gap-2">
+                    <input type="number" name="prop_firm_account[rules_config][step1][max_drawdown][value]" id="step1_dd_val" value="2000" class="<%= mini_input %> flex-1">
+                    <select name="prop_firm_account[rules_config][step1][max_drawdown][unit]" id="step1_dd_unit" class="<%= unit_cls %>">
+                      <option value="amount">$</option>
+                      <option value="percent">%</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label class="<%= mini_label %>">Piso del drawdown</label>
+                <select name="prop_firm_account[rules_config][step1][drawdown_floor]" id="step1_dd_floor" class="input-field w-full px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:border-brand">
+                  <option value="initial_balance">Balance inicial (estancado)</option>
+                  <option value="fixed">Fijo</option>
+                </select>
+              </div>
+
+              <div class="sm:col-span-2">
+                <div class="flex items-center justify-between mb-1.5">
+                  <label class="text-sm font-semibold text-slate-600 dark:text-slate-300">Consistencia (% mejor día)</label>
+                  <label class="flex items-center gap-1.5 text-sm font-medium text-slate-500 dark:text-slate-400 cursor-pointer">
+                    <input type="checkbox" name="prop_firm_account[rules_config][step1][consistency][enabled]" value="1" id="step1_consistency_enabled" onchange="toggleConsistency('step1')" checked class="w-4 h-4 rounded text-brand"> Requiere consistencia
+                  </label>
+                </div>
+                <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                  <input type="number" name="prop_firm_account[rules_config][step1][consistency][pct]" id="step1_consistency_pct" value="50" oninput="updateConsistencyHelp('step1')" class="<%= mini_input %> sm:w-32">
+                  <span id="step1_consistency_help" class="text-sm text-amber-600 dark:text-amber-400">Tu mejor día debe estar por debajo del 50% de tu profit total.</span>
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <!-- PASO 2 -->
+          <details id="details-step2" class="group border border-slate-200 dark:border-darkBorder rounded-xl bg-slate-50/60 dark:bg-darkHover/30 hidden">
+            <summary class="flex items-center justify-between cursor-pointer select-none px-4 py-3 text-sm font-bold text-purple-500">
+              <span class="flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">filter_2</span> Paso 2 · Evaluación</span>
+              <span class="material-symbols-outlined text-[20px] group-open:rotate-180 transition-transform">expand_more</span>
+            </summary>
+
+            <div class="px-4 pb-5 pt-2 space-y-4">
+              <label class="flex items-center gap-2 text-sm font-semibold text-slate-600 dark:text-slate-300 cursor-pointer">
+                <input type="checkbox" name="prop_firm_account[rules_config][step2][same_as_step1]" value="1" id="step2_same_as_step1" onchange="toggleSameAsStep1(this.checked)" class="w-4 h-4 rounded text-brand"> Mismas reglas que el Paso 1
+              </label>
+
+              <div id="step2-fields-container" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label class="<%= mini_label %>">Días mínimos de trading</label>
+                  <input type="number" name="prop_firm_account[rules_config][step2][min_trading_days]" id="step2_min_days" value="5" class="<%= mini_input %>">
+                </div>
+                <div>
+                  <label class="<%= mini_label %>">Objetivo de profit</label>
+                  <div class="flex gap-2">
+                    <input type="number" name="prop_firm_account[rules_config][step2][profit_target][value]" id="step2_profit_val" value="2500" class="<%= mini_input %> flex-1">
+                    <select name="prop_firm_account[rules_config][step2][profit_target][unit]" id="step2_profit_unit" class="<%= unit_cls %>">
+                      <option value="amount">$</option>
+                      <option value="percent">%</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <!-- FONDEADA -->
+          <details id="details-funding" class="group border border-slate-200 dark:border-darkBorder rounded-xl bg-slate-50/60 dark:bg-darkHover/30">
+            <summary class="flex items-center justify-between cursor-pointer select-none px-4 py-3 text-sm font-bold text-emerald-500">
+              <span class="flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">verified</span> Cuenta fondeada (Live)</span>
+              <span class="material-symbols-outlined text-[20px] group-open:rotate-180 transition-transform">expand_more</span>
+            </summary>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 px-4 pb-5 pt-2">
+              <div>
+                <label class="<%= mini_label %>">Profit split (% trader)</label>
+                <input type="number" name="prop_firm_account[rules_config][funded][profit_split_pct]" id="funded_split" value="90" max="100" class="<%= mini_input %>">
+              </div>
+
+              <div>
+                <label class="<%= mini_label %>">Pérdida diaria máx.</label>
+                <div class="flex gap-2">
+                  <input type="number" name="prop_firm_account[rules_config][funded][daily_loss][value]" id="funded_daily_val" value="1000" class="<%= mini_input %> flex-1">
+                  <select name="prop_firm_account[rules_config][funded][daily_loss][unit]" id="funded_daily_unit" class="<%= unit_cls %>">
+                    <option value="amount">$</option>
+                    <option value="percent">%</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </details>
+
+        </div>
+
+        <!-- Footer fijo -->
+        <div class="shrink-0 flex items-center justify-end gap-3 px-6 py-4 border-t dark:border-darkBorder border-slate-200">
+          <button type="button" onclick="toggleCustomRulesModal()" class="px-5 py-2.5 text-sm font-semibold text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white rounded-xl transition-colors cursor-pointer">
+            Cancelar
+          </button>
+          <button type="button" onclick="applyModalRules()" class="px-6 py-2.5 bg-brand hover:brightness-110 text-white font-bold text-sm rounded-xl shadow-lg glow-brand transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2">
+            Aplicar reglas
+          </button>
+        </div>
+
+      </div>
     </div>
 
   <% end %>
 
 </div>
-
-<!-- MODAL REGLAS PERSONALIZADAS -->
-<div id="custom-rules-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
-  <div class="glass rounded-2xl p-6 w-full max-w-2xl mx-auto space-y-5 shadow-2xl border dark:border-darkBorder border-slate-200 my-8">
-    
-    <div class="flex items-center justify-between pb-3 border-b dark:border-darkBorder border-slate-200">
-      <div>
-        <h3 class="text-base font-black dark:text-white text-slate-800 flex items-center gap-2">
-          <span class="material-symbols-outlined text-brand">edit_note</span>
-          Edición de Reglas & Parámetros Personalizados
-        </h3>
-        <p class="text-xs text-slate-400 mt-0.5">Configura drawdown estático/EOD, pérdida diaria, días mínimos y consistencia.</p>
-      </div>
-      <button type="button" onclick="toggleCustomRulesModal()" class="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-darkHover transition-all">
-        <span class="material-symbols-outlined text-slate-400 text-[20px]">close</span>
-      </button>
-    </div>
-
-    <div class="flex p-1 bg-slate-100 dark:bg-darkCard rounded-xl gap-1 border border-slate-200 dark:border-darkBorder text-xs font-bold">
-      <button type="button" onclick="switchModalTab('eval', this)" class="modal-tab-btn flex-1 py-2 rounded-lg bg-white dark:bg-slate-700 text-brand shadow-xs text-center">
-        Fase de Evaluación (Paso 1 & 2)
-      </button>
-      <button type="button" onclick="switchModalTab('funded', this)" class="modal-tab-btn flex-1 py-2 rounded-lg text-slate-400 hover:text-slate-200 text-center">
-        Fase Fondeada (Live / Real)
-      </button>
-    </div>
-
-    <div id="modal-sec-eval" class="space-y-4">
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-bold dark:text-slate-200 text-slate-700">
-        <div>
-          <label class="block mb-1">Profit Target Personalizado ($)</label>
-          <input type="number" name="prop_firm_account[custom_profit_target]" placeholder="Ej: 3000" class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono focus:outline-none focus:border-brand">
-        </div>
-        <div>
-          <label class="block mb-1">Max Drawdown Personalizado ($)</label>
-          <input type="number" name="prop_firm_account[custom_max_drawdown]" placeholder="Ej: 2000" class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono focus:outline-none focus:border-brand">
-        </div>
-        <div>
-          <label class="block mb-1">Tipo de Max Drawdown</label>
-          <select name="prop_firm_account[custom_drawdown_type]" class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand">
-            <option value="eod">End of Day (EOD - Al cierre diario)</option>
-            <option value="trailing">Intradía / Trailing (En tiempo real al tick)</option>
-            <option value="static">Estático (Fijo respecto al balance inicial)</option>
-            <option value="floor">Piso del Drawdown (Trailing estancado al balance inicial)</option>
-          </select>
-        </div>
-        <div>
-          <label class="block mb-1">Límite Pérdida Diaria ($)</label>
-          <input type="number" name="prop_firm_account[custom_daily_loss_limit]" placeholder="Ej: 1000 (Opcional)" class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono focus:outline-none focus:border-brand">
-        </div>
-        <div>
-          <label class="block mb-1">Consistencia (% mejor día)</label>
-          <input type="number" name="prop_firm_account[custom_consistency_pct]" placeholder="Ej: 50" max="100" class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono focus:outline-none focus:border-brand">
-        </div>
-        <div>
-          <label class="block mb-1">Días Mínimos de Trading</label>
-          <input type="number" name="prop_firm_account[custom_min_trading_days]" placeholder="Ej: 2" min="0" class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono focus:outline-none focus:border-brand">
-        </div>
-      </div>
-    </div>
-
-    <div id="modal-sec-funded" class="hidden space-y-4">
-      <div class="p-3.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs text-blue-400 space-y-1">
-        <p class="font-bold flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">info</span> Reglas de la Cuenta Fondeada / Live</p>
-        <p class="text-[11px] text-slate-300">Monitoreo de límites de pérdida diaria, piso de drawdown estático/EOD y requisitos de consistencia para payouts.</p>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-bold dark:text-slate-200 text-slate-700">
-        <div>
-          <label class="block mb-1">Pérdida Diaria en Fondeada ($)</label>
-          <input type="number" placeholder="Ej: 1000" class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono focus:outline-none focus:border-brand">
-        </div>
-        <div>
-          <label class="block mb-1">Profit Split / % Trader</label>
-          <input type="number" placeholder="Ej: 90" max="100" class="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono focus:outline-none focus:border-brand">
-        </div>
-      </div>
-    </div>
-
-    <div class="flex items-center justify-end gap-3 pt-4 border-t dark:border-darkBorder border-slate-200">
-      <button type="button" onclick="toggleCustomRulesModal()" class="px-5 py-2.5 text-xs font-bold text-slate-400 hover:text-white rounded-xl">
-        Cancelar
-      </button>
-      <button type="button" onclick="toggleCustomRulesModal()" class="px-6 py-2.5 bg-brand hover:scale-[1.02] text-white font-extrabold text-xs rounded-xl shadow-lg glow-brand transition-all">
-        Aplicar Reglas Personalizadas
-      </button>
-    </div>
-  </div>
-</div>
-

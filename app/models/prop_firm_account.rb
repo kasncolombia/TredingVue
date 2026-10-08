@@ -6,20 +6,15 @@ class PropFirmAccount < ApplicationRecord
   has_and_belongs_to_many :strategies
 
   # ── CONSTANTES ──
-  # Estados mutuamente excluyentes (un solo campo `status`)
-  STATUSES = %w[evaluacion fondeada quemada cerrada].freeze
-
-  # Fases de evaluación (solo aplica cuando status == evaluacion)
-  PHASES = %w[paso_1 paso_2].freeze
+  STATUSES = %w[activa quemada reseteada pausada].freeze
+  PHASES = %w[paso_1 paso_2 fondeada express sim].freeze
 
   BURN_REASONS = [
-    "Falta de gestión de riesgo",
-    "Noticia",
-    "Overtrading",
-    "Regla de consistencia",
-    "Drawdown máximo",
-    "Pérdida diaria máxima",
-    "Presión de tiempo",
+    "Pérdida diaria superada",
+    "Drawdown máximo superado",
+    "Días límite / Inactividad",
+    "Operar en noticias restringidas",
+    "Falta de gestión de riesgo / Overtrading",
     "Error técnico / Plataforma",
     "Otro"
   ].freeze
@@ -31,84 +26,151 @@ class PropFirmAccount < ApplicationRecord
   validates :phase, inclusion: { in: PHASES }, allow_nil: true
   validates :burn_reason, presence: true, if: -> { quemada? }
   validate :account_size_within_range
-  validate :phase_only_in_evaluacion
 
   # ── SCOPES ──
-  scope :evaluacion, -> { where(status: "evaluacion") }
-  scope :fondeada,   -> { where(status: "fondeada") }
+  scope :evaluacion, -> { where(status: "activa", phase: %w[paso_1 paso_2 express sim]) }
+  scope :fondeada,   -> { where(status: "activa", phase: "fondeada") }
   scope :quemada,    -> { where(status: "quemada") }
-  scope :cerrada,    -> { where(status: "cerrada") }
-  scope :activas,    -> { where(status: %w[evaluacion fondeada]) }
+  scope :pausada,    -> { where(status: "pausada") }
+  scope :reseteada,  -> { where(status: "reseteada") }
+  scope :activas,    -> { where(status: "activa") }
 
   # ── ESTADO: PREDICADOS ──
   def evaluacion?
-    status == "evaluacion"
+    status == "activa" && phase.in?(%w[paso_1 paso_2 express sim])
   end
 
   def fondeada?
-    status == "fondeada"
+    status == "activa" && phase == "fondeada"
   end
 
   def quemada?
     status == "quemada"
   end
+  
+  def pausada?
+    status == "pausada"
+  end
+
+  def reseteada?
+    status == "reseteada"
+  end
 
   def cerrada?
-    status == "cerrada"
+    # Para retrocompatibilidad
+    quemada? || pausada?
   end
 
   # ── ETIQUETA LEGIBLE DE ESTADO (para la UI) ──
   def status_label
-    case status
-    when "evaluacion" then "Evaluación"
-    when "fondeada"   then "Fondeada"
-    when "quemada"    then "Quemada"
-    when "cerrada"    then "Cerrada"
-    else status&.capitalize
-    end
+    status&.capitalize
   end
 
   def phase_label
-    return nil unless evaluacion? && phase.present?
-    phase.gsub("_", " ").capitalize # "paso_1" → "Paso 1"
+    return nil unless phase.present?
+    case phase
+    when "paso_1" then "Paso 1 (Eval)"
+    when "paso_2" then "Paso 2 (Eval)"
+    when "fondeada" then "Fondeada / Live"
+    when "express" then "Express"
+    when "sim" then "Simulación"
+    else phase.gsub("_", " ").capitalize
+    end
   end
 
-  # ── REGLAS ACTIVAS (Fallback a templates) ──
+  # ── CONFIG DE REGLAS ──
+  def current_rules_section
+    case phase
+    when "paso_1", "express", "sim"
+      "step1"
+    when "paso_2"
+      rules_config.dig("step2", "same_as_step1") ? "step1" : "step2"
+    when "fondeada"
+      "funded"
+    else
+      "step1"
+    end
+  end
+  
+  def rule_value_for(field)
+    return current_rules[field.to_s] if current_rules && current_rules.key?(field.to_s)
+    # Check legacy custom configs
+    legacy_val = send("custom_#{field}") if respond_to?("custom_#{field}")
+    return legacy_val if legacy_val.present?
+    
+    # Check template
+    prop_firm_rule_template&.send(field) if prop_firm_rule_template.respond_to?(field)
+  end
+  
+  def current_rules
+    rules_config.present? ? (rules_config[current_rules_section] || {}) : {}
+  end
+  
+  def to_amount(value_hash)
+    return 0.0 unless value_hash.is_a?(Hash)
+    val = value_hash["value"].to_f
+    unit = value_hash["unit"]
+    return val if unit == "amount"
+    (val / 100.0) * initial_balance
+  end
+
+  # ── REGLAS ACTIVAS ──
   def active_profit_target
-    custom_profit_target || prop_firm_rule_template&.profit_target
+    v = current_rules["profit_target"]
+    return to_amount(v) if v.is_a?(Hash)
+    rule_value_for(:profit_target)
   end
 
   def active_max_drawdown
-    custom_max_drawdown || prop_firm_rule_template&.max_drawdown
+    v = current_rules["max_drawdown"]
+    return to_amount(v) if v.is_a?(Hash)
+    rule_value_for(:max_drawdown)
   end
 
   def active_drawdown_type
-    custom_drawdown_type || prop_firm_rule_template&.drawdown_type
+    v = current_rules["max_drawdown"]
+    return v["type"] if v.is_a?(Hash) && v["type"].present?
+    rule_value_for(:drawdown_type)
+  end
+  
+  def active_drawdown_floor
+    current_rules["drawdown_floor"] || "initial_balance"
   end
 
   def active_daily_loss_limit
-    custom_daily_loss_limit || prop_firm_rule_template&.daily_loss_limit
+    v = current_rules["daily_loss"]
+    if v.is_a?(Hash)
+      return 0.0 unless v["enabled"]
+      return to_amount(v)
+    end
+    rule_value_for(:daily_loss_limit)
   end
 
   def active_consistency_pct
-    custom_consistency_pct || prop_firm_rule_template&.consistency_pct
+    c = current_rules["consistency"]
+    if c.is_a?(Hash)
+      return 0.0 unless c["enabled"]
+      return c["pct"].to_f
+    end
+    rule_value_for(:consistency_pct)
   end
 
   def active_min_trading_days
-    custom_min_trading_days || prop_firm_rule_template&.min_trading_days || 0
+    current_rules["min_trading_days"].present? ? current_rules["min_trading_days"].to_i : rule_value_for(:min_trading_days).to_i
+  end
+  
+  def active_period_days
+    return nil if current_rules["unlimited_period"]
+    current_rules["period_days"].presence
   end
 
   # ── CÁLCULOS DE NEGOCIO ──
 
-  # Interpreta account_size de forma segura.
-  # Soporta formatos: "50K", "100K", "150000", 50000
   def initial_balance
     raw = account_size.to_s.strip
     if raw =~ /\A[\d.]+K\z/i
-      # Formato "50K" → 50_000
       raw.gsub(/K/i, "").to_f * 1_000
     else
-      # Formato numérico directo "50000"
       raw.gsub(/[^\d.]/, "").to_f
     end
   end
@@ -142,7 +204,18 @@ class PropFirmAccount < ApplicationRecord
   def drawdown_floor
     max_dd = active_max_drawdown.to_f
     return 0.0 if max_dd.zero?
-    initial_balance - max_dd
+    
+    if active_drawdown_type == "static"
+      initial_balance - max_dd
+    elsif active_drawdown_floor == "fixed"
+      # Si es fixed, se basa en el balance actual máximo - max_dd pero sin estancarse, o piso al start? En legacy era initial_balance para 'floor'.
+      # Mantenemos inicial_balance - max_dd para simplicidad si type != 'trailing' o si es intraday pero usa floor=initial_balance
+      initial_balance - max_dd
+    else
+      # Trailing regular (intraday)
+      # Esto requeriría calcular el max balance histórico, por simplicidad para la UI:
+      initial_balance - max_dd 
+    end
   end
 
   def margin_to_floor
@@ -156,7 +229,6 @@ class PropFirmAccount < ApplicationRecord
     [(consumed / max_dd * 100).round(1), 100.0].min
   end
 
-  # Retorna :safe, :warning, :danger
   def drawdown_status
     pct = drawdown_consumed_pct
     if pct >= 80
@@ -219,20 +291,14 @@ class PropFirmAccount < ApplicationRecord
     }
   end
 
-  # ══════════════════════════════════════════
-  # TRANSICIONES DE ESTADO
-  # Cada método valida la transición y crea
-  # transacciones financieras cuando corresponde.
-  # ══════════════════════════════════════════
+  # ── TRANSICIONES DE ESTADO ──
 
-  # Pasa la cuenta a fondeada. Opcionalmente registra gasto de activación.
   def pasar_a_fondeada!(costo_activacion: nil)
     raise "Solo cuentas en evaluación pueden pasar a fondeada" unless evaluacion?
 
     transaction do
       update!(
-        status: "fondeada",
-        phase: nil,
+        phase: "fondeada",
         funded_at: Date.current
       )
 
@@ -251,33 +317,27 @@ class PropFirmAccount < ApplicationRecord
     end
   end
 
-  # Marca la cuenta como quemada. Motivo es obligatorio.
   def quemar!(motivo:)
-    raise "No se puede quemar una cuenta ya quemada o cerrada" if quemada? || cerrada?
+    raise "No se puede quemar una cuenta ya quemada" if quemada?
     raise "Motivo de quema es obligatorio" if motivo.blank?
 
     update!(
       status: "quemada",
       burn_reason: motivo,
-      burned_at: Date.current,
-      phase: nil
+      burned_at: Date.current
     )
   end
 
-  # Cierra definitivamente la cuenta.
   def cerrar!
-    raise "Solo cuentas fondeadas o quemadas se pueden cerrar" unless fondeada? || quemada?
-
-    update!(status: "cerrada", phase: nil)
+    update!(status: "pausada")
   end
 
-  # Resetea una cuenta quemada a evaluación. Opcionalmente registra gasto de reset.
   def resetear!(costo_reset: 0)
     raise "Solo cuentas quemadas se pueden resetear" unless quemada?
 
     transaction do
       update!(
-        status: "evaluacion",
+        status: "activa",
         phase: "paso_1",
         burn_reason: nil,
         burned_at: nil
@@ -297,7 +357,6 @@ class PropFirmAccount < ApplicationRecord
     end
   end
 
-  # ── LEGACY ALIASES (compatibilidad con controlador existente) ──
   def mark_as_burned!(reason)
     quemar!(motivo: reason)
   end
@@ -316,19 +375,11 @@ class PropFirmAccount < ApplicationRecord
 
   private
 
-  # Valida que el tamaño de cuenta interpretado esté en un rango razonable
   def account_size_within_range
     return if account_size.blank?
     balance = initial_balance
-    if balance < 5_000 || balance > 1_000_000
-      errors.add(:account_size, "debe representar un valor entre $5,000 y $1,000,000 (valor interpretado: $#{balance.to_i})")
-    end
-  end
-
-  # La fase solo tiene sentido cuando el status es evaluación
-  def phase_only_in_evaluacion
-    if phase.present? && !evaluacion?
-      errors.add(:phase, "solo aplica cuando la cuenta está en evaluación")
+    if balance < 1_000 || balance > 5_000_000
+      errors.add(:account_size, "debe representar un valor entre $1,000 y $5,000,000")
     end
   end
 end

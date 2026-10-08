@@ -4,12 +4,11 @@ export default class extends Controller {
   connect() {
     this.initWizardGlobals();
     
-    // El elemento (this.element) es el <form>
     const hasErrors = this.element.dataset.hasFormErrors === 'true';
     if (hasErrors) {
       window.propWizardState.step = 3;
     } else {
-      window.propWizardState = { step: 1, mode: 'preset', firm: 'Topstep', plan: 'Estándar', size: '50K', tab: 'step1' };
+      window.propWizardState = { step: 1, mode: 'preset', firm: 'Topstep', plan: 'Estándar', size: '50K', tab: 'step1', program_steps: 1 };
     }
     
     if (typeof window.initWizard === "function") {
@@ -19,17 +18,17 @@ export default class extends Controller {
 
   initWizardGlobals() {
     window.RULES_DATABASE = {
-      "10K":  { target: "$600",   max_dd: "$1,000 (EOD)", daily: "$500",  consistency: "50%", min_days: "2 días" },
-      "25K":  { target: "$1,500", max_dd: "$1,500 (EOD)", daily: "$1,000", consistency: "50%", min_days: "2 días" },
-      "50K":  { target: "$3,000", max_dd: "$2,000 (EOD)", daily: "$1,000", consistency: "50%", min_days: "2 días" },
-      "100K": { target: "$6,000", max_dd: "$3,000 (EOD)", daily: "$2,000", consistency: "50%", min_days: "2 días" },
-      "150K": { target: "$9,000", max_dd: "$4,500 (EOD)", daily: "$3,000", consistency: "50%", min_days: "2 días" },
-      "200K": { target: "$12,000", max_dd: "$5,000 (EOD)", daily: "$4,000", consistency: "50%", min_days: "2 días" },
-      "250K": { target: "$15,000", max_dd: "$6,000 (EOD)", daily: "$5,000", consistency: "50%", min_days: "2 días" }
+      "10K":  { target: "$600",   max_dd: "$1,000 (EOD)", daily: "$500",  consistency: "50%", min_days: "2 días", steps: 1 },
+      "25K":  { target: "$1,500", max_dd: "$1,500 (EOD)", daily: "$1,000", consistency: "50%", min_days: "2 días", steps: 1 },
+      "50K":  { target: "$3,000", max_dd: "$2,000 (EOD)", daily: "$1,000", consistency: "50%", min_days: "2 días", steps: 1 },
+      "100K": { target: "$6,000", max_dd: "$3,000 (EOD)", daily: "$2,000", consistency: "50%", min_days: "2 días", steps: 1 },
+      "150K": { target: "$9,000", max_dd: "$4,500 (EOD)", daily: "$3,000", consistency: "50%", min_days: "2 días", steps: 1 },
+      "200K": { target: "$12,000", max_dd: "$5,000 (EOD)", daily: "$4,000", consistency: "50%", min_days: "2 días", steps: 1 },
+      "250K": { target: "$15,000", max_dd: "$6,000 (EOD)", daily: "$5,000", consistency: "50%", min_days: "2 días", steps: 1 }
     };
 
     if (typeof window.propWizardState === 'undefined') {
-      window.propWizardState = { step: 1, mode: 'preset', firm: 'Topstep', plan: 'Estándar', size: '50K', tab: 'step1' };
+      window.propWizardState = { step: 1, mode: 'preset', firm: 'Topstep', plan: 'Estándar', size: '50K', tab: 'step1', program_steps: 1 };
     }
 
     window.setDisplay = function(el, show) {
@@ -46,11 +45,15 @@ export default class extends Controller {
     window.syncManualFirm = function(val) {
       const f = document.getElementById("prop_firm_name_field");
       if (f) f.value = val;
+      window.propWizardState.firm = val || "Personalizada";
+      window.updateRulesDisplay();
     };
 
     window.syncManualSize = function(val) {
       const s = document.getElementById("prop_account_size_field");
       if (s) s.value = val;
+      window.propWizardState.size = val || "50K";
+      window.updateRulesDisplay();
     };
 
     window.selectPropAccountMode = function(mode, cardEl) {
@@ -110,10 +113,10 @@ export default class extends Controller {
         if (!node) continue;
         if (i <= stepNum) {
           node.className = "w-10 h-10 rounded-full bg-brand text-white font-extrabold text-sm flex items-center justify-center shadow-md ring-4 ring-brand/20 transition-all";
-          if (label) label.className = "text-[11px] font-bold text-brand transition-colors";
+          if (label) label.className = "text-xs font-bold text-brand transition-colors";
         } else {
           node.className = "w-10 h-10 rounded-full bg-slate-200 dark:bg-darkBorder text-slate-500 font-extrabold text-sm flex items-center justify-center transition-all";
-          if (label) label.className = "text-[11px] font-bold text-slate-400 transition-colors";
+          if (label) label.className = "text-xs font-bold text-slate-400 transition-colors";
         }
       }
 
@@ -138,6 +141,14 @@ export default class extends Controller {
       if (btn) btn.classList.add("ring-2", "ring-brand", "border-brand", "bg-brand/10");
       const lbl = document.getElementById("firm-plan-label");
       if (lbl) lbl.textContent = `2 - CONFIGURACIÓN DE PLAN DE ${firmName.toUpperCase()}`;
+      
+      // Auto toggle FTMO / 2-Step
+      if (firmName.toLowerCase().includes("ftmo")) {
+        window.propWizardState.program_steps = 2;
+      } else {
+        window.propWizardState.program_steps = 1;
+      }
+
       window.updateRulesDisplay();
     };
 
@@ -160,6 +171,14 @@ export default class extends Controller {
         b.classList.remove("ring-2", "ring-brand", "border-brand", "bg-brand/10")
       );
       if (btn) btn.classList.add("ring-2", "ring-brand", "border-brand", "bg-brand/10");
+      
+      // Sync modal size input
+      const mInput = document.getElementById("modal-account-size-input");
+      if (mInput) {
+        const raw = size.includes("K") ? parseFloat(size) * 1000 : parseFloat(size);
+        mInput.value = raw;
+      }
+
       window.updateRulesDisplay();
     };
 
@@ -179,6 +198,21 @@ export default class extends Controller {
         b.classList.remove("ring-2", "ring-emerald-500", "border-emerald-500", "bg-emerald-500/10", "text-emerald-500")
       );
       if (btn) btn.classList.add("ring-2", "ring-emerald-500", "border-emerald-500", "bg-emerald-500/10", "text-emerald-500");
+
+      const burnContainer = document.getElementById("burn-reason-container");
+      const burnSelect = document.getElementById("burn_reason_select");
+      if (burnContainer) {
+        if (statusId === "quemada") {
+          burnContainer.classList.remove("hidden");
+          if (burnSelect) burnSelect.required = true;
+        } else {
+          burnContainer.classList.add("hidden");
+          if (burnSelect) {
+            burnSelect.required = false;
+            burnSelect.value = "";
+          }
+        }
+      }
     };
 
     window.switchRuleTab = function(tabName, btn) {
@@ -196,24 +230,57 @@ export default class extends Controller {
 
     window.updateRulesDisplay = function() {
       const title = document.getElementById("rules-box-title");
-      if (title) title.textContent = `3 - REGLAS: ${window.propWizardState.firm.toUpperCase()} (${window.propWizardState.size})`;
-      const data = window.RULES_DATABASE[window.propWizardState.size] || window.RULES_DATABASE["50K"];
+      if (title) title.textContent = `3 - REGLAS: ${(window.propWizardState.firm || 'TOPSTEP').toUpperCase()} (${window.propWizardState.size})`;
+
+      const isTwoStep = window.propWizardState.program_steps === 2;
+      const tabStep2Btn = document.getElementById("rule-tab-step2");
+      const detailsStep2 = document.getElementById("details-step2");
+      const phaseBtnStep2 = document.getElementById("phase-btn-paso_2");
+
+      if (tabStep2Btn) {
+        if (isTwoStep) tabStep2Btn.classList.remove("hidden");
+        else tabStep2Btn.classList.add("hidden");
+      }
+      if (detailsStep2) {
+        if (isTwoStep) detailsStep2.classList.remove("hidden");
+        else detailsStep2.classList.add("hidden");
+      }
+      if (phaseBtnStep2) {
+        if (isTwoStep) phaseBtnStep2.classList.remove("hidden");
+        else phaseBtnStep2.classList.add("hidden");
+      }
+
+      // Read from modal inputs if present
+      const targetVal = document.getElementById("step1_profit_val")?.value || "3000";
+      const targetUnit = document.getElementById("step1_profit_unit")?.value || "$";
+      const ddVal = document.getElementById("step1_dd_val")?.value || "2000";
+      const ddType = document.getElementById("step1_dd_type")?.value || "eod";
+      const ddFloor = document.getElementById("step1_dd_floor")?.value || "initial_balance";
+      const dailyVal = document.getElementById("step1_daily_val")?.value || "1000";
+      const dailyEnabled = document.getElementById("step1_daily_enabled")?.checked;
+      const consVal = document.getElementById("step1_consistency_pct")?.value || "50";
+      const consEnabled = document.getElementById("step1_consistency_enabled")?.checked;
+      const minDaysVal = document.getElementById("step1_min_days")?.value || "2";
+      const unlimitedVal = document.getElementById("step1_unlimited")?.checked;
 
       const elTarget = document.getElementById("rule-target");
       const elMaxDD  = document.getElementById("rule-max-dd");
       const elDaily  = document.getElementById("rule-daily-loss");
       const elCons   = document.getElementById("rule-consistency");
+      const elMinDays = document.getElementById("rule-min-days");
 
       if (window.propWizardState.tab === "funded") {
         if (elTarget) elTarget.textContent = "N/A (Retiros / Payouts)";
-        if (elMaxDD)  elMaxDD.textContent  = data.max_dd;
-        if (elDaily)  elDaily.textContent  = data.daily;
-        if (elCons)   elCons.textContent   = "30% (Regla Retiro)";
+        if (elMaxDD)  elMaxDD.textContent  = `$${ddVal} (${ddType.toUpperCase()})`;
+        if (elDaily)  elDaily.textContent  = dailyEnabled ? `$${dailyVal}` : "No aplica";
+        if (elCons)   elCons.textContent   = consEnabled ? `${consVal}% (Regla Retiro)` : "No aplica";
+        if (elMinDays) elMinDays.textContent = `${minDaysVal} días`;
       } else {
-        if (elTarget) elTarget.textContent = data.target;
-        if (elMaxDD)  elMaxDD.textContent  = data.max_dd;
-        if (elDaily)  elDaily.textContent  = data.daily;
-        if (elCons)   elCons.textContent   = data.consistency;
+        if (elTarget) elTarget.textContent = `${targetUnit === 'percent' ? '' : '$'}${targetVal}${targetUnit === 'percent' ? '%' : ''}`;
+        if (elMaxDD)  elMaxDD.textContent  = `$${ddVal} (${ddType.toUpperCase()} - ${ddFloor === 'initial_balance' ? 'Balance inicial' : 'Fijo'})`;
+        if (elDaily)  elDaily.textContent  = dailyEnabled ? `$${dailyVal}` : "No aplica";
+        if (elCons)   elCons.textContent   = consEnabled ? `${consVal}% máx` : "No aplica";
+        if (elMinDays) elMinDays.textContent = `${minDaysVal} días (${unlimitedVal ? 'Sin límite' : 'Limitado'})`;
       }
     };
 
@@ -222,23 +289,90 @@ export default class extends Controller {
       if (m) m.classList.toggle("hidden");
     };
 
-    window.switchModalTab = function(tabName, btn) {
-      document.querySelectorAll(".modal-tab-btn").forEach(b => {
-        b.classList.remove("bg-white", "dark:bg-slate-700", "text-brand", "shadow-xs");
-        b.classList.add("text-slate-400");
-      });
-      if (btn) {
-        btn.classList.add("bg-white", "dark:bg-slate-700", "text-brand", "shadow-xs");
-        btn.classList.remove("text-slate-400");
+    window.applyModalRules = function() {
+      window.updateRulesDisplay();
+      window.toggleCustomRulesModal();
+    };
+
+    window.toggleUnlimited = function(step) {
+      const unl = document.getElementById(`${step}_unlimited`);
+      const input = document.getElementById(`${step}_period_days`);
+      if (input && unl) {
+        input.disabled = unl.checked;
+        if (unl.checked) input.value = "";
       }
-      const ev = document.getElementById("modal-sec-eval");
-      const fu = document.getElementById("modal-sec-funded");
-      if (tabName === "funded") {
-        if (ev) ev.classList.add("hidden");
-        if (fu) fu.classList.remove("hidden");
+    };
+
+    window.toggleDailyLoss = function(step) {
+      const en = document.getElementById(`${step}_daily_enabled`);
+      const val = document.getElementById(`${step}_daily_val`);
+      const unit = document.getElementById(`${step}_daily_unit`);
+      if (val && en) {
+        val.disabled = !en.checked;
+        if (unit) unit.disabled = !en.checked;
+      }
+    };
+
+    window.toggleConsistency = function(step) {
+      const en = document.getElementById(`${step}_consistency_enabled`);
+      const val = document.getElementById(`${step}_consistency_pct`);
+      if (val && en) {
+        val.disabled = !en.checked;
+      }
+    };
+
+    window.updateConsistencyHelp = function(step) {
+      const val = document.getElementById(`${step}_consistency_pct`)?.value || "50";
+      const help = document.getElementById(`${step}_consistency_help`);
+      if (help) help.textContent = `Tu mejor día debe estar por debajo del ${val}% de tu profit total.`;
+    };
+
+    window.toggleSameAsStep1 = function(isSame) {
+      const fields = document.querySelectorAll("#step2-fields-container input, #step2-fields-container select");
+      fields.forEach(f => {
+        f.disabled = isSame;
+        if (isSame) {
+          const step1Id = f.id.replace("step2_", "step1_");
+          const step1El = document.getElementById(step1Id);
+          if (step1El) f.value = step1El.value;
+        }
+      });
+    };
+
+    window.applyTemplateToModal = function(templateKey) {
+      if (templateKey.includes("FTMO") || templateKey.includes("2Step")) {
+        window.propWizardState.program_steps = 2;
       } else {
-        if (ev) ev.classList.remove("hidden");
-        if (fu) fu.classList.add("hidden");
+        window.propWizardState.program_steps = 1;
+      }
+      window.updateRulesDisplay();
+    };
+
+    window.selectModalSizeChip = function(sizeLabel, btn) {
+      document.querySelectorAll(".modal-size-chip").forEach(b => b.classList.remove("border-brand", "text-brand", "bg-brand/10"));
+      if (btn) btn.classList.add("border-brand", "text-brand", "bg-brand/10");
+      window.setAccountSize(sizeLabel);
+    };
+
+    window.syncModalAccountSize = function(val) {
+      const sizeStr = val >= 1000 ? `${Math.round(val / 1000)}K` : val;
+      const s = document.getElementById("prop_account_size_field");
+      if (s) s.value = sizeStr;
+      window.propWizardState.size = sizeStr;
+      window.updateRulesDisplay();
+    };
+
+    window.updateStrategiesSummary = function() {
+      const checked = document.querySelectorAll(".strategy-checkbox:checked");
+      const summary = document.getElementById("strategies-selected-summary");
+      if (summary) {
+        if (checked.length === 0) {
+          summary.textContent = "Seleccionar estrategias...";
+          summary.className = "text-slate-400";
+        } else {
+          summary.textContent = `${checked.length} estrategia(s) seleccionada(s)`;
+          summary.className = "text-brand font-bold";
+        }
       }
     };
 

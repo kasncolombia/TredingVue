@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_02_174500) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_08_104500) do
   create_table "ai_analyses", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "discipline_score"
@@ -235,10 +235,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_02_174500) do
     t.string "name", null: false
     t.string "phase"
     t.string "plan_name", null: false
+    t.integer "program_steps", default: 1
     t.integer "prop_firm_rule_template_id"
+    t.json "rules_config", default: {}
     t.boolean "sim", default: false, null: false
     t.date "start_date"
     t.string "status", default: "evaluacion", null: false
+    t.string "template_key"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["prop_firm_rule_template_id"], name: "index_prop_firm_accounts_on_prop_firm_rule_template_id"
