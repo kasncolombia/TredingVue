@@ -3,9 +3,16 @@ module Backtesting
     # Mapeo de Nomenclatura local vs Massive
     # Ej: En TradeTres podemos usar "NQ1!", pero Massive requiere "MNQ" o lo que sea.
     SYMBOL_MAP = {
-      "NQ1!" => "NQ",  # Nasdaq E-mini Future (Ajusta este ticker a la doc real de Massive)
-      "ES1!" => "ES",
-      "AAPL" => "AAPL"
+      "AAPL" => "AAPL",
+      "MSFT" => "MSFT",
+      "NVDA" => "NVDA",
+      "TSLA" => "TSLA",
+      "AMZN" => "AMZN",
+      "GOOGL" => "GOOGL",
+      "META" => "META",
+      "SPY" => "SPY",
+      "QQQ" => "QQQ",
+      "IWM" => "IWM"
     }
 
     class << self
@@ -46,10 +53,12 @@ module Backtesting
         end
 
         # Upsert para no duplicar datos si ejecutas el script más de una vez
-        HistoricalBar1m.upsert_all(
-          bars_to_insert, 
-          unique_by: [:symbol, :timestamp_utc]
-        )
+        bars_to_insert.each_slice(5000) do |batch|
+          HistoricalBar1m.upsert_all(
+            batch, 
+            unique_by: [:symbol, :timestamp_utc]
+          )
+        end
 
         Rails.logger.info "[MassiveImporter] ¡Se cargaron #{bars_to_insert.size} velas exitosamente en M1!"
         bars_to_insert.size

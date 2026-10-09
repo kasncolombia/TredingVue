@@ -416,10 +416,11 @@ export default class extends Controller {
     const close = currentBar.close
 
     let pnl = 0
+    const multiplier = this.getMultiplier()
     if (pos.type === 'BUY') {
-      pnl = (close - pos.entryPrice) * pos.quantity * 50 // Multiplicador base (ej. Futuros 50/pt)
+      pnl = (close - pos.entryPrice) * pos.quantity * multiplier
     } else {
-      pnl = (pos.entryPrice - close) * pos.quantity * 50
+      pnl = (pos.entryPrice - close) * pos.quantity * multiplier
     }
 
     // Update floating P&L display
@@ -457,10 +458,11 @@ export default class extends Controller {
     const exitPrice = exitPriceOverride || (currentBar ? currentBar.close : pos.entryPrice)
 
     let pnl = 0
+    const multiplier = this.getMultiplier()
     if (pos.type === 'BUY') {
-      pnl = (exitPrice - pos.entryPrice) * pos.quantity * 50
+      pnl = (exitPrice - pos.entryPrice) * pos.quantity * multiplier
     } else {
-      pnl = (pos.entryPrice - exitPrice) * pos.quantity * 50
+      pnl = (pos.entryPrice - exitPrice) * pos.quantity * multiplier
     }
 
     this.currentBalance += pnl
@@ -476,6 +478,29 @@ export default class extends Controller {
       time: currentBar ? currentBar.time : pos.entryTime
     }
     this.executedTrades.unshift(tradeRecord)
+
+    // AJAX Call to persistent DB
+    fetch(`/backtesting/sessions/${this.sessionIdValue}/record_trade`, {
+      method: "POST",
+      headers: this.headers(),
+      body: JSON.stringify({
+        trade: {
+          direction: pos.type,
+          entry_price: pos.entryPrice,
+          exit_price: exitPrice,
+          pnl: pnl,
+          entry_at: pos.entryTime,
+          exit_at: tradeRecord.time,
+          quantity: pos.quantity,
+          notes: reason
+        }
+      })
+    }).then(r => r.json()).then(data => {
+      if(data.success && this.hasBalanceDisplayTarget) {
+         this.balanceDisplayTarget.innerText = `$${parseFloat(data.balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+         this.currentBalance = parseFloat(data.balance)
+      }
+    })
 
     // Add Exit Marker
     const isWin = pnl >= 0
@@ -801,10 +826,11 @@ export default class extends Controller {
     const exitPrice = currentBar ? currentBar.close : pos.entryPrice
 
     let pnl = 0
+    const multiplier = this.getMultiplier()
     if (pos.type === 'BUY') {
-      pnl = (exitPrice - pos.entryPrice) * partialQty * 50
+      pnl = (exitPrice - pos.entryPrice) * partialQty * multiplier
     } else {
-      pnl = (pos.entryPrice - exitPrice) * partialQty * 50
+      pnl = (pos.entryPrice - exitPrice) * partialQty * multiplier
     }
 
     this.currentBalance += pnl
@@ -822,6 +848,29 @@ export default class extends Controller {
     }
     this.executedTrades.unshift(tradeRecord)
 
+    // AJAX Call to persistent DB
+    fetch(`/backtesting/sessions/${this.sessionIdValue}/record_trade`, {
+      method: "POST",
+      headers: this.headers(),
+      body: JSON.stringify({
+        trade: {
+          direction: pos.type,
+          entry_price: pos.entryPrice,
+          exit_price: exitPrice,
+          pnl: pnl,
+          entry_at: pos.entryTime,
+          exit_at: tradeRecord.time,
+          quantity: partialQty,
+          notes: 'Parcial 50%'
+        }
+      })
+    }).then(r => r.json()).then(data => {
+      if(data.success && this.hasBalanceDisplayTarget) {
+         this.balanceDisplayTarget.innerText = `$${parseFloat(data.balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+         this.currentBalance = parseFloat(data.balance)
+      }
+    })
+
     // Add Exit Marker
     const isWin = pnl >= 0
     this.addMarker(`Parcial 50% ($${pnl >= 0 ? '+' : ''}${pnl.toFixed(0)})`, isWin ? '#10B981' : '#F43F5E', 'square', pos.type === 'BUY' ? 'aboveBar' : 'belowBar')
@@ -834,6 +883,18 @@ export default class extends Controller {
     this.updateActivePositionUI()
     this.updateTradesListUI()
     this.updateMetricsUI()
+  }
+
+
+
+  getMultiplier() {
+    const symbol = this.hasHeaderSymbolTarget ? this.headerSymbolTarget.innerText.trim().toUpperCase() : ''
+    if (symbol === 'NQ' || symbol === 'NQ1!') return 20
+    if (symbol === 'MNQ') return 2
+    if (symbol === 'ES' || symbol === 'ES1!') return 50
+    if (symbol === 'MES') return 5
+    // Forex standard lot could be 100000 but the price diff is small. If it's stocks/crypto it's 1.
+    return 1
   }
 
   headers() {

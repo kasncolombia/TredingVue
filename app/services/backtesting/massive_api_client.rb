@@ -4,6 +4,10 @@ module Backtesting
     require 'json'
     require 'uri'
 
+    class ApiError < StandardError; end
+    class RateLimited < ApiError; end
+    class NoDataError < ApiError; end
+
     API_BASE = "https://api.massive.com/v2"
 
     def initialize
@@ -18,15 +22,24 @@ module Backtesting
       from_str = from.is_a?(Time) || from.is_a?(Date) ? from.strftime("%Y-%m-%d") : from
       to_str = to.is_a?(Time) || to.is_a?(Date) ? to.strftime("%Y-%m-%d") : to
 
-      url = "#{API_BASE}/aggs/ticker/#{CGI.escape(ticker.to_s.upcase)}/range/#{multiplier}/#{timespan}/#{from_str}/#{to_str}?apiKey=#{@api_key}&limit=50000"
+      url = "#{API_BASE}/aggs/ticker/#{CGI.escape(ticker.to_s.upcase)}/range/#{multiplier}/#{timespan}/#{from_str}/#{to_str}?limit=50000"
       
-      response = fetch_json(url)
+      all_results = []
       
-      if response["status"] != "OK" && response["status"] != "DELAYED"
-        Rails.logger.error "[MassiveAPI] Error en repuesta: #{response.inspect}"
+      loop do
+        response = fetch_json(url)
+        all_results.concat(response["results"] || [])
+        
+        url = response["next_url"]
+        break unless url
+        url = "#{url}&limit=50000" unless url.include?('limit=')
       end
       
-      response["results"] || []
+      if all_results.empty?
+        raise NoDataError, "No hay datos disponibles para #{ticker} del #{from_str} al #{to_str}"
+      end
+      
+      all_results
     end
 
     private
@@ -34,14 +47,30 @@ module Backtesting
     def fetch_json(url)
       uri = URI(url)
       http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
+      http.use_ssl = uri.scheme == 'https'
       
       request = Net::HTTP::Get.new(uri)
+      request['Authorization'] = "Bearer #{@api_key}"
+      
       response = http.request(request)
-      JSON.parse(response.body)
-    rescue => e
-      Rails.logger.error "[MassiveAPI] Network error: #{e.message}"
-      { "status" => "ERROR", "error" => e.message }
+      
+      if response.code == "429"
+        raise RateLimited, "429 Too Many Requests de Massive API"
+      elsif !response.is_a?(Net::HTTPSuccess)
+        raise ApiError, "Error HTTP #{response.code}: #{response.message}"
+      end
+      
+      data = JSON.parse(response.body)
+      if data["status"] != "OK" && data["status"] != "DELAYED"
+        Rails.logger.error "[MassiveAPI] Error status: #{data.inspect}"
+      end
+      data
+    rescue JSON::ParserError
+      raise ApiError, "Respuesta JSON inválida de la API"
+    rescue RateLimited => e
+      raise e
+    rescue StandardError => e
+      raise ApiError, "Error de red/API: #{e.message}"
     end
   end
 end

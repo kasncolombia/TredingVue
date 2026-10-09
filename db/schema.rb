@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_08_104500) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_09_163000) do
   create_table "ai_analyses", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "discipline_score"
@@ -71,19 +71,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_104500) do
 
   create_table "backtest_sessions", force: :cascade do |t|
     t.decimal "account_size", precision: 12, scale: 2, default: "100000.0"
+    t.datetime "archived_at"
     t.string "asset"
     t.decimal "balance_actual", precision: 12, scale: 2, default: "100000.0"
     t.decimal "balance_inicial", precision: 12, scale: 2, default: "100000.0"
     t.json "config", default: {}
     t.datetime "created_at", null: false
+    t.string "data_status", default: "pendiente"
     t.date "end_date"
+    t.datetime "last_opened_at"
     t.decimal "max_daily_loss_pct", precision: 5, scale: 2, default: "2.0"
     t.decimal "max_drawdown_pct", precision: 5, scale: 2, default: "8.0"
     t.string "name", null: false
     t.text "notes"
     t.decimal "profit_target_pct", precision: 5, scale: 2, default: "8.0"
     t.string "prop_company"
-    t.datetime "replay_cursor"
+    t.datetime "replay_cursor_at"
     t.string "session_type", default: "backtest", null: false
     t.integer "speed", default: 1
     t.date "start_date"
@@ -173,6 +176,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_104500) do
     t.datetime "updated_at", null: false
     t.integer "volume", default: 0
     t.index ["symbol", "timestamp_utc"], name: "index_historical_bar1ms_on_symbol_and_timestamp_utc", unique: true
+  end
+
+  create_table "historical_data_coverages", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "error_message"
+    t.date "from_date", null: false
+    t.string "status", default: "pending", null: false
+    t.string "symbol", null: false
+    t.date "to_date", null: false
+    t.datetime "updated_at", null: false
+    t.index ["symbol", "from_date", "to_date"], name: "idx_historical_coverages", unique: true
   end
 
   create_table "instrument_specs", force: :cascade do |t|
@@ -355,6 +369,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_104500) do
   end
 
   create_table "trades", force: :cascade do |t|
+    t.integer "backtest_session_id"
     t.decimal "capital_used", precision: 15, scale: 2
     t.decimal "commission", precision: 10, scale: 4, default: "0.0"
     t.datetime "created_at", null: false
@@ -388,6 +403,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_104500) do
     t.integer "trading_account_id"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
+    t.index ["backtest_session_id"], name: "index_trades_on_backtest_session_id"
     t.index ["prop_firm_account_id"], name: "index_trades_on_prop_firm_account_id"
     t.index ["strategy_id"], name: "index_trades_on_strategy_id"
     t.index ["trading_account_id"], name: "index_trades_on_trading_account_id"

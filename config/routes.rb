@@ -42,18 +42,21 @@ namespace :backtesting do
   get :intro, to: 'dashboard#intro', as: :intro_root
 
 
-  resources :sessions, only: [:new, :create, :show] do
+  resources :sessions, only: [:new, :create, :show, :destroy] do
     member do
       get :replay
       post :play
       post :pause
       post :next
-      post :step_back
-      post :change_timeframe
-      post :finish
-      post :record_trade
-      get :historical_data
-    end
+        post :step_back
+        post :change_timeframe
+        get :historical_data
+        post :record_trade
+        post :duplicate
+        patch :archive
+        patch :rename
+        patch :retry_import
+      end
   end
 end
 

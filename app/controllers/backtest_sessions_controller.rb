@@ -16,8 +16,8 @@ class BacktestSessionsController < ApplicationController
 
   def show
     @session = current_user.backtest_sessions.find(params[:id])
-    # Buscamos los trades etiquetados con este modo
-    @trades = current_user.trades.where(portfolio_mode: @session.portfolio_mode_value).recent
+    # Buscamos los trades etiquetados con esta sesion especifica
+    @trades = current_user.trades.where(backtest_session_id: @session.id).order(created_at: :desc)
     @stats  = @trades.any? ? Trading::CalculateStatistics.new(@trades).call : nil
   end
 

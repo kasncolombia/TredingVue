@@ -1,69 +1,165 @@
-<div class="p-6 md:p-10 max-w-7xl mx-auto min-h-screen">
+<div class="p-4 md:p-8 lg:p-10 max-w-7xl mx-auto min-h-screen">
   
-  <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
+  <!-- HEADER -->
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
     <div class="space-y-1">
       <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-500 text-xs font-bold uppercase tracking-wider mb-2">
         <span class="material-symbols-outlined text-[14px]">query_stats</span> Backtesting Engine
       </div>
       <h1 class="text-3xl font-black text-slate-800 dark:text-gray-100">Simulador de Mercado</h1>
-      <p class="text-slate-500 text-sm">Ejecuta pruebas retrospectivas en un entorno libre de trampas (Anti-Lookahead).</p>
+      <p class="text-slate-500 text-sm">Practicá con datos históricos reales sin ver el futuro.</p>
     </div>
     
-    <%= link_to new_backtesting_session_path, class: "group flex items-center justify-center gap-2 bg-brand text-white px-6 py-3 rounded-2xl font-bold text-sm shadow-xl shadow-brand/20 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-brand/30 transition-all glow-brand" do %>
+    <%= link_to new_backtesting_session_path, class: "hidden md:flex group items-center justify-center gap-2 bg-brand text-white px-6 py-3 rounded-2xl font-bold text-sm shadow-xl shadow-brand/20 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-brand/30 transition-all glow-brand" do %>
       <span class="material-symbols-outlined text-[18px]">add_task</span>
       <span>Nueva Sesión de Replay</span>
     <% end %>
   </div>
 
+  <!-- BANNER DISCRETO CERRABLE (MVP sin js cookies, al menos UI funcional) -->
+  <div class="mb-8 relative w-full glass rounded-2xl border border-sky-500/20 bg-sky-500/5 p-4 pr-10 flex gap-4 items-start md:items-center" data-controller="removal" data-removal-target="element">
+    <div class="p-2 bg-sky-500/10 text-sky-500 rounded-xl shrink-0">
+      <span class="material-symbols-outlined text-[20px]">info</span>
+    </div>
+    <div class="text-sm font-medium text-slate-700 dark:text-slate-300">
+      <span class="font-bold text-sky-600 dark:text-sky-400">Disponible hoy:</span> acciones y ETFs de EE. UU. · velas de 1 minuto · hasta 2 años atrás · máximo 30 días por sesión.
+      <br>
+      <span class="text-xs text-slate-500 dark:text-slate-400 mt-1 inline-block">Futuros y Forex: próximamente.</span>
+    </div>
+    <button data-action="click->removal#remove" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors p-1" aria-label="Cerrar banner">
+      <span class="material-symbols-outlined text-[18px]">close</span>
+    </button>
+  </div>
+
+  <!-- CONTENIDO: BUSCADOR Y FILTROS -->
   <% if @sessions.any? %>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <% @sessions.each do |session| %>
-        <div class="glass border border-slate-200 dark:border-darkBorder rounded-3xl p-6 transition-all hover:border-brand/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 flex flex-col justify-between">
-          <div>
-            <div class="flex justify-between items-start mb-4">
-              <h3 class="font-black text-lg text-slate-800 dark:text-gray-100"><%= session.name %></h3>
-              <span class="px-3 py-1 rounded-full bg-slate-200 dark:bg-darkBorder text-slate-600 dark:text-slate-300 text-xs font-bold font-mono">
-                <%= session.symbol %>
-              </span>
-            </div>
-            
-            <div class="space-y-3 mb-6">
-              <div class="flex justify-between text-sm">
-                <span class="text-slate-500">Estado</span>
-                <span class="font-bold text-<%= session.state == 'playing' ? 'emerald' : 'amber' %>-500 uppercase text-xs tracking-wider">
-                  <%= session.state %>
-                </span>
-              </div>
-              <div class="flex justify-between text-sm">
-                <span class="text-slate-500">Balance</span>
-                <span class="font-mono font-bold text-slate-800 dark:text-gray-100">
-                  <%= number_to_currency(session.balance_actual) %>
-                </span>
-              </div>
-            </div>
-          </div>
-          
-          <%= link_to replay_backtesting_session_path(session), class: "w-full py-2.5 rounded-xl border border-slate-200 dark:border-darkBorder font-bold text-sm text-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-brand transition-colors flex items-center justify-center gap-2" do %>
-            <span class="material-symbols-outlined text-[18px]">play_circle</span>
-            Continuar Simulador
-          <% end %>
+    <% if @sessions.size > 6 %>
+      <div class="mb-6 flex flex-col md:flex-row gap-4 justify-between items-center bg-white/40 dark:bg-slate-800/40 p-4 rounded-3xl border border-slate-200 dark:border-darkBorder" id="backtesting_filters">
+        <div class="w-full md:max-w-xs relative">
+          <span class="material-symbols-outlined absolute left-4 top-3 text-slate-400">search</span>
+          <input type="text" id="search_input" placeholder="Buscar sesión..." class="w-full pl-11 pr-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-darkBorder rounded-2xl text-sm font-medium focus:ring-2 focus:ring-brand focus:outline-none">
         </div>
+        <div class="w-full md:w-auto flex items-center gap-2">
+          <span class="text-xs font-bold text-slate-500 uppercase">Filtrar:</span>
+          <select id="symbol_filter" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-darkBorder rounded-xl px-4 py-2 text-sm font-bold cursor-pointer">
+            <option value="">Todos los activos</option>
+            <% @sessions.map(&:symbol).uniq.each do |sym| %>
+              <option value="<%= sym %>"><%= sym %></option>
+            <% end %>
+          </select>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- LISTADO DE SESIONES ARCHIVADAS Y ACTIVAS -->
+    <% active_sessions = @sessions.reject { |s| s.archived_at.present? }.sort_by { |s| s.last_opened_at || s.created_at }.reverse %>
+    <% archived_sessions = @sessions.select { |s| s.archived_at.present? }.sort_by { |s| s.last_opened_at || s.created_at }.reverse %>
+
+    <!-- GRILLA SESIONES ACTIVAS -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+      <% active_sessions.each do |session| %>
+        <%= render partial: "backtesting/dashboard/session_card", locals: { session: session } %>
       <% end %>
     </div>
+
+    <!-- SECCION ARCHIVADOS COLAPSABLE -->
+    <% if archived_sessions.any? %>
+      <details class="group">
+        <summary class="flex items-center gap-3 cursor-pointer text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 font-bold transition-colors select-none mb-6">
+          <span class="material-symbols-outlined group-open:-rotate-180 transition-transform">expand_more</span>
+          <h2>Sesiones Archivadas (<%= archived_sessions.size %>)</h2>
+          <div class="flex-grow h-px bg-slate-200 dark:bg-darkBorder ml-2"></div>
+        </summary>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4 opacity-75 grayscale-[20%] hover:grayscale-0 transition-all">
+          <% archived_sessions.each do |session| %>
+            <%= render partial: "backtesting/dashboard/session_card", locals: { session: session } %>
+          <% end %>
+        </div>
+      </details>
+    <% end %>
+    
   <% else %>
-    <div class="w-full flex flex-col items-center justify-center text-center py-20 px-4 glass border border-slate-200 dark:border-darkBorder rounded-3xl">
+    <!-- ESTADO VACIO -->
+    <div class="w-full flex flex-col items-center justify-center text-center py-24 px-4 glass border border-slate-200 dark:border-darkBorder rounded-3xl">
       <div class="w-24 h-24 bg-brand/10 text-brand rounded-full flex items-center justify-center mb-6 shadow-xl shadow-brand/5 ring-4 ring-brand/5">
         <span class="material-symbols-outlined text-4xl">history_toggle_off</span>
       </div>
-      <h2 class="text-2xl font-black text-slate-800 dark:text-gray-100 mb-2">Sin Sesiones Activas</h2>
+      <h2 class="text-2xl font-black text-slate-800 dark:text-gray-100 mb-2">Todavía no tenés sesiones</h2>
       <p class="text-slate-500 max-w-md mx-auto mb-8">
-        Crea tu primera sesión de backtesting aislando tu estrategia en un entorno 100% puro.
+        Empezá a practicar tus estrategias aislando tu mente del "lado derecho del gráfico".
       </p>
-      <%= link_to new_backtesting_session_path, class: "bg-brand text-white px-8 py-3.5 rounded-2xl font-extrabold text-sm shadow-xl shadow-brand/20 hover:-translate-y-0.5 glow-brand transition-all flex items-center gap-2" do %>
-        <span>Crear Entorno de Simulación</span>
-        <span class="material-symbols-outlined">arrow_forward</span>
+      
+      <%= form_with url: backtesting_sessions_path, local: true, class: "inline-block" do |f| %>
+        <input type="hidden" name="backtest_session[name]" value="AAPL · Backtest Base">
+        <input type="hidden" name="backtest_session[symbol]" value="AAPL">
+        <input type="hidden" name="backtest_session[balance_inicial]" value="100000">
+        <input type="hidden" name="backtest_session[timeframe]" value="M1">
+        <input type="hidden" name="backtest_session[speed]" value="1">
+        <input type="hidden" name="backtest_session[start_date]" value="<%= (Date.today - 3.days) %>">
+        <input type="hidden" name="backtest_session[end_date]" value="<%= (Date.today - 1.day) %>">
+        <%= f.button type: :submit, class: "bg-brand text-white px-8 py-3.5 rounded-2xl font-extrabold text-sm shadow-xl shadow-brand/20 hover:-translate-y-0.5 glow-brand transition-all flex items-center gap-2 cursor-pointer" do %>
+          <span>Probar con AAPL</span>
+          <span class="material-symbols-outlined">arrow_forward</span>
+        <% end %>
       <% end %>
     </div>
   <% end %>
 
+  <!-- FLOATING BTN MOBILE -->
+  <%= link_to new_backtesting_session_path, class: "md:hidden fixed bottom-6 right-6 z-40 bg-brand text-white p-4 rounded-full shadow-2xl glow-brand hover:scale-105 transition-transform" do %>
+    <span class="material-symbols-outlined text-[24px]">add</span>
+  <% end %>
+
+  <!-- LOGIC PARA SEARCH Y FILTRO -->
+  <script>
+    (function() {
+      const initFilters = () => {
+        const searchInput = document.getElementById('search_input');
+        const symbolFilter = document.getElementById('symbol_filter');
+        const cards = document.querySelectorAll('.session-card-wrapper');
+
+        const filterCards = () => {
+          if (!searchInput && !symbolFilter) return;
+          const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
+          const symbolTerm = symbolFilter ? symbolFilter.value.toLowerCase() : "";
+
+          cards.forEach(card => {
+            const title = (card.dataset.title || '').toLowerCase();
+            const symbol = (card.dataset.symbol || '').toLowerCase();
+            
+            const matchesSearch = title.includes(searchTerm) || symbol.includes(searchTerm);
+            const matchesSymbol = symbolTerm === "" || symbol === symbolTerm;
+            
+            if (matchesSearch && matchesSymbol) {
+              card.style.display = '';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+        };
+
+        if (searchInput) searchInput.addEventListener('input', filterCards);
+        if (symbolFilter) symbolFilter.addEventListener('change', filterCards);
+      };
+
+      document.addEventListener('turbo:load', initFilters);
+      // Run once immediately in case of full page load
+      if (document.readyState !== 'loading') {
+        initFilters();
+      } else {
+        document.addEventListener('DOMContentLoaded', initFilters);
+      }
+    })();
+  </script>
+
+  <!-- ESPACIADO INFERIOR PARA EVITAR COLLISIONS CON AI COACH -->
+  <div class="h-24 w-full block"></div>
+
+  <% if @sessions.any? { |s| s.data_status == 'importando' } %>
+    <script>
+      setTimeout(() => {
+        window.location.reload();
+      }, 4000);
+    </script>
+  <% end %>
 </div>

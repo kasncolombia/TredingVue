@@ -1,0 +1,165 @@
+<% status_color = { 'en_curso' => 'blue', 'en_pausa' => 'amber', 'finalizada' => 'emerald' }[session.human_status] || 'slate' %>
+<% data_color = { 'lista' => 'emerald', 'importando' => 'sky', 'fallo' => 'rose', 'pendiente' => 'slate' }[session.data_status] || 'slate' %>
+<% pnl = session.pnl_neto %>
+<% pnl_color = pnl >= 0 ? "text-emerald-500" : "text-rose-500" %>
+<% available = Backtesting::Catalog.available?(session.symbol) %>
+<% importing = session.data_status == 'importando' %>
+<% card_link = (available && !importing) ? replay_backtesting_session_path(session) : "javascript:void(0)" %>
+
+<div class="relative group glass border border-slate-200 dark:border-darkBorder rounded-3xl p-6 transition-all <%= available ? 'hover:border-brand/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 hover:shadow-xl hover:-translate-y-1' : 'opacity-80 grayscale-[30%]' %> flex flex-col justify-between session-card-wrapper overflow-hidden"
+     data-title="<%= session.name %>" data-symbol="<%= session.symbol %>"
+     <% if available && !importing %>onclick="window.location.href='<%= card_link %>';"<% end %>
+     style="<%= (available && !importing) ? 'cursor: pointer;' : 'cursor: not-allowed;' %>">
+     
+  <!-- CABECERA DE TARJETA -->
+  <div class="flex justify-between items-start mb-4">
+    <div class="w-[85%] pr-2">
+      <h3 class="font-black text-lg text-slate-800 dark:text-gray-100 truncate" title="<%= session.name %>"><%= session.name %></h3>
+      <p class="text-[11px] text-slate-500 font-medium">
+        <% if session.start_date && session.end_date %>
+          <%= l(session.start_date, format: :short) %> &ndash; <%= l(session.end_date, format: :short) %>
+        <% else %>
+          Rango sin definir
+        <% end %>
+      </p>
+    </div>
+    
+    <div class="flex items-center gap-2">
+      <!-- Menú Kebab -->
+      <details class="relative z-20 group/menu" onclick="event.stopPropagation();">
+        <summary class="list-none p-1 rounded-full text-slate-400 hover:text-brand hover:bg-brand/10 transition-colors cursor-pointer select-none" aria-label="Opciones">
+          <span class="material-symbols-outlined text-[20px]">more_vert</span>
+        </summary>
+        
+        <!-- Menu popover -->
+        <div class="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-darkBorder overflow-hidden z-30">
+          <%= button_to archive_backtesting_session_path(session), method: :patch, class: "w-full text-left px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center gap-2", form_class: "w-full" do %>
+            <span class="material-symbols-outlined text-[18px]">archive</span> Archivar
+          <% end %>
+          
+          <%= button_to duplicate_backtesting_session_path(session), method: :post, class: "w-full text-left px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center gap-2", form_class: "w-full" do %>
+            <span class="material-symbols-outlined text-[18px]">content_copy</span> Duplicar
+          <% end %>
+          
+          <%= button_to backtesting_session_path(session), method: :delete, form: { data: { turbo_confirm: "¿Eliminar sesión permanentemente?" } }, class: "w-full text-left px-4 py-3 text-sm font-medium text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 flex items-center gap-2 border-t border-slate-100 dark:border-darkBorder", form_class: "w-full" do %>
+            <span class="material-symbols-outlined text-[18px]">delete</span> Eliminar
+          <% end %>
+        </div>
+      </details>
+    </div>
+  </div>
+  
+  <div class="flex items-center gap-2 mb-5">
+    <span class="px-2.5 py-0.5 rounded-full bg-slate-200 dark:bg-darkBorder text-slate-600 dark:text-slate-300 text-[11px] font-bold font-mono tracking-widest">
+      <%= session.symbol %>
+    </span>
+    
+    <span class="px-2.5 py-0.5 rounded-full bg-<%= status_color %>-500/10 text-<%= status_color %>-600 dark:text-<%= status_color %>-400 border border-<%= status_color %>-500/20 text-[10px] font-bold uppercase tracking-wider">
+      <%= session.human_status.titleize %>
+    </span>
+    
+    <% if !available %>
+      <div class="group/tooltip relative">
+        <span class="material-symbols-outlined text-[16px] text-rose-500 cursor-help mt-1">warning</span>
+        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-slate-900 text-white text-[10px] rounded-lg opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all shadow-xl z-20 text-center">
+          Este activo llega con el plan de datos de Futuros. Mientras tanto, practicá con QQQ o SPY.
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- BARRA DE PROGRESO -->
+  <div class="mb-5">
+    <div class="flex justify-between text-[11px] font-semibold text-slate-500 mb-1.5">
+      <span>Progreso</span>
+      <span><%= session.progress_percentage.round(0) %>%</span>
+    </div>
+    <div class="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+      <div class="h-full bg-brand transition-all duration-500" style="width: <%= session.progress_percentage %>%;"></div>
+    </div>
+  </div>
+
+  <!-- METRICAS (BALANCE, P&L, TRADES) -->
+  <div class="grid grid-cols-2 gap-4 mb-6">
+    <div class="space-y-1">
+      <p class="text-[11px] font-bold text-slate-400 tracking-wider">BALANCE</p>
+      <p class="font-mono font-black text-sm text-slate-800 dark:text-gray-100">
+        <%= number_with_precision((session.balance_actual || session.balance_inicial), precision: 2, delimiter: ',') %>
+      </p>
+    </div>
+    <div class="space-y-1 text-right">
+      <p class="text-[11px] font-bold text-slate-400 tracking-wider">P&L (<%= session.trades_count %> TRADES)</p>
+      <p class="font-mono font-black text-sm <%= pnl_color %>">
+        <%= pnl >= 0 ? "+" : "" %><%= number_with_precision(pnl, precision: 2, delimiter: ',') %>
+      </p>
+    </div>
+  </div>
+
+  <!-- FOOTER DE TARJETA -->
+  <div class="mt-auto border-t border-slate-100 dark:border-darkBorder pt-4 flex justify-between items-center">
+    <div class="flex items-center gap-1.5 text-[10px] font-medium text-slate-400">
+      <span class="material-symbols-outlined text-[14px]">schedule</span>
+      <%= session.last_opened_at ? "usada hace #{time_ago_in_words(session.last_opened_at)}" : "Creada hace #{time_ago_in_words(session.created_at)}" %>
+    </div>
+    
+    <% if session.data_status == "importando" %>
+      <div class="flex items-center gap-1 text-[11px] font-bold text-sky-500" aria-label="Importando">
+        <span class="material-symbols-outlined text-[14px] animate-spin">sync</span>
+        Importando...
+      </div>
+    <% elsif session.data_status == "lista" %>
+      <div class="flex items-center gap-1 text-[11px] font-bold text-emerald-500" aria-label="Datos listos">
+        <span class="material-symbols-outlined text-[14px]">cloud_done</span>
+        Lista
+      </div>
+    <% elsif session.data_status == "fallo" %>
+      <div class="flex items-center gap-1 text-[11px] font-bold text-rose-500" aria-label="Error de descarga">
+        <span class="material-symbols-outlined text-[14px]">cloud_off</span>
+        Fallo
+        <%= button_to retry_import_backtesting_session_path(session), method: :patch, class: "ml-2 px-2 py-0.5 rounded bg-rose-500/10 hover:bg-rose-500/20 transition-colors text-[10px]" do %>Reintentar<% end %>
+      </div>
+    <% else %>
+      <div class="flex items-center gap-1 text-[11px] font-bold text-slate-400" aria-label="Sin datos">
+        <span class="material-symbols-outlined text-[14px]">cloud_download</span>
+        Pendiente
+      </div>
+    <% end %>
+  </div>
+  
+  <!-- ACTION BUTTON OVERLAY DISCRETO -->
+  <% if importing %>
+    <div class="absolute inset-0 z-10 bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none rounded-3xl">
+      <span class="material-symbols-outlined text-[32px] text-sky-500 animate-spin mb-3">sync</span>
+      <h4 class="font-black text-slate-800 dark:text-white text-sm mb-1">Importando mercado...</h4>
+      
+      <!-- FAKE PROGRESS BAR -->
+      <div class="w-2/3 h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full mt-2 overflow-hidden flex">
+        <div class="h-full bg-sky-500 rounded-full animate-progress-indeterminate w-full origin-left"></div>
+      </div>
+      
+      <p class="text-[10px] font-bold text-slate-500 uppercase mt-3 text-center px-4 leading-tight">
+        Preparando el ecosistema.<br>Por favor no cierres la ventana.
+      </p>
+    </div>
+    
+  <% elsif available %>
+    <div class="absolute inset-0 z-0 bg-transparent flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+      <div class="translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+        <span class="bg-brand text-white px-5 py-2.5 rounded-full font-bold shadow-xl flex items-center gap-2 text-sm">
+          <span class="material-symbols-outlined text-[18px]"><%= session.finished? ? 'analytics' : 'play_arrow' %></span>
+          <%= session.finished? ? 'Ver Resultados' : (session.progress_percentage > 0 ? 'Continuar' : 'Empezar') %>
+        </span>
+      </div>
+    </div>
+  <% else %>
+    <div class="absolute inset-0 z-0 bg-transparent flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none bg-slate-900/10 dark:bg-black/30 backdrop-blur-[2px] rounded-3xl">
+      <div class="translate-y-4 group-hover:translate-y-0 transition-all duration-300 flex flex-col items-center pointer-events-auto">
+        <span class="bg-slate-800 text-white px-5 py-2.5 rounded-full font-bold shadow-xl flex items-center gap-2 text-sm mb-2 opacity-50 cursor-not-allowed">
+          <span class="material-symbols-outlined text-[18px]">lock</span> Bloqueado
+        </span>
+        <%= button_to "Duplicar con QQQ", duplicate_backtesting_session_path(session, symbol: 'QQQ'), method: :post, class: "text-brand hover:text-brand/80 font-bold text-xs underline cursor-pointer" %>
+      </div>
+    </div>
+  <% end %>
+
+</div>

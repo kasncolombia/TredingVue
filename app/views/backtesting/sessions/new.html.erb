@@ -1,30 +1,30 @@
 <% content_for :page_title, "Nueva Sesión de Backtesting" %>
 
-<div class="max-w-3xl mx-auto py-10 px-4 space-y-8 fade-in">
+<div class="max-w-2xl mx-auto py-10 px-4 space-y-8 fade-in">
   
   <!-- HEADER -->
   <div class="flex items-center gap-4">
-    <%= link_to backtesting_root_path, class: "p-2.5 rounded-2xl glass border border-slate-200 dark:border-darkBorder text-slate-500 hover:text-brand transition-colors" do %>
+    <%= link_to backtesting_root_path, class: "p-2.5 rounded-2xl glass border border-slate-200 dark:border-darkBorder text-slate-500 hover:text-brand transition-colors", 'aria-label': "Volver" do %>
       <span class="material-symbols-outlined text-[20px]">arrow_back</span>
     <% end %>
     
     <div>
       <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand/10 text-brand text-xs font-bold uppercase tracking-wider mb-1">
-        <span class="material-symbols-outlined text-[14px]">tune</span> Configuración de Simulación
+        <span class="material-symbols-outlined text-[14px]">add_task</span> Nueva Sesión
       </div>
-      <h1 class="text-2xl font-black text-slate-900 dark:text-white">Nueva Sesión de Replay</h1>
+      <h1 class="text-2xl font-black text-slate-900 dark:text-white">Aislar un entorno de prueba</h1>
     </div>
   </div>
 
   <!-- FORM CARD -->
   <div class="glass border border-slate-200 dark:border-darkBorder rounded-3xl p-6 md:p-8 shadow-xl bg-white/70 dark:bg-slate-900/80">
-    <%= form_with(model: @session, url: backtesting_sessions_path, local: true, class: "space-y-6") do |f| %>
+    <%= form_with(model: @session, url: backtesting_sessions_path, local: true, class: "space-y-6 flex flex-col", id: "new_session_form") do |f| %>
       
       <% if @session.errors.any? %>
         <div class="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-500 text-sm space-y-1">
           <p class="font-bold flex items-center gap-2">
             <span class="material-symbols-outlined text-[18px]">error</span>
-            Ocurrieron errores al guardar la sesión:
+            No pudimos crear la sesión:
           </p>
           <ul class="list-disc list-inside text-xs space-y-1 pl-6">
             <% @session.errors.full_messages.each do |msg| %>
@@ -34,56 +34,92 @@
         </div>
       <% end %>
 
-      <!-- NOMBRE DE LA SESIÓN -->
+      <!-- 1. SIMBOLO / ACTIVO -->
       <div class="space-y-2">
-        <%= f.label :name, "Nombre de la Sesión / Estrategia", class: "block text-xs font-bold text-slate-500 uppercase tracking-wider" %>
-        <%= f.text_field :name, placeholder: "Ej. Prueba Breakout NQ1 - Septiembre", class: "w-full bg-slate-50 dark:bg-darkBorder/40 border border-slate-200 dark:border-darkBorder rounded-2xl px-4 py-3 text-sm font-semibold text-slate-800 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand transition-all outline-none" %>
+        <%= f.label :symbol, "1. Activo de Mercado", class: "block text-xs font-bold text-slate-500 uppercase tracking-wider" %>
+        <div class="relative">
+          <select name="backtest_session[symbol]" id="session_symbol" class="w-full bg-slate-50 dark:bg-darkBorder/40 border border-slate-200 dark:border-darkBorder rounded-2xl px-4 py-3 pb-3 pt-3 text-sm font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand transition-all outline-none cursor-pointer appearance-none" required>
+            <option value="" disabled selected>Seleccioná un activo...</option>
+            <optgroup label="Disponibles ahora (Acciones/ETFs)">
+              <% Backtesting::Catalog.available.each do |item| %>
+                <option value="<%= item[:symbol] %>" <%= 'selected' if @session.symbol == item[:symbol] %>><%= item[:symbol] %> - <%= item[:name] %></option>
+              <% end %>
+            </optgroup>
+            <optgroup label="Próximamente">
+              <% Backtesting::Catalog.coming_soon.each do |item| %>
+                <option value="<%= item[:symbol] %>" disabled><%= item[:symbol] %> - <%= item[:name] %> (Próximamente)</option>
+              <% end %>
+            </optgroup>
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
+            <span class="material-symbols-outlined">expand_more</span>
+          </div>
+        </div>
+        <p class="text-[11px] text-slate-400 mt-1 flex items-start gap-1">
+          <span class="material-symbols-outlined text-[13px] mt-0.5">lightbulb</span>
+          Para practicar Nasdaq usá QQQ; para S&P 500, SPY. Son ETFs, no el contrato de futuros.
+        </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- SIMBOLO / ACTIVO -->
+      <!-- 2. FECHAS -->
+      <div class="grid grid-cols-2 gap-4">
         <div class="space-y-2">
-          <%= f.label :symbol, "Activo de Mercado (Ticker)", class: "block text-xs font-bold text-slate-500 uppercase tracking-wider" %>
-          <%= f.text_field :symbol, placeholder: "Ej. AAPL, NQ, ES...", required: true, class: "w-full bg-slate-50 dark:bg-darkBorder/40 border border-slate-200 dark:border-darkBorder rounded-2xl px-4 py-3 text-sm font-bold text-slate-800 dark:text-white uppercase focus:ring-2 focus:ring-brand focus:border-brand transition-all outline-none" %>
+          <%= f.label :start_date, "2. Fecha de Inicio", class: "block text-xs font-bold text-slate-500 uppercase tracking-wider" %>
+          <%= f.date_field :start_date, id: "session_start_date", min: 2.years.ago.to_date, max: Date.today, required: true, class: "w-full bg-slate-50 dark:bg-darkBorder/40 border border-slate-200 dark:border-darkBorder rounded-2xl px-4 py-3 text-sm font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand transition-all outline-none cursor-pointer" %>
         </div>
-
-        <!-- BALANCE INICIAL -->
         <div class="space-y-2">
-          <%= f.label :balance_inicial, "Balance Inicial ($USD)", class: "block text-xs font-bold text-slate-500 uppercase tracking-wider" %>
-          <%= f.number_field :balance_inicial, value: @session.balance_inicial || 50000, step: 5000, class: "w-full bg-slate-50 dark:bg-darkBorder/40 border border-slate-200 dark:border-darkBorder rounded-2xl px-4 py-3 text-sm font-mono font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand transition-all outline-none" %>
+          <%= f.label :end_date, "Hasta", class: "block text-xs font-bold text-slate-500 uppercase tracking-wider" %>
+          <%= f.date_field :end_date, id: "session_end_date", min: 2.years.ago.to_date, max: Date.today, required: true, class: "w-full bg-slate-50 dark:bg-darkBorder/40 border border-slate-200 dark:border-darkBorder rounded-2xl px-4 py-3 text-sm font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand transition-all outline-none cursor-pointer" %>
         </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- TIMEFRAME INICIAL -->
-        <div class="space-y-2">
-          <%= f.label :timeframe, "Temporalidad Inicial", class: "block text-xs font-bold text-slate-500 uppercase tracking-wider" %>
-          <%= f.select :timeframe, [
-            ["1 Minuto (M1)", "M1"],
-            ["5 Minutos (M5)", "M5"],
-            ["15 Minutos (M15)", "M15"],
-            ["1 Hora (H1)", "H1"]
-          ], { selected: "M1" }, class: "w-full bg-slate-50 dark:bg-darkBorder/40 border border-slate-200 dark:border-darkBorder rounded-2xl px-4 py-3 text-sm font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand transition-all outline-none cursor-pointer" %>
-        </div>
-
-        <!-- VELOCIDAD DE REPLAY -->
-        <div class="space-y-2">
-          <%= f.label :speed, "Velocidad de Reproducción", class: "block text-xs font-bold text-slate-500 uppercase tracking-wider" %>
-          <%= f.select :speed, [
-            ["Normal (1x - 1 seg/vela)", 1],
-            ["Rápida (5x)", 5],
-            ["Ultra (20x)", 20]
-          ], { selected: 1 }, class: "w-full bg-slate-50 dark:bg-darkBorder/40 border border-slate-200 dark:border-darkBorder rounded-2xl px-4 py-3 text-sm font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand transition-all outline-none cursor-pointer" %>
+        <div class="col-span-2 text-[11px] font-bold text-slate-400 -mt-1" id="date_limit_warning">
+          Rango máximo: 30 días.
         </div>
       </div>
+
+      <!-- 3. BALANCE INICIAL -->
+      <div class="space-y-2">
+        <%= f.label :balance_inicial, "3. Capital Inicial ($USD)", class: "block text-xs font-bold text-slate-500 uppercase tracking-wider" %>
+        <%= f.number_field :balance_inicial, value: @session.balance_inicial || 100000, step: 1000, class: "w-full bg-slate-50 dark:bg-darkBorder/40 border border-slate-200 dark:border-darkBorder rounded-2xl px-4 py-3 text-sm font-mono font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand transition-all outline-none" %>
+      </div>
+
+      <!-- 4. NOMBRE -->
+      <div class="space-y-2">
+        <%= f.label :name, "4. Nombre de la Sesión", class: "block text-xs font-bold text-slate-500 uppercase tracking-wider" %>
+        <%= f.text_field :name, id: "session_name", placeholder: "Ej. AAPL · 1–30 sep", class: "w-full bg-slate-50 dark:bg-darkBorder/40 border border-slate-200 dark:border-darkBorder rounded-2xl px-4 py-3 text-sm font-semibold text-slate-800 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand transition-all outline-none" %>
+      </div>
+
+      <!-- 5. REGLAS OPCIONALES -->
+      <details class="group border border-slate-200 dark:border-darkBorder rounded-2xl bg-white/40 dark:bg-slate-800/40 mt-2">
+        <summary class="flex justify-between items-center cursor-pointer p-4 font-bold text-sm text-slate-700 dark:text-slate-300 select-none">
+          <span class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-slate-400">gavel</span>
+            5. Reglas de Prop Firm (Opcional)
+          </span>
+          <span class="material-symbols-outlined group-open:-rotate-180 transition-transform">expand_more</span>
+        </summary>
+        <div class="p-4 pt-0 grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-slate-200 dark:border-darkBorder mt-2">
+          <div class="space-y-1">
+            <label class="text-[10px] font-bold text-slate-500 uppercase">Pérdida Diaria Max (%)</label>
+            <%= f.number_field :max_daily_loss_pct, value: 2.0, step: 0.5, class: "w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-darkBorder rounded-xl px-3 py-2 text-sm font-mono" %>
+          </div>
+          <div class="space-y-1">
+            <label class="text-[10px] font-bold text-slate-500 uppercase">Drawdown Max (%)</label>
+            <%= f.number_field :max_drawdown_pct, value: 8.0, step: 1.0, class: "w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-darkBorder rounded-xl px-3 py-2 text-sm font-mono" %>
+          </div>
+        </div>
+      </details>
+
+      <!-- HIDDEN FIELDS FOR PREVIOUS BEHAVIOR -->
+      <%= f.hidden_field :timeframe, value: "M1" %>
+      <%= f.hidden_field :speed, value: "1" %>
 
       <!-- BOTONES -->
-      <div class="pt-4 flex items-center justify-end gap-3">
-        <%= link_to "Cancelar", backtesting_root_path, class: "px-6 py-3 rounded-2xl border border-slate-200 dark:border-darkBorder text-slate-500 font-bold text-sm hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" %>
+      <div class="pt-6 flex flex-col sm:flex-row items-center justify-end gap-3 border-t border-slate-200 dark:border-darkBorder">
+        <%= link_to "Cancelar", backtesting_root_path, class: "w-full sm:w-auto px-6 py-3.5 rounded-2xl text-slate-500 font-bold text-sm hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-center" %>
         
-        <%= f.button type: :submit, class: "bg-brand text-white px-8 py-3 rounded-2xl font-extrabold text-sm shadow-xl shadow-brand/20 hover:-translate-y-0.5 glow-brand transition-all flex items-center gap-2 cursor-pointer" do %>
+        <%= f.button id: "submit_btn", type: :submit, class: "w-full sm:w-auto bg-brand text-white px-8 py-3.5 rounded-2xl font-extrabold text-sm shadow-xl shadow-brand/20 hover:-translate-y-0.5 glow-brand transition-all flex items-center justify-center gap-2 cursor-pointer" do %>
           <span class="material-symbols-outlined text-[18px]">play_circle</span>
-          <span>Crear e Iniciar Replay</span>
+          <span>Crear e Iniciar Importación</span>
         <% end %>
       </div>
 
@@ -91,3 +127,61 @@
   </div>
 
 </div>
+
+<script>
+  document.addEventListener('turbo:load', () => {
+    const symSelect = document.getElementById('session_symbol');
+    const startInput = document.getElementById('session_start_date');
+    const endInput = document.getElementById('session_end_date');
+    const nameInput = document.getElementById('session_name');
+    const submitBtn = document.getElementById('submit_btn');
+    const warning = document.getElementById('date_limit_warning');
+
+    if(!symSelect) return;
+
+    const updateName = () => {
+      // Solo sobreescribe si el usuario no editó manualmente o si está vacío
+      if (nameInput.dataset.edited === 'true' && nameInput.value.trim() !== '') return;
+      
+      const sym = symSelect.value || 'Activo';
+      const start = startInput.value;
+      const end = endInput.value;
+      
+      if(start && end) {
+        const d_start = new Date(start);
+        const d_end = new Date(end);
+        const diffTime = Math.abs(d_end - d_start);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        if(diffDays > 30) {
+          warning.classList.replace('text-slate-400', 'text-rose-500');
+          submitBtn.disabled = true;
+          submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+          warning.classList.replace('text-rose-500', 'text-slate-400');
+          submitBtn.disabled = false;
+          submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        const months = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+        
+        let formatted = `${sym} · ${d_start.getDate() + 1}`;
+        if (d_start.getMonth() !== d_end.getMonth()) {
+          formatted += ` ${months[d_start.getMonth()]}`;
+        }
+        formatted += ` - ${d_end.getDate() + 1} ${months[d_end.getMonth()]}`;
+
+        nameInput.value = formatted;
+      }
+    };
+
+    symSelect.addEventListener('change', updateName);
+    startInput.addEventListener('change', updateName);
+    endInput.addEventListener('change', updateName);
+    
+    nameInput.addEventListener('input', () => {
+      nameInput.dataset.edited = 'true';
+      if (nameInput.value.trim() === '') nameInput.dataset.edited = 'false';
+    });
+  });
+</script>
