@@ -359,14 +359,14 @@ puts "  ✔ #{Broker.count} brokers/plataformas registradas"
 puts "✅ Datos de Community y Brokers sembrados con éxito!"
 
 # db/seeds.rb
-if HistoricalBar1m.count < 1000
-  puts "Importando datos históricos iniciales desde Massive API..."
+puts "Importando datos históricos iniciales desde Massive API..."
 
-  if ENV["MASSIVE_API_KEY"].present?
-    max_date = Date.today
-    max_date -= 1.day while max_date.saturday? || max_date.sunday? || max_date == Date.today
-    
-    ["AAPL", "TSLA", "QQQ"].each do |activo|
+if ENV["MASSIVE_API_KEY"].present?
+  max_date = Date.today
+  max_date -= 1.day while max_date.saturday? || max_date.sunday? || max_date == Date.today
+  
+  ["AAPL", "TSLA", "QQQ"].each do |activo|
+    if HistoricalBar1m.where(symbol: activo).count < 1000
       begin
         count = Backtesting::MassiveImporter.import_historical_range(
           activo,
@@ -378,8 +378,10 @@ if HistoricalBar1m.count < 1000
       rescue => e
         puts "Error importando #{activo}: #{e.message}"
       end
+    else
+      puts "Datos históricos para #{activo} ya existen. Moviendo al siguiente..."
     end
-  else
-    puts "ADVERTENCIA: No se encontró MASSIVE_API_KEY en las variables de entorno."
   end
+else
+  puts "ADVERTENCIA: No se encontró MASSIVE_API_KEY en las variables de entorno."
 end
