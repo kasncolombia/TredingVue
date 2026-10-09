@@ -35,7 +35,12 @@ module Backtesting
     end
 
     def self.available?(symbol)
-      available.any? { |i| i[:symbol] == symbol.upcase }
+      return false if symbol.blank?
+      
+      clean_symbol = symbol.to_s.strip.upcase
+      return false if clean_symbol.empty?
+      
+      available.any? { |i| i[:symbol] == clean_symbol }
     end
   end
 end
